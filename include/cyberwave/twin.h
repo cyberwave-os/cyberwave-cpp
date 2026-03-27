@@ -1,0 +1,213 @@
+/**
+ * @brief High-level twin handle used for control, queries, and subscriptions.
+ */
+
+#ifndef CYBERWAVE_TWIN_H
+#define CYBERWAVE_TWIN_H
+
+#include "cyberwave/mqtt_interface.h"
+#include <functional>
+#include <map>
+#include <memory>
+#include <optional>
+#include <string>
+#include <vector>
+
+namespace cyberwave
+{
+
+class Client;
+class TwinAlertManager;
+class TwinNavigationHandle;
+class TwinMotionHandle;
+class JointController;
+class TwinControllerHandle;
+
+/**
+ * @brief Handle to a twin returned by `Client` or `TwinManager`.
+ */
+class Twin
+{
+public:
+    /** @brief Construct a lightweight twin handle from identity fields. */
+    Twin(const Client& client, std::string uuid, std::string name);
+
+    /** @brief Construct a twin handle from a full backend schema payload. */
+    Twin(const Client& client, std::shared_ptr<void> schema_ptr);
+
+    /** @brief Virtual destructor for subclassed twin types. */
+    virtual ~Twin() = default;
+
+    /** @brief Return the owning SDK client. */
+    const Client& client() const noexcept { return client_.get(); }
+    /** @brief Return the twin UUID. */
+    const std::string& uuid() const noexcept { return uuid_; }
+    /** @brief Return the twin name. */
+    const std::string& name() const noexcept { return name_; }
+
+    /** Optional environment UUID (may be empty). */
+    const std::string& environment_id() const noexcept { return environment_id_; }
+    void set_environment_id(std::string id) { environment_id_ = std::move(id); }
+
+    /** @brief Return the alert manager scoped to this twin. */
+    TwinAlertManager alerts() const;
+
+    /** @brief Return the navigation handle for this twin. */
+    TwinNavigationHandle navigation() const;
+
+    /** @brief Return the motion handle for this twin. */
+    TwinMotionHandle motion() const;
+
+    /** @brief Return the joint controller for this twin. */
+    JointController joints() const;
+
+    /** @brief Return the controller handle for keyboard teleoperation helpers. */
+    TwinControllerHandle controller() const;
+
+    /** UUID of the asset this twin was created from (empty if not loaded from full schema). */
+    std::string asset_id() const;
+
+    /** Capabilities map as a JSON object string ("{}") if none. */
+    std::string capabilities_json() const;
+
+    /** UUIDs of child twins (requires full schema from TwinManager::get()). */
+    std::vector<std::string> child_uuids() const;
+
+    /**
+     * Fetch the parent Twin (if docked). Returns nullopt if not docked.
+     * Reads attach_to_twin_uuid from the schema, then fetches from TwinManager.
+     * Mirrors Python Twin.parent.
+     */
+    std::optional<Twin> parent() const;
+
+    /**
+     * Fetch child Twin objects. Iterates child_uuids() and fetches each.
+     * Mirrors Python Twin.children.
+     */
+    std::vector<Twin> children() const;
+
+    /** True if the named capability is present. */
+    bool has_capability(const std::string& cap) const;
+
+    /** True if any camera/sensor capability is present. Pass specific sensor_type to check that type. */
+    bool has_sensor(const std::string& sensor_type = "") const;
+
+    /**
+     * Re-fetch this twin from the backend and update internal state.
+     * Mirrors Python Twin.refresh().
+     */
+    void refresh();
+
+    /**
+     * Delete this twin from the backend.
+     * Mirrors Python Twin.delete().
+     */
+    void delete_twin();
+
+    /**
+     * Move twin to position [x, y, z] (metres). Delegates to TwinManager::update_state().
+     * Mirrors Python Twin.edit_position(x, y, z).
+     */
+    void edit_position(double x, double y, double z);
+
+    /**
+     * Set twin rotation as quaternion [w, x, y, z].
+     * Mirrors Python Twin.edit_rotation(quaternion=...).
+     */
+    void edit_rotation(double w, double rx, double ry, double rz);
+
+    /**
+     * Set twin rotation from Euler angles (degrees).
+     * Converts yaw/pitch/roll to quaternion and delegates to edit_rotation(w,x,y,z).
+     * Mirrors Python Twin.edit_rotation(yaw=, pitch=, roll=).
+     */
+    void edit_rotation(double yaw, double pitch = 0.0, double roll = 0.0);
+
+    /**
+     * Uniformly scale twin. Not supported by the REST API — throws CyberwaveError.
+     * Stub to mirror Python Twin.edit_scale() interface.
+     */
+    void edit_scale(double x, double y, double z);
+
+    // --- Joint states (delegate to TwinManager) ---
+    /** Get joint states as a map from joint name to position. */
+    std::map<std::string, double> get_joint_states() const;
+
+    /** Update a single joint state. */
+    void update_joint_state(const std::string& joint_name, double position, double velocity = 0.0,
+                            double effort = 0.0) const;
+
+    // --- Calibration (delegate to TwinManager) ---
+    /**
+     * Get joint calibration as a JSON string.
+     * robot_type optionally filters by robot type (e.g. "amr", "arm").
+     * Note: robot_type is currently ignored by the generated REST client.
+     */
+    std::string get_calibration(const std::string& robot_type = "") const;
+
+    /** Update joint calibration. Returns updated calibration as JSON. */
+    std::string update_calibration(const std::string& calibration_json, const std::string& robot_type = "") const;
+
+    // --- Frame (delegate to TwinManager) ---
+    /**
+     * Get latest RGB frame.
+     * sensor_id selects a specific camera on multi-camera twins (e.g. "wrist_camera").
+     * Throws `CyberwaveError` when the generated REST client cannot capture binary response bodies.
+     */
+    std::vector<unsigned char> get_latest_frame(bool mock = false, const std::string& sensor_id = "") const;
+
+    // --- Universal schema (delegate to TwinManager) ---
+    /** Get the universal schema at path (JSON string). */
+    std::string get_schema(const std::string& path = "") const;
+
+    /** Patch the universal schema. Returns updated schema as JSON. */
+    std::string update_schema(const std::string& path, const std::string& value_json,
+                              const std::string& op = "replace") const;
+
+    /**
+     * Get controllable joint names (revolute, prismatic, continuous).
+     * Parses get_schema() for movable joint types.
+     * Mirrors Python Twin.get_controllable_joint_names().
+     */
+    std::vector<std::string> get_controllable_joint_names() const;
+
+    // --- MQTT subscribe helpers (require set_mqtt_client on Client) ---
+
+    /**
+     * Subscribe to all updates for this twin (cyberwave/twin/{uuid}/#).
+     * Requires MQTT client set on the parent Client.
+     * Mirrors Python Twin.subscribe().
+     */
+    void subscribe(MqttMessageHandler on_update) const;
+
+    /**
+     * Subscribe to position updates for this twin.
+     * Mirrors Python Twin.subscribe_position().
+     */
+    void subscribe_position(MqttMessageHandler on_update) const;
+
+    /**
+     * Subscribe to rotation updates for this twin.
+     * Mirrors Python Twin.subscribe_rotation().
+     */
+    void subscribe_rotation(MqttMessageHandler on_update) const;
+
+    /**
+     * Subscribe to joint state updates for this twin.
+     * Mirrors Python Twin.subscribe_joints().
+     */
+    void subscribe_joints(MqttMessageHandler on_update) const;
+
+private:
+    std::reference_wrapper<const Client> client_;
+    std::string uuid_;
+    std::string name_;
+    std::string environment_id_;
+
+    /** Optional full TwinSchema (set by schema constructor or refresh()). */
+    std::shared_ptr<void> schema_;
+};
+
+} // namespace cyberwave
+
+#endif // CYBERWAVE_TWIN_H
