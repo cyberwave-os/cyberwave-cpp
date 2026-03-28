@@ -1,0 +1,8 @@
+build/
+build-*/
+examples/build/
+rest-tmp/
+.cache/
+.git/
+.vscode/
+.idea/

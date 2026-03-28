@@ -79,6 +79,16 @@ public:
     void unsetQueue_length();
     void setQueueLength(int32_t value);
 
+    int32_t getConfiguredLabs() const;
+    bool configuredLabsIsSet() const;
+    void unsetConfigured_labs();
+    void setConfiguredLabs(int32_t value);
+
+    int32_t getOnlineLabs() const;
+    bool onlineLabsIsSet() const;
+    void unsetOnline_labs();
+    void setOnlineLabs(int32_t value);
+
     int32_t getQueuePosition() const;
     bool queuePositionIsSet() const;
     void unsetQueue_position();
@@ -135,6 +145,12 @@ protected:
 
     int32_t m_Queue_length;
     bool m_Queue_lengthIsSet;
+
+    int32_t m_Configured_labs;
+    bool m_Configured_labsIsSet;
+
+    int32_t m_Online_labs;
+    bool m_Online_labsIsSet;
 
     boost::optional<int32_t> m_Queue_position;
 

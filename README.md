@@ -4,111 +4,122 @@
   </a>
 </p>
 
-# Cyberwave C++ SDK
+# Cyberwave C++ SDK (experimental)
 
-This module is part of **Cyberwave: Making the physical world programmable**.
+Official C++ SDK for the [Cyberwave](https://cyberwave.com) platform. Control digital twins, manage simulations, and interact with the Cyberwave ecosystem from C++ applications.
 
-Official C++ SDK for the Cyberwave platform. Control digital twins, manage simulations, and interact with the Cyberwave ecosystem from your C++ applications.
-
-[![License](https://img.shields.io/badge/License-MIT-orange.svg)](https://github.com/cyberwave-os/cyberwave-cpp-sdk/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-orange.svg)](https://github.com/cyberwave-os/cyberwave-cpp/blob/main/LICENSE)
 [![Documentation](https://img.shields.io/badge/Documentation-docs.cyberwave.com-orange)](https://docs.cyberwave.com)
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label&color=orange)](https://discord.gg/dfGhNrawyF)
 
 ## Overview
 
-This SDK integrates two APIs and one bridge:
+The SDK provides three integration layers:
 
-1. **REST API** - Auto-generated from OpenAPI specification (in `/rest` folder)
-2. **MQTT API** - Real-time communication with Cyberwave backend (in `/mqtt` folder)
-3. **ROS2 Bridge** - Real-time communication with ROS2 (in `/ros2` folder)
+1. **REST API** — Auto-generated client from the Cyberwave OpenAPI spec (in `rest/`), wrapped with a hand-crafted C++ layer for a clean developer experience.
+2. **MQTT API** — Real-time pub/sub communication with the Cyberwave backend (in `mqtt/`).
+3. **Edge abstractions** — Base classes for building edge nodes and AMR integrations (in `include/cyberwave/edge/`).
 
-The REST API provides a hand-crafted layer on top of the auto-generated code to deliver a delightful developer experience with modern C++ idioms. The MQTT API and the ROS2 Bridge have been written from scratch.
-
-## Architecture
+## Project Structure
 
 ```
-cyberwave-cpp-sdk/
-├── rest/                    # Auto-generated REST API client (do not modify)
-├── include/
-│   └── cyberwave/
-│       ├── client.h         # Main Cyberwave client integrating REST and MQTT
-│       ├── twin.h           # High-level Twin abstraction for controlling digital twins
-│       ├── twins.h          # Twin manager
-│       ├── config.h         # Configuration management
-│       └── exceptions.h     # Custom exceptions
-└── src/
-    └── cyberwave/           # Implementation files
+cyberwave-cpp/
+├── rest/                        # Auto-generated REST client (included in releases)
+├── include/cyberwave/           # Public SDK headers
+│   ├── client.h                 # Main client (REST + optional MQTT)
+│   ├── twin.h / twins.h        # Twin abstractions
+│   ├── config.h                 # Configuration / env loading
+│   ├── exceptions.h             # Error types
+│   ├── edge/                    # Edge node base classes
+│   └── ...                      # Assets, environments, workflows, alerts, etc.
+├── src/cyberwave/               # Implementation files
+├── mqtt/                        # Paho MQTT adapter
+├── cmake/                       # CMake package config template
+├── examples/                    # Example applications
+├── tests/                       # Unit and integration tests
+├── install.sh                   # One-command installer (deps + build + install)
+└── Dockerfile                   # Clean-room install validation
 ```
 
 ## Installation
 
-### Prerequisites
-
-Install the required dependencies:
-
-**macOS:**
+### One-command install (recommended)
 
 ```bash
-brew install cpprestsdk cmake openssl
-# Optional for MQTT examples:
-brew install paho-mqtt-cpp nlohmann-json spdlog
+./install.sh
 ```
 
-**Linux (Ubuntu/Debian):**
+This handles everything: system dependencies (Ubuntu/Debian via apt), REST client generation if `rest/` is missing, CMake build, and system-wide install to `/usr/local`.
+
+Common options:
 
 ```bash
-sudo apt-get update
-sudo apt-get install libcpprest-dev cmake libssl-dev
-# Required for built-in MQTT support (optional for REST-only builds):
-sudo apt-get install libpaho-mqtt-dev libpaho-mqttpp-dev nlohmann-json3-dev libspdlog-dev
+./install.sh --prefix /opt/cyberwave        # Custom install prefix
+./install.sh --skip-deps                    # Skip apt if deps are already installed
+./install.sh --force-generate-rest          # Regenerate rest/ from OpenAPI
+./install.sh --openapi-url http://localhost:8000/api/v1/openapi.json  # Custom endpoint
+./install.sh --with-opencv                  # Also install OpenCV (for camera_stream_opencv example)
+./install.sh --run-tests                    # Run ctest after build
 ```
 
-**Windows:**
+The script is idempotent and safe to re-run. Run `./install.sh --help` for all options.
+
+### Manual install
+
+Install dependencies:
 
 ```bash
-vcpkg install cpprestsdk cpprestsdk:x64-windows boost-uuid boost-uuid:x64-windows
+# Ubuntu/Debian
+sudo apt-get update && sudo apt-get install -y \
+  build-essential cmake pkg-config ca-certificates curl git \
+  libcpprest-dev libssl-dev libboost-all-dev \
+  nlohmann-json3-dev libpaho-mqtt-dev libpaho-mqttpp-dev libspdlog-dev
 ```
 
-### Dependency Notes (Core vs Optional)
-
-`cyberwave_sdk` keeps transport/media dependencies optional where possible:
-
-- **Core SDK (REST + base types):** `cpprestsdk`, `OpenSSL`
-- **MQTT usage/examples:** `paho-mqtt-cpp`, `nlohmann_json`, `spdlog`
-- **WebRTC camera streaming:** `libdatachannel` (signaling + RTP)
-- **H264 encoding in CameraStreamer:** FFmpeg (`libavcodec`, `libavutil`, `libswscale`)
-
-Frame decoding is intentionally **not** done in the SDK. `IFrameSource` now provides raw frames (`VideoFrame`), so JPEG/driver-specific decoding can live in driver adapters (for example, using OpenCV in the driver), while the SDK remains codec/transport focused.
-
-### Building the SDK
+Build and install:
 
 ```bash
-cd cyberwave-cpp-sdk
-cmake -S . -B build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel
+sudo cmake --install build
 ```
 
-### Using the SDK in Your Project
+> **Note:** The `rest/` directory ships pre-generated in releases. If you are building from source and `rest/` is missing, run `./install.sh --force-generate-rest` or the monorepo's `cpp-sdk-gen.sh` to generate it.
 
-The top-level build produces a `cyberwave_sdk` target. A simple in-tree consumer setup looks like this:
+### Dependency Overview
+
+| Dependency | Required | Purpose |
+|---|---|---|
+| `cpprestsdk` | Yes | HTTP client for REST API |
+| `OpenSSL` | Yes | TLS |
+| `paho-mqtt-cpp` + `nlohmann_json` + `spdlog` | For MQTT | Real-time pub/sub |
+| `OpenCV` | Optional | `camera_stream_opencv` example (`./install.sh --with-opencv`) |
+| `libdatachannel` | Optional | WebRTC camera streaming |
+| FFmpeg (`libavcodec`, `libavutil`, `libswscale`) | Optional | H264 encoding in CameraStreamer |
+
+## Using the SDK in Your Project
+
+### find_package (installed SDK)
 
 ```cmake
-cmake_minimum_required(VERSION 3.10)
-project(MyRoboticsApp)
-
-set(CMAKE_CXX_STANDARD 17)
-
-add_subdirectory(path/to/cyberwave-cpp-sdk cyberwave-cpp-sdk-build)
+find_package(CyberwaveCppSDK CONFIG REQUIRED)
 
 add_executable(my_app main.cpp)
-target_link_libraries(my_app PRIVATE
-    cyberwave_sdk
-)
+target_link_libraries(my_app PRIVATE CyberwaveCppSDK::cyberwave_sdk)
+```
+
+### add_subdirectory (vendored / in-tree)
+
+```cmake
+add_subdirectory(path/to/cyberwave-cpp cyberwave-cpp-build)
+
+add_executable(my_app main.cpp)
+target_link_libraries(my_app PRIVATE cyberwave_sdk)
 ```
 
 ## Quick Start
 
-### Basic Configuration
+### Configuration
 
 ```cpp
 #include <cyberwave/client.h>
@@ -117,10 +128,8 @@ target_link_libraries(my_app PRIVATE
 int main() {
     cyberwave::Config config;
     config.load_from_environment();
-
-    // Or set fields explicitly:
-    // config.base_url = "http://localhost:8000";
-    // config.api_key = "your_api_key";
+    // Or: config.base_url = "https://api.cyberwave.com";
+    //     config.api_key  = "your_api_key";
 
     cyberwave::Client client(config);
     return 0;
@@ -141,19 +150,16 @@ int main() {
     cyberwave::Client client(config);
 
     auto twins = client.twins().list();
-    if (twins.empty()) {
-        return 0;
-    }
+    if (twins.empty()) return 0;
 
     auto robot = twins[0];
     robot.edit_position(1.0, 0.0, 0.5);
-    robot.edit_rotation(90.0); // yaw in degrees
+    robot.edit_rotation(90.0);
 
     auto joints = robot.joints().get_all();
     if (!joints.empty()) {
-        const auto& joint_name = joints.begin()->first;
-        robot.joints().set(joint_name, 30.0, true); // degrees=true
-        double angle_rad = robot.joints().get(joint_name);
+        const auto& name = joints.begin()->first;
+        robot.joints().set(name, 30.0, true);
     }
 
     client.affect("simulation");
@@ -161,12 +167,9 @@ int main() {
 }
 ```
 
-### MQTT Usage
-
-`Client` holds MQTT via `std::shared_ptr<IMqttClient>`. Use `PahoMqttAdapter` as the concrete client.
+### MQTT
 
 ```cpp
-#include <memory>
 #include <cyberwave/client.h>
 #include <cyberwave/config.h>
 #include <cyberwave/paho_mqtt_adapter.h>
@@ -182,168 +185,96 @@ int main() {
 
     auto twins = client.twins().list();
     if (!twins.empty()) {
-        auto robot = twins[0];
-        robot.subscribe_position([](const std::string& payload) {
+        twins[0].subscribe_position([](const std::string& payload) {
             std::cout << "Position: " << payload << std::endl;
         });
     }
 
-    client.disconnect(); // detaches MQTT from Client; call set_mqtt_client again to reuse
+    client.disconnect();
     mqtt->disconnect();
     return 0;
 }
 ```
 
-For local non-TLS brokers on port `1883`, set:
-
-```bash
-export CYBERWAVE_MQTT_USE_TLS=false
-```
+For local non-TLS brokers: `export CYBERWAVE_MQTT_USE_TLS=false`
 
 ### Error Handling
 
 ```cpp
-#include <cyberwave/client.h>
-#include <cyberwave/config.h>
-#include <cyberwave/exceptions.h>
-
-int main() {
-    try {
-        cyberwave::Config config;
-        config.load_from_environment();
-        cyberwave::Client client(config);
-        auto robot = client.twin("invalid/twin");
-        robot.refresh();
-    }
-    catch (const cyberwave::CyberwaveAPIError& e) {
-        std::cerr << "API error: " << e.what() << std::endl;
-    }
-    catch (const cyberwave::CyberwaveConnectionError& e) {
-        std::cerr << "Connection error: " << e.what() << std::endl;
-    }
-    catch (const cyberwave::CyberwaveError& e) {
-        std::cerr << "SDK error: " << e.what() << std::endl;
-    }
+try {
+    cyberwave::Client client(config);
+    auto robot = client.twin("some-uuid");
+    robot.refresh();
+} catch (const cyberwave::CyberwaveAPIError& e) {
+    std::cerr << "API error: " << e.what() << std::endl;
+} catch (const cyberwave::CyberwaveConnectionError& e) {
+    std::cerr << "Connection error: " << e.what() << std::endl;
+} catch (const cyberwave::CyberwaveError& e) {
+    std::cerr << "SDK error: " << e.what() << std::endl;
 }
 ```
 
-## Main Entry Points
+## API Reference
 
-- `cyberwave::Client` - main SDK client
-- `cyberwave::Config` - SDK configuration / env loading
-- `cyberwave::Twin` - high-level twin handle
-- `cyberwave::JointController` - joint get/set/list/get_all
-- `cyberwave::TwinManager` - list/get/create/update/delete twins
-- `cyberwave::WorkflowManager` - list/get/trigger workflows
-- `cyberwave::PahoMqttAdapter` - concrete MQTT implementation for `IMqttClient`
+| Class | Purpose |
+|---|---|
+| `cyberwave::Client` | Main SDK client (REST + optional MQTT) |
+| `cyberwave::Config` | Configuration and environment loading |
+| `cyberwave::Twin` | High-level twin handle |
+| `cyberwave::TwinManager` | List / get / create / update / delete twins |
+| `cyberwave::JointController` | Joint get / set / list / get_all |
+| `cyberwave::WorkflowManager` | List / get / trigger workflows |
+| `cyberwave::PahoMqttAdapter` | Paho-backed `IMqttClient` implementation |
 
 ## Examples
 
-See the `/examples` directory for working examples aligned with the Python SDK:
+See `examples/` for working code aligned with the Python SDK:
 
-- `quickstart.cpp`
-- `compact.cpp`
-- `alerts.cpp`
-- `workflows.cpp`
-- `capture_frame.cpp`
-- `camera_stream.cpp`
-- `camera_stream_opencv.cpp` (OpenCV-based `IFrameSource` implementation)
-- `depth_stream.cpp`
-- `command_receiver_simple.cpp`
-- `go2_locomotion.cpp`
-
-`camera_stream_opencv.cpp` is the reference for implementing a driver-side frame source with OpenCV and feeding raw `VideoFrame` data into `CameraStreamer`.
+| Example | Transport | Description |
+|---|---|---|
+| `quickstart.cpp` | REST (+MQTT if available) | Minimal end-to-end demo |
+| `compact.cpp` | REST | Compact API usage |
+| `alerts.cpp` | REST | Alert management |
+| `workflows.cpp` | REST | Workflow triggering |
+| `capture_frame.cpp` | REST | Single frame capture |
+| `camera_stream.cpp` | MQTT | Live camera streaming |
+| `camera_stream_opencv.cpp` | MQTT | OpenCV `IFrameSource` reference |
+| `depth_stream.cpp` | MQTT | Depth camera streaming |
+| `command_receiver_simple.cpp` | MQTT | Receive commands from the platform |
+| `go2_locomotion.cpp` | MQTT | Unitree Go2 locomotion |
 
 ## Development
-
-### Project Structure
-
-The SDK follows a clear separation between auto-generated and hand-crafted code:
-
-- **`/rest`** - Auto-generated REST API client (gitignored, regenerated on build)
-- **`/include/cyberwave`** - Public headers for hand-crafted SDK layer
-- **`/src/cyberwave`** - Implementation of hand-crafted SDK layer
-- **`/examples`** - Example applications
-- **`/tests`** - Unit and integration tests
-
-### Building from Source
-
-```bash
-git clone https://github.com/cyberwave-os/cyberwave-cpp-sdk.git
-cd cyberwave-cpp-sdk
-cmake -S . -B build
-cmake --build build --parallel
-ctest --test-dir build --output-on-failure
-```
 
 ### Running Tests
 
 ```bash
+cmake -S . -B build -DCYBERWAVE_BUILD_TESTS=ON
+cmake --build build --parallel
 ctest --test-dir build --output-on-failure
 ```
 
-### Testing with Docker
+### Docker Validation
 
-Build and run tests inside the provided Docker image. Use `--network host` so backend-dependent tests can reach a local backend:
-
-```bash
-docker build -t cyberwave-cpp-sdk .
-docker run --rm --network host \
-  -e CYBERWAVE_BASE_URL=http://127.0.0.1:8000 \
-  -e CYBERWAVE_API_KEY=your-api-key \
-  cyberwave-cpp-sdk
-```
-
-### Running Examples with Docker
-
-REST examples:
+The root `Dockerfile` is a clean-room validation: it runs `./install.sh` in a fresh Ubuntu image, then builds a downstream project using `find_package(CyberwaveCppSDK CONFIG REQUIRED)`.
 
 ```bash
-docker run --rm --network host \
-  -e CYBERWAVE_API_KEY=your-api-key \
-  -e CYBERWAVE_BASE_URL=http://127.0.0.1:8000 \
-  cyberwave-cpp-sdk /src/build/examples/example_compact
+docker build -t cyberwave-cpp-install-validation .
 ```
 
-MQTT-enabled examples:
-
-```bash
-docker run --rm --network host \
-  -e CYBERWAVE_API_KEY=your-api-key \
-  -e CYBERWAVE_BASE_URL=http://127.0.0.1:8000 \
-  -e CYBERWAVE_MQTT_HOST=localhost \
-  -e CYBERWAVE_MQTT_PORT=1883 \
-  -e CYBERWAVE_MQTT_USERNAME=test \
-  -e CYBERWAVE_MQTT_USE_TLS=false \
-  cyberwave-cpp-sdk /src/build/examples/example_quickstart
-```
-
-The Docker image includes the MQTT dependencies, so `example_quickstart`, `example_camera_stream`,
-`example_depth_stream`, `example_command_receiver_simple`, and `example_go2_locomotion` are built too.
+Build succeeds only if installation and downstream package discovery work end-to-end.
 
 ## Requirements
 
-- **C++17** or later
-- **CMake 3.10** or later
-- **cpprestsdk** (Microsoft C++ REST SDK)
-- **OpenSSL**
-- **Required for built-in MQTT support:** Paho MQTT C/C++, nlohmann-json, spdlog
-  - Optional only for REST-only builds that do not use `PahoMqttAdapter` or MQTT-enabled examples
-
-## Contributing
-
-Contributions are welcome. If you find an issue or want to improve the SDK, open an issue or submit a pull request. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## License
-
-This SDK is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+- C++17 or later
+- CMake 3.10+
+- Linux (Ubuntu/Debian fully supported; macOS manual deps)
 
 ## Support
 
 - **Documentation**: https://docs.cyberwave.com
-- **Issues**: https://github.com/cyberwave-os/cyberwave-cpp-sdk/issues
+- **Issues**: https://github.com/cyberwave-os/cyberwave-cpp/issues
 - **Community**: https://discord.gg/dfGhNrawyF
 
-## Changelog
+## License
 
-See [CHANGELOG.md](CHANGELOG.md) for version history and updates.
+MIT License. See [LICENSE](LICENSE) for details.

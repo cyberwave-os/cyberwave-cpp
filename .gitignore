@@ -1,0 +1,13 @@
+# Build artifacts
+build/
+build-*/
+
+# install.sh working directories
+.cache/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*~
+CMakeUserPresets.json
