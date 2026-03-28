@@ -61,6 +61,7 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/../mqtt/mqtt_client.cpp)
     # Find required packages for mqtt implementation
     find_package(PahoMqttCpp REQUIRED)
     find_package(nlohmann_json REQUIRED)
+    find_package(spdlog REQUIRED)
 
     # Build static library from the mqtt source file (compile inside this build tree)
     add_library(cyberwave_mqtt_client STATIC ${CMAKE_SOURCE_DIR}/../mqtt/mqtt_client.cpp)
@@ -72,7 +73,7 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/../mqtt/mqtt_client.cpp)
     )
     target_link_libraries(cyberwave_mqtt_client
         PUBLIC PahoMqttCpp::paho-mqttpp3
-        PRIVATE nlohmann_json::nlohmann_json
+        PRIVATE nlohmann_json::nlohmann_json spdlog::spdlog
     )
 
     # Place the static archive and the mqtt_example runtime binary in build/mqtt_build

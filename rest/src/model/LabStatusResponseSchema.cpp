@@ -30,6 +30,10 @@ LabStatusResponseSchema::LabStatusResponseSchema()
     m_Free_labsIsSet = false;
     m_Queue_length = 0;
     m_Queue_lengthIsSet = false;
+    m_Configured_labs = 0;
+    m_Configured_labsIsSet = false;
+    m_Online_labs = 0;
+    m_Online_labsIsSet = false;
     m_Message = utility::conversions::to_string_t("");
     m_MessageIsSet = false;
 }
@@ -70,6 +74,16 @@ web::json::value LabStatusResponseSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("queue_length"))] = ModelBase::toJson(m_Queue_length);
+    }
+    if(m_Configured_labsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("configured_labs"))] = ModelBase::toJson(m_Configured_labs);
+    }
+    if(m_Online_labsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("online_labs"))] = ModelBase::toJson(m_Online_labs);
     }
     if(m_Queue_position.has_value())
     {
@@ -170,6 +184,28 @@ bool LabStatusResponseSchema::fromJson(const web::json::value& val)
             int32_t refVal_setQueueLength;
             ok &= ModelBase::fromJson(fieldValue, refVal_setQueueLength);
             setQueueLength(refVal_setQueueLength);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("configured_labs"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("configured_labs")));
+        if(!fieldValue.is_null())
+        {
+            int32_t refVal_setConfiguredLabs;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setConfiguredLabs);
+            setConfiguredLabs(refVal_setConfiguredLabs);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("online_labs"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("online_labs")));
+        if(!fieldValue.is_null())
+        {
+            int32_t refVal_setOnlineLabs;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setOnlineLabs);
+            setOnlineLabs(refVal_setOnlineLabs);
             
         }
     }
@@ -291,6 +327,14 @@ void LabStatusResponseSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("queue_length")), m_Queue_length));
     }
+    if(m_Configured_labsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("configured_labs")), m_Configured_labs));
+    }
+    if(m_Online_labsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("online_labs")), m_Online_labs));
+    }
     if(m_Queue_position.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("queue_position")), m_Queue_position.get()));
@@ -363,6 +407,18 @@ bool LabStatusResponseSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
         int32_t refVal_setQueueLength;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("queue_length"))), refVal_setQueueLength );
         setQueueLength(refVal_setQueueLength);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("configured_labs"))))
+    {
+        int32_t refVal_setConfiguredLabs;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("configured_labs"))), refVal_setConfiguredLabs );
+        setConfiguredLabs(refVal_setConfiguredLabs);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("online_labs"))))
+    {
+        int32_t refVal_setOnlineLabs;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("online_labs"))), refVal_setOnlineLabs );
+        setOnlineLabs(refVal_setOnlineLabs);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("queue_position"))))
     {
@@ -515,6 +571,46 @@ bool LabStatusResponseSchema::queueLengthIsSet() const
 void LabStatusResponseSchema::unsetQueue_length()
 {
     m_Queue_lengthIsSet = false;
+}
+int32_t LabStatusResponseSchema::getConfiguredLabs() const
+{
+    return m_Configured_labs;
+}
+
+void LabStatusResponseSchema::setConfiguredLabs(int32_t value)
+{
+    m_Configured_labs = value;
+    m_Configured_labsIsSet = true;
+}
+
+bool LabStatusResponseSchema::configuredLabsIsSet() const
+{
+    return m_Configured_labsIsSet;
+}
+
+void LabStatusResponseSchema::unsetConfigured_labs()
+{
+    m_Configured_labsIsSet = false;
+}
+int32_t LabStatusResponseSchema::getOnlineLabs() const
+{
+    return m_Online_labs;
+}
+
+void LabStatusResponseSchema::setOnlineLabs(int32_t value)
+{
+    m_Online_labs = value;
+    m_Online_labsIsSet = true;
+}
+
+bool LabStatusResponseSchema::onlineLabsIsSet() const
+{
+    return m_Online_labsIsSet;
+}
+
+void LabStatusResponseSchema::unsetOnline_labs()
+{
+    m_Online_labsIsSet = false;
 }
 int32_t LabStatusResponseSchema::getQueuePosition() const
 {
