@@ -12,6 +12,7 @@ OPENAPI_GENERATOR_VERSION="${CYBERWAVE_OPENAPI_GENERATOR_VERSION:-7.8.0}"
 SKIP_DEPS=0
 SKIP_GENERATE_REST=0
 FORCE_GENERATE_REST=0
+WITH_GRPC=0
 WITH_OPENCV=0
 RUN_TESTS=0
 
@@ -31,6 +32,7 @@ Options:
   --skip-deps                        Skip dependency installation
   --skip-generate-rest               Do not auto-generate rest/ when missing
   --force-generate-rest              Regenerate rest/ even if it already exists
+  --with-grpc                          Install gRPC/protobuf dev libs (for driver tf-exchange proto)
   --with-opencv                       Install OpenCV dev libs (for camera_stream_opencv example)
   --run-tests                        Run ctest after build
   -h, --help                         Show this help
@@ -109,6 +111,10 @@ parse_args() {
                 FORCE_GENERATE_REST=1
                 shift
                 ;;
+            --with-grpc)
+                WITH_GRPC=1
+                shift
+                ;;
             --with-opencv)
                 WITH_OPENCV=1
                 shift
@@ -148,6 +154,15 @@ install_deps_debian() {
         libpaho-mqtt-dev \
         libpaho-mqttpp-dev \
         libspdlog-dev
+
+    if [[ "$WITH_GRPC" -eq 1 ]]; then
+        log "Installing gRPC/protobuf dev libraries (--with-grpc)"
+        run_as_root apt-get install -y --no-install-recommends \
+            libgrpc++-dev \
+            libprotobuf-dev \
+            protobuf-compiler \
+            protobuf-compiler-grpc
+    fi
 
     if [[ "$WITH_OPENCV" -eq 1 ]]; then
         log "Installing OpenCV dev libraries (--with-opencv)"
@@ -344,6 +359,7 @@ configure_build_install() {
     cmake -S "${SCRIPT_DIR}" -B "${BUILD_DIR}" \
         -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
         -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}" \
+        -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
         -DCYBERWAVE_BUILD_TESTS="${build_tests}" \
         -DCYBERWAVE_BUILD_EXAMPLES=OFF
 
@@ -366,7 +382,8 @@ configure_build_install_mqtt() {
     log "Configuring MQTT client (mqtt/)"
     cmake -S "${SCRIPT_DIR}/mqtt" -B "${mqtt_build_dir}" \
         -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
-        -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}"
+        -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}" \
+        -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 
     log "Building MQTT client"
     cmake --build "${mqtt_build_dir}" --parallel "$(parallel_jobs)"
