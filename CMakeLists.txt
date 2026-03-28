@@ -102,8 +102,9 @@ target_link_libraries(cyberwave_sdk PUBLIC
     OpenSSL::SSL
     OpenSSL::Crypto
 )
-# Match rest build: string_t = std::string
-target_compile_definitions(cyberwave_sdk PUBLIC _TURN_OFF_PLATFORM_STRING)
+# string_t = std::string on Linux (no-op); avoids wide-string conversions on Windows.
+# PRIVATE: only SDK .cpp files use it; don't leak to downstream consumers.
+target_compile_definitions(cyberwave_sdk PRIVATE _TURN_OFF_PLATFORM_STRING)
 
 # WebRTC producer support (libdatachannel / rtc.hpp)
 if(CYBERWAVE_ENABLE_WEBRTC)
