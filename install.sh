@@ -19,7 +19,8 @@ usage() {
     cat <<'EOF'
 Usage: ./install.sh [options]
 
-Build and install Cyberwave C++ SDK system-wide (default: /usr/local).
+Build and install Cyberwave C++ SDK system-wide (default: /usr/local), then build and
+install the mqtt/ CMake package to the same prefix (find_package(cyberwave_mqtt_client)).
 
 Options:
   --prefix <path>                    Install prefix (default: /usr/local)
@@ -302,6 +303,39 @@ ensure_rest_sources() {
     generate_rest_sources
 }
 
+parallel_jobs() {
+    local jobs
+    jobs="${CYBERWAVE_BUILD_JOBS:-$(( $(nproc) - 1 ))}"
+    [[ "$jobs" -lt 1 ]] && jobs=1
+    echo "$jobs"
+}
+
+run_cmake_install() {
+    local build_tree="$1"
+
+    log "Installing CMake build tree to ${INSTALL_PREFIX}"
+    if [[ "$(id -u)" -eq 0 ]]; then
+        cmake --install "${build_tree}"
+        if have_cmd ldconfig; then
+            ldconfig || true
+        fi
+        return
+    fi
+
+    if [[ -w "${INSTALL_PREFIX}" ]]; then
+        cmake --install "${build_tree}"
+    elif have_cmd sudo; then
+        sudo cmake --install "${build_tree}"
+        if have_cmd ldconfig; then
+            sudo ldconfig || true
+        fi
+    else
+        err "No permissions for ${INSTALL_PREFIX} and sudo is unavailable."
+        err "Use --prefix to choose a writable location, or run as root."
+        exit 1
+    fi
+}
+
 configure_build_install() {
     local build_tests="OFF"
     [[ "${RUN_TESTS}" -eq 1 ]] && build_tests="ON"
@@ -314,10 +348,7 @@ configure_build_install() {
         -DCYBERWAVE_BUILD_EXAMPLES=OFF
 
     log "Building SDK"
-    local jobs
-    jobs="${CYBERWAVE_BUILD_JOBS:-$(( $(nproc) - 1 ))}"
-    [[ "$jobs" -lt 1 ]] && jobs=1
-    cmake --build "${BUILD_DIR}" --parallel "$jobs"
+    cmake --build "${BUILD_DIR}" --parallel "$(parallel_jobs)"
 
     if [[ "${RUN_TESTS}" -eq 1 ]]; then
         log "Running tests (ctest)"
@@ -326,27 +357,21 @@ configure_build_install() {
         fi
     fi
 
-    log "Installing SDK to ${INSTALL_PREFIX}"
-    if [[ "$(id -u)" -eq 0 ]]; then
-        cmake --install "${BUILD_DIR}"
-        if have_cmd ldconfig; then
-            ldconfig || true
-        fi
-        return
-    fi
+    run_cmake_install "${BUILD_DIR}"
+}
 
-    if [[ -w "${INSTALL_PREFIX}" ]]; then
-        cmake --install "${BUILD_DIR}"
-    elif have_cmd sudo; then
-        sudo cmake --install "${BUILD_DIR}"
-        if have_cmd ldconfig; then
-            sudo ldconfig || true
-        fi
-    else
-        err "No permissions for ${INSTALL_PREFIX} and sudo is unavailable."
-        err "Use --prefix to choose a writable location, or run as root."
-        exit 1
-    fi
+configure_build_install_mqtt() {
+    local mqtt_build_dir="${SCRIPT_DIR}/build/install-mqtt"
+
+    log "Configuring MQTT client (mqtt/)"
+    cmake -S "${SCRIPT_DIR}/mqtt" -B "${mqtt_build_dir}" \
+        -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+        -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}"
+
+    log "Building MQTT client"
+    cmake --build "${mqtt_build_dir}" --parallel "$(parallel_jobs)"
+
+    run_cmake_install "${mqtt_build_dir}"
 }
 
 main() {
@@ -361,11 +386,14 @@ main() {
     install_deps
     ensure_rest_sources
     configure_build_install
+    configure_build_install_mqtt
 
     log "Installation complete."
     log "Downstream projects can now use:"
     log "  find_package(CyberwaveCppSDK CONFIG REQUIRED)"
     log "  target_link_libraries(<target> PRIVATE CyberwaveCppSDK::cyberwave_sdk)"
+    log "  find_package(cyberwave_mqtt_client CONFIG REQUIRED)"
+    log "  target_link_libraries(<target> PRIVATE cyberwave::cyberwave_mqtt_client)"
 }
 
 main "$@"
