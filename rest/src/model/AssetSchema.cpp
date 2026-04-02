@@ -32,6 +32,8 @@ AssetSchema::AssetSchema()
     m_Updated_atIsSet = false;
     m_Has_universal_schema = false;
     m_Has_universal_schemaIsSet = false;
+    m_Fixed_base = false;
+    m_Fixed_baseIsSet = false;
 }
 
 AssetSchema::~AssetSchema()
@@ -86,6 +88,11 @@ web::json::value AssetSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("registry_id"))] = ModelBase::toJson(m_Registry_id.get());
     }
+    if(m_Registry_id_alias.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("registry_id_alias"))] = ModelBase::toJson(m_Registry_id_alias.get());
+    }
     if(m_Glb_file.has_value())
     {
         
@@ -130,6 +137,11 @@ web::json::value AssetSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("universal_schema"))] = ModelBase::toJson(m_Universal_schema.get());
+    }
+    if(m_Fixed_baseIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("fixed_base"))] = ModelBase::toJson(m_Fixed_base);
     }
 
     return val;
@@ -223,6 +235,17 @@ bool AssetSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setRegistryId;
             ok &= ModelBase::fromJson(fieldValue, refVal_setRegistryId);
             setRegistryId(refVal_setRegistryId);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("registry_id_alias"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("registry_id_alias")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setRegistryIdAlias;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRegistryIdAlias);
+            setRegistryIdAlias(refVal_setRegistryIdAlias);
             
         }
     }
@@ -325,6 +348,17 @@ bool AssetSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("fixed_base")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setFixedBase;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFixedBase);
+            setFixedBase(refVal_setFixedBase);
+            
+        }
+    }
     return ok;
 }
 
@@ -367,6 +401,10 @@ void AssetSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, cons
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("registry_id")), m_Registry_id.get()));
     }
+    if(m_Registry_id_alias.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("registry_id_alias")), m_Registry_id_alias.get()));
+    }
     if(m_Glb_file.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("glb_file")), m_Glb_file.get()));
@@ -402,6 +440,10 @@ void AssetSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, cons
     if(m_Universal_schema.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("universal_schema")), m_Universal_schema.get()));
+    }
+    if(m_Fixed_baseIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("fixed_base")), m_Fixed_base));
     }
 }
 
@@ -462,6 +504,12 @@ bool AssetSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, co
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("registry_id"))), refVal_setRegistryId );
         setRegistryId(refVal_setRegistryId);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("registry_id_alias"))))
+    {
+        utility::string_t refVal_setRegistryIdAlias;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("registry_id_alias"))), refVal_setRegistryIdAlias );
+        setRegistryIdAlias(refVal_setRegistryIdAlias);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("glb_file"))))
     {
         utility::string_t refVal_setGlbFile;
@@ -515,6 +563,12 @@ bool AssetSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, co
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setUniversalSchema;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("universal_schema"))), refVal_setUniversalSchema );
         setUniversalSchema(refVal_setUniversalSchema);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        bool refVal_setFixedBase;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))), refVal_setFixedBase );
+        setFixedBase(refVal_setFixedBase);
     }
     return ok;
 }
@@ -684,6 +738,26 @@ bool AssetSchema::registryIdIsSet() const
 void AssetSchema::unsetRegistry_id()
 {
     m_Registry_id.reset();
+}
+utility::string_t AssetSchema::getRegistryIdAlias() const
+{
+    return m_Registry_id_alias.get();
+}
+
+
+void AssetSchema::setRegistryIdAlias(const utility::string_t& value)
+{
+    m_Registry_id_alias = value;
+}
+
+bool AssetSchema::registryIdAliasIsSet() const
+{
+    return m_Registry_id_alias.has_value();
+}
+
+void AssetSchema::unsetRegistry_id_alias()
+{
+    m_Registry_id_alias.reset();
 }
 utility::string_t AssetSchema::getGlbFile() const
 {
@@ -864,6 +938,26 @@ bool AssetSchema::universalSchemaIsSet() const
 void AssetSchema::unsetUniversal_schema()
 {
     m_Universal_schema.reset();
+}
+bool AssetSchema::isFixedBase() const
+{
+    return m_Fixed_base;
+}
+
+void AssetSchema::setFixedBase(bool value)
+{
+    m_Fixed_base = value;
+    m_Fixed_baseIsSet = true;
+}
+
+bool AssetSchema::fixedBaseIsSet() const
+{
+    return m_Fixed_baseIsSet;
+}
+
+void AssetSchema::unsetFixed_base()
+{
+    m_Fixed_baseIsSet = false;
 }
 
 }

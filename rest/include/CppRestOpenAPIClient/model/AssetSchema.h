@@ -96,6 +96,11 @@ public:
     void unsetRegistry_id();
     void setRegistryId(const utility::string_t& value);
 
+    utility::string_t getRegistryIdAlias() const;
+    bool registryIdAliasIsSet() const;
+    void unsetRegistry_id_alias();
+    void setRegistryIdAlias(const utility::string_t& value);
+
     utility::string_t getGlbFile() const;
     bool glbFileIsSet() const;
     void unsetGlb_file();
@@ -141,6 +146,11 @@ public:
     void unsetUniversal_schema();
     void setUniversalSchema(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    bool isFixedBase() const;
+    bool fixedBaseIsSet() const;
+    void unsetFixed_base();
+    void setFixedBase(bool value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -164,6 +174,8 @@ protected:
 
     boost::optional<utility::string_t> m_Registry_id;
 
+    boost::optional<utility::string_t> m_Registry_id_alias;
+
     boost::optional<utility::string_t> m_Glb_file;
 
     boost::optional<utility::string_t> m_Urdf_file;
@@ -182,6 +194,9 @@ protected:
     bool m_Has_universal_schemaIsSet;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Universal_schema;
+
+    bool m_Fixed_base;
+    bool m_Fixed_baseIsSet;
 
 };
 

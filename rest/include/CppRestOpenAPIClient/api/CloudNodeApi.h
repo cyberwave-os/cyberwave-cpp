@@ -174,6 +174,16 @@ public:
         utility::string_t uuid,
         std::shared_ptr<CloudNodeLogRequest> cloudNodeLogRequest
     ) const;
+    /// <summary>
+    /// Terminate Instance
+    /// </summary>
+    /// <remarks>
+    /// Trigger termination for a managed Cloud Node (GPU) instance.  This admin-only endpoint is intended for backend operators. Self-hosted instances are excluded because Cyberwave does not own their lifecycle.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<CloudNodeTerminatedResponse>> srcAppApiCloudNodesTerminateInstance(
+        utility::string_t uuid
+    ) const;
 
 protected:
     std::shared_ptr<const ApiClient> m_ApiClient;

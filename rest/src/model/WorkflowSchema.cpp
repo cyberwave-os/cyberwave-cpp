@@ -22,6 +22,8 @@ WorkflowSchema::WorkflowSchema()
 {
     m_Uuid = utility::conversions::to_string_t("");
     m_UuidIsSet = false;
+    m_Slug = utility::conversions::to_string_t("");
+    m_SlugIsSet = false;
     m_Name = utility::conversions::to_string_t("");
     m_NameIsSet = false;
     m_Description = utility::conversions::to_string_t("");
@@ -56,6 +58,11 @@ web::json::value WorkflowSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("uuid"))] = ModelBase::toJson(m_Uuid);
     }
+    if(m_SlugIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("slug"))] = ModelBase::toJson(m_Slug);
+    }
     if(m_NameIsSet)
     {
         
@@ -75,6 +82,11 @@ web::json::value WorkflowSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))] = ModelBase::toJson(m_Workspace_uuid);
+    }
+    if(m_Workspace_name.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("workspace_name"))] = ModelBase::toJson(m_Workspace_name.get());
     }
     if(m_VisibilityIsSet)
     {
@@ -134,6 +146,17 @@ bool WorkflowSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("slug"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("slug")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setSlug;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSlug);
+            setSlug(refVal_setSlug);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("name"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("name")));
@@ -175,6 +198,17 @@ bool WorkflowSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setWorkspaceUuid;
             ok &= ModelBase::fromJson(fieldValue, refVal_setWorkspaceUuid);
             setWorkspaceUuid(refVal_setWorkspaceUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("workspace_name"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("workspace_name")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setWorkspaceName;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setWorkspaceName);
+            setWorkspaceName(refVal_setWorkspaceName);
             
         }
     }
@@ -280,6 +314,10 @@ void WorkflowSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, c
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("uuid")), m_Uuid));
     }
+    if(m_SlugIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("slug")), m_Slug));
+    }
     if(m_NameIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("name")), m_Name));
@@ -295,6 +333,10 @@ void WorkflowSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, c
     if(m_Workspace_uuidIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workspace_uuid")), m_Workspace_uuid));
+    }
+    if(m_Workspace_name.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workspace_name")), m_Workspace_name.get()));
     }
     if(m_VisibilityIsSet)
     {
@@ -345,6 +387,12 @@ bool WorkflowSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart,
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("uuid"))), refVal_setUuid );
         setUuid(refVal_setUuid);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("slug"))))
+    {
+        utility::string_t refVal_setSlug;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("slug"))), refVal_setSlug );
+        setSlug(refVal_setSlug);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("name"))))
     {
         utility::string_t refVal_setName;
@@ -368,6 +416,12 @@ bool WorkflowSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart,
         utility::string_t refVal_setWorkspaceUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))), refVal_setWorkspaceUuid );
         setWorkspaceUuid(refVal_setWorkspaceUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("workspace_name"))))
+    {
+        utility::string_t refVal_setWorkspaceName;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workspace_name"))), refVal_setWorkspaceName );
+        setWorkspaceName(refVal_setWorkspaceName);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("visibility"))))
     {
@@ -441,6 +495,27 @@ bool WorkflowSchema::uuidIsSet() const
 void WorkflowSchema::unsetUuid()
 {
     m_UuidIsSet = false;
+}
+utility::string_t WorkflowSchema::getSlug() const
+{
+    return m_Slug;
+}
+
+
+void WorkflowSchema::setSlug(const utility::string_t& value)
+{
+    m_Slug = value;
+    m_SlugIsSet = true;
+}
+
+bool WorkflowSchema::slugIsSet() const
+{
+    return m_SlugIsSet;
+}
+
+void WorkflowSchema::unsetSlug()
+{
+    m_SlugIsSet = false;
 }
 utility::string_t WorkflowSchema::getName() const
 {
@@ -524,6 +599,26 @@ bool WorkflowSchema::workspaceUuidIsSet() const
 void WorkflowSchema::unsetWorkspace_uuid()
 {
     m_Workspace_uuidIsSet = false;
+}
+utility::string_t WorkflowSchema::getWorkspaceName() const
+{
+    return m_Workspace_name.get();
+}
+
+
+void WorkflowSchema::setWorkspaceName(const utility::string_t& value)
+{
+    m_Workspace_name = value;
+}
+
+bool WorkflowSchema::workspaceNameIsSet() const
+{
+    return m_Workspace_name.has_value();
+}
+
+void WorkflowSchema::unsetWorkspace_name()
+{
+    m_Workspace_name.reset();
 }
 utility::string_t WorkflowSchema::getVisibility() const
 {

@@ -61,6 +61,11 @@ public:
     void unsetName();
     void setName(const utility::string_t& value);
 
+    utility::string_t getSlug() const;
+    bool slugIsSet() const;
+    void unsetSlug();
+    void setSlug(const utility::string_t& value);
+
     utility::string_t getDescription() const;
     bool descriptionIsSet() const;
     void unsetDescription();
@@ -84,6 +89,8 @@ public:
 
 protected:
     boost::optional<utility::string_t> m_Name;
+
+    boost::optional<utility::string_t> m_Slug;
 
     boost::optional<utility::string_t> m_Description;
 
