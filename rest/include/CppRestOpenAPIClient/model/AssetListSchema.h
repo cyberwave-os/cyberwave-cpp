@@ -91,6 +91,11 @@ public:
     void unsetRegistry_id();
     void setRegistryId(const utility::string_t& value);
 
+    utility::string_t getRegistryIdAlias() const;
+    bool registryIdAliasIsSet() const;
+    void unsetRegistry_id_alias();
+    void setRegistryIdAlias(const utility::string_t& value);
+
     std::map<utility::string_t, std::shared_ptr<AnyType>> getMetadata() const;
     bool metadataIsSet() const;
     void unsetMetadata();
@@ -121,6 +126,11 @@ public:
     void unsetHas_universal_schema();
     void setHasUniversalSchema(bool value);
 
+    bool isFixedBase() const;
+    bool fixedBaseIsSet() const;
+    void unsetFixed_base();
+    void setFixedBase(bool value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -142,6 +152,8 @@ protected:
 
     boost::optional<utility::string_t> m_Registry_id;
 
+    boost::optional<utility::string_t> m_Registry_id_alias;
+
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Capabilities;
@@ -154,6 +166,9 @@ protected:
 
     bool m_Has_universal_schema;
     bool m_Has_universal_schemaIsSet;
+
+    bool m_Fixed_base;
+    bool m_Fixed_baseIsSet;
 
 };
 

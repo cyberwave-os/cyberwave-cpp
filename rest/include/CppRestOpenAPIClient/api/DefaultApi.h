@@ -62,6 +62,8 @@
 #include "CppRestOpenAPIClient/model/EdgeRegisterSchema.h"
 #include "CppRestOpenAPIClient/model/EdgeSchema.h"
 #include "CppRestOpenAPIClient/model/EndSessionResponseSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentAssistantRequestSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentAssistantResponseSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSnapshotCreateSchema.h"
@@ -1027,6 +1029,18 @@ public:
     pplx::task<void> srcAppApiEnvironmentsDeleteEnvironmentForProject(
         utility::string_t projectUuid,
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Run the MCP-powered environment assistant
+    /// </summary>
+    /// <remarks>
+    /// Chat with the environment assistant.  The assistant uses an MLModel from the catalog (defaults to GPT-5.2) and the Cyberwave MCP server to inspect and act on environment resources. The OPENAI_API_KEY stays server-side and is never exposed to the client.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="environmentAssistantRequestSchema"></param>
+    pplx::task<std::shared_ptr<EnvironmentAssistantResponseSchema>> srcAppApiEnvironmentsEnvironmentAssistant(
+        utility::string_t uuid,
+        std::shared_ptr<EnvironmentAssistantRequestSchema> environmentAssistantRequestSchema
     ) const;
     /// <summary>
     /// Get Environment Dirty Twins

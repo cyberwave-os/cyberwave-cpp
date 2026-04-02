@@ -69,6 +69,11 @@ public:
     void unsetUuid();
     void setUuid(const utility::string_t& value);
 
+    utility::string_t getSlug() const;
+    bool slugIsSet() const;
+    void unsetSlug();
+    void setSlug(const utility::string_t& value);
+
     utility::string_t getName() const;
     bool nameIsSet() const;
     void unsetName();
@@ -88,6 +93,11 @@ public:
     bool workspaceUuidIsSet() const;
     void unsetWorkspace_uuid();
     void setWorkspaceUuid(const utility::string_t& value);
+
+    utility::string_t getWorkspaceName() const;
+    bool workspaceNameIsSet() const;
+    void unsetWorkspace_name();
+    void setWorkspaceName(const utility::string_t& value);
 
     utility::string_t getVisibility() const;
     bool visibilityIsSet() const;
@@ -134,6 +144,9 @@ protected:
     utility::string_t m_Uuid;
     bool m_UuidIsSet;
 
+    utility::string_t m_Slug;
+    bool m_SlugIsSet;
+
     utility::string_t m_Name;
     bool m_NameIsSet;
 
@@ -145,6 +158,8 @@ protected:
 
     utility::string_t m_Workspace_uuid;
     bool m_Workspace_uuidIsSet;
+
+    boost::optional<utility::string_t> m_Workspace_name;
 
     utility::string_t m_Visibility;
     bool m_VisibilityIsSet;

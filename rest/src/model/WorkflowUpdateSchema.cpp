@@ -39,6 +39,11 @@ web::json::value WorkflowUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("name"))] = ModelBase::toJson(m_Name.get());
     }
+    if(m_Slug.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("slug"))] = ModelBase::toJson(m_Slug.get());
+    }
     if(m_Description.has_value())
     {
         
@@ -74,6 +79,17 @@ bool WorkflowUpdateSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setName;
             ok &= ModelBase::fromJson(fieldValue, refVal_setName);
             setName(refVal_setName);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("slug"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("slug")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setSlug;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSlug);
+            setSlug(refVal_setSlug);
             
         }
     }
@@ -135,6 +151,10 @@ void WorkflowUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData> multip
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("name")), m_Name.get()));
     }
+    if(m_Slug.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("slug")), m_Slug.get()));
+    }
     if(m_Description.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("description")), m_Description.get()));
@@ -167,6 +187,12 @@ bool WorkflowUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> mult
         utility::string_t refVal_setName;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("name"))), refVal_setName );
         setName(refVal_setName);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("slug"))))
+    {
+        utility::string_t refVal_setSlug;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("slug"))), refVal_setSlug );
+        setSlug(refVal_setSlug);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("description"))))
     {
@@ -215,6 +241,26 @@ bool WorkflowUpdateSchema::nameIsSet() const
 void WorkflowUpdateSchema::unsetName()
 {
     m_Name.reset();
+}
+utility::string_t WorkflowUpdateSchema::getSlug() const
+{
+    return m_Slug.get();
+}
+
+
+void WorkflowUpdateSchema::setSlug(const utility::string_t& value)
+{
+    m_Slug = value;
+}
+
+bool WorkflowUpdateSchema::slugIsSet() const
+{
+    return m_Slug.has_value();
+}
+
+void WorkflowUpdateSchema::unsetSlug()
+{
+    m_Slug.reset();
 }
 utility::string_t WorkflowUpdateSchema::getDescription() const
 {

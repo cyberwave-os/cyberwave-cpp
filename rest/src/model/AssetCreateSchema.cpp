@@ -70,6 +70,11 @@ web::json::value AssetCreateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("registry_id"))] = ModelBase::toJson(m_Registry_id.get());
     }
+    if(m_Registry_id_alias.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("registry_id_alias"))] = ModelBase::toJson(m_Registry_id_alias.get());
+    }
     if(m_Universal_schema.has_value())
     {
         
@@ -148,6 +153,17 @@ bool AssetCreateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("registry_id_alias"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("registry_id_alias")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setRegistryIdAlias;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRegistryIdAlias);
+            setRegistryIdAlias(refVal_setRegistryIdAlias);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("universal_schema"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("universal_schema")));
@@ -192,6 +208,10 @@ void AssetCreateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart
     if(m_Registry_id.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("registry_id")), m_Registry_id.get()));
+    }
+    if(m_Registry_id_alias.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("registry_id_alias")), m_Registry_id_alias.get()));
     }
     if(m_Universal_schema.has_value())
     {
@@ -243,6 +263,12 @@ bool AssetCreateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
         utility::string_t refVal_setRegistryId;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("registry_id"))), refVal_setRegistryId );
         setRegistryId(refVal_setRegistryId);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("registry_id_alias"))))
+    {
+        utility::string_t refVal_setRegistryIdAlias;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("registry_id_alias"))), refVal_setRegistryIdAlias );
+        setRegistryIdAlias(refVal_setRegistryIdAlias);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("universal_schema"))))
     {
@@ -376,6 +402,26 @@ bool AssetCreateSchema::registryIdIsSet() const
 void AssetCreateSchema::unsetRegistry_id()
 {
     m_Registry_id.reset();
+}
+utility::string_t AssetCreateSchema::getRegistryIdAlias() const
+{
+    return m_Registry_id_alias.get();
+}
+
+
+void AssetCreateSchema::setRegistryIdAlias(const utility::string_t& value)
+{
+    m_Registry_id_alias = value;
+}
+
+bool AssetCreateSchema::registryIdAliasIsSet() const
+{
+    return m_Registry_id_alias.has_value();
+}
+
+void AssetCreateSchema::unsetRegistry_id_alias()
+{
+    m_Registry_id_alias.reset();
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> AssetCreateSchema::getUniversalSchema() const
 {
