@@ -55,6 +55,11 @@ web::json::value NavigationWaypointSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("yaw"))] = ModelBase::toJson(m_Yaw.get());
     }
+    if(m_Actions.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("actions"))] = ModelBase::toJson(m_Actions.get());
+    }
     if(m_Metadata.has_value())
     {
         
@@ -111,6 +116,17 @@ bool NavigationWaypointSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("actions"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("actions")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<NavigationWaypointActionSchema>> refVal_setActions;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setActions);
+            setActions(refVal_setActions);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("metadata"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("metadata")));
@@ -147,6 +163,10 @@ void NavigationWaypointSchema::toMultipart(std::shared_ptr<MultipartFormData> mu
     if(m_Yaw.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("yaw")), m_Yaw.get()));
+    }
+    if(m_Actions.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("actions")), m_Actions.get()));
     }
     if(m_Metadata.has_value())
     {
@@ -186,6 +206,12 @@ bool NavigationWaypointSchema::fromMultiPart(std::shared_ptr<MultipartFormData> 
         double refVal_setYaw;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("yaw"))), refVal_setYaw );
         setYaw(refVal_setYaw);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("actions"))))
+    {
+        std::vector<std::shared_ptr<NavigationWaypointActionSchema>> refVal_setActions;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("actions"))), refVal_setActions );
+        setActions(refVal_setActions);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))))
     {
@@ -275,6 +301,26 @@ bool NavigationWaypointSchema::yawIsSet() const
 void NavigationWaypointSchema::unsetYaw()
 {
     m_Yaw.reset();
+}
+std::vector<std::shared_ptr<NavigationWaypointActionSchema>> NavigationWaypointSchema::getActions() const
+{
+    return m_Actions.get();
+}
+
+
+void NavigationWaypointSchema::setActions(const std::vector<std::shared_ptr<NavigationWaypointActionSchema>>& value)
+{
+    m_Actions = value;
+}
+
+bool NavigationWaypointSchema::actionsIsSet() const
+{
+    return m_Actions.has_value();
+}
+
+void NavigationWaypointSchema::unsetActions()
+{
+    m_Actions.reset();
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> NavigationWaypointSchema::getMetadata() const
 {

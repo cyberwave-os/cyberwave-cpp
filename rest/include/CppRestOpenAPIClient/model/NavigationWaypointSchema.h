@@ -22,9 +22,11 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/NavigationWaypointActionSchema.h"
 #include <cpprest/details/basic_types.h>
 #include "CppRestOpenAPIClient/model/NavigationRotationSchema.h"
 #include <map>
+#include <vector>
 #include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
@@ -33,6 +35,7 @@ namespace client {
 namespace model {
 
 class NavigationRotationSchema;
+class NavigationWaypointActionSchema;
 
 
 /// <summary>
@@ -81,6 +84,11 @@ public:
     void unsetYaw();
     void setYaw(double value);
 
+    std::vector<std::shared_ptr<NavigationWaypointActionSchema>> getActions() const;
+    bool actionsIsSet() const;
+    void unsetActions();
+    void setActions(const std::vector<std::shared_ptr<NavigationWaypointActionSchema>>& value);
+
     std::map<utility::string_t, std::shared_ptr<AnyType>> getMetadata() const;
     bool metadataIsSet() const;
     void unsetMetadata();
@@ -96,6 +104,8 @@ protected:
     boost::optional<std::shared_ptr<NavigationRotationSchema>> m_Rotation;
 
     boost::optional<double> m_Yaw;
+
+    boost::optional<std::vector<std::shared_ptr<NavigationWaypointActionSchema>>> m_Actions;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
 

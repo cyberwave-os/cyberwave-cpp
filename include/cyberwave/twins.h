@@ -121,12 +121,12 @@ public:
     /**
      * Get the latest RGB frame for a twin.
      * sensor_id selects a specific camera on multi-camera twins (e.g. "wrist_camera").
-     * Note: sensor_id is not exposed by the generated REST client; accepted for compatibility.
-     * Throws `CyberwaveError` when the generated REST client cannot capture binary response bodies.
+     * source_type can request simulation frames when set to "sim".
      * Mirrors Python TwinManager.get_latest_frame().
      */
     std::vector<unsigned char> get_latest_frame(const std::string& twin_id, bool mock = false,
-                                                const std::string& sensor_id = "") const;
+                                                const std::string& sensor_id = "",
+                                                const std::string& source_type = "") const;
 
     /**
      * Get the universal schema (or a sub-path) for a twin.

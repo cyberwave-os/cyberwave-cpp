@@ -17,19 +17,16 @@
 
 #include <nlohmann/json.hpp>
 
-#if __has_include(<rtc/rtc.hpp>)
-#include <rtc/rtc.hpp>
-#define CYBERWAVE_HAS_LIBDATACHANNEL 1
-#else
+#ifndef CYBERWAVE_HAS_LIBDATACHANNEL
 #define CYBERWAVE_HAS_LIBDATACHANNEL 0
 #endif
 
-// Optional (only enabled when headers exist at compile time).
-// FFmpeg-backed H264 encoding for WebRTC frames.
-#if __has_include(<libavcodec/avcodec.h>) && __has_include(<libswscale/swscale.h>)
-#define CYBERWAVE_HAS_FFMPEG 1
-#else
+#ifndef CYBERWAVE_HAS_FFMPEG
 #define CYBERWAVE_HAS_FFMPEG 0
+#endif
+
+#if CYBERWAVE_HAS_LIBDATACHANNEL
+#include <rtc/rtc.hpp>
 #endif
 
 // Important: these includes must live at file scope (not inside namespace cyberwave),

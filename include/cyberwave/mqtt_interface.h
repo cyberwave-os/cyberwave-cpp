@@ -10,6 +10,7 @@
 
 #include <functional>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -18,6 +19,12 @@ namespace cyberwave
 
 /** @brief Callback type for subscribed MQTT JSON payloads. */
 using MqttMessageHandler = std::function<void(const std::string& json_payload)>;
+
+/** @brief RAII handle for a scoped MQTT subscription. */
+struct MqttSubscriptionHandle
+{
+    virtual ~MqttSubscriptionHandle() = default;
+};
 
 /**
  * @brief Interface for SDK MQTT integrations.
@@ -46,6 +53,19 @@ struct IMqttClient
 
     /** @brief Subscribe to a topic and invoke `handler` for each JSON payload. */
     virtual void subscribe(const std::string& topic, MqttMessageHandler handler) = 0;
+
+    /**
+     * @brief Subscribe to a topic and return a scoped handle that keeps the subscription active.
+     *
+     * Implementations that support explicit unsubscription should override this. The default
+     * implementation falls back to `subscribe()` and returns `nullptr`, preserving existing behavior.
+     */
+    virtual std::unique_ptr<MqttSubscriptionHandle> subscribe_scoped(const std::string& topic,
+                                                                     MqttMessageHandler handler)
+    {
+        subscribe(topic, std::move(handler));
+        return nullptr;
+    }
 
     /**
      * Connect to the MQTT broker. Default no-op (implementors override if needed).

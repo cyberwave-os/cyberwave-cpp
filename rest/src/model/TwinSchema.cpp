@@ -73,6 +73,7 @@ TwinSchema::TwinSchema()
     m_Attach_offset_rotation_zIsSet = false;
     m_Fixed_base = false;
     m_Fixed_baseIsSet = false;
+    m_Export_warningsIsSet = false;
 }
 
 TwinSchema::~TwinSchema()
@@ -271,6 +272,11 @@ web::json::value TwinSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("fixed_base"))] = ModelBase::toJson(m_Fixed_base);
+    }
+    if(m_Export_warningsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("export_warnings"))] = ModelBase::toJson(m_Export_warnings);
     }
 
     return val;
@@ -686,6 +692,17 @@ bool TwinSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("export_warnings"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("export_warnings")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::map<utility::string_t, utility::string_t>> refVal_setExportWarnings;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExportWarnings);
+            setExportWarnings(refVal_setExportWarnings);
+            
+        }
+    }
     return ok;
 }
 
@@ -843,6 +860,10 @@ void TwinSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const
     if(m_Fixed_baseIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("fixed_base")), m_Fixed_base));
+    }
+    if(m_Export_warningsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("export_warnings")), m_Export_warnings));
     }
 }
 
@@ -1076,6 +1097,12 @@ bool TwinSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
         bool refVal_setFixedBase;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))), refVal_setFixedBase );
         setFixedBase(refVal_setFixedBase);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("export_warnings"))))
+    {
+        std::vector<std::map<utility::string_t, utility::string_t>> refVal_setExportWarnings;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("export_warnings"))), refVal_setExportWarnings );
+        setExportWarnings(refVal_setExportWarnings);
     }
     return ok;
 }
@@ -1830,6 +1857,27 @@ bool TwinSchema::fixedBaseIsSet() const
 void TwinSchema::unsetFixed_base()
 {
     m_Fixed_baseIsSet = false;
+}
+std::vector<std::map<utility::string_t, utility::string_t>> TwinSchema::getExportWarnings() const
+{
+    return m_Export_warnings;
+}
+
+
+void TwinSchema::setExportWarnings(const std::vector<std::map<utility::string_t, utility::string_t>>& value)
+{
+    m_Export_warnings = value;
+    m_Export_warningsIsSet = true;
+}
+
+bool TwinSchema::exportWarningsIsSet() const
+{
+    return m_Export_warningsIsSet;
+}
+
+void TwinSchema::unsetExport_warnings()
+{
+    m_Export_warningsIsSet = false;
 }
 
 }

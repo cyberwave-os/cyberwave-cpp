@@ -19,7 +19,7 @@ int main()
     assert(std::string(cyberwave::SOURCE_TYPE_EDGE_LEADER) == "edge_leader");
     assert(std::string(cyberwave::SOURCE_TYPE_EDGE_FOLLOWER) == "edge_follower");
 
-    assert(cyberwave::SOURCE_TYPES_SIZE == 6);
+    assert(cyberwave::SOURCE_TYPES_SIZE == 7);
     bool has_edge = false;
     for (const char* t : cyberwave::SOURCE_TYPES)
     {
@@ -29,6 +29,7 @@ int main()
     assert(has_edge);
     assert(cyberwave::is_valid_source_type("edge"));
     assert(cyberwave::is_valid_source_type("tele"));
+    assert(cyberwave::is_valid_source_type("sim_tele"));
     assert(!cyberwave::is_valid_source_type("invalid"));
 
     // --- TimeReference ---

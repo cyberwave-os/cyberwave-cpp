@@ -44,7 +44,23 @@ AlertSchemaPtr get_schema(const std::shared_ptr<void>& p)
 
 std::string datetime_to_string(const utility::datetime& dt)
 {
-    return to_std(dt.to_string(utility::datetime::ISO_8601));
+    std::string value = to_std(dt.to_string(utility::datetime::ISO_8601));
+    const std::size_t z_pos = value.rfind('Z');
+    const std::size_t dot_pos = value.rfind('.');
+    if (z_pos != std::string::npos && dot_pos != std::string::npos && dot_pos < z_pos)
+    {
+        std::size_t trim_pos = z_pos;
+        while (trim_pos > dot_pos && value[trim_pos - 1] == '0')
+        {
+            --trim_pos;
+        }
+        if (trim_pos == dot_pos + 1)
+        {
+            --trim_pos; // Drop the decimal point when the fractional part is all zeros.
+        }
+        value.erase(trim_pos, z_pos - trim_pos);
+    }
+    return value;
 }
 
 std::map<utility::string_t, AnyTypePtr> string_map_to_anytype_map(const std::map<std::string, std::string>& values)

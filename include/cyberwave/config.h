@@ -42,12 +42,15 @@ struct Config
     std::string mqtt_password;
     bool mqtt_use_tls{true}; // default TLS on port 8883, mirrors Python CyberwaveConfig
     std::string mqtt_tls_ca_cert;
+    int mqtt_protocol{0}; // 0 = library default, 4 = MQTT 3.1.1, 5 = MQTT 5
     std::string environment_id;
     std::string workspace_id;
     int timeout_seconds{DEFAULT_TIMEOUT};
     bool verify_ssl{true};
     std::string source_type{SOURCE_TYPE_EDGE}; // from constants.h
     std::string topic_prefix;
+    std::string runtime_mode{"live"};
+    std::string twin_uuid;
 
     /**
      * @brief Load configuration fields from environment variables.

@@ -4,6 +4,7 @@
 #include <cyberwave/client.h>
 #include <cyberwave/config.h>
 #include <cyberwave/exceptions.h>
+#include <cyberwave/mqtt_interface.h>
 #include <cyberwave/workflows.h>
 
 #include <CppRestOpenAPIClient/model/WorkflowRunSchema.h>
@@ -11,9 +12,61 @@
 
 #include <cassert>
 #include <map>
+#include <memory>
 #include <string>
 
 using namespace cyberwave;
+
+namespace
+{
+
+struct MockMqttClient : IMqttClient
+{
+    struct MockSubscriptionHandle : MqttSubscriptionHandle
+    {
+        explicit MockSubscriptionHandle(std::shared_ptr<bool> active) : active(std::move(active)) {}
+        ~MockSubscriptionHandle() override { *active = false; }
+        std::shared_ptr<bool> active;
+    };
+
+    bool connected = false;
+    bool connect_called = false;
+    std::string last_topic;
+    MqttMessageHandler last_handler;
+    std::shared_ptr<bool> active_subscription;
+
+    bool is_connected() const override { return connected; }
+    std::string get_topic_prefix() const override { return "dev/"; }
+    void update_joint_state(const std::string&, const std::string&, double) override {}
+    void publish(const std::string&, const std::string&) override {}
+    void subscribe(const std::string& topic, MqttMessageHandler handler) override
+    {
+        last_topic = topic;
+        last_handler = std::move(handler);
+    }
+    std::unique_ptr<MqttSubscriptionHandle> subscribe_scoped(const std::string& topic,
+                                                             MqttMessageHandler handler) override
+    {
+        last_topic = topic;
+        active_subscription = std::make_shared<bool>(true);
+        last_handler = [active = active_subscription, handler = std::move(handler)](const std::string& payload)
+        {
+            if (!*active)
+            {
+                return;
+            }
+            handler(payload);
+        };
+        return std::make_unique<MockSubscriptionHandle>(active_subscription);
+    }
+    void connect() override
+    {
+        connect_called = true;
+        connected = true;
+    }
+};
+
+} // namespace
 
 static void test_client_has_workflows_and_workflow_runs()
 {
@@ -34,12 +87,14 @@ static void test_workflow_view_getters()
     Client c(cfg);
     auto schema = std::make_shared<org::openapitools::client::model::WorkflowSchema>();
     schema->setUuid(utility::conversions::to_string_t("wf-1"));
+    schema->setSlug(utility::conversions::to_string_t("pick"));
     schema->setName(utility::conversions::to_string_t("Pick"));
     schema->setDescription(utility::conversions::to_string_t("Pick workflow"));
     schema->setIsActive(true);
     schema->setWorkspaceUuid(utility::conversions::to_string_t("ws-uuid"));
     Workflow wf(c, std::shared_ptr<void>(std::static_pointer_cast<void>(schema)));
     assert(wf.uuid() == "wf-1");
+    assert(wf.slug() == "pick");
     assert(wf.name() == "Pick");
     assert(wf.description() == "Pick workflow");
     assert(wf.is_active() == true);
@@ -296,6 +351,23 @@ static void test_workflow_trigger_throws_without_api_key()
     assert(threw);
 }
 
+static void test_workflow_get_by_slug_throws_without_api_key()
+{
+    Config cfg;
+    cfg.api_key = "";
+    Client c(cfg);
+    bool threw = false;
+    try
+    {
+        c.workflows().get_by_slug("ws-1", "pick");
+    }
+    catch (const CyberwaveError&)
+    {
+        threw = true;
+    }
+    assert(threw);
+}
+
 /** Workflow::visibility returns empty when not set */
 static void test_workflow_visibility_empty_default()
 {
@@ -381,6 +453,89 @@ static void test_workflow_object_trigger_with_json_throws()
     assert(threw);
 }
 
+static void test_workflow_run_on_status_change_uses_mqtt_topic_and_updates_status()
+{
+    Config cfg;
+    cfg.api_key = "";
+    Client c(cfg);
+    auto mqtt = std::make_shared<MockMqttClient>();
+    c.set_mqtt_client(mqtt);
+
+    auto schema = std::make_shared<org::openapitools::client::model::WorkflowRunSchema>();
+    schema->setUuid(utility::conversions::to_string_t("run-123"));
+    schema->setWorkflowId(utility::conversions::to_string_t("wf-1"));
+    schema->setStatus(utility::conversions::to_string_t("running"));
+    WorkflowRun run(c, std::shared_ptr<void>(std::static_pointer_cast<void>(schema)));
+
+    bool callback_called = false;
+    std::string callback_status;
+    auto subscription = run.on_status_change(
+        [&](const std::string& status, const WorkflowRun& updated_run)
+        {
+            callback_called = true;
+            callback_status = status;
+            assert(updated_run.uuid() == "run-123");
+            assert(updated_run.status() == "success");
+        });
+
+    assert(subscription != nullptr);
+    assert(mqtt->connect_called);
+    assert(mqtt->last_topic == "dev/cyberwave/workflow-run/run-123/status");
+    assert(static_cast<bool>(mqtt->last_handler));
+
+    mqtt->last_handler("{\"status\":\"success\"}");
+
+    assert(callback_called);
+    assert(callback_status == "success");
+    assert(run.status() == "success");
+}
+
+static void test_workflow_run_on_status_change_stops_after_handle_release()
+{
+    Config cfg;
+    cfg.api_key = "";
+    Client c(cfg);
+    auto mqtt = std::make_shared<MockMqttClient>();
+    c.set_mqtt_client(mqtt);
+
+    auto schema = std::make_shared<org::openapitools::client::model::WorkflowRunSchema>();
+    schema->setUuid(utility::conversions::to_string_t("run-456"));
+    schema->setStatus(utility::conversions::to_string_t("running"));
+    WorkflowRun run(c, std::shared_ptr<void>(std::static_pointer_cast<void>(schema)));
+
+    int callback_count = 0;
+    auto subscription = run.on_status_change([&](const std::string&, const WorkflowRun&) { ++callback_count; });
+    assert(subscription != nullptr);
+
+    subscription.reset();
+    mqtt->last_handler("{\"status\":\"success\"}");
+
+    assert(callback_count == 0);
+    assert(run.status() == "running");
+}
+
+static void test_workflow_run_on_status_change_requires_mqtt_client()
+{
+    Config cfg;
+    cfg.api_key = "";
+    Client c(cfg);
+    auto schema = std::make_shared<org::openapitools::client::model::WorkflowRunSchema>();
+    schema->setUuid(utility::conversions::to_string_t("run-123"));
+    WorkflowRun run(c, std::shared_ptr<void>(std::static_pointer_cast<void>(schema)));
+
+    bool threw = false;
+    try
+    {
+        (void)run.on_status_change([](const std::string&, const WorkflowRun&) {});
+    }
+    catch (const CyberwaveMQTTError&)
+    {
+        threw = true;
+    }
+
+    assert(threw);
+}
+
 int main()
 {
     test_client_has_workflows_and_workflow_runs();
@@ -400,11 +555,15 @@ int main()
     test_workflow_run_get_throws_without_api_key();
     test_workflow_run_cancel_throws_without_api_key();
     test_workflow_trigger_throws_without_api_key();
+    test_workflow_get_by_slug_throws_without_api_key();
     test_workflow_visibility_empty_default();
     test_workflow_visibility_set();
     test_workflow_timestamps_empty_default();
     test_workflow_metadata_json_empty_default();
     test_workflow_trigger_with_json_throws();
     test_workflow_object_trigger_with_json_throws();
+    test_workflow_run_on_status_change_uses_mqtt_topic_and_updates_status();
+    test_workflow_run_on_status_change_stops_after_handle_release();
+    test_workflow_run_on_status_change_requires_mqtt_client();
     return 0;
 }

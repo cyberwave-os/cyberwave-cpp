@@ -19,6 +19,28 @@ class Client;
 class Twin;
 
 /**
+ * @brief Lightweight view over an attachment returned by the backend.
+ */
+class Attachment
+{
+public:
+    /** @brief Construct an attachment view from a backend payload. */
+    explicit Attachment(std::shared_ptr<void> schema_ptr);
+
+    /** @brief Return the attachment UUID. */
+    std::string uuid() const;
+
+    /** @brief Return the download URL for the attachment. */
+    std::string file_url() const;
+
+    /** @brief Return attachment metadata as a JSON object string. */
+    std::string metadata_json() const;
+
+private:
+    std::shared_ptr<void> schema_;
+};
+
+/**
  * @brief Lightweight view over an environment returned by the backend.
  */
 class Environment
@@ -76,23 +98,40 @@ public:
 
     /**
      * Get the universal schema for an environment as a raw JSON string.
-     * Note: the generated REST client returns void; this method calls the endpoint
-     * and returns an empty string. Use the Python SDK for actual data.
      * Mirrors Python EnvironmentManager.get_universal_schema_json().
      */
     std::string get_universal_schema_json(const std::string& environment_id) const;
 
     /**
-     * Export environment as URDF scene. Returns empty vector (generated client returns void).
+     * Export environment as URDF scene ZIP bytes.
      * Mirrors Python EnvironmentManager.export_urdf_scene().
      */
     std::vector<unsigned char> export_urdf_scene(const std::string& environment_id) const;
 
     /**
-     * Export environment as MuJoCo scene. Returns empty vector (generated client returns void).
+     * Export environment as MuJoCo scene ZIP bytes.
      * Mirrors Python EnvironmentManager.export_mujoco_scene().
      */
     std::vector<unsigned char> export_mujoco_scene(const std::string& environment_id) const;
+
+    /**
+     * Generate and store a static preview attachment for an environment.
+     * Mirrors Python EnvironmentManager.create_preview().
+     */
+    Attachment create_preview(const std::string& environment_id) const;
+
+    /**
+     * Replace the environment base universal schema and return the updated schema payload.
+     * Mirrors Python EnvironmentManager.set_universal_schema().
+     */
+    std::string set_universal_schema(const std::string& environment_id, const std::string& schema_json) const;
+
+    /**
+     * Patch the environment base universal schema and return the updated schema payload.
+     * Mirrors Python EnvironmentManager.patch_universal_schema().
+     */
+    std::string patch_universal_schema(const std::string& environment_id, const std::string& path,
+                                       const std::string& value_json, const std::string& op = "replace") const;
 
 private:
     std::reference_wrapper<const Client> client_;

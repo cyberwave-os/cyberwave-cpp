@@ -1,6 +1,8 @@
 #include "cyberwave/twin.h"
 #include "cyberwave/alerts.h"
+#include "cyberwave/camera_streaming.h"
 #include "cyberwave/client.h"
+#include "cyberwave/constants.h"
 #include "cyberwave/exceptions.h"
 #include "cyberwave/joints.h"
 #include "cyberwave/keyboard.h"
@@ -8,6 +10,7 @@
 #include "cyberwave/mqtt_interface.h"
 #include "cyberwave/navigation.h"
 #include "cyberwave/twins.h"
+#include "source_type_utils.h"
 
 #include "CppRestOpenAPIClient/AnyType.h"
 #include "CppRestOpenAPIClient/model/TwinSchema.h"
@@ -15,13 +18,26 @@
 #include <cpprest/details/basic_types.h>
 #include <cpprest/json.h>
 
+#include <algorithm>
+#include <cctype>
+#include <chrono>
 #include <cmath>
+#include <sstream>
 
 namespace cyberwave
 {
 
 namespace
 {
+
+struct CapabilityFlags
+{
+    bool can_fly = false;
+    bool can_locomote = false;
+    bool can_grip = false;
+    bool has_sensors = false;
+    bool has_depth = false;
+};
 
 std::string twin_to_std(const utility::string_t& t)
 {
@@ -35,6 +51,65 @@ std::string twin_to_std(const utility::string_t& t)
 static std::shared_ptr<org::openapitools::client::model::TwinSchema> twin_schema(const std::shared_ptr<void>& p)
 {
     return std::static_pointer_cast<org::openapitools::client::model::TwinSchema>(p);
+}
+
+bool json_bool_or_false(const web::json::value& value)
+{
+    if (value.is_boolean())
+        return value.as_bool();
+    if (value.is_number())
+        return value.as_integer() != 0;
+    if (!value.is_string())
+        return false;
+
+    std::string normalized = twin_to_std(value.as_string());
+    std::transform(normalized.begin(), normalized.end(), normalized.begin(),
+                   [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+    return normalized == "1" || normalized == "true" || normalized == "yes" || normalized == "on";
+}
+
+CapabilityFlags
+capability_flags_from_schema(const std::shared_ptr<org::openapitools::client::model::TwinSchema>& schema)
+{
+    CapabilityFlags flags;
+    if (!schema || !schema->capabilitiesIsSet())
+        return flags;
+
+    const auto& caps = schema->getCapabilities();
+    const auto get_value = [&](const char* key) -> web::json::value
+    {
+        auto it = caps.find(utility::conversions::to_string_t(key));
+        if (it == caps.end() || !it->second)
+            return web::json::value::null();
+        return it->second->toJson();
+    };
+
+    flags.can_fly = json_bool_or_false(get_value("can_fly"));
+    flags.can_locomote = json_bool_or_false(get_value("can_locomote"));
+    flags.can_grip = json_bool_or_false(get_value("can_grip"));
+    flags.has_sensors = json_bool_or_false(get_value("has_sensors"));
+    flags.has_depth = json_bool_or_false(get_value("has_depth"));
+
+    const auto sensors = get_value("sensors");
+    if (sensors.is_array())
+    {
+        const auto& values = sensors.as_array();
+        flags.has_sensors = flags.has_sensors || values.size() > 0;
+        for (const auto& sensor : values)
+        {
+            if (!sensor.is_object())
+                continue;
+            const auto type_key = utility::conversions::to_string_t("type");
+            if (sensor.has_field(type_key))
+            {
+                const std::string sensor_type = twin_to_std(sensor.at(type_key).as_string());
+                if (sensor_type == "depth")
+                    flags.has_depth = true;
+            }
+        }
+    }
+
+    return flags;
 }
 
 } // namespace
@@ -62,6 +137,12 @@ std::string Twin::asset_id() const
 {
     auto s = twin_schema(schema_);
     return s && s->assetUuidIsSet() ? twin_to_std(s->getAssetUuid()) : "";
+}
+
+bool Twin::fixed_base() const
+{
+    auto s = twin_schema(schema_);
+    return s && s->fixedBaseIsSet() && s->isFixedBase();
 }
 
 std::string Twin::capabilities_json() const
@@ -100,13 +181,23 @@ bool Twin::has_capability(const std::string& cap) const
 
 bool Twin::has_sensor(const std::string& sensor_type) const
 {
+    const CapabilityFlags flags = capability_flags_from_schema(twin_schema(schema_));
     if (sensor_type.empty())
-    {
-        // Any camera/sensor capability counts
-        return has_capability("has_sensors") || has_capability("has_depth");
-    }
-    return has_capability(sensor_type);
+        return flags.has_sensors || flags.has_depth;
+
+    std::string normalized = sensor_type;
+    std::transform(normalized.begin(), normalized.end(), normalized.begin(),
+                   [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+    if (normalized == "depth")
+        return flags.has_depth;
+    return flags.has_sensors;
 }
+
+bool Twin::can_fly() const { return capability_flags_from_schema(twin_schema(schema_)).can_fly; }
+
+bool Twin::can_locomote() const { return capability_flags_from_schema(twin_schema(schema_)).can_locomote; }
+
+bool Twin::can_grip() const { return capability_flags_from_schema(twin_schema(schema_)).can_grip; }
 
 void Twin::refresh()
 {
@@ -192,9 +283,98 @@ std::string Twin::update_calibration(const std::string& calibration_json, const 
     return client().twins().update_calibration(uuid_, calibration_json, robot_type);
 }
 
-std::vector<unsigned char> Twin::get_latest_frame(bool mock, const std::string& sensor_id) const
+std::vector<unsigned char> Twin::get_latest_frame(bool mock, const std::string& sensor_id,
+                                                  const std::string& source_type) const
 {
-    return client().twins().get_latest_frame(uuid_, mock, sensor_id);
+    return client().twins().get_latest_frame(uuid_, mock, sensor_id,
+                                             detail::resolve_frame_source_type(client(), source_type));
+}
+
+void Twin::set_frame_source(std::shared_ptr<IFrameSource> source) { frame_source_ = std::move(source); }
+
+void Twin::start_streaming(int fps, int /*camera_id*/)
+{
+    if (!has_sensor())
+        throw CyberwaveError("start_streaming() requires a twin with camera sensor capabilities");
+    if (!frame_source_)
+        throw CyberwaveError("Set a frame source with set_frame_source() before start_streaming()");
+
+    auto mqtt = client().mqtt_client();
+    if (!mqtt)
+        throw CyberwaveError("start_streaming() requires an MQTT client set on Client (set_mqtt_client)");
+
+    stop_streaming();
+    camera_streamer_ = std::shared_ptr<CameraStreamer>(new CameraStreamer(mqtt, uuid(), frame_source_, fps),
+                                                       [](CameraStreamer* streamer)
+                                                       {
+                                                           if (streamer)
+                                                           {
+                                                               streamer->stop();
+                                                               delete streamer;
+                                                           }
+                                                       });
+    camera_streamer_->start();
+}
+
+void Twin::stop_streaming() { camera_streamer_.reset(); }
+
+void Twin::set_depth_source(std::shared_ptr<IDepthSource> source) { depth_source_ = std::move(source); }
+
+void Twin::start_depth_streaming(int fps)
+{
+    if (!has_sensor("depth"))
+        throw CyberwaveError("start_depth_streaming() requires a twin with depth sensor capabilities");
+    if (!depth_source_)
+        throw CyberwaveError("Set a depth source with set_depth_source() before start_depth_streaming()");
+
+    auto mqtt = client().mqtt_client();
+    if (!mqtt)
+        throw CyberwaveError("start_depth_streaming() requires an MQTT client set on Client (set_mqtt_client)");
+
+    stop_depth_streaming();
+    depth_streamer_ = std::shared_ptr<DepthStreamer>(new DepthStreamer(mqtt, uuid(), depth_source_, fps),
+                                                     [](DepthStreamer* streamer)
+                                                     {
+                                                         if (streamer)
+                                                         {
+                                                             streamer->stop();
+                                                             delete streamer;
+                                                         }
+                                                     });
+    depth_streamer_->start();
+}
+
+void Twin::stop_depth_streaming() { depth_streamer_.reset(); }
+
+void Twin::publish_depth_frame(const std::string& json_payload)
+{
+    if (!has_sensor("depth"))
+        throw CyberwaveError("publish_depth_frame() requires a twin with depth sensor capabilities");
+    auto mqtt = client().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+    mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/depth", json_payload);
+}
+
+void Twin::publish_point_cloud(const std::string& json_payload)
+{
+    if (!has_sensor("depth"))
+        throw CyberwaveError("publish_point_cloud() requires a twin with depth sensor capabilities");
+    auto mqtt = client().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+    mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/pointcloud", json_payload);
+}
+
+void Twin::capture_depth_frame() const
+{
+    throw CyberwaveError("capture_depth_frame() requires an active depth stream. Use start_depth_streaming() first.");
+}
+
+void Twin::get_point_cloud() const
+{
+    throw CyberwaveError(
+        "get_point_cloud() requires depth sensor data processing. This feature is not yet implemented.");
 }
 
 std::string Twin::get_schema(const std::string& path) const
@@ -248,6 +428,149 @@ std::vector<std::string> Twin::get_controllable_joint_names() const
     { /* return whatever was found */
     }
     return result;
+}
+
+void Twin::move_forward(double distance_m, const std::string& source_type)
+{
+    if (!can_locomote())
+        throw CyberwaveError("move_forward() requires a twin with locomotion capabilities");
+    auto mqtt = client().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+
+    const std::string resolved_source_type = detail::normalize_control_source_type(client(), source_type);
+    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::ostringstream out;
+    out << "{\"source_type\":\"" << resolved_source_type
+        << "\",\"command\":\"move_forward\",\"data\":{\"linear_x\":" << distance_m
+        << ",\"angular_z\":0},\"timestamp\":" << ts << "}";
+    mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
+}
+
+void Twin::move_backward(double distance_m, const std::string& source_type)
+{
+    if (!can_locomote())
+        throw CyberwaveError("move_backward() requires a twin with locomotion capabilities");
+    auto mqtt = client().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+    const std::string resolved_source_type = detail::normalize_control_source_type(client(), source_type);
+    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::ostringstream out;
+    out << "{\"source_type\":\"" << resolved_source_type
+        << "\",\"command\":\"move_backward\",\"data\":{\"linear_x\":" << -distance_m
+        << ",\"angular_z\":0},\"timestamp\":" << ts << "}";
+    mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
+}
+
+void Twin::turn_left(double angle_rad, const std::string& source_type)
+{
+    if (!can_locomote())
+        throw CyberwaveError("turn_left() requires a twin with locomotion capabilities");
+    auto mqtt = client().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+
+    const std::string resolved_source_type = detail::normalize_control_source_type(client(), source_type);
+    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::ostringstream out;
+    out << "{\"source_type\":\"" << resolved_source_type
+        << "\",\"command\":\"turn_left\",\"data\":{\"linear_x\":0,\"angular_z\":" << angle_rad
+        << "},\"timestamp\":" << ts << "}";
+    mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
+}
+
+void Twin::turn_right(double angle_rad, const std::string& source_type)
+{
+    if (!can_locomote())
+        throw CyberwaveError("turn_right() requires a twin with locomotion capabilities");
+    auto mqtt = client().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+
+    const std::string resolved_source_type = detail::normalize_control_source_type(client(), source_type);
+    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::ostringstream out;
+    out << "{\"source_type\":\"" << resolved_source_type
+        << "\",\"command\":\"turn_right\",\"data\":{\"linear_x\":0,\"angular_z\":" << -angle_rad
+        << "},\"timestamp\":" << ts << "}";
+    mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
+}
+
+void Twin::takeoff(double altitude_m)
+{
+    if (!can_fly())
+        throw CyberwaveError("takeoff() requires a twin with flight capabilities");
+    auto mqtt = client().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+
+    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::ostringstream out;
+    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE
+        << "\",\"command\":\"takeoff\",\"data\":{\"altitude\":" << altitude_m << "},\"timestamp\":" << ts << "}";
+    mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
+}
+
+void Twin::land()
+{
+    if (!can_fly())
+        throw CyberwaveError("land() requires a twin with flight capabilities");
+    auto mqtt = client().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+
+    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::ostringstream out;
+    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE << "\",\"command\":\"land\",\"data\":{},\"timestamp\":" << ts
+        << "}";
+    mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
+}
+
+void Twin::hover()
+{
+    if (!can_fly())
+        throw CyberwaveError("hover() requires a twin with flight capabilities");
+    auto mqtt = client().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+
+    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::ostringstream out;
+    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE << "\",\"command\":\"hover\",\"data\":{},\"timestamp\":" << ts
+        << "}";
+    mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
+}
+
+void Twin::grip(double force)
+{
+    if (!can_grip())
+        throw CyberwaveError("grip() requires a twin with gripper capabilities");
+    auto mqtt = client().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+
+    const double clamped_force = force < 0.0 ? 0.0 : (force > 1.0 ? 1.0 : force);
+    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::ostringstream out;
+    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE << "\",\"command\":\"grip\",\"data\":{\"force\":" << clamped_force
+        << "},\"timestamp\":" << ts << "}";
+    mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
+}
+
+void Twin::release()
+{
+    if (!can_grip())
+        throw CyberwaveError("release() requires a twin with gripper capabilities");
+    auto mqtt = client().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+
+    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::ostringstream out;
+    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE << "\",\"command\":\"release\",\"data\":{},\"timestamp\":" << ts
+        << "}";
+    mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
 }
 
 void Twin::subscribe(MqttMessageHandler on_update) const

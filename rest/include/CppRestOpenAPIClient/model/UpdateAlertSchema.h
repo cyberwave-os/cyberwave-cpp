@@ -89,6 +89,11 @@ public:
     void unsetStatus();
     void setStatus(const utility::string_t& value);
 
+    utility::string_t getCategory() const;
+    bool categoryIsSet() const;
+    void unsetCategory();
+    void setCategory(const utility::string_t& value);
+
     std::map<utility::string_t, std::shared_ptr<AnyType>> getMetadata() const;
     bool metadataIsSet() const;
     void unsetMetadata();
@@ -107,6 +112,8 @@ protected:
     boost::optional<utility::string_t> m_Severity;
 
     boost::optional<utility::string_t> m_Status;
+
+    boost::optional<utility::string_t> m_Category;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
 

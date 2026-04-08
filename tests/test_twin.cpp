@@ -349,12 +349,14 @@ static void test_twin_schema_constructor()
     auto schema = std::make_shared<org::openapitools::client::model::TwinSchema>();
     schema->setUuid(utility::conversions::to_string_t("schema-uuid"));
     schema->setName(utility::conversions::to_string_t("Schema Twin"));
+    schema->setFixedBase(true);
     Config cfg;
     cfg.api_key = "";
     Client c(cfg);
     Twin t(c, std::shared_ptr<void>(std::static_pointer_cast<void>(schema)));
     assert(t.uuid() == "schema-uuid");
     assert(t.name() == "Schema Twin");
+    assert(t.fixed_base());
 }
 
 /** Twin::parent() returns nullopt when no schema attached */
@@ -411,6 +413,24 @@ static void test_twin_edit_rotation_euler_throws_without_api_key()
     assert(threw);
 }
 
+static void test_twin_get_latest_frame_with_source_type_throws_without_api_key()
+{
+    Config cfg;
+    cfg.api_key = "";
+    Client c(cfg);
+    Twin t = c.twin("twin-uuid");
+    bool threw = false;
+    try
+    {
+        t.get_latest_frame(false, "wrist_camera", "sim");
+    }
+    catch (const CyberwaveError&)
+    {
+        threw = true;
+    }
+    assert(threw);
+}
+
 int main()
 {
     test_twin_get_alerts_handle();
@@ -439,5 +459,6 @@ int main()
     test_twin_parent_no_attach();
     test_twin_children_empty();
     test_twin_edit_rotation_euler_throws_without_api_key();
+    test_twin_get_latest_frame_with_source_type_throws_without_api_key();
     return 0;
 }

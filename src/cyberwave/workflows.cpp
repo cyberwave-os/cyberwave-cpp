@@ -2,6 +2,7 @@
 #include "cyberwave/client.h"
 #include "cyberwave/client_internal.h"
 #include "cyberwave/exceptions.h"
+#include "cyberwave/rest_helpers.h"
 
 #include "CppRestOpenAPIClient/AnyType.h"
 #include "CppRestOpenAPIClient/api/DefaultApi.h"
@@ -12,6 +13,7 @@
 #include <boost/optional.hpp>
 #include <cpprest/details/basic_types.h>
 #include <cpprest/json.h>
+#include <nlohmann/json.hpp>
 #include <pplx/pplxtasks.h>
 
 #include <algorithm>
@@ -66,6 +68,12 @@ std::string Workflow::uuid() const
 {
     auto s = workflow_schema(schema_);
     return s && s->uuidIsSet() ? to_std(s->getUuid()) : "";
+}
+
+std::string Workflow::slug() const
+{
+    auto s = workflow_schema(schema_);
+    return s && s->slugIsSet() ? to_std(s->getSlug()) : "";
 }
 
 std::string Workflow::name() const
@@ -153,7 +161,7 @@ std::vector<WorkflowRun> Workflow::runs(const std::string& status_filter) const
 // -----------------------------------------------------------------------------
 
 WorkflowRun::WorkflowRun(const Client& client, std::shared_ptr<void> schema_ptr)
-    : client_(client), schema_(std::move(schema_ptr))
+    : client_(client), schema_(std::move(schema_ptr)), client_lifetime_(ClientAccess::lifetime_token(&client))
 {
 }
 
@@ -251,6 +259,72 @@ WorkflowRun& WorkflowRun::cancel()
     return *this;
 }
 
+std::unique_ptr<MqttSubscriptionHandle>
+WorkflowRun::on_status_change(const std::function<void(const std::string&, const WorkflowRun&)>& callback)
+{
+    auto mqtt = client_.get().mqtt_client();
+    if (!mqtt)
+    {
+        throw CyberwaveMQTTError("WorkflowRun::on_status_change() requires an MQTT client set on Client");
+    }
+    if (!mqtt->is_connected())
+    {
+        mqtt->connect();
+    }
+    if (!schema_)
+    {
+        schema_ =
+            std::static_pointer_cast<void>(std::make_shared<org::openapitools::client::model::WorkflowRunSchema>());
+    }
+
+    const std::string topic = mqtt->get_topic_prefix() + "cyberwave/workflow-run/" + uuid() + "/status";
+    auto client_ref = client_;
+    auto shared_schema = schema_;
+    auto client_lifetime = client_lifetime_;
+    return mqtt->subscribe_scoped(
+        topic,
+        [client_ref, shared_schema, client_lifetime, callback](const std::string& json_payload)
+        {
+            auto keepalive = client_lifetime.lock();
+            if (!keepalive)
+            {
+                return;
+            }
+
+            std::string new_status;
+            try
+            {
+                const auto payload = nlohmann::json::parse(json_payload);
+                if (payload.is_object())
+                {
+                    const auto it = payload.find("status");
+                    if (it != payload.end() && it->is_string())
+                    {
+                        new_status = it->get<std::string>();
+                    }
+                }
+                else if (payload.is_string())
+                {
+                    new_status = payload.get<std::string>();
+                }
+            }
+            catch (const nlohmann::json::parse_error&)
+            {
+            }
+
+            if (!new_status.empty())
+            {
+                auto schema = run_schema(shared_schema);
+                if (schema)
+                {
+                    schema->setStatus(from_std(new_status));
+                }
+            }
+
+            callback(new_status, WorkflowRun(client_ref.get(), shared_schema));
+        });
+}
+
 WorkflowRun& WorkflowRun::wait(double timeout_s, double poll_interval_s)
 {
     if (is_terminal())
@@ -262,6 +336,8 @@ WorkflowRun& WorkflowRun::wait(double timeout_s, double poll_interval_s)
             throw CyberwaveTimeoutError("WorkflowRun " + uuid() + " did not complete within " +
                                         std::to_string(static_cast<int>(timeout_s)) + "s");
         std::this_thread::sleep_for(std::chrono::duration<double>(poll_interval_s));
+        if (is_terminal())
+            break;
         refresh();
     }
     return *this;
@@ -311,6 +387,28 @@ Workflow WorkflowManager::get(const std::string& workflow_id) const
     {
         throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
     }
+}
+
+Workflow WorkflowManager::get_by_slug(const std::string& workspace_id, const std::string& slug) const
+{
+    auto response = detail::request_raw(client_.get(), from_std("/api/v1/workflows"), web::http::methods::GET,
+                                        {
+                                            {from_std("workspace_uuid"), from_std(workspace_id)},
+                                            {from_std("slug"), from_std(slug)},
+                                        });
+
+    const auto parsed = detail::parse_json_response(response);
+    if (!parsed.is_array())
+    {
+        throw CyberwaveError("Workflow not found for slug: " + slug);
+    }
+    auto items = parsed.as_array();
+    if (items.size() == 0)
+        throw CyberwaveError("Workflow not found for slug: " + slug);
+
+    auto schema = std::make_shared<org::openapitools::client::model::WorkflowSchema>();
+    schema->fromJson(items[0]);
+    return Workflow(client_, std::shared_ptr<void>(std::static_pointer_cast<void>(schema)));
 }
 
 WorkflowRun WorkflowManager::trigger(const std::string& workflow_id,

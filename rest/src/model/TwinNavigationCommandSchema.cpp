@@ -67,6 +67,11 @@ web::json::value TwinNavigationCommandSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid"))] = ModelBase::toJson(m_Controller_policy_uuid.get());
     }
+    if(m_Reference_frame.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("reference_frame"))] = ModelBase::toJson(m_Reference_frame.get());
+    }
     if(m_Environment_uuid.has_value())
     {
         
@@ -161,6 +166,17 @@ bool TwinNavigationCommandSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("reference_frame"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("reference_frame")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setReferenceFrame;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setReferenceFrame);
+            setReferenceFrame(refVal_setReferenceFrame);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("environment_uuid")));
@@ -239,6 +255,10 @@ void TwinNavigationCommandSchema::toMultipart(std::shared_ptr<MultipartFormData>
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid")), m_Controller_policy_uuid.get()));
     }
+    if(m_Reference_frame.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("reference_frame")), m_Reference_frame.get()));
+    }
     if(m_Environment_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("environment_uuid")), m_Environment_uuid.get()));
@@ -301,6 +321,12 @@ bool TwinNavigationCommandSchema::fromMultiPart(std::shared_ptr<MultipartFormDat
         utility::string_t refVal_setControllerPolicyUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid"))), refVal_setControllerPolicyUuid );
         setControllerPolicyUuid(refVal_setControllerPolicyUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("reference_frame"))))
+    {
+        utility::string_t refVal_setReferenceFrame;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("reference_frame"))), refVal_setReferenceFrame );
+        setReferenceFrame(refVal_setReferenceFrame);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))))
     {
@@ -492,6 +518,26 @@ bool TwinNavigationCommandSchema::controllerPolicyUuidIsSet() const
 void TwinNavigationCommandSchema::unsetController_policy_uuid()
 {
     m_Controller_policy_uuid.reset();
+}
+utility::string_t TwinNavigationCommandSchema::getReferenceFrame() const
+{
+    return m_Reference_frame.get();
+}
+
+
+void TwinNavigationCommandSchema::setReferenceFrame(const utility::string_t& value)
+{
+    m_Reference_frame = value;
+}
+
+bool TwinNavigationCommandSchema::referenceFrameIsSet() const
+{
+    return m_Reference_frame.has_value();
+}
+
+void TwinNavigationCommandSchema::unsetReference_frame()
+{
+    m_Reference_frame.reset();
 }
 utility::string_t TwinNavigationCommandSchema::getEnvironmentUuid() const
 {

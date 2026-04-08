@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 project(cyberwave_mqtt_client VERSION 1.0.0 LANGUAGES CXX)
 
 # Set C++ standard

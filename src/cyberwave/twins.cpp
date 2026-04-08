@@ -2,6 +2,7 @@
 #include "cyberwave/client.h"
 #include "cyberwave/client_internal.h"
 #include "cyberwave/exceptions.h"
+#include "cyberwave/rest_helpers.h"
 #include "cyberwave/twin.h"
 
 #include "CppRestOpenAPIClient/AnyType.h"
@@ -391,24 +392,26 @@ std::string TwinManager::update_calibration(const std::string& twin_id, const st
 }
 
 std::vector<unsigned char> TwinManager::get_latest_frame(const std::string& twin_id, bool mock,
-                                                         const std::string& /*sensor_id*/) const
+                                                         const std::string& sensor_id,
+                                                         const std::string& source_type) const
 {
-    auto* a = api(client_.get());
-    if (!a)
-        throw CyberwaveError("Client has no REST API (missing api_key)");
-    try
+    std::map<utility::string_t, utility::string_t> query;
+    if (mock)
     {
-        boost::optional<bool> mock_opt;
-        if (mock)
-            mock_opt = true;
-        a->srcAppApiTwinsGetTwinLatestFrame(from_std(twin_id), mock_opt).get();
-        throw CyberwaveError("get_latest_frame() is not supported by the generated C++ REST client because the binary "
-                             "response body cannot be captured");
+        query[from_std("mock")] = from_std("true");
     }
-    catch (const org::openapitools::client::api::ApiException& e)
+    if (!sensor_id.empty())
     {
-        throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
+        query[from_std("sensor_id")] = from_std(sensor_id);
     }
+    if (!source_type.empty())
+    {
+        query[from_std("source_type")] = from_std(source_type);
+    }
+
+    auto response = detail::request_raw(client_.get(), from_std("/api/v1/twins/" + twin_id + "/latest-frame"),
+                                        web::http::methods::GET, query);
+    return response.body;
 }
 
 static std::string

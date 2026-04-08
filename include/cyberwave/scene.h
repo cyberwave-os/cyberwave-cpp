@@ -51,9 +51,7 @@ public:
 
     /**
      * Get the composed universal schema for this scene's environment.
-     * Returns a raw JSON string. Note: the generated REST client for this endpoint
-     * returns void; the response body cannot be captured via the typed client.
-     * This method calls the endpoint (for auth/connectivity checking) and returns an empty string.
+     * Returns a raw JSON string.
      * Mirrors Python Scene.get_composed_schema().
      */
     std::string get_composed_schema() const;

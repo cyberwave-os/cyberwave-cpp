@@ -23,6 +23,27 @@ namespace cyberwave
 class PahoMqttAdapter : public IMqttClient
 {
 public:
+    class ScopedSubscriptionHandle : public MqttSubscriptionHandle
+    {
+    public:
+        ScopedSubscriptionHandle(std::weak_ptr<CyberwaveMQTTClient> client, SubscriptionId subscription_id)
+            : client_(std::move(client)), subscription_id_(subscription_id)
+        {
+        }
+
+        ~ScopedSubscriptionHandle() override
+        {
+            if (auto client = client_.lock())
+            {
+                client->unsubscribe(subscription_id_);
+            }
+        }
+
+    private:
+        std::weak_ptr<CyberwaveMQTTClient> client_;
+        SubscriptionId subscription_id_;
+    };
+
     /**
      * Construct from a cyberwave::Config (loaded from environment or set explicitly).
      * Does NOT connect automatically — call connect() when ready.
@@ -40,7 +61,7 @@ public:
         paho_cfg.mqtt_tls_ca_cert = cfg.mqtt_tls_ca_cert;
         paho_cfg.topic_prefix = cfg.topic_prefix;
         paho_cfg.source_type = cfg.source_type;
-        inner_ = std::make_unique<CyberwaveMQTTClient>(paho_cfg);
+        inner_ = std::make_shared<CyberwaveMQTTClient>(paho_cfg);
     }
 
     // -----------------------------------------------------------------------
@@ -84,6 +105,14 @@ public:
     {
         inner_->subscribe(topic,
                           [handler](const std::string& /*topic*/, const nlohmann::json& msg) { handler(msg.dump()); });
+    }
+
+    std::unique_ptr<MqttSubscriptionHandle> subscribe_scoped(const std::string& topic,
+                                                             MqttMessageHandler handler) override
+    {
+        const auto subscription_id = inner_->subscribe_with_id(
+            topic, [handler](const std::string& /*topic*/, const nlohmann::json& msg) { handler(msg.dump()); });
+        return std::make_unique<ScopedSubscriptionHandle>(inner_, subscription_id);
     }
 
     // -----------------------------------------------------------------------
@@ -197,7 +226,7 @@ public:
     const CyberwaveMQTTClient& inner() const noexcept { return *inner_; }
 
 private:
-    std::unique_ptr<CyberwaveMQTTClient> inner_;
+    std::shared_ptr<CyberwaveMQTTClient> inner_;
 
     /** Wrap an IMqttClient MqttMessageHandler into a CyberwaveMQTTClient MessageCallback. */
     static MessageCallback wrap(MqttMessageHandler handler) // NOLINT

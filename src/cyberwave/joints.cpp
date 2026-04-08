@@ -3,6 +3,7 @@
 #include "cyberwave/client_internal.h"
 #include "cyberwave/exceptions.h"
 #include "cyberwave/twin.h"
+#include "source_type_utils.h"
 
 #include "CppRestOpenAPIClient/api/DefaultApi.h"
 #include "CppRestOpenAPIClient/model/JointStateUpdateSchema.h"
@@ -89,7 +90,7 @@ void JointController::set(const std::string& joint_name, double position, bool d
     auto mqtt = client.mqtt_client();
     if (mqtt && mqtt->is_connected())
     {
-        const std::string& st = source_type.empty() ? client.source_type() : source_type;
+        const std::string st = detail::normalize_control_source_type(client, source_type);
         mqtt->update_joint_state(twin_.uuid(), joint_name, position, 0.0, 0.0, timestamp, st);
         return;
     }

@@ -3,15 +3,19 @@
 #include "cyberwave/client.h"
 #include "cyberwave/client_internal.h"
 #include "cyberwave/exceptions.h"
+#include "cyberwave/rest_helpers.h"
 #include "cyberwave/twin.h"
 #include <optional>
 
 #include "CppRestOpenAPIClient/api/DefaultApi.h"
+#include "CppRestOpenAPIClient/model/AttachmentSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentUniversalSchemaPatchSchema.h"
 #include "CppRestOpenAPIClient/model/TwinSchema.h"
 
 #include <cpprest/details/basic_types.h>
+#include <cpprest/json.h>
 #include <pplx/pplxtasks.h>
 
 #include <algorithm>
@@ -38,7 +42,45 @@ static org::openapitools::client::api::DefaultApi* api(const Client& client)
     return ClientAccess::default_api(&client);
 }
 
+static std::string
+any_map_to_json(const std::map<utility::string_t, std::shared_ptr<org::openapitools::client::model::AnyType>>& values)
+{
+    web::json::value obj = web::json::value::object();
+    for (const auto& [key, value] : values)
+    {
+        if (value)
+        {
+            obj[key] = value->toJson();
+        }
+    }
+    return to_std(obj.serialize());
+}
+
 } // namespace
+
+Attachment::Attachment(std::shared_ptr<void> schema_ptr) : schema_(std::move(schema_ptr)) {}
+
+std::string Attachment::uuid() const
+{
+    auto attachment = std::static_pointer_cast<org::openapitools::client::model::AttachmentSchema>(schema_);
+    return attachment && attachment->uuidIsSet() ? to_std(attachment->getUuid()) : "";
+}
+
+std::string Attachment::file_url() const
+{
+    auto attachment = std::static_pointer_cast<org::openapitools::client::model::AttachmentSchema>(schema_);
+    return attachment && attachment->fileUrlIsSet() ? to_std(attachment->getFileUrl()) : "";
+}
+
+std::string Attachment::metadata_json() const
+{
+    auto attachment = std::static_pointer_cast<org::openapitools::client::model::AttachmentSchema>(schema_);
+    if (!attachment || !attachment->metadataIsSet())
+    {
+        return "{}";
+    }
+    return any_map_to_json(attachment->getMetadata());
+}
 
 Environment::Environment(std::shared_ptr<void> schema_ptr) : schema_(std::move(schema_ptr)) {}
 
@@ -205,31 +247,38 @@ std::vector<Twin> EnvironmentManager::get_twins(const std::string& environment_i
 
 std::string EnvironmentManager::get_universal_schema_json(const std::string& environment_id) const
 {
-    auto* a = api(client_.get());
-    if (!a)
-        throw CyberwaveError("Client has no REST API (missing api_key)");
-    try
-    {
-        // Generated client returns void; body not capturable. Calls endpoint for auth/connectivity check.
-        a->srcAppApiEnvironmentsExportsGetEnvironmentUniversalSchemaJson(from_std(environment_id)).get();
-        return "";
-    }
-    catch (const org::openapitools::client::api::ApiException& e)
-    {
-        throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
-    }
+    auto response = detail::request_raw(client_.get(),
+                                        from_std("/api/v1/environments/" + environment_id + "/universal-schema.json"),
+                                        web::http::methods::GET);
+    return response.text();
 }
 
 std::vector<unsigned char> EnvironmentManager::export_urdf_scene(const std::string& environment_id) const
 {
+    auto response = detail::request_raw(
+        client_.get(), from_std("/api/v1/environments/" + environment_id + "/urdf-scene.zip"), web::http::methods::GET);
+    return response.body;
+}
+
+std::vector<unsigned char> EnvironmentManager::export_mujoco_scene(const std::string& environment_id) const
+{
+    auto response =
+        detail::request_raw(client_.get(), from_std("/api/v1/environments/" + environment_id + "/mujoco-scene.zip"),
+                            web::http::methods::GET);
+    return response.body;
+}
+
+Attachment EnvironmentManager::create_preview(const std::string& environment_id) const
+{
     auto* a = api(client_.get());
     if (!a)
         throw CyberwaveError("Client has no REST API (missing api_key)");
     try
     {
-        // Generated client returns void; body not capturable.
-        a->srcAppApiEnvironmentsExportsGetEnvironmentUrdfScene(from_std(environment_id)).get();
-        return {};
+        auto result = a->srcAppApiEnvironmentsGenerateEnvironmentPreview(from_std(environment_id)).get();
+        if (!result)
+            throw CyberwaveError("Generate environment preview returned no data");
+        return Attachment(std::shared_ptr<void>(std::static_pointer_cast<void>(result)));
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {
@@ -237,16 +286,64 @@ std::vector<unsigned char> EnvironmentManager::export_urdf_scene(const std::stri
     }
 }
 
-std::vector<unsigned char> EnvironmentManager::export_mujoco_scene(const std::string& environment_id) const
+std::string EnvironmentManager::set_universal_schema(const std::string& environment_id,
+                                                     const std::string& schema_json) const
 {
     auto* a = api(client_.get());
     if (!a)
         throw CyberwaveError("Client has no REST API (missing api_key)");
     try
     {
-        // Generated client returns void; body not capturable.
-        a->srcAppApiEnvironmentsExportsGetEnvironmentMujocoScene(from_std(environment_id)).get();
-        return {};
+        auto current = a->srcAppApiEnvironmentsGetEnvironment(from_std(environment_id)).get();
+        if (!current)
+            throw CyberwaveError("Get environment returned no data");
+
+        auto body = std::make_shared<org::openapitools::client::model::EnvironmentCreateSchema>();
+        if (current->nameIsSet())
+            body->setName(current->getName());
+        if (current->descriptionIsSet())
+            body->setDescription(current->getDescription());
+        if (current->settingsIsSet())
+            body->setSettings(current->getSettings());
+        if (current->projectUuidIsSet())
+            body->setProjectUuid(current->getProjectUuid());
+        if (current->workspaceUuidIsSet())
+            body->setWorkspaceUuid(current->getWorkspaceUuid());
+        if (current->visibilityIsSet())
+            body->setVisibility(current->getVisibility());
+
+        const web::json::value parsed_schema = web::json::value::parse(from_std(schema_json));
+        body->setUniversalSchema(detail::json_object_to_any_map(parsed_schema));
+
+        auto result = a->srcAppApiEnvironmentsUpdateEnvironment(from_std(environment_id), body).get();
+        if (!result)
+            throw CyberwaveError("Update environment returned no data");
+        return any_map_to_json(result->getUniversalSchema());
+    }
+    catch (const org::openapitools::client::api::ApiException& e)
+    {
+        throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
+    }
+}
+
+std::string EnvironmentManager::patch_universal_schema(const std::string& environment_id, const std::string& path,
+                                                       const std::string& value_json, const std::string& op) const
+{
+    auto* a = api(client_.get());
+    if (!a)
+        throw CyberwaveError("Client has no REST API (missing api_key)");
+    try
+    {
+        auto body = std::make_shared<org::openapitools::client::model::EnvironmentUniversalSchemaPatchSchema>();
+        body->setOp(from_std(op));
+        body->setPath(from_std(path));
+
+        auto any_value = std::make_shared<org::openapitools::client::model::AnyType>();
+        any_value->fromJson(web::json::value::parse(from_std(value_json)));
+        body->setValue(any_value);
+
+        auto result = a->srcAppApiEnvironmentsPatchEnvironmentUniversalSchema(from_std(environment_id), body).get();
+        return any_map_to_json(result);
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {

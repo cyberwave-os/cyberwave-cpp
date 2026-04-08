@@ -30,6 +30,8 @@ CreateAlertSchema::CreateAlertSchema()
     m_SeverityIsSet = false;
     m_Source_type = utility::conversions::to_string_t("");
     m_Source_typeIsSet = false;
+    m_Category = utility::conversions::to_string_t("");
+    m_CategoryIsSet = false;
     m_Force = false;
     m_ForceIsSet = false;
 }
@@ -75,6 +77,11 @@ web::json::value CreateAlertSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("source_type"))] = ModelBase::toJson(m_Source_type);
+    }
+    if(m_CategoryIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("category"))] = ModelBase::toJson(m_Category);
     }
     if(m_Twin_uuid.has_value())
     {
@@ -179,6 +186,17 @@ bool CreateAlertSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("category"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("category")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setCategory;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCategory);
+            setCategory(refVal_setCategory);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("twin_uuid")));
@@ -279,6 +297,10 @@ void CreateAlertSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("source_type")), m_Source_type));
     }
+    if(m_CategoryIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("category")), m_Category));
+    }
     if(m_Twin_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("twin_uuid")), m_Twin_uuid.get()));
@@ -349,6 +371,12 @@ bool CreateAlertSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
         utility::string_t refVal_setSourceType;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("source_type"))), refVal_setSourceType );
         setSourceType(refVal_setSourceType);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("category"))))
+    {
+        utility::string_t refVal_setCategory;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("category"))), refVal_setCategory );
+        setCategory(refVal_setCategory);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))))
     {
@@ -514,6 +542,27 @@ bool CreateAlertSchema::sourceTypeIsSet() const
 void CreateAlertSchema::unsetSource_type()
 {
     m_Source_typeIsSet = false;
+}
+utility::string_t CreateAlertSchema::getCategory() const
+{
+    return m_Category;
+}
+
+
+void CreateAlertSchema::setCategory(const utility::string_t& value)
+{
+    m_Category = value;
+    m_CategoryIsSet = true;
+}
+
+bool CreateAlertSchema::categoryIsSet() const
+{
+    return m_CategoryIsSet;
+}
+
+void CreateAlertSchema::unsetCategory()
+{
+    m_CategoryIsSet = false;
 }
 utility::string_t CreateAlertSchema::getTwinUuid() const
 {
