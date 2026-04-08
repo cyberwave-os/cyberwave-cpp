@@ -22,6 +22,7 @@
 
 #include "CppRestOpenAPIClient/ApiClient.h"
 
+#include "CppRestOpenAPIClient/model/ApiTokenContextSchema.h"
 #include "CppRestOpenAPIClient/model/OnboardingCompletionSchema.h"
 #include "CppRestOpenAPIClient/model/PasswordChangeSchema.h"
 #include "CppRestOpenAPIClient/model/ProfileResponseSchema.h"
@@ -62,6 +63,14 @@ public:
     /// Mark the current user onboarding flow as completed.
     /// </remarks>
     pplx::task<std::shared_ptr<OnboardingCompletionSchema>> srcUsersApiProfileCompleteOnboarding(
+    ) const;
+    /// <summary>
+    /// Get Api Token Context
+    /// </summary>
+    /// <remarks>
+    /// Return the active API token context for API-token-authenticated requests.
+    /// </remarks>
+    pplx::task<std::shared_ptr<ApiTokenContextSchema>> srcUsersApiProfileGetApiTokenContext(
     ) const;
     /// <summary>
     /// Update Profile
