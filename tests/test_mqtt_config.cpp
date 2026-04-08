@@ -99,6 +99,18 @@ static void test_config_env_override_base_url()
     ::unsetenv("CYBERWAVE_BASE_URL");
 }
 
+static void test_config_env_override_mqtt_protocol_and_twin_uuid()
+{
+    ::setenv("CYBERWAVE_MQTT_PROTOCOL", "mqttv5", 1);
+    ::setenv("CYBERWAVE_TWIN_UUID", "edge-twin", 1);
+    Config cfg;
+    cfg.load_from_environment();
+    assert(cfg.mqtt_protocol == 5);
+    assert(cfg.twin_uuid == "edge-twin");
+    ::unsetenv("CYBERWAVE_MQTT_PROTOCOL");
+    ::unsetenv("CYBERWAVE_TWIN_UUID");
+}
+
 int main()
 {
     test_config_default_mqtt_port_is_tls();
@@ -110,5 +122,6 @@ int main()
     test_config_env_override_mqtt_use_tls();
     test_config_env_override_api_key();
     test_config_env_override_base_url();
+    test_config_env_override_mqtt_protocol_and_twin_uuid();
     return 0;
 }

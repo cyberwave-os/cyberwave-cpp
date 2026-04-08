@@ -46,6 +46,9 @@ Client& get_client()
     return *g_client;
 }
 
-Twin twin(const std::string& slug) { return get_client().twin(slug); }
+Twin twin(const std::string& identifier, const TwinResolveOptions& options)
+{
+    return get_client().twin(identifier, options);
+}
 
 } // namespace cyberwave

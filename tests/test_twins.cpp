@@ -149,6 +149,24 @@ static void test_twins_get_latest_frame_with_sensor_id_throws()
     assert(threw);
 }
 
+static void test_twins_get_latest_frame_with_source_type_throws()
+{
+    Config cfg;
+    cfg.api_key = "";
+    Client c(cfg);
+    TwinManager t = c.twins();
+    bool threw = false;
+    try
+    {
+        t.get_latest_frame("some-uuid", false, "wrist_camera", "sim");
+    }
+    catch (const CyberwaveError&)
+    {
+        threw = true;
+    }
+    assert(threw);
+}
+
 /** get_calibration with robot_type (throws without API key) */
 static void test_twins_get_calibration_with_robot_type_throws()
 {
@@ -178,6 +196,7 @@ int main()
     test_twins_get_calibration_throws_without_api_key();
     test_twins_get_universal_schema_throws_without_api_key();
     test_twins_get_latest_frame_with_sensor_id_throws();
+    test_twins_get_latest_frame_with_source_type_throws();
     test_twins_get_calibration_with_robot_type_throws();
     return 0;
 }

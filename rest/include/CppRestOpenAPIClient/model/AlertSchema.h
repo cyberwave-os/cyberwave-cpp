@@ -99,6 +99,11 @@ public:
     void unsetSource_type();
     void setSourceType(const utility::string_t& value);
 
+    utility::string_t getCategory() const;
+    bool categoryIsSet() const;
+    void unsetCategory();
+    void setCategory(const utility::string_t& value);
+
     utility::string_t getTwinUuid() const;
     bool twinUuidIsSet() const;
     void unsetTwin_uuid();
@@ -168,6 +173,9 @@ protected:
 
     utility::string_t m_Source_type;
     bool m_Source_typeIsSet;
+
+    utility::string_t m_Category;
+    bool m_CategoryIsSet;
 
     boost::optional<utility::string_t> m_Twin_uuid;
 

@@ -1,5 +1,5 @@
 # Top-level build: REST client, cyberwave SDK layer, and optional tests/examples.
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 project(CyberwaveCppSDK VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -7,11 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+include(FetchContent)
 
 option(CYBERWAVE_BUILD_TESTS "Build cyberwave C++ SDK tests" ON)
 option(CYBERWAVE_BUILD_EXAMPLES "Build cyberwave C++ SDK examples" ON)
-option(CYBERWAVE_ENABLE_WEBRTC "Enable WebRTC support when LibDataChannel is available" ON)
-option(CYBERWAVE_FETCH_LIBDATACHANNEL "Fetch and build LibDataChannel when not available on the system" OFF)
+option(CYBERWAVE_ENABLE_WEBRTC "Enable WebRTC support (fetches LibDataChannel if not found)" ON)
 
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/rest/CMakeLists.txt")
     message(FATAL_ERROR
@@ -21,9 +21,19 @@ endif()
 
 find_package(cpprestsdk REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(PkgConfig QUIET)
+if(PkgConfig_FOUND)
+    pkg_check_modules(FFMPEG QUIET IMPORTED_TARGET libavcodec libavutil libswscale)
+endif()
 
 # REST client (generated)
 add_subdirectory(rest)
+
+# Suppress cpprestsdk's U() macro for all consumers of CppRestOpenAPIClient.
+# Without this, U(x) leaks into downstream headers (e.g. fmt/core.h) where 'U'
+# is used as a template parameter name, causing hard compilation errors on
+# Ubuntu 24.04 (fmt 9 + GCC 13 + C++20).
+target_compile_definitions(CppRestOpenAPIClient INTERFACE _TURN_OFF_PLATFORM_STRING)
 
 # Hand-crafted SDK layer (config, exceptions, client, twin, alerts, workspaces, edges)
 set(CYBERWAVE_SDK_HEADERS
@@ -40,6 +50,9 @@ set(CYBERWAVE_SDK_HEADERS
     include/cyberwave/twins.h
     include/cyberwave/workflows.h
     include/cyberwave/scene.h
+    include/cyberwave/data.h
+    include/cyberwave/workers.h
+    include/cyberwave/manifest.h
     include/cyberwave/navigation.h
     include/cyberwave/motion.h
     include/cyberwave/joints.h
@@ -72,6 +85,9 @@ set(CYBERWAVE_SDK_SOURCES
     src/cyberwave/twins.cpp
     src/cyberwave/workflows.cpp
     src/cyberwave/scene.cpp
+    src/cyberwave/data.cpp
+    src/cyberwave/workers.cpp
+    src/cyberwave/manifest.cpp
     src/cyberwave/navigation.cpp
     src/cyberwave/motion.cpp
     src/cyberwave/joints.cpp
@@ -102,32 +118,40 @@ target_link_libraries(cyberwave_sdk PUBLIC
     OpenSSL::SSL
     OpenSSL::Crypto
 )
-# string_t = std::string on Linux (no-op); avoids wide-string conversions on Windows.
-# PRIVATE: only SDK .cpp files use it; don't leak to downstream consumers.
-target_compile_definitions(cyberwave_sdk PRIVATE _TURN_OFF_PLATFORM_STRING)
+if(FFMPEG_FOUND)
+    target_link_libraries(cyberwave_sdk PUBLIC PkgConfig::FFMPEG)
+    target_compile_definitions(cyberwave_sdk PRIVATE CYBERWAVE_HAS_FFMPEG=1)
+    set(CYBERWAVE_SDK_HAS_FFMPEG TRUE)
+else()
+    message(STATUS "FFmpeg development libraries not found — CameraStreamer will build without H264 encoding support.")
+    set(CYBERWAVE_SDK_HAS_FFMPEG FALSE)
+endif()
 
-# WebRTC producer support (libdatachannel / rtc.hpp)
+# WebRTC producer support (libdatachannel / rtc.hpp).
+# Tries the system package first; fetches from source automatically when missing.
+set(CYBERWAVE_SDK_HAS_WEBRTC FALSE)
 if(CYBERWAVE_ENABLE_WEBRTC)
+    set(CYBERWAVE_SDK_HAS_WEBRTC TRUE)
     find_package(LibDataChannel QUIET)
     if(LibDataChannel_FOUND)
+        message(STATUS "Using system LibDataChannel")
         target_link_libraries(cyberwave_sdk PRIVATE LibDataChannel::LibDataChannel)
-    elseif(CYBERWAVE_FETCH_LIBDATACHANNEL)
-        include(FetchContent)
+    else()
+        message(STATUS "LibDataChannel not found on system — fetching v0.22.4 from source")
         FetchContent_Declare(
             libdatachannel
             GIT_REPOSITORY https://github.com/paullouisageneau/libdatachannel.git
             GIT_TAG v0.22.4
         )
-        set(NO_WEBSOCKET ON CACHE BOOL "Disable websocket transport" FORCE)
-        set(NO_MEDIA OFF CACHE BOOL "Enable media support for WebRTC video track" FORCE)
-        set(NO_EXAMPLES ON CACHE BOOL "Disable libdatachannel examples" FORCE)
-        set(NO_TESTS ON CACHE BOOL "Disable libdatachannel tests" FORCE)
-        set(BUILD_SHARED_LIBS OFF CACHE BOOL "Prefer static linkage for container runtime" FORCE)
+        set(NO_WEBSOCKET ON CACHE BOOL "" FORCE)
+        set(NO_MEDIA OFF CACHE BOOL "" FORCE)
+        set(NO_EXAMPLES ON CACHE BOOL "" FORCE)
+        set(NO_TESTS ON CACHE BOOL "" FORCE)
+        set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
         FetchContent_MakeAvailable(libdatachannel)
         target_link_libraries(cyberwave_sdk PRIVATE datachannel)
-    else()
-        message(STATUS "LibDataChannel not found and CYBERWAVE_FETCH_LIBDATACHANNEL=OFF. Building SDK without WebRTC support.")
     endif()
+    target_compile_definitions(cyberwave_sdk PRIVATE CYBERWAVE_HAS_LIBDATACHANNEL=1)
 endif()
 
 # Install targets and package config so downstream users can find_package(CyberwaveCppSDK CONFIG REQUIRED).
@@ -178,6 +202,14 @@ configure_package_config_file(
     INSTALL_DESTINATION ${CYBERWAVE_CMAKE_CONFIG_INSTALL_DIR}
 )
 
+# Stamp build-time feature flags so the config template can conditionally
+# require optional dependencies only when they were part of the build.
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CyberwaveCppSDKBuildConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/CyberwaveCppSDKBuildConfig.cmake
+    @ONLY
+)
+
 write_basic_package_version_file(
     ${CMAKE_CURRENT_BINARY_DIR}/CyberwaveCppSDKConfigVersion.cmake
     VERSION ${PROJECT_VERSION}
@@ -188,6 +220,7 @@ install(
     FILES
         ${CMAKE_CURRENT_BINARY_DIR}/CyberwaveCppSDKConfig.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/CyberwaveCppSDKConfigVersion.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/CyberwaveCppSDKBuildConfig.cmake
     DESTINATION ${CYBERWAVE_CMAKE_CONFIG_INSTALL_DIR}
 )
 
@@ -199,129 +232,30 @@ install(
 )
 
 if(CYBERWAVE_BUILD_TESTS)
-    # Tests (symmetric with Python: config, exceptions, client, alerts)
     enable_testing()
 
-    add_executable(test_config tests/test_config.cpp)
-    target_link_libraries(test_config PRIVATE cyberwave_sdk)
-    add_test(NAME test_config COMMAND test_config)
+    # All tests link cyberwave_sdk which transitively provides OpenSSL, cpprestsdk,
+    # and rest/include — no need to repeat those dependencies per target.
+    set(_CYBERWAVE_UNIT_TESTS
+        test_config test_exceptions test_client test_alerts test_workspaces
+        test_edges test_projects test_environments test_assets test_twins
+        test_workflows test_scene test_data test_workers test_manifest
+        test_utils test_twin_subclasses test_compact test_motion
+        test_navigation test_keyboard test_device_pairing test_edge_node
+        test_amr_edge_node test_camera_streaming test_depth_streaming
+        test_mqtt_config test_twin test_mqtt_interface
+    )
+    foreach(_t IN LISTS _CYBERWAVE_UNIT_TESTS)
+        add_executable(${_t} tests/${_t}.cpp)
+        target_link_libraries(${_t} PRIVATE cyberwave_sdk)
+        add_test(NAME ${_t} COMMAND ${_t})
+    endforeach()
 
-    add_executable(test_exceptions tests/test_exceptions.cpp)
-    target_link_libraries(test_exceptions PRIVATE cyberwave_sdk)
-    add_test(NAME test_exceptions COMMAND test_exceptions)
-
-    add_executable(test_client tests/test_client.cpp)
-    target_link_libraries(test_client PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_client COMMAND test_client)
-
-    add_executable(test_alerts tests/test_alerts.cpp)
-    target_include_directories(test_alerts PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/rest/include)
-    target_link_libraries(test_alerts PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_alerts COMMAND test_alerts)
-
-    add_executable(test_workspaces tests/test_workspaces.cpp)
-    target_include_directories(test_workspaces PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/rest/include)
-    target_link_libraries(test_workspaces PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_workspaces COMMAND test_workspaces)
-
-    add_executable(test_edges tests/test_edges.cpp)
-    target_include_directories(test_edges PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/rest/include)
-    target_link_libraries(test_edges PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_edges COMMAND test_edges)
-
-    add_executable(test_projects tests/test_projects.cpp)
-    target_include_directories(test_projects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/rest/include)
-    target_link_libraries(test_projects PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_projects COMMAND test_projects)
-
-    add_executable(test_environments tests/test_environments.cpp)
-    target_include_directories(test_environments PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/rest/include)
-    target_link_libraries(test_environments PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_environments COMMAND test_environments)
-
-    add_executable(test_assets tests/test_assets.cpp)
-    target_include_directories(test_assets PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/rest/include)
-    target_link_libraries(test_assets PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_assets COMMAND test_assets)
-
-    add_executable(test_twins tests/test_twins.cpp)
-    target_include_directories(test_twins PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/rest/include)
-    target_link_libraries(test_twins PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_twins COMMAND test_twins)
-
-    add_executable(test_workflows tests/test_workflows.cpp)
-    target_include_directories(test_workflows PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/rest/include)
-    target_link_libraries(test_workflows PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_workflows COMMAND test_workflows)
-
-    add_executable(test_scene tests/test_scene.cpp)
-    target_include_directories(test_scene PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/rest/include)
-    target_link_libraries(test_scene PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_scene COMMAND test_scene)
-
-    add_executable(test_utils tests/test_utils.cpp)
-    target_link_libraries(test_utils PRIVATE cyberwave_sdk)
-    add_test(NAME test_utils COMMAND test_utils)
-
-    add_executable(test_twin_subclasses tests/test_twin_subclasses.cpp)
-    target_link_libraries(test_twin_subclasses PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_twin_subclasses COMMAND test_twin_subclasses)
-
-    add_executable(test_compact tests/test_compact.cpp)
-    target_link_libraries(test_compact PRIVATE cyberwave_sdk)
-    add_test(NAME test_compact COMMAND test_compact)
-
-    add_executable(test_motion tests/test_motion.cpp)
-    target_link_libraries(test_motion PRIVATE cyberwave_sdk)
-    add_test(NAME test_motion COMMAND test_motion)
-
-    add_executable(test_navigation tests/test_navigation.cpp)
-    target_link_libraries(test_navigation PRIVATE cyberwave_sdk)
-    add_test(NAME test_navigation COMMAND test_navigation)
-
-    add_executable(test_keyboard tests/test_keyboard.cpp)
-    target_link_libraries(test_keyboard PRIVATE cyberwave_sdk)
-    add_test(NAME test_keyboard COMMAND test_keyboard)
-
-    add_executable(test_device_pairing tests/test_device_pairing.cpp)
-    target_link_libraries(test_device_pairing PRIVATE cyberwave_sdk)
-    add_test(NAME test_device_pairing COMMAND test_device_pairing)
-
-    add_executable(test_edge_node tests/test_edge_node.cpp)
-    target_link_libraries(test_edge_node PRIVATE cyberwave_sdk)
-    add_test(NAME test_edge_node COMMAND test_edge_node)
-
-    add_executable(test_amr_edge_node tests/test_amr_edge_node.cpp)
-    target_link_libraries(test_amr_edge_node PRIVATE cyberwave_sdk)
-    add_test(NAME test_amr_edge_node COMMAND test_amr_edge_node)
-
-    add_executable(test_camera_streaming tests/test_camera_streaming.cpp)
-    target_link_libraries(test_camera_streaming PRIVATE cyberwave_sdk)
-    add_test(NAME test_camera_streaming COMMAND test_camera_streaming)
-
-    add_executable(test_depth_streaming tests/test_depth_streaming.cpp)
-    target_link_libraries(test_depth_streaming PRIVATE cyberwave_sdk)
-    add_test(NAME test_depth_streaming COMMAND test_depth_streaming)
-
-    add_executable(test_mqtt_config tests/test_mqtt_config.cpp)
-    target_link_libraries(test_mqtt_config PRIVATE cyberwave_sdk)
-    add_test(NAME test_mqtt_config COMMAND test_mqtt_config)
-
-    add_executable(test_twin tests/test_twin.cpp)
-    target_include_directories(test_twin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/rest/include)
-    target_link_libraries(test_twin PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
-    add_test(NAME test_twin COMMAND test_twin)
-
-    add_executable(test_mqtt_interface tests/test_mqtt_interface.cpp)
-    target_link_libraries(test_mqtt_interface PRIVATE cyberwave_sdk)
-    add_test(NAME test_mqtt_interface COMMAND test_mqtt_interface)
-
-    # Optional: existing SDK test (links generated client only)
+    # Integration test: exercises the generated REST client against a live backend.
     add_executable(test_sdk tests/test_sdk.cpp)
-    target_include_directories(test_sdk PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/rest/include)
-    target_compile_definitions(test_sdk PRIVATE _TURN_OFF_PLATFORM_STRING)
     target_link_libraries(test_sdk PRIVATE CppRestOpenAPIClient cpprestsdk::cpprest OpenSSL::SSL OpenSSL::Crypto)
     add_test(NAME test_sdk COMMAND test_sdk)
+    set_tests_properties(test_sdk PROPERTIES LABELS integration)
 endif()
 
 if(CYBERWAVE_BUILD_EXAMPLES)
@@ -334,7 +268,7 @@ if(CYBERWAVE_BUILD_EXAMPLES)
     # REST-only examples: build unconditionally (no Paho required).
     foreach(_ex quickstart compact alerts workflows capture_frame)
         add_executable(example_${_ex} examples/${_ex}.cpp)
-        target_link_libraries(example_${_ex} PRIVATE cyberwave_sdk OpenSSL::SSL OpenSSL::Crypto)
+        target_link_libraries(example_${_ex} PRIVATE cyberwave_sdk)
         set_target_properties(example_${_ex} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples)
     endforeach()
@@ -356,7 +290,7 @@ if(CYBERWAVE_BUILD_EXAMPLES)
             add_executable(example_${_ex} examples/${_ex}.cpp)
             # mqtt/ directory provides mqtt_client.h (needed by paho_mqtt_adapter.h)
             target_include_directories(example_${_ex} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mqtt)
-            target_link_libraries(example_${_ex} PRIVATE cyberwave_sdk cyberwave_mqtt_client OpenSSL::SSL OpenSSL::Crypto)
+            target_link_libraries(example_${_ex} PRIVATE cyberwave_sdk cyberwave_mqtt_client)
             set_target_properties(example_${_ex} PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples)
         endforeach()
@@ -378,8 +312,6 @@ if(CYBERWAVE_BUILD_EXAMPLES)
             target_link_libraries(example_camera_stream_opencv PRIVATE
                 cyberwave_sdk
                 cyberwave_mqtt_client
-                OpenSSL::SSL
-                OpenSSL::Crypto
                 ${OpenCV_LIBS}
             )
             set_target_properties(example_camera_stream_opencv PROPERTIES

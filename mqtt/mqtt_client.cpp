@@ -61,6 +61,34 @@ bool contains_uuid(const std::vector<std::string>& items, const std::string& val
     return std::find(items.begin(), items.end(), value) != items.end();
 }
 
+bool has_nonempty_env(const char* name)
+{
+    const char* value = std::getenv(name);
+    return value && value[0] != '\0';
+}
+
+bool parse_bool_env(const std::string& value)
+{
+    std::string normalized;
+    normalized.reserve(value.size());
+    for (char ch : value)
+    {
+        normalized.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(ch))));
+    }
+
+    if (normalized == "1" || normalized == "true" || normalized == "yes" || normalized == "on")
+    {
+        return true;
+    }
+    if (normalized == "0" || normalized == "false" || normalized == "no" || normalized == "off")
+    {
+        return false;
+    }
+
+    mqtt_log().warn("Invalid boolean env value '{}', keeping configured TLS setting", value);
+    throw std::invalid_argument("invalid boolean env");
+}
+
 } // namespace
 
 CyberwaveMQTTClient::CyberwaveMQTTClient(const CyberwaveConfig& config) : config_(config), connected_(false)
@@ -103,13 +131,16 @@ CyberwaveMQTTClient::CyberwaveMQTTClient(const CyberwaveConfig& config) : config
     }
     topic_prefix_ = resolve_topic_prefix(config);
 
-    bool use_tls = config_.mqtt_use_tls || mqtt_port_ == 8883;
-    if (!config_.mqtt_use_tls)
+    bool use_tls = config_.mqtt_use_tls;
+    if (has_nonempty_env("CYBERWAVE_MQTT_USE_TLS"))
     {
         const std::string env_mqtt_tls = read_env("CYBERWAVE_MQTT_USE_TLS");
-        if (!env_mqtt_tls.empty())
+        try
         {
             use_tls = parse_bool_env(env_mqtt_tls);
+        }
+        catch (const std::invalid_argument&)
+        {
         }
     }
 
@@ -119,7 +150,7 @@ CyberwaveMQTTClient::CyberwaveMQTTClient(const CyberwaveConfig& config) : config
     }
 
     const std::string server_uri = (use_tls ? "ssl://" : "tcp://") + mqtt_broker_ + ":" + std::to_string(mqtt_port_);
-    client_id_ = "sdk_" + generate_client_id();
+    client_id_ = (config_.runtime_mode == "simulation" ? "sdk_sim_" : "sdk_") + generate_client_id();
     client_ = std::make_unique<mqtt::async_client>(server_uri, client_id_);
 
     callback_ = std::make_unique<MQTTCallback>(*this);
@@ -228,7 +259,7 @@ void CyberwaveMQTTClient::connect()
         return;
     }
 
-    const bool use_tls = config_.mqtt_use_tls || mqtt_port_ == 8883;
+    const bool use_tls = config_.mqtt_use_tls;
     try
     {
         mqtt::connect_options conn_opts;
@@ -237,6 +268,10 @@ void CyberwaveMQTTClient::connect()
         conn_opts.set_keep_alive_interval(60);
         conn_opts.set_clean_session(true);
         conn_opts.set_automatic_reconnect(1, 30);
+        if (config_.mqtt_protocol > 0)
+        {
+            conn_opts.set_mqtt_version(config_.mqtt_protocol);
+        }
         if (use_tls)
         {
             mqtt::ssl_options_builder ssl_builder;
@@ -464,11 +499,13 @@ void CyberwaveMQTTClient::publish_initial_observation(const std::string& twin_uu
                                                                             {"timestamp", now_seconds()}});
 }
 
-void CyberwaveMQTTClient::subscribe(const std::string& topic, MessageCallback callback, int qos)
+SubscriptionId CyberwaveMQTTClient::subscribe_with_id(const std::string& topic, MessageCallback callback, int qos)
 {
+    SubscriptionId subscription_id = 0;
     {
         std::lock_guard<std::mutex> lock(callbacks_mutex_);
-        message_callbacks_[topic].push_back(callback);
+        subscription_id = next_subscription_id_++;
+        message_callbacks_[topic].push_back({subscription_id, std::move(callback)});
         const auto qos_it = subscription_qos_.find(topic);
         if (qos_it == subscription_qos_.end())
         {
@@ -483,7 +520,7 @@ void CyberwaveMQTTClient::subscribe(const std::string& topic, MessageCallback ca
     if (!connected_)
     {
         mqtt_log().warn("Cannot subscribe to {}: not connected to MQTT broker", topic);
-        return;
+        return subscription_id;
     }
 
     try
@@ -500,8 +537,15 @@ void CyberwaveMQTTClient::subscribe(const std::string& topic, MessageCallback ca
     catch (const mqtt::exception& exc)
     {
         mqtt_log().error("MQTT subscribe error: {}", exc.what());
-        return;
+        return subscription_id;
     }
+
+    return subscription_id;
+}
+
+void CyberwaveMQTTClient::subscribe(const std::string& topic, MessageCallback callback, int qos)
+{
+    (void)subscribe_with_id(topic, std::move(callback), qos);
 }
 
 void CyberwaveMQTTClient::subscribe(const std::string& topic, std::function<void(const json& message)> callback,
@@ -509,6 +553,54 @@ void CyberwaveMQTTClient::subscribe(const std::string& topic, std::function<void
 {
     subscribe(
         topic, [callback = std::move(callback)](const std::string&, const json& message) { callback(message); }, qos);
+}
+
+void CyberwaveMQTTClient::unsubscribe(SubscriptionId subscription_id)
+{
+    std::vector<std::string> topics_to_unsubscribe;
+    {
+        std::lock_guard<std::mutex> lock(callbacks_mutex_);
+        for (auto callbacks_it = message_callbacks_.begin(); callbacks_it != message_callbacks_.end();)
+        {
+            auto& callbacks = callbacks_it->second;
+            callbacks.erase(std::remove_if(callbacks.begin(), callbacks.end(),
+                                           [subscription_id](const RegisteredCallback& registered)
+                                           { return registered.id == subscription_id; }),
+                            callbacks.end());
+
+            if (callbacks.empty())
+            {
+                topics_to_unsubscribe.push_back(callbacks_it->first);
+                subscription_qos_.erase(callbacks_it->first);
+                callbacks_it = message_callbacks_.erase(callbacks_it);
+            }
+            else
+            {
+                ++callbacks_it;
+            }
+        }
+    }
+
+    if (!connected_)
+    {
+        return;
+    }
+
+    for (const auto& topic : topics_to_unsubscribe)
+    {
+        try
+        {
+            auto token = client_->unsubscribe(topic);
+            if (!token->wait_for(std::chrono::seconds(5)))
+            {
+                mqtt_log().warn("MQTT unsubscribe timed out after 5s: {}", topic);
+            }
+        }
+        catch (const mqtt::exception& exc)
+        {
+            mqtt_log().error("MQTT unsubscribe error: {}", exc.what());
+        }
+    }
 }
 
 void CyberwaveMQTTClient::publish(const std::string& topic, const json& message, int qos)
@@ -875,8 +967,6 @@ void CyberwaveMQTTClient::subscribe_pong(const std::string& resource_uuid, Messa
 
 void CyberwaveMQTTClient::handle_message(const std::string& topic, const std::string& payload)
 {
-    std::lock_guard<std::mutex> lock(callbacks_mutex_);
-
     json parsed_message;
     try
     {
@@ -888,32 +978,42 @@ void CyberwaveMQTTClient::handle_message(const std::string& topic, const std::st
         parsed_message = payload;
     }
 
-    auto exact_it = message_callbacks_.find(topic);
-    if (exact_it != message_callbacks_.end())
+    std::vector<MessageCallback> matching_callbacks;
     {
-        for (const auto& callback : exact_it->second)
+        std::lock_guard<std::mutex> lock(callbacks_mutex_);
+
+        auto exact_it = message_callbacks_.find(topic);
+        if (exact_it != message_callbacks_.end())
         {
-            callback(topic, parsed_message);
+            for (const auto& callback : exact_it->second)
+            {
+                matching_callbacks.push_back(callback.callback);
+            }
+        }
+
+        for (const auto& [pattern, callbacks] : message_callbacks_)
+        {
+            if (pattern == topic)
+            {
+                continue;
+            }
+            if (pattern.find('+') == std::string::npos && pattern.find('#') == std::string::npos)
+            {
+                continue;
+            }
+            if (topic_matches(topic, pattern))
+            {
+                for (const auto& callback : callbacks)
+                {
+                    matching_callbacks.push_back(callback.callback);
+                }
+            }
         }
     }
 
-    for (const auto& [pattern, callbacks] : message_callbacks_)
+    for (const auto& callback : matching_callbacks)
     {
-        if (pattern == topic)
-        {
-            continue;
-        }
-        if (pattern.find('+') == std::string::npos && pattern.find('#') == std::string::npos)
-        {
-            continue;
-        }
-        if (topic_matches(topic, pattern))
-        {
-            for (const auto& callback : callbacks)
-            {
-                callback(topic, parsed_message);
-            }
-        }
+        callback(topic, parsed_message);
     }
 }
 

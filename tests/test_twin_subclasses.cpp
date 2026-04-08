@@ -122,15 +122,14 @@ int main()
         assert(dynamic_cast<cyberwave::DepthCameraTwin*>(t.get()) != nullptr);
     }
 
-    // can_grip + has_sensors → GripperTwin (grip wins over sensors)
+    // can_grip + has_sensors → GripperCameraTwin
     {
         cyberwave::Capabilities caps;
         caps.can_grip = true;
         caps.has_sensors = true;
         auto t = cyberwave::create_twin(client, "uuid-gs", "gs", caps);
-        auto* grip = dynamic_cast<cyberwave::GripperTwin*>(t.get());
+        auto* grip = dynamic_cast<cyberwave::GripperCameraTwin*>(t.get());
         assert(grip != nullptr);
-        // Must NOT be DepthCameraTwin or CameraTwin
         assert(dynamic_cast<cyberwave::DepthCameraTwin*>(t.get()) == nullptr);
     }
 

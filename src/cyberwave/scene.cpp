@@ -50,20 +50,7 @@ Twin Scene::undock(const std::string& twin_id) const { return client_.get().twin
 
 std::string Scene::get_composed_schema() const
 {
-    auto* a = scene_api(client_.get());
-    if (!a)
-        throw CyberwaveError("Client has no REST API (missing api_key)");
-    try
-    {
-        // The generated REST client endpoint returns void; the response body is not captured.
-        // This call validates connectivity and auth. Use the Python SDK or direct HTTP for the full schema.
-        a->srcAppApiEnvironmentsExportsGetEnvironmentUniversalSchemaJson(scene_from_std(environment_id_)).get();
-        return "";
-    }
-    catch (const org::openapitools::client::api::ApiException& e)
-    {
-        throw CyberwaveAPIError(utility::conversions::to_utf8string(utility::conversions::to_string_t(e.what())), 0);
-    }
+    return client_.get().environments().get_universal_schema_json(environment_id_);
 }
 
 } // namespace cyberwave

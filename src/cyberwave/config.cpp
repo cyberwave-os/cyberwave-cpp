@@ -1,5 +1,6 @@
 #include "cyberwave/config.h"
 
+#include <cctype>
 #include <cstdlib>
 #include <cstring>
 #include <stdexcept>
@@ -51,8 +52,45 @@ static bool getenv_bool(const char* name, bool default_value)
     return default_value;
 }
 
+static bool getenv_present(const char* name)
+{
+    const char* v = std::getenv(name);
+    return v && v[0] != '\0';
+}
+
+static int parse_mqtt_protocol(const std::string& raw, int default_value)
+{
+    if (raw.empty())
+        return default_value;
+
+    std::string normalized;
+    normalized.reserve(raw.size());
+    for (char c : raw)
+    {
+        if (c == '.' || c == '_' || c == '-')
+            continue;
+        normalized.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(c))));
+    }
+
+    if (normalized == "5" || normalized == "v5" || normalized == "mqttv5" || normalized == "mqtt5")
+        return 5;
+    if (normalized == "311" || normalized == "v311" || normalized == "mqttv311" || normalized == "mqtt311")
+        return 4;
+
+    try
+    {
+        return std::stoi(raw);
+    }
+    catch (...)
+    {
+        return default_value;
+    }
+}
+
 void Config::load_from_environment()
 {
+    const bool runtime_mode_preconfigured = !runtime_mode.empty() && runtime_mode != "live";
+    const bool source_type_env_present = getenv_present("CYBERWAVE_SOURCE_TYPE");
     {
         std::string env_key = getenv_default("CYBERWAVE_API_KEY", "");
         if (!env_key.empty())
@@ -88,12 +126,17 @@ void Config::load_from_environment()
     {
         mqtt_password = getenv_default("CYBERWAVE_MQTT_PASSWORD", "");
     }
-    mqtt_use_tls = getenv_bool("CYBERWAVE_MQTT_USE_TLS", mqtt_use_tls);
-    if (mqtt_port == 8883 && !mqtt_use_tls)
-        mqtt_use_tls = true;
+    if (getenv_present("CYBERWAVE_MQTT_USE_TLS"))
+    {
+        mqtt_use_tls = getenv_bool("CYBERWAVE_MQTT_USE_TLS", mqtt_use_tls);
+    }
     if (mqtt_tls_ca_cert.empty())
     {
         mqtt_tls_ca_cert = getenv_default("CYBERWAVE_MQTT_TLS_CA_CERT", "");
+    }
+    if (mqtt_protocol == 0)
+    {
+        mqtt_protocol = parse_mqtt_protocol(getenv_default("CYBERWAVE_MQTT_PROTOCOL", ""), mqtt_protocol);
     }
     if (environment_id.empty())
     {
@@ -103,9 +146,13 @@ void Config::load_from_environment()
     {
         workspace_id = getenv_default("CYBERWAVE_WORKSPACE_ID", "");
     }
-    if (source_type.empty())
+    if (source_type_env_present)
     {
-        source_type = getenv_default("CYBERWAVE_SOURCE_TYPE", SOURCE_TYPE_EDGE);
+        source_type = getenv_default("CYBERWAVE_SOURCE_TYPE", source_type.c_str());
+    }
+    else if (source_type.empty())
+    {
+        source_type = SOURCE_TYPE_EDGE;
     }
     if (topic_prefix.empty())
     {
@@ -116,6 +163,18 @@ void Config::load_from_environment()
             if (!env_val.empty() && env_val != "production")
                 topic_prefix = env_val;
         }
+    }
+    if (runtime_mode.empty() || runtime_mode == "live")
+    {
+        runtime_mode = getenv_default("CYBERWAVE_RUNTIME_MODE", runtime_mode.empty() ? "live" : runtime_mode.c_str());
+    }
+    if (!source_type_env_present && !runtime_mode_preconfigured && runtime_mode == "simulation")
+    {
+        source_type = SOURCE_TYPE_SIM;
+    }
+    if (twin_uuid.empty())
+    {
+        twin_uuid = getenv_default("CYBERWAVE_TWIN_UUID", "");
     }
     if (timeout_seconds == DEFAULT_TIMEOUT)
     {

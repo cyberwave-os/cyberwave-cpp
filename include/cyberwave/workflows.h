@@ -5,6 +5,8 @@
 #ifndef CYBERWAVE_WORKFLOWS_H
 #define CYBERWAVE_WORKFLOWS_H
 
+#include "cyberwave/mqtt_interface.h"
+
 #include <functional>
 #include <map>
 #include <memory>
@@ -29,6 +31,9 @@ public:
 
     /** @brief Return the workflow UUID. */
     std::string uuid() const;
+
+    /** @brief Return the workspace-scoped slug. */
+    std::string slug() const;
 
     /** @brief Return the workflow name. */
     std::string name() const;
@@ -122,6 +127,15 @@ public:
     WorkflowRun& cancel();
 
     /**
+     * Subscribe to MQTT status updates for this run.
+     * The callback receives the new status string and an updated run view.
+     * Keep the returned handle alive for as long as you want to receive updates.
+     * Requires an MQTT client set on the parent Client.
+     */
+    [[nodiscard]] std::unique_ptr<MqttSubscriptionHandle>
+    on_status_change(const std::function<void(const std::string&, const WorkflowRun&)>& callback);
+
+    /**
      * Block until the run reaches a terminal state or timeout_s seconds have passed.
      * Returns *this. Throws CyberwaveTimeoutError if timeout exceeded.
      * Mirrors Python WorkflowRun.wait(timeout, poll_interval).
@@ -131,6 +145,7 @@ public:
 private:
     std::reference_wrapper<const Client> client_;
     std::shared_ptr<void> schema_;
+    std::weak_ptr<void> client_lifetime_;
 };
 
 /**
@@ -147,6 +162,9 @@ public:
 
     /** @brief Fetch a workflow by UUID. */
     Workflow get(const std::string& workflow_id) const;
+
+    /** @brief Fetch a workflow by workspace UUID and slug. */
+    Workflow get_by_slug(const std::string& workspace_id, const std::string& slug) const;
 
     /** @brief Trigger a workflow run using string inputs. */
     WorkflowRun trigger(const std::string& workflow_id, const std::map<std::string, std::string>& inputs = {}) const;

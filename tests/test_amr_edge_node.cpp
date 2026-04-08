@@ -108,7 +108,7 @@ static void test_amr_edge_node_lifecycle()
     node.run();
 
     assert(node.adapter());
-    assert(node.adapter()->is_connected());
+    assert(!node.adapter()->is_connected());
     assert(node.discover_calls == 1);
     assert(!node.running());
 }

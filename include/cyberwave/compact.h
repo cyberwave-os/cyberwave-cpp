@@ -8,6 +8,7 @@
 #ifndef CYBERWAVE_COMPACT_H
 #define CYBERWAVE_COMPACT_H
 
+#include "cyberwave/client.h"
 #include "cyberwave/config.h"
 #include "cyberwave/twin.h"
 
@@ -15,8 +16,6 @@
 
 namespace cyberwave
 {
-
-class Client; // forward declaration for get_client()
 
 /**
  * @brief Configure the global client from a copied configuration.
@@ -38,12 +37,13 @@ void configure(Config&& config);
 Client& get_client();
 
 /**
- * @brief Return a twin handle from the global client.
- * @param slug Twin slug or UUID.
- * @return Twin handle from `get_client().twin(slug)`.
+ * @brief Return or create a twin handle from the global client.
+ * @param identifier Existing twin UUID, or an asset registry ID / alias to resolve.
+ * @param options Optional lookup and creation controls.
+ * @return Twin handle from `get_client().twin(identifier, options)`.
  * @throws CyberwaveError If the global client has not been configured.
  */
-Twin twin(const std::string& slug);
+Twin twin(const std::string& identifier, const TwinResolveOptions& options = {});
 
 } // namespace cyberwave
 

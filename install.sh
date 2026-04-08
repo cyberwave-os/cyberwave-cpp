@@ -7,13 +7,15 @@ INSTALL_PREFIX="/usr/local"
 BUILD_DIR="${SCRIPT_DIR}/build/install"
 BUILD_TYPE="Release"
 OPENAPI_URL="${CYBERWAVE_OPENAPI_URL:-https://api.cyberwave.com/api/v1/openapi.json}"
-OPENAPI_GENERATOR_VERSION="${CYBERWAVE_OPENAPI_GENERATOR_VERSION:-7.8.0}"
+OPENAPI_GENERATOR_VERSION="${CYBERWAVE_OPENAPI_GENERATOR_VERSION:-7.21.0}"
 
 SKIP_DEPS=0
 SKIP_GENERATE_REST=0
 FORCE_GENERATE_REST=0
 WITH_GRPC=0
 WITH_OPENCV=0
+WITHOUT_FFMPEG=0
+WITHOUT_WEBRTC=0
 RUN_TESTS=0
 
 usage() {
@@ -28,12 +30,14 @@ Options:
   --build-dir <path>                 Build directory (default: ./build/install)
   --build-type <type>                CMake build type (default: Release)
   --openapi-url <url>                OpenAPI URL to generate REST client when needed
-  --openapi-generator-version <ver>  openapi-generator-cli version (default: 7.8.0)
+  --openapi-generator-version <ver>  openapi-generator-cli version (default: 7.21.0)
   --skip-deps                        Skip dependency installation
   --skip-generate-rest               Do not auto-generate rest/ when missing
   --force-generate-rest              Regenerate rest/ even if it already exists
-  --with-grpc                          Install gRPC/protobuf dev libs (for driver tf-exchange proto)
-  --with-opencv                       Install OpenCV dev libs (for camera_stream_opencv example)
+  --with-grpc                        Install gRPC/protobuf dev libs (for driver tf-exchange proto)
+  --with-opencv                      Install OpenCV dev libs (for camera_stream_opencv example)
+  --without-ffmpeg                   Skip FFmpeg dev libs (disables H264 encoding in CameraStreamer)
+  --without-webrtc                   Disable WebRTC support (skips LibDataChannel fetch)
   --run-tests                        Run ctest after build
   -h, --help                         Show this help
 
@@ -119,6 +123,14 @@ parse_args() {
                 WITH_OPENCV=1
                 shift
                 ;;
+            --without-ffmpeg)
+                WITHOUT_FFMPEG=1
+                shift
+                ;;
+            --without-webrtc)
+                WITHOUT_WEBRTC=1
+                shift
+                ;;
             --run-tests)
                 RUN_TESTS=1
                 shift
@@ -169,6 +181,14 @@ install_deps_debian() {
         run_as_root apt-get install -y --no-install-recommends \
             libopencv-dev
     fi
+
+    if [[ "$WITHOUT_FFMPEG" -eq 0 ]]; then
+        log "Installing FFmpeg dev libraries (skip with --without-ffmpeg)"
+        run_as_root apt-get install -y --no-install-recommends \
+            libavcodec-dev \
+            libavutil-dev \
+            libswscale-dev
+    fi
 }
 
 install_deps() {
@@ -195,9 +215,9 @@ download_openapi_generator_jar() {
 
     mkdir -p "${cache_dir}"
     if [[ -f "${jar_path}" ]]; then
-        log "Using cached openapi-generator-cli ${OPENAPI_GENERATOR_VERSION}"
+        log "Using cached openapi-generator-cli ${OPENAPI_GENERATOR_VERSION}" >&2
     else
-        log "Downloading openapi-generator-cli ${OPENAPI_GENERATOR_VERSION}"
+        log "Downloading openapi-generator-cli ${OPENAPI_GENERATOR_VERSION}" >&2
         curl -fsSL "${url}" -o "${jar_path}"
     fi
 
@@ -226,11 +246,9 @@ h_text = h_path.read_text()
 decl = "static utility::string_t parameterToString(const HttpContent& value);"
 needle = "static utility::string_t parameterToString(const ModelBase& value);"
 if decl not in h_text:
-    if needle not in h_text:
-        print("Missing ModelBase declaration in ApiClient.h", file=sys.stderr)
-        sys.exit(1)
-    h_text = h_text.replace(needle, needle + "\\n    " + decl, 1)
-    h_path.write_text(h_text)
+    if needle in h_text:
+        h_text = h_text.replace(needle, needle + "\\n    " + decl, 1)
+        h_path.write_text(h_text)
 
 cpp_text = cpp_path.read_text()
 impl_signature = "utility::string_t ApiClient::parameterToString(const HttpContent& value)"
@@ -240,18 +258,16 @@ if impl_signature not in cpp_text:
         re.MULTILINE | re.DOTALL,
     )
     match = pattern.search(cpp_text)
-    if not match:
-        print("Missing ModelBase implementation in ApiClient.cpp", file=sys.stderr)
-        sys.exit(1)
-    block = match.group(1)
-    addition = (
-        "\\n\\nutility::string_t ApiClient::parameterToString(const HttpContent& value)\\n"
-        "{\\n"
-        "    return value.getFileName();\\n"
-        "}\\n"
-    )
-    cpp_text = cpp_text.replace(block, block + addition, 1)
-    cpp_path.write_text(cpp_text)
+    if match:
+        block = match.group(1)
+        addition = (
+            "\\n\\nutility::string_t ApiClient::parameterToString(const HttpContent& value)\\n"
+            "{\\n"
+            "    return value.getFileName();\\n"
+            "}\\n"
+        )
+        cpp_text = cpp_text.replace(block, block + addition, 1)
+        cpp_path.write_text(cpp_text)
 PY
 }
 
@@ -355,13 +371,17 @@ configure_build_install() {
     local build_tests="OFF"
     [[ "${RUN_TESTS}" -eq 1 ]] && build_tests="ON"
 
+    local enable_webrtc="ON"
+    [[ "${WITHOUT_WEBRTC}" -eq 1 ]] && enable_webrtc="OFF"
+
     log "Configuring CMake build"
     cmake -S "${SCRIPT_DIR}" -B "${BUILD_DIR}" \
         -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
         -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}" \
         -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
         -DCYBERWAVE_BUILD_TESTS="${build_tests}" \
-        -DCYBERWAVE_BUILD_EXAMPLES=OFF
+        -DCYBERWAVE_BUILD_EXAMPLES=OFF \
+        -DCYBERWAVE_ENABLE_WEBRTC="${enable_webrtc}"
 
     log "Building SDK"
     cmake --build "${BUILD_DIR}" --parallel "$(parallel_jobs)"

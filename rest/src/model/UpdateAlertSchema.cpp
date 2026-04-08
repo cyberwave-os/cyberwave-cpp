@@ -64,6 +64,11 @@ web::json::value UpdateAlertSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("status"))] = ModelBase::toJson(m_Status.get());
     }
+    if(m_Category.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("category"))] = ModelBase::toJson(m_Category.get());
+    }
     if(m_Metadata.has_value())
     {
         
@@ -142,6 +147,17 @@ bool UpdateAlertSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("category"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("category")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setCategory;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCategory);
+            setCategory(refVal_setCategory);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("metadata"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("metadata")));
@@ -186,6 +202,10 @@ void UpdateAlertSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart
     if(m_Status.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("status")), m_Status.get()));
+    }
+    if(m_Category.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("category")), m_Category.get()));
     }
     if(m_Metadata.has_value())
     {
@@ -237,6 +257,12 @@ bool UpdateAlertSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
         utility::string_t refVal_setStatus;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("status"))), refVal_setStatus );
         setStatus(refVal_setStatus);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("category"))))
+    {
+        utility::string_t refVal_setCategory;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("category"))), refVal_setCategory );
+        setCategory(refVal_setCategory);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))))
     {
@@ -367,6 +393,26 @@ bool UpdateAlertSchema::statusIsSet() const
 void UpdateAlertSchema::unsetStatus()
 {
     m_Status.reset();
+}
+utility::string_t UpdateAlertSchema::getCategory() const
+{
+    return m_Category.get();
+}
+
+
+void UpdateAlertSchema::setCategory(const utility::string_t& value)
+{
+    m_Category = value;
+}
+
+bool UpdateAlertSchema::categoryIsSet() const
+{
+    return m_Category.has_value();
+}
+
+void UpdateAlertSchema::unsetCategory()
+{
+    m_Category.reset();
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> UpdateAlertSchema::getMetadata() const
 {

@@ -19,6 +19,8 @@ The SDK provides three integration layers:
 1. **REST API** — Auto-generated client from the Cyberwave OpenAPI spec (in `rest/`), wrapped with a hand-crafted C++ layer for a clean developer experience.
 2. **MQTT API** — Real-time pub/sub communication with the Cyberwave backend (in `mqtt/`).
 3. **Edge abstractions** — Base classes for building edge nodes and AMR integrations (in `include/cyberwave/edge/`).
+4. **Data plane (first milestone)** — Wire-format helpers, validated data keys, and a filesystem-backed `DataBus` facade for JSON/bytes/ndarray payload exchange (in `include/cyberwave/data.h`).
+5. **Worker/manifest scaffolding** — Hook registration helpers plus a manifest schema/dispatch helper for upcoming worker-runtime parity (in `include/cyberwave/workers.h` and `include/cyberwave/manifest.h`).
 
 ## Project Structure
 
@@ -167,6 +169,28 @@ int main() {
 }
 ```
 
+`Client::affect()` now resets any attached MQTT client so reconnects pick up the new runtime settings. For parity with Python, simulation mode defaults frame fetches to `source_type=sim` while control publishers use `sim_tele`; live mode keeps REST/frame defaults on `edge` and control publishers on `tele`.
+
+### Quickstart Twin Resolution
+
+`Client::twin()` can now fetch an existing twin by UUID, or resolve an asset registry id / alias and reuse or create a twin in the configured environment. When no environment is configured, it mirrors Python quickstart behavior by creating and caching a default workspace/project/environment context.
+
+```cpp
+cyberwave::TwinResolveOptions options;
+options.environment_id = "env-uuid";
+options.name = "Front Camera";
+
+auto camera = client.twin("camera", options);
+```
+
+Regular `Twin` handles now expose the capability convenience helpers directly, so a twin fetched through `client.twin(...)` or `client.twins().get(...)` can call helpers such as `move_forward()`, `grip()`, or `start_streaming()` without going through a separate subclass factory first.
+
+Scene-level composed schema and environment export helpers now use the canonical backend routes (`/universal-schema.json`, `/urdf-scene.zip`, `/mujoco-scene.zip`) instead of the older `/exports/...` paths.
+
+### Asset uploads
+
+`AssetManager::upload_glb()` now mirrors Python's behavior: small GLBs use the standard multipart endpoint, large GLBs switch to the attachment signed-upload flow automatically, and payload-too-large responses on the direct endpoint retry through the attachment path.
+
 ### MQTT
 
 ```cpp
@@ -198,6 +222,31 @@ int main() {
 
 For local non-TLS brokers: `export CYBERWAVE_MQTT_USE_TLS=false`
 
+Optional MQTT envs:
+- `CYBERWAVE_MQTT_PROTOCOL=5` to request MQTT v5
+- `CYBERWAVE_TWIN_UUID=<uuid>` to keep a default twin UUID in config
+
+### DataBus (filesystem backend)
+
+```cpp
+#include <cyberwave/client.h>
+#include <cyberwave/config.h>
+#include <cyberwave/data.h>
+
+int main() {
+    cyberwave::Config config;
+    config.twin_uuid = "550e8400-e29b-41d4-a716-446655440000";
+
+    cyberwave::Client client(config);
+    auto backend = std::make_shared<cyberwave::FilesystemDataBackend>();
+    auto data = client.data(backend);
+
+    data.publish("joint_states", {{"joint1", 0.5}, {"joint2", -1.0}});
+    auto latest = data.latest("joint_states");
+    return latest.has_value() ? 0 : 1;
+}
+```
+
 ### Error Handling
 
 ```cpp
@@ -220,11 +269,17 @@ try {
 |---|---|
 | `cyberwave::Client` | Main SDK client (REST + optional MQTT) |
 | `cyberwave::Config` | Configuration and environment loading |
+| `cyberwave::TwinResolveOptions` | Quickstart options for resolving or creating twins from asset keys |
 | `cyberwave::Twin` | High-level twin handle |
 | `cyberwave::TwinManager` | List / get / create / update / delete twins |
+| `cyberwave::WorkflowRun` | Workflow run view with polling and MQTT status subscription helpers |
 | `cyberwave::JointController` | Joint get / set / list / get_all |
 | `cyberwave::WorkflowManager` | List / get / trigger workflows |
 | `cyberwave::PahoMqttAdapter` | Paho-backed `IMqttClient` implementation |
+| `cyberwave::DataBus` | Typed data-plane facade for publish / subscribe / latest |
+| `cyberwave::FilesystemDataBackend` | Stdlib-backed data transport for development and tests |
+| `cyberwave::HookRegistry` | Worker hook registration surface for upcoming runtime support |
+| `cyberwave::ManifestSchema` | Read-only manifest schema and dispatch-mode validation helpers |
 
 ## Examples
 
@@ -262,6 +317,17 @@ docker build -t cyberwave-cpp-install-validation .
 ```
 
 Build succeeds only if installation and downstream package discovery work end-to-end.
+
+### Development Container
+
+`Dockerfile.dev` is the reproducible SDK development image. It installs the optional gRPC/OpenCV/media build dependencies, regenerates `rest/` from OpenAPI, then builds and runs the C++ test suite.
+
+```bash
+docker build -f Dockerfile.dev -t cyberwave-cpp-dev \
+  --build-arg OPENAPI_URL=http://host.docker.internal:8000/api/v1/openapi.json .
+```
+
+You can point `OPENAPI_URL` at a local backend or keep the default production schema.
 
 ## Requirements
 

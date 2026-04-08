@@ -22,6 +22,10 @@ class TwinNavigationHandle;
 class TwinMotionHandle;
 class JointController;
 class TwinControllerHandle;
+struct IFrameSource;
+struct IDepthSource;
+class CameraStreamer;
+class DepthStreamer;
 
 /**
  * @brief Handle to a twin returned by `Client` or `TwinManager`.
@@ -67,6 +71,9 @@ public:
     /** UUID of the asset this twin was created from (empty if not loaded from full schema). */
     std::string asset_id() const;
 
+    /** Whether the twin currently uses a fixed base. */
+    bool fixed_base() const;
+
     /** Capabilities map as a JSON object string ("{}") if none. */
     std::string capabilities_json() const;
 
@@ -91,6 +98,15 @@ public:
 
     /** True if any camera/sensor capability is present. Pass specific sensor_type to check that type. */
     bool has_sensor(const std::string& sensor_type = "") const;
+
+    /** True if the twin advertises aerial control support. */
+    bool can_fly() const;
+
+    /** True if the twin advertises locomotion support. */
+    bool can_locomote() const;
+
+    /** True if the twin advertises gripper support. */
+    bool can_grip() const;
 
     /**
      * Re-fetch this twin from the backend and update internal state.
@@ -152,9 +168,68 @@ public:
     /**
      * Get latest RGB frame.
      * sensor_id selects a specific camera on multi-camera twins (e.g. "wrist_camera").
-     * Throws `CyberwaveError` when the generated REST client cannot capture binary response bodies.
      */
-    std::vector<unsigned char> get_latest_frame(bool mock = false, const std::string& sensor_id = "") const;
+    std::vector<unsigned char> get_latest_frame(bool mock = false, const std::string& sensor_id = "",
+                                                const std::string& source_type = "") const;
+
+    // --- Capability convenience helpers ---
+
+    /** Set frame source for streaming (e.g. VirtualFrameSource or OpenCV source). */
+    void set_frame_source(std::shared_ptr<IFrameSource> source);
+
+    /** Start RGB streaming. Requires sensor capability, MQTT, and a frame source. */
+    void start_streaming(int fps = 30, int camera_id = 0);
+
+    /** Stop RGB streaming started via start_streaming(). */
+    void stop_streaming();
+
+    /** Set depth frame source for depth streaming. */
+    void set_depth_source(std::shared_ptr<IDepthSource> source);
+
+    /** Start depth streaming. Requires depth capability, MQTT, and a depth source. */
+    void start_depth_streaming(int fps = 10);
+
+    /** Stop depth streaming started via start_depth_streaming(). */
+    void stop_depth_streaming();
+
+    /** Publish a raw depth frame JSON payload. */
+    void publish_depth_frame(const std::string& json_payload);
+
+    /** Publish a raw point cloud JSON payload. */
+    void publish_point_cloud(const std::string& json_payload);
+
+    /** Not yet implemented, kept for Python parity. */
+    [[noreturn]] void capture_depth_frame() const;
+
+    /** Not yet implemented, kept for Python parity. */
+    [[noreturn]] void get_point_cloud() const;
+
+    /** Command forward locomotion over MQTT. */
+    void move_forward(double distance_m, const std::string& source_type = "");
+
+    /** Command backward locomotion over MQTT. */
+    void move_backward(double distance_m, const std::string& source_type = "");
+
+    /** Command a left turn over MQTT. */
+    void turn_left(double angle_rad = 1.5, const std::string& source_type = "");
+
+    /** Command a right turn over MQTT. */
+    void turn_right(double angle_rad = 1.5, const std::string& source_type = "");
+
+    /** Command aerial takeoff over MQTT. */
+    void takeoff(double altitude_m = 1.0);
+
+    /** Command landing over MQTT. */
+    void land();
+
+    /** Command hover over MQTT. */
+    void hover();
+
+    /** Command gripper close over MQTT. */
+    void grip(double force = 1.0);
+
+    /** Command gripper open over MQTT. */
+    void release();
 
     // --- Universal schema (delegate to TwinManager) ---
     /** Get the universal schema at path (JSON string). */
@@ -206,6 +281,10 @@ private:
 
     /** Optional full TwinSchema (set by schema constructor or refresh()). */
     std::shared_ptr<void> schema_;
+    std::shared_ptr<IFrameSource> frame_source_;
+    std::shared_ptr<CameraStreamer> camera_streamer_;
+    std::shared_ptr<IDepthSource> depth_source_;
+    std::shared_ptr<DepthStreamer> depth_streamer_;
 };
 
 } // namespace cyberwave

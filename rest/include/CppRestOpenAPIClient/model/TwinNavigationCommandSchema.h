@@ -102,6 +102,11 @@ public:
     void unsetController_policy_uuid();
     void setControllerPolicyUuid(const utility::string_t& value);
 
+    utility::string_t getReferenceFrame() const;
+    bool referenceFrameIsSet() const;
+    void unsetReference_frame();
+    void setReferenceFrame(const utility::string_t& value);
+
     utility::string_t getEnvironmentUuid() const;
     bool environmentUuidIsSet() const;
     void unsetEnvironment_uuid();
@@ -136,6 +141,8 @@ protected:
     boost::optional<std::vector<std::shared_ptr<NavigationWaypointSchema>>> m_Waypoints;
 
     boost::optional<utility::string_t> m_Controller_policy_uuid;
+
+    boost::optional<utility::string_t> m_Reference_frame;
 
     boost::optional<utility::string_t> m_Environment_uuid;
 

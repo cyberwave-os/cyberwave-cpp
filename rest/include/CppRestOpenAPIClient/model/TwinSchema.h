@@ -242,6 +242,11 @@ public:
     void unsetFixed_base();
     void setFixedBase(bool value);
 
+    std::vector<std::map<utility::string_t, utility::string_t>> getExportWarnings() const;
+    bool exportWarningsIsSet() const;
+    void unsetExport_warnings();
+    void setExportWarnings(const std::vector<std::map<utility::string_t, utility::string_t>>& value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -345,6 +350,9 @@ protected:
 
     bool m_Fixed_base;
     bool m_Fixed_baseIsSet;
+
+    std::vector<std::map<utility::string_t, utility::string_t>> m_Export_warnings;
+    bool m_Export_warningsIsSet;
 
 };
 

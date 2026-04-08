@@ -1,0 +1,3 @@
+# Auto-generated — records feature flags from the SDK build.
+set(CYBERWAVE_SDK_HAS_FFMPEG @CYBERWAVE_SDK_HAS_FFMPEG@)
+set(CYBERWAVE_SDK_HAS_WEBRTC @CYBERWAVE_SDK_HAS_WEBRTC@)

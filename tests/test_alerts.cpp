@@ -61,9 +61,12 @@ static void test_alert_timestamps_and_metadata_getters()
     Client c(cfg);
     auto schema = std::make_shared<org::openapitools::client::model::AlertSchema>();
     schema->setUuid(utility::conversions::to_string_t("alert-uuid"));
-    schema->setCreatedAt(utility::datetime::from_string(utility::conversions::to_string_t("2026-03-18T12:34:56Z")));
-    schema->setUpdatedAt(utility::datetime::from_string(utility::conversions::to_string_t("2026-03-18T12:35:10Z")));
-    schema->setResolvedAt(utility::datetime::from_string(utility::conversions::to_string_t("2026-03-18T12:36:00Z")));
+    schema->setCreatedAt(utility::datetime::from_string(utility::conversions::to_string_t("2026-03-18T12:34:56Z"),
+                                                        utility::datetime::ISO_8601));
+    schema->setUpdatedAt(utility::datetime::from_string(utility::conversions::to_string_t("2026-03-18T12:35:10Z"),
+                                                        utility::datetime::ISO_8601));
+    schema->setResolvedAt(utility::datetime::from_string(utility::conversions::to_string_t("2026-03-18T12:36:00Z"),
+                                                         utility::datetime::ISO_8601));
 
     auto metadata_value = std::make_shared<org::openapitools::client::model::AnyType>();
     metadata_value->fromJson(web::json::value::string(utility::conversions::to_string_t("robot-1")));

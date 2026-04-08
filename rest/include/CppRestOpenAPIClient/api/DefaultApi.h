@@ -65,6 +65,7 @@
 #include "CppRestOpenAPIClient/model/EnvironmentAssistantRequestSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentAssistantResponseSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentCreateSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentNavigationSettingsPatchSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSnapshotCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSnapshotSchema.h"
@@ -145,6 +146,7 @@
 #include "CppRestOpenAPIClient/model/TwinJointCalibrationSchema.h"
 #include "CppRestOpenAPIClient/model/TwinMetricsQuerySchema.h"
 #include "CppRestOpenAPIClient/model/TwinMotionResponseSchema.h"
+#include "CppRestOpenAPIClient/model/TwinNavigationCaptureUploadResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinNavigationCommandSchema.h"
 #include "CppRestOpenAPIClient/model/TwinRelationshipSchema.h"
 #include "CppRestOpenAPIClient/model/TwinSchema.h"
@@ -349,6 +351,7 @@ public:
     /// <param name="description"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="workspaceUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="visibility"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="image"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::shared_ptr<DeferredTaskExecutionResponseSchema>> srcAppApiAssetsCreateAssetFromPromptOrImage(
         utility::string_t assetName,
         boost::optional<utility::string_t> prompt,
@@ -356,7 +359,8 @@ public:
         boost::optional<std::shared_ptr<Image_Bytes>> imageBytes,
         boost::optional<utility::string_t> description,
         boost::optional<utility::string_t> workspaceUuid,
-        boost::optional<utility::string_t> visibility
+        boost::optional<utility::string_t> visibility,
+        boost::optional<std::shared_ptr<HttpContent>> image
     ) const;
     /// <summary>
     /// Create Asset With Urdf
@@ -499,6 +503,14 @@ public:
     /// 
     /// </remarks>
     pplx::task<std::vector<std::shared_ptr<AssetListSchema>>> srcAppApiAssetsListAssets(
+    ) const;
+    /// <summary>
+    /// List Primitive Assets
+    /// </summary>
+    /// <remarks>
+    /// List public catalog assets that have a registry_id_alias (shortcut) set.  These are the \&quot;primitive\&quot; assets — curated catalog entries with a short alias such as &#x60;&#x60;camera&#x60;&#x60; or &#x60;&#x60;lidar&#x60;&#x60; that can be instantiated directly by alias, making it easy to populate an environment programmatically.
+    /// </remarks>
+    pplx::task<std::vector<std::shared_ptr<AssetListSchema>>> srcAppApiAssetsListPrimitiveAssets(
     ) const;
     /// <summary>
     /// Llm Generation
@@ -1283,6 +1295,18 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Patch Environment Navigation Settings
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="environmentNavigationSettingsPatchSchema"></param>
+    pplx::task<std::shared_ptr<EnvironmentSchema>> srcAppApiEnvironmentsPatchEnvironmentNavigationSettings(
+        utility::string_t uuid,
+        std::shared_ptr<EnvironmentNavigationSettingsPatchSchema> environmentNavigationSettingsPatchSchema
+    ) const;
+    /// <summary>
     /// Patch Environment Universal Schema
     /// </summary>
     /// <remarks>
@@ -1361,6 +1385,18 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsRecordingsProcessAllEnvironmentSessions(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Reencode Recording Video
+    /// </summary>
+    /// <remarks>
+    /// Re-encode the MP4 video for a recording to fix decode errors.  This is called automatically by the frontend when video playback fails due to browser decode errors (non-monotonic DTS, corrupted frames).  The re-encoding task runs asynchronously and replaces the original MP4.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="recordingUuid"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsRecordingsReencodeRecordingVideo(
+        utility::string_t uuid,
+        utility::string_t recordingUuid
     ) const;
     /// <summary>
     /// Update Recording Metadata
@@ -2229,6 +2265,18 @@ public:
     pplx::task<std::shared_ptr<TwinActionResponseSchema>> srcAppApiNavigationExecuteTwinNavigation(
         utility::string_t uuid,
         std::shared_ptr<TwinNavigationCommandSchema> twinNavigationCommandSchema
+    ) const;
+    /// <summary>
+    /// Upload Navigation Capture
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="image"></param>
+    pplx::task<std::shared_ptr<TwinNavigationCaptureUploadResponseSchema>> srcAppApiNavigationUploadNavigationCapture(
+        utility::string_t uuid,
+        std::shared_ptr<HttpContent> image
     ) const;
     /// <summary>
     /// Create Project
@@ -3114,7 +3162,7 @@ public:
     /// Edge Sync Workflows
     /// </summary>
     /// <remarks>
-    /// Sync workflows for an edge node.  Returns active workflows with camera_frame triggers for the specified twin, along with resolved plugin requirements from MLModel metadata.  Edge nodes call this to know: 1. Which workflows to run 2. Which plugins/models to install 3. What events to emit
+    /// Sync workflows for an edge node.  Returns active workflows with camera_frame triggers for the specified twin, along with resolved plugin requirements from MLModel metadata and generated worker Python source for each eligible workflow.  Edge nodes call this to know: 1. Which workflows to run 2. Which plugins/models to install 3. What events to emit 4. What worker files to write/update (worker_filename, worker_source,    model_requirements per workflow entry)
     /// </remarks>
     /// <param name="twinUuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiWorkflowsEdgeSyncWorkflows(
@@ -3482,7 +3530,7 @@ public:
     /// Get Workspace By Slug
     /// </summary>
     /// <remarks>
-    /// Retrieve a workspace by slug (public endpoint)
+    /// Retrieve a workspace by slug
     /// </remarks>
     /// <param name="slug"></param>
     pplx::task<std::shared_ptr<WorkspaceSchema>> srcUsersApiWorkspacesGetWorkspaceBySlug(

@@ -2,6 +2,7 @@
 
 #include "constants.h"
 #include <chrono>
+#include <cstdint>
 #include <functional>
 #include <map>
 #include <memory>
@@ -17,6 +18,7 @@ namespace cyberwave
 {
 
 using json = nlohmann::json;
+using SubscriptionId = std::uint64_t;
 
 // Configuration structure
 struct CyberwaveConfig
@@ -31,6 +33,9 @@ struct CyberwaveConfig
     std::string mqtt_password;
     bool mqtt_use_tls = false;
     std::string mqtt_tls_ca_cert;
+    int mqtt_protocol = 0;
+    std::string runtime_mode = "live";
+    std::string twin_uuid;
 };
 
 // Data structures
@@ -354,6 +359,8 @@ public:
      */
     void subscribe(const std::string& topic, MessageCallback callback, int qos = 0);
     void subscribe(const std::string& topic, std::function<void(const json& message)> callback, int qos = 0);
+    SubscriptionId subscribe_with_id(const std::string& topic, MessageCallback callback, int qos = 0);
+    void unsubscribe(SubscriptionId subscription_id);
 
     /**
      * Publish a message to any MQTT topic.
@@ -412,9 +419,16 @@ private:
     int reconnect_attempts_{0};
     int max_reconnect_attempts_{5};
 
-    std::map<std::string, std::vector<MessageCallback>> message_callbacks_;
+    struct RegisteredCallback
+    {
+        SubscriptionId id;
+        MessageCallback callback;
+    };
+
+    std::map<std::string, std::vector<RegisteredCallback>> message_callbacks_;
     std::map<std::string, int> subscription_qos_;
     std::mutex callbacks_mutex_;
+    SubscriptionId next_subscription_id_{1};
     std::mutex telemetry_mutex_;
     std::vector<std::string> twin_uuids_;
     std::vector<std::string> twin_uuids_with_telemetry_start_;

@@ -3,6 +3,7 @@
 #include "cyberwave/mqtt_interface.h"
 #include "mqtt_client.h"
 
+#include <memory>
 #include <string>
 
 namespace cyberwave
@@ -11,6 +12,23 @@ namespace cyberwave
 class CyberwaveMqttClientAdapter : public IMqttClient
 {
 public:
+    class ScopedSubscriptionHandle : public MqttSubscriptionHandle
+    {
+    public:
+        explicit ScopedSubscriptionHandle(std::shared_ptr<bool> active) : active_(std::move(active)) {}
+
+        ~ScopedSubscriptionHandle() override
+        {
+            if (active_)
+            {
+                *active_ = false;
+            }
+        }
+
+    private:
+        std::shared_ptr<bool> active_;
+    };
+
     explicit CyberwaveMqttClientAdapter(CyberwaveMQTTClient& client) : client_(client) {}
 
     bool is_connected() const override { return client_.is_connected(); }
@@ -33,6 +51,24 @@ public:
         client_.subscribe(
             topic, [h = std::move(handler)](const std::string&, const nlohmann::json& message) { h(message.dump()); },
             0);
+    }
+
+    std::unique_ptr<MqttSubscriptionHandle> subscribe_scoped(const std::string& topic,
+                                                             MqttMessageHandler handler) override
+    {
+        auto active = std::make_shared<bool>(true);
+        client_.subscribe(
+            topic,
+            [active, h = std::move(handler)](const std::string&, const nlohmann::json& message)
+            {
+                if (!*active)
+                {
+                    return;
+                }
+                h(message.dump());
+            },
+            0);
+        return std::make_unique<ScopedSubscriptionHandle>(std::move(active));
     }
 
 private:

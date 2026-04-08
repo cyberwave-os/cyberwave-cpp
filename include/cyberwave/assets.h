@@ -37,6 +37,15 @@ public:
     /** @brief Return the asset description. */
     std::string description() const;
 
+    /** @brief Return the canonical registry identifier. */
+    std::string registry_id() const;
+
+    /** @brief Return the first-class registry alias, if present. */
+    std::string registry_id_alias() const;
+
+    /** @brief Return whether the asset defaults to a fixed base. */
+    bool fixed_base() const;
+
 private:
     explicit Asset(std::shared_ptr<void> schema_ptr, bool is_list_schema);
 
@@ -107,6 +116,12 @@ public:
      */
     std::string patch_universal_schema(const std::string& asset_id, const std::string& path,
                                        const std::string& value_json, const std::string& op = "replace") const;
+
+    /**
+     * Rebuild the authoritative universal schema from source files.
+     * Mirrors Python AssetManager.rebuild_universal_schema().
+     */
+    std::string rebuild_universal_schema(const std::string& asset_id, bool sync = false) const;
 
 private:
     std::reference_wrapper<const Client> client_;
