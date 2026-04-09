@@ -3526,7 +3526,7 @@ pplx::task<std::shared_ptr<InitiateLargeUploadResponse>> DefaultApi::srcAppApiAs
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<AssetListSchema>>> DefaultApi::srcAppApiAssetsListAssets() const
+pplx::task<std::vector<std::shared_ptr<AssetListSchema>>> DefaultApi::srcAppApiAssetsListAssets(boost::optional<int32_t> limit, boost::optional<int32_t> offset, boost::optional<utility::string_t> registryId, boost::optional<utility::string_t> registryVendor, boost::optional<utility::string_t> owned, boost::optional<utility::string_t> search, boost::optional<utility::string_t> metadataKey, boost::optional<utility::string_t> metadataValue) const
 {
 
 
@@ -3567,6 +3567,38 @@ pplx::task<std::vector<std::shared_ptr<AssetListSchema>>> DefaultApi::srcAppApiA
 
     std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
 
+    if (limit)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("limit")] = ApiClient::parameterToString(*limit);
+    }
+    if (offset)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("offset")] = ApiClient::parameterToString(*offset);
+    }
+    if (registryId)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("registry_id")] = ApiClient::parameterToString(*registryId);
+    }
+    if (registryVendor)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("registry_vendor")] = ApiClient::parameterToString(*registryVendor);
+    }
+    if (owned)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("owned")] = ApiClient::parameterToString(*owned);
+    }
+    if (search)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("search")] = ApiClient::parameterToString(*search);
+    }
+    if (metadataKey)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("metadata_key")] = ApiClient::parameterToString(*metadataKey);
+    }
+    if (metadataValue)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("metadata_value")] = ApiClient::parameterToString(*metadataValue);
+    }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
     utility::string_t localVarRequestHttpContentType;

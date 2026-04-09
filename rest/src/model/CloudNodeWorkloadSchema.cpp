@@ -153,6 +153,16 @@ web::json::value CloudNodeWorkloadSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("callback_kwargs"))] = ModelBase::toJson(m_Callback_kwargs.get());
     }
+    if(m_Asset_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))] = ModelBase::toJson(m_Asset_uuid.get());
+    }
+    if(m_Asset_name.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("asset_name"))] = ModelBase::toJson(m_Asset_name.get());
+    }
 
     return val;
 }
@@ -391,6 +401,28 @@ bool CloudNodeWorkloadSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("asset_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setAssetUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAssetUuid);
+            setAssetUuid(refVal_setAssetUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("asset_name"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("asset_name")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setAssetName;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAssetName);
+            setAssetName(refVal_setAssetName);
+            
+        }
+    }
     return ok;
 }
 
@@ -484,6 +516,14 @@ void CloudNodeWorkloadSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     if(m_Callback_kwargs.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("callback_kwargs")), m_Callback_kwargs.get()));
+    }
+    if(m_Asset_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_uuid")), m_Asset_uuid.get()));
+    }
+    if(m_Asset_name.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_name")), m_Asset_name.get()));
     }
 }
 
@@ -621,6 +661,18 @@ bool CloudNodeWorkloadSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setCallbackKwargs;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("callback_kwargs"))), refVal_setCallbackKwargs );
         setCallbackKwargs(refVal_setCallbackKwargs);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))))
+    {
+        utility::string_t refVal_setAssetUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))), refVal_setAssetUuid );
+        setAssetUuid(refVal_setAssetUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("asset_name"))))
+    {
+        utility::string_t refVal_setAssetName;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_name"))), refVal_setAssetName );
+        setAssetName(refVal_setAssetName);
     }
     return ok;
 }
@@ -1052,6 +1104,46 @@ bool CloudNodeWorkloadSchema::callbackKwargsIsSet() const
 void CloudNodeWorkloadSchema::unsetCallback_kwargs()
 {
     m_Callback_kwargs.reset();
+}
+utility::string_t CloudNodeWorkloadSchema::getAssetUuid() const
+{
+    return m_Asset_uuid.get();
+}
+
+
+void CloudNodeWorkloadSchema::setAssetUuid(const utility::string_t& value)
+{
+    m_Asset_uuid = value;
+}
+
+bool CloudNodeWorkloadSchema::assetUuidIsSet() const
+{
+    return m_Asset_uuid.has_value();
+}
+
+void CloudNodeWorkloadSchema::unsetAsset_uuid()
+{
+    m_Asset_uuid.reset();
+}
+utility::string_t CloudNodeWorkloadSchema::getAssetName() const
+{
+    return m_Asset_name.get();
+}
+
+
+void CloudNodeWorkloadSchema::setAssetName(const utility::string_t& value)
+{
+    m_Asset_name = value;
+}
+
+bool CloudNodeWorkloadSchema::assetNameIsSet() const
+{
+    return m_Asset_name.has_value();
+}
+
+void CloudNodeWorkloadSchema::unsetAsset_name()
+{
+    m_Asset_name.reset();
 }
 
 }

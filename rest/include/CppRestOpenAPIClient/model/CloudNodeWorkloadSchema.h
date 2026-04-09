@@ -164,6 +164,16 @@ public:
     void unsetCallback_kwargs();
     void setCallbackKwargs(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    utility::string_t getAssetUuid() const;
+    bool assetUuidIsSet() const;
+    void unsetAsset_uuid();
+    void setAssetUuid(const utility::string_t& value);
+
+    utility::string_t getAssetName() const;
+    bool assetNameIsSet() const;
+    void unsetAsset_name();
+    void setAssetName(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -214,6 +224,10 @@ protected:
     boost::optional<utility::string_t> m_Callback_task;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Callback_kwargs;
+
+    boost::optional<utility::string_t> m_Asset_uuid;
+
+    boost::optional<utility::string_t> m_Asset_name;
 
 };
 

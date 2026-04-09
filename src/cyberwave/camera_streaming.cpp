@@ -630,7 +630,7 @@ private:
             codec_ctx_->bit_rate = static_cast<std::int64_t>(h264_bitrate_kbps_) * 1000LL;
             codec_ctx_->gop_size = std::max(1, h264_gop_size_);
             codec_ctx_->max_b_frames = 0;
-            codec_ctx_->thread_count = 1;
+            codec_ctx_->thread_count = 0; // 0 = auto-detect optimal thread count
 
             if (codec_name_ == "libx264")
             {
@@ -783,7 +783,8 @@ public:
 
         ssrc_ = 1 + (std::rand() % 0xFFFFFFFEu);
         auto video_description = rtc::Description::Video("video", rtc::Description::Direction::SendOnly);
-        video_description.addH264Codec(payload_type_h264_);
+        video_description.addH264Codec(payload_type_h264_,
+                                       "profile-level-id=42001f;packetization-mode=1;level-asymmetry-allowed=1");
         video_description.addSSRC(ssrc_, cname_, msid_, track_id_);
         video_track_ = peer_connection_->addTrack(video_description);
 
@@ -1301,16 +1302,51 @@ void DepthStreamer::start()
         running_ = false;
         return;
     }
+    if (publish_pointcloud_)
+    {
+        pc_publish_thread_ = std::thread(&DepthStreamer::pointcloud_publish_loop, this);
+    }
     thread_ = std::thread(&DepthStreamer::stream_loop, this);
 }
 
 void DepthStreamer::stop()
 {
     running_ = false;
+    pc_cv_.notify_all();
+    if (pc_publish_thread_.joinable())
+    {
+        pc_publish_thread_.join();
+        pc_publish_thread_ = std::thread();
+    }
     if (thread_.joinable())
     {
         thread_.join();
         thread_ = std::thread();
+    }
+}
+
+void DepthStreamer::pointcloud_publish_loop()
+{
+    while (running_ && mqtt_ && mqtt_->is_connected())
+    {
+        std::string topic;
+        std::string payload;
+        {
+            std::unique_lock<std::mutex> lock(pc_mutex_);
+            pc_cv_.wait(lock, [this] { return pc_has_pending_ || !running_; });
+            if (!running_ && !pc_has_pending_)
+                break;
+            topic = std::move(pc_pending_topic_);
+            payload = std::move(pc_pending_payload_);
+            pc_has_pending_ = false;
+        }
+        try
+        {
+            mqtt_->publish(topic, payload);
+        }
+        catch (...)
+        {
+        }
     }
 }
 
@@ -1325,13 +1361,11 @@ void DepthStreamer::stream_loop()
         DepthFrame frame;
         if (publish_depth_ && source_ && source_->next_depth_frame(frame) && !frame.data.empty())
         {
-            // Encode raw 16-bit depth as base64
             std::string b64 = base64_encode(reinterpret_cast<const unsigned char*>(frame.data.data()),
                                             frame.data.size() * sizeof(uint16_t));
             web::json::value data = web::json::value::object();
             data[from_std("width")] = frame.width;
             data[from_std("height")] = frame.height;
-            // Match Python SDK contract exactly for backend parity.
             data[from_std("dtype")] = web::json::value::string(from_std("uint16"));
             data[from_std("depth_binary")] = web::json::value::string(from_std(b64));
             web::json::value payload = web::json::value::object();
@@ -1342,20 +1376,28 @@ void DepthStreamer::stream_loop()
             mqtt_->publish(depth_topic, json_serialize(payload));
         }
 
-        // Point cloud → /pointcloud (if source supports it)
+        // Pointcloud → hand off to the dedicated publish thread (non-blocking).
+        // The slot overwrites any unsent payload, so the publisher always sends
+        // the freshest frame and stale data is dropped — not queued.
         std::vector<PointXYZRGB> cloud;
         if (publish_pointcloud_ && source_ && source_->next_point_cloud(cloud) && !cloud.empty())
         {
-            // Match Python/backend/frontend contract:
-            // {"type":"pointcloud","data":"<base64 float32 xyzrgb bytes>","timestamp":...}
             std::string bytes_b64 =
                 base64_encode(reinterpret_cast<const unsigned char*>(cloud.data()), cloud.size() * sizeof(PointXYZRGB));
             web::json::value pc_payload = web::json::value::object();
             pc_payload[from_std("type")] = web::json::value::string(from_std("pointcloud"));
             pc_payload[from_std("data")] = web::json::value::string(from_std(bytes_b64));
+            pc_payload[from_std("point_count")] = web::json::value::number(static_cast<int>(cloud.size()));
+            pc_payload[from_std("point_stride")] = web::json::value::number(6);
             pc_payload[from_std("timestamp")] = timestamp_now();
             std::string pc_topic = mqtt_->get_topic_prefix() + "cyberwave/twin/" + twin_uuid_ + "/pointcloud";
-            mqtt_->publish(pc_topic, json_serialize(pc_payload));
+            {
+                std::lock_guard<std::mutex> lock(pc_mutex_);
+                pc_pending_topic_ = std::move(pc_topic);
+                pc_pending_payload_ = json_serialize(pc_payload);
+                pc_has_pending_ = true;
+            }
+            pc_cv_.notify_one();
         }
 
         auto elapsed = std::chrono::steady_clock::now() - frame_start;
@@ -1364,6 +1406,7 @@ void DepthStreamer::stream_loop()
             std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::steady_clock::duration>(sleep_dur));
     }
     running_ = false;
+    pc_cv_.notify_all();
 }
 
 } // namespace cyberwave

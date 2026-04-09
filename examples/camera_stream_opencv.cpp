@@ -12,15 +12,15 @@
         export TWIN_UUID=your-camera-twin-uuid
 
     Requires:
-     - MQTT example deps (PahoMqttCpp + nlohmann_json + spdlog)
+     - MQTT example deps (libmosquitto + nlohmann_json + spdlog)
      - OpenCV (core,imgproc,videoio)
 */
 
 #include <cyberwave/camera_streaming.h>
 #include <cyberwave/client.h>
 #include <cyberwave/config.h>
+#include <cyberwave/cyberwave_mqtt_adapter.h>
 #include <cyberwave/exceptions.h>
-#include <cyberwave/paho_mqtt_adapter.h>
 #include <cyberwave/twin_subclasses.h>
 
 #include <opencv2/imgcodecs.hpp>
@@ -91,7 +91,7 @@ int main()
         cfg.load_from_environment();
         cyberwave::Client cw(cfg);
 
-        auto adapter = std::make_shared<cyberwave::PahoMqttAdapter>(cfg);
+        auto adapter = std::make_shared<cyberwave::CyberwaveMqttAdapter>(cfg);
         adapter->connect();
         cw.set_mqtt_client(adapter);
 

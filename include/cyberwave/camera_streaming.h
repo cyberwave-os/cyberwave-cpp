@@ -10,9 +10,11 @@
 #include <array>
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <thread>
 #include <vector>
@@ -144,6 +146,12 @@ struct IDepthSource
 
 /**
  * @brief Streamer that publishes depth and optional point-cloud payloads.
+ *
+ * Pointcloud publishes run on a dedicated background thread with a
+ * single-slot "latest wins" buffer so that the acquisition loop is never
+ * blocked by MQTT back-pressure.  If the network cannot keep up, stale
+ * frames are silently replaced by newer ones — the correct behaviour for
+ * real-time sensor streams.
  */
 class DepthStreamer
 {
@@ -161,6 +169,7 @@ public:
 
 private:
     void stream_loop();
+    void pointcloud_publish_loop();
 
     std::shared_ptr<IMqttClient> mqtt_;
     std::string twin_uuid_;
@@ -170,6 +179,14 @@ private:
     bool publish_pointcloud_{true};
     std::atomic<bool> running_{false};
     std::thread thread_;
+
+    // Single-slot latest-wins buffer for async pointcloud publishing.
+    std::thread pc_publish_thread_;
+    std::mutex pc_mutex_;
+    std::condition_variable pc_cv_;
+    std::string pc_pending_topic_;
+    std::string pc_pending_payload_;
+    bool pc_has_pending_{false};
 };
 
 /**
