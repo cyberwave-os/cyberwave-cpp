@@ -5,12 +5,10 @@ project(cyberwave_mqtt_client VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find required packages. Parent may have already found them (to decide if MQTT
-# examples are built); avoid find_package again to prevent duplicate imported
-# target "PahoMqttC::PahoMqttC" (PahoMqttCpp's find_dependency(PahoMqttC) would
-# re-run FindPahoMqttC.cmake and try to add the same target).
-if(NOT TARGET PahoMqttCpp::paho-mqttpp3)
-  find_package(PahoMqttCpp REQUIRED)
+# Find required packages.
+find_package(PkgConfig REQUIRED)
+if(NOT TARGET PkgConfig::MOSQUITTO)
+  pkg_check_modules(MOSQUITTO REQUIRED IMPORTED_TARGET libmosquitto)
 endif()
 if(NOT TARGET nlohmann_json::nlohmann_json)
   find_package(nlohmann_json REQUIRED)
@@ -41,7 +39,7 @@ set_target_properties(cyberwave_mqtt_client PROPERTIES
 # Link libraries
 target_link_libraries(cyberwave_mqtt_client
     PUBLIC
-        PahoMqttCpp::paho-mqttpp3
+        PkgConfig::MOSQUITTO
         nlohmann_json::nlohmann_json
         spdlog::spdlog
 )
@@ -60,7 +58,24 @@ install(FILES mqtt_client.h
 )
 
 install(EXPORT cyberwave_mqtt_client-targets
-    FILE cyberwave_mqtt_client-config.cmake
     NAMESPACE cyberwave::
+    DESTINATION lib/cmake/cyberwave_mqtt_client
+)
+
+# Generate a config file that re-creates transitive dependencies for consumers.
+include(CMakePackageConfigHelpers)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/cyberwave_mqtt_client-config.cmake"
+[=[
+include(CMakeFindDependencyMacro)
+find_dependency(PkgConfig REQUIRED)
+if(NOT TARGET PkgConfig::MOSQUITTO)
+  pkg_check_modules(MOSQUITTO REQUIRED IMPORTED_TARGET libmosquitto)
+endif()
+find_dependency(nlohmann_json REQUIRED)
+find_dependency(spdlog REQUIRED)
+include("${CMAKE_CURRENT_LIST_DIR}/cyberwave_mqtt_client-targets.cmake")
+]=]
+)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cyberwave_mqtt_client-config.cmake"
     DESTINATION lib/cmake/cyberwave_mqtt_client
 )

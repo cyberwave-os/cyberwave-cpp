@@ -9,6 +9,8 @@
 #include <chrono>
 #include <cstdlib>
 #include <filesystem>
+#include <mutex>
+#include <random>
 #include <stdexcept>
 #include <string_view>
 
@@ -16,8 +18,35 @@ using json = nlohmann::json;
 
 namespace cyberwave
 {
+
+// ── MosquittoDeleter ────────────────────────────────────────────────────────
+
+void MosquittoDeleter::operator()(struct mosquitto* m) const noexcept
+{
+    if (m)
+    {
+        mosquitto_destroy(m);
+    }
+}
+
 namespace
 {
+
+// ── Library lifecycle (process-global, init once) ───────────────────────────
+
+std::once_flag mosq_lib_init_flag;
+
+void ensure_mosq_lib_init()
+{
+    std::call_once(mosq_lib_init_flag,
+                   []
+                   {
+                       mosquitto_lib_init();
+                       std::atexit([] { mosquitto_lib_cleanup(); });
+                   });
+}
+
+// ── Logging ─────────────────────────────────────────────────────────────────
 
 inline spdlog::logger& mqtt_log()
 {
@@ -91,7 +120,9 @@ bool parse_bool_env(const std::string& value)
 
 } // namespace
 
-CyberwaveMQTTClient::CyberwaveMQTTClient(const CyberwaveConfig& config) : config_(config), connected_(false)
+// ── Constructor / Destructor ────────────────────────────────────────────────
+
+CyberwaveMQTTClient::CyberwaveMQTTClient(const CyberwaveConfig& config) : config_(config)
 {
     const std::string env_mqtt_host = read_env("CYBERWAVE_MQTT_HOST");
     mqtt_broker_ =
@@ -131,13 +162,12 @@ CyberwaveMQTTClient::CyberwaveMQTTClient(const CyberwaveConfig& config) : config
     }
     topic_prefix_ = resolve_topic_prefix(config);
 
-    bool use_tls = config_.mqtt_use_tls;
     if (has_nonempty_env("CYBERWAVE_MQTT_USE_TLS"))
     {
         const std::string env_mqtt_tls = read_env("CYBERWAVE_MQTT_USE_TLS");
         try
         {
-            use_tls = parse_bool_env(env_mqtt_tls);
+            config_.mqtt_use_tls = parse_bool_env(env_mqtt_tls);
         }
         catch (const std::invalid_argument&)
         {
@@ -149,15 +179,429 @@ CyberwaveMQTTClient::CyberwaveMQTTClient(const CyberwaveConfig& config) : config
         config_.mqtt_tls_ca_cert = read_env("CYBERWAVE_MQTT_TLS_CA_CERT");
     }
 
-    const std::string server_uri = (use_tls ? "ssl://" : "tcp://") + mqtt_broker_ + ":" + std::to_string(mqtt_port_);
     client_id_ = (config_.runtime_mode == "simulation" ? "sdk_sim_" : "sdk_") + generate_client_id();
-    client_ = std::make_unique<mqtt::async_client>(server_uri, client_id_);
 
-    callback_ = std::make_unique<MQTTCallback>(*this);
-    client_->set_callback(*callback_);
+    ensure_mosq_lib_init();
+    mosq_.reset(mosquitto_new(client_id_.c_str(), true, this));
+    if (!mosq_)
+    {
+        throw std::runtime_error("mosquitto_new failed (out of memory)");
+    }
+
+    mosquitto_connect_callback_set(mosq_.get(), on_connect_cb);
+    mosquitto_disconnect_callback_set(mosq_.get(), on_disconnect_cb);
+    mosquitto_message_callback_set(mosq_.get(), on_message_cb);
 }
 
-CyberwaveMQTTClient::~CyberwaveMQTTClient() { disconnect(); }
+CyberwaveMQTTClient::~CyberwaveMQTTClient()
+{
+    disconnect();
+    if (loop_started_)
+    {
+        mosquitto_loop_stop(mosq_.get(), true);
+        loop_started_ = false;
+    }
+}
+
+// ── Connection ──────────────────────────────────────────────────────────────
+
+void CyberwaveMQTTClient::connect()
+{
+    if (connected_)
+    {
+        return;
+    }
+
+    const bool use_tls = config_.mqtt_use_tls;
+
+    mosquitto_username_pw_set(mosq_.get(), mqtt_username_.c_str(), mqtt_api_token_.c_str());
+    mosquitto_reconnect_delay_set(mosq_.get(), 1, 30, true);
+
+    if (config_.mqtt_protocol > 0)
+    {
+        mosquitto_int_option(mosq_.get(), MOSQ_OPT_PROTOCOL_VERSION, config_.mqtt_protocol);
+    }
+
+    if (use_tls)
+    {
+        std::string ca_path;
+        if (!config_.mqtt_tls_ca_cert.empty())
+        {
+            bool ca_exists = false;
+            try
+            {
+                ca_exists = std::filesystem::exists(config_.mqtt_tls_ca_cert);
+            }
+            catch (...)
+            {
+                ca_exists = false;
+            }
+
+            mqtt_log().info("MQTT TLS CA cert configured: '{}' (exists={})", config_.mqtt_tls_ca_cert, ca_exists);
+
+            if (ca_exists)
+            {
+                ca_path = config_.mqtt_tls_ca_cert;
+            }
+            else
+            {
+                mqtt_log().warn("MQTT TLS CA cert path not found; falling back to system trust store: '{}'",
+                                config_.mqtt_tls_ca_cert);
+            }
+        }
+
+        if (ca_path.empty())
+        {
+            const char* default_ca_paths[] = {
+                "/etc/ssl/certs/ca-certificates.crt",
+                "/etc/ssl/cert.pem",
+            };
+
+            for (const char* path : default_ca_paths)
+            {
+                if (!path)
+                    continue;
+                try
+                {
+                    if (std::filesystem::exists(path))
+                    {
+                        ca_path = path;
+                        mqtt_log().info("MQTT TLS CA cert not configured; using default CA bundle: '{}'", path);
+                        break;
+                    }
+                }
+                catch (...)
+                {
+                }
+            }
+            if (ca_path.empty())
+            {
+                mqtt_log().warn(
+                    "MQTT TLS CA cert not configured and default CA bundles not found; relying on MQTT TLS defaults");
+            }
+        }
+
+        int rc = mosquitto_tls_set(mosq_.get(), ca_path.empty() ? nullptr : ca_path.c_str(), nullptr, nullptr, nullptr,
+                                   nullptr);
+        if (rc != MOSQ_ERR_SUCCESS)
+        {
+            std::string message = std::string("MQTT TLS setup error: ") + mosquitto_strerror(rc);
+            mqtt_log().error("{}", message);
+            throw std::runtime_error(message);
+        }
+        mosquitto_tls_insecure_set(mosq_.get(), false);
+    }
+
+    mqtt_log().info("Connecting to MQTT broker: {}:{} ({})", mqtt_broker_, mqtt_port_,
+                    use_tls ? "TLS enabled" : "TLS disabled");
+
+    int rc = mosquitto_loop_start(mosq_.get());
+    if (rc != MOSQ_ERR_SUCCESS)
+    {
+        std::string message = std::string("Failed to start MQTT loop: ") + mosquitto_strerror(rc);
+        mqtt_log().error("{}", message);
+        throw std::runtime_error(message);
+    }
+    loop_started_ = true;
+
+    rc = mosquitto_connect_async(mosq_.get(), mqtt_broker_.c_str(), mqtt_port_, 60);
+    if (rc != MOSQ_ERR_SUCCESS)
+    {
+        std::string message = std::string("MQTT connection error: ") + mosquitto_strerror(rc);
+        if (mqtt_port_ == 1883 && use_tls)
+        {
+            message += " Hint: port 1883 is usually non-TLS. Set CYBERWAVE_MQTT_USE_TLS=false, "
+                       "or use port 8883 for TLS.";
+        }
+        mqtt_log().error("{}", message);
+        throw std::runtime_error(message);
+    }
+
+    {
+        std::unique_lock<std::mutex> lock(connect_mutex_);
+        if (!connect_cv_.wait_for(lock, std::chrono::seconds(10), [this] { return connected_.load(); }))
+        {
+            throw std::runtime_error("MQTT connect timed out after 10s");
+        }
+    }
+
+    mqtt_log().info("Connected to MQTT broker successfully");
+    resubscribe_registered_topics();
+
+    std::lock_guard<std::mutex> lock(telemetry_mutex_);
+    for (const auto& twin_uuid : twin_uuids_)
+    {
+        if (!contains_uuid(twin_uuids_with_telemetry_start_, twin_uuid))
+        {
+            twin_uuids_with_telemetry_start_.push_back(twin_uuid);
+            publish_connect_message(twin_uuid);
+            publish_telemetry_start_message(twin_uuid);
+        }
+    }
+}
+
+void CyberwaveMQTTClient::disconnect()
+{
+    if (!connected_)
+    {
+        return;
+    }
+
+    try
+    {
+        std::vector<std::string> tracked_twins;
+        {
+            std::lock_guard<std::mutex> lock(telemetry_mutex_);
+            tracked_twins = twin_uuids_;
+        }
+        for (const auto& twin_uuid : tracked_twins)
+        {
+            publish_disconnect_message(twin_uuid);
+            publish_telemetry_end(twin_uuid);
+        }
+    }
+    catch (...)
+    {
+        mqtt_log().warn("Error publishing disconnect messages");
+    }
+
+    connected_ = false;
+    mosquitto_disconnect(mosq_.get());
+
+    if (loop_started_)
+    {
+        mosquitto_loop_stop(mosq_.get(), false);
+        loop_started_ = false;
+    }
+
+    mqtt_log().info("Disconnected from MQTT broker");
+}
+
+bool CyberwaveMQTTClient::is_connected() const { return connected_; }
+
+std::string CyberwaveMQTTClient::get_topic_prefix() const { return topic_prefix_; }
+
+// ── libmosquitto callbacks ──────────────────────────────────────────────────
+
+void CyberwaveMQTTClient::on_connect_cb(struct mosquitto* /*mosq*/, void* userdata, int rc)
+{
+    auto& self = *static_cast<CyberwaveMQTTClient*>(userdata);
+    if (rc == 0)
+    {
+        self.reconnect_attempts_ = 0;
+        {
+            std::lock_guard<std::mutex> lock(self.connect_mutex_);
+            self.connected_ = true;
+        }
+        self.connect_cv_.notify_all();
+        mqtt_log().info("MQTT connection established");
+        self.resubscribe_registered_topics();
+    }
+    else
+    {
+        mqtt_log().error("MQTT connection refused: {}", mosquitto_connack_string(rc));
+    }
+}
+
+void CyberwaveMQTTClient::on_disconnect_cb(struct mosquitto* /*mosq*/, void* userdata, int rc)
+{
+    auto& self = *static_cast<CyberwaveMQTTClient*>(userdata);
+    self.connected_ = false;
+
+    if (rc == 0)
+    {
+        mqtt_log().info("MQTT disconnected cleanly");
+        return;
+    }
+
+    self.reconnect_attempts_ += 1;
+    if (self.reconnect_attempts_ < self.max_reconnect_attempts_)
+    {
+        mqtt_log().warn("MQTT connection lost (rc={}); reconnecting ({}/{})...", rc, self.reconnect_attempts_,
+                        self.max_reconnect_attempts_);
+    }
+    else
+    {
+        mqtt_log().error("MQTT connection lost (rc={}); max reconnection attempts reached", rc);
+    }
+}
+
+void CyberwaveMQTTClient::on_message_cb(struct mosquitto* /*mosq*/, void* userdata, const struct mosquitto_message* msg)
+{
+    if (!msg || !msg->topic)
+        return;
+    auto& self = *static_cast<CyberwaveMQTTClient*>(userdata);
+    std::string topic(msg->topic);
+    std::string payload;
+    if (msg->payload && msg->payloadlen > 0)
+    {
+        payload.assign(static_cast<const char*>(msg->payload), static_cast<std::size_t>(msg->payloadlen));
+    }
+    self.handle_message(topic, payload);
+}
+
+// ── Publish ─────────────────────────────────────────────────────────────────
+
+void CyberwaveMQTTClient::publish(const std::string& topic, const json& message, int qos)
+{
+    if (!connected_)
+    {
+        mqtt_log().warn("Cannot publish to {}: not connected to MQTT broker", topic);
+        return;
+    }
+
+    json payload_json = message;
+    if (payload_json.is_object() && !payload_json.contains("session_id"))
+    {
+        payload_json["session_id"] = client_id_;
+    }
+    std::string payload = payload_json.dump();
+
+    int rc = mosquitto_publish(mosq_.get(), nullptr, topic.c_str(), static_cast<int>(payload.size()), payload.c_str(),
+                               qos, false);
+    if (rc != MOSQ_ERR_SUCCESS)
+    {
+        mqtt_log().warn("MQTT publish error on {}: {}", topic, mosquitto_strerror(rc));
+    }
+}
+
+void CyberwaveMQTTClient::publish(const std::string& topic, const std::string& message, int qos)
+{
+    if (!connected_)
+    {
+        mqtt_log().warn("Cannot publish to {}: not connected to MQTT broker", topic);
+        return;
+    }
+
+    int rc = mosquitto_publish(mosq_.get(), nullptr, topic.c_str(), static_cast<int>(message.size()), message.c_str(),
+                               qos, false);
+    if (rc != MOSQ_ERR_SUCCESS)
+    {
+        mqtt_log().warn("MQTT publish error on {}: {}", topic, mosquitto_strerror(rc));
+    }
+}
+
+// ── Subscribe / Unsubscribe ─────────────────────────────────────────────────
+
+SubscriptionId CyberwaveMQTTClient::subscribe_with_id(const std::string& topic, MessageCallback callback, int qos)
+{
+    SubscriptionId subscription_id = 0;
+    {
+        std::lock_guard<std::mutex> lock(callbacks_mutex_);
+        subscription_id = next_subscription_id_++;
+        message_callbacks_[topic].push_back({subscription_id, std::move(callback)});
+        const auto qos_it = subscription_qos_.find(topic);
+        if (qos_it == subscription_qos_.end())
+        {
+            subscription_qos_[topic] = qos;
+        }
+        else if (qos > qos_it->second)
+        {
+            subscription_qos_[topic] = qos;
+        }
+    }
+
+    if (!connected_)
+    {
+        mqtt_log().warn("Cannot subscribe to {}: not connected to MQTT broker", topic);
+        return subscription_id;
+    }
+
+    int rc = mosquitto_subscribe(mosq_.get(), nullptr, topic.c_str(), qos);
+    if (rc == MOSQ_ERR_SUCCESS)
+    {
+        mqtt_log().info("Subscribed to topic: {}", topic);
+    }
+    else
+    {
+        mqtt_log().error("MQTT subscribe error on {}: {}", topic, mosquitto_strerror(rc));
+    }
+
+    return subscription_id;
+}
+
+void CyberwaveMQTTClient::subscribe(const std::string& topic, MessageCallback callback, int qos)
+{
+    (void)subscribe_with_id(topic, std::move(callback), qos);
+}
+
+void CyberwaveMQTTClient::subscribe(const std::string& topic, std::function<void(const json& message)> callback,
+                                    int qos)
+{
+    subscribe(
+        topic, [callback = std::move(callback)](const std::string&, const json& message) { callback(message); }, qos);
+}
+
+void CyberwaveMQTTClient::unsubscribe(SubscriptionId subscription_id)
+{
+    std::vector<std::string> topics_to_unsubscribe;
+    {
+        std::lock_guard<std::mutex> lock(callbacks_mutex_);
+        for (auto callbacks_it = message_callbacks_.begin(); callbacks_it != message_callbacks_.end();)
+        {
+            auto& callbacks = callbacks_it->second;
+            callbacks.erase(std::remove_if(callbacks.begin(), callbacks.end(),
+                                           [subscription_id](const RegisteredCallback& registered)
+                                           { return registered.id == subscription_id; }),
+                            callbacks.end());
+
+            if (callbacks.empty())
+            {
+                topics_to_unsubscribe.push_back(callbacks_it->first);
+                subscription_qos_.erase(callbacks_it->first);
+                callbacks_it = message_callbacks_.erase(callbacks_it);
+            }
+            else
+            {
+                ++callbacks_it;
+            }
+        }
+    }
+
+    if (!connected_)
+    {
+        return;
+    }
+
+    for (const auto& topic : topics_to_unsubscribe)
+    {
+        int rc = mosquitto_unsubscribe(mosq_.get(), nullptr, topic.c_str());
+        if (rc != MOSQ_ERR_SUCCESS)
+        {
+            mqtt_log().error("MQTT unsubscribe error on {}: {}", topic, mosquitto_strerror(rc));
+        }
+    }
+}
+
+// ── Resubscribe (after reconnect) ───────────────────────────────────────────
+
+void CyberwaveMQTTClient::resubscribe_registered_topics()
+{
+    std::vector<std::pair<std::string, int>> topics;
+    {
+        std::lock_guard<std::mutex> lock(callbacks_mutex_);
+        topics.reserve(subscription_qos_.size());
+        for (const auto& [topic, qos] : subscription_qos_)
+        {
+            topics.emplace_back(topic, qos);
+        }
+    }
+
+    for (const auto& [topic, qos] : topics)
+    {
+        int rc = mosquitto_subscribe(mosq_.get(), nullptr, topic.c_str(), qos);
+        if (rc == MOSQ_ERR_SUCCESS)
+        {
+            mqtt_log().info("Resubscribed to topic: {}", topic);
+        }
+        else
+        {
+            mqtt_log().error("MQTT resubscribe error for {}: {}", topic, mosquitto_strerror(rc));
+        }
+    }
+}
+
+// ── Helpers (unchanged business logic) ──────────────────────────────────────
 
 std::string CyberwaveMQTTClient::generate_client_id()
 {
@@ -225,7 +669,6 @@ std::string CyberwaveMQTTClient::resolve_topic_prefix(const CyberwaveConfig& con
         return normalize_topic_prefix(prefixed_environment);
     }
 
-    // Legacy fallback.
     return normalize_topic_prefix(read_env("ENVIRONMENT"));
 }
 
@@ -252,166 +695,7 @@ bool CyberwaveMQTTClient::is_valid_source_type(const std::string& source_type) c
            source_type == SOURCE_TYPE_EDIT || source_type == SOURCE_TYPE_SIM || source_type == SOURCE_TYPE_SIM_TELE;
 }
 
-void CyberwaveMQTTClient::connect()
-{
-    if (connected_)
-    {
-        return;
-    }
-
-    const bool use_tls = config_.mqtt_use_tls;
-    try
-    {
-        mqtt::connect_options conn_opts;
-        conn_opts.set_user_name(mqtt_username_);
-        conn_opts.set_password(mqtt_api_token_);
-        conn_opts.set_keep_alive_interval(60);
-        conn_opts.set_clean_session(true);
-        conn_opts.set_automatic_reconnect(1, 30);
-        if (config_.mqtt_protocol > 0)
-        {
-            conn_opts.set_mqtt_version(config_.mqtt_protocol);
-        }
-        if (use_tls)
-        {
-            mqtt::ssl_options_builder ssl_builder;
-            ssl_builder.enable_server_cert_auth(true);
-            if (!config_.mqtt_tls_ca_cert.empty())
-            {
-                bool ca_exists = false;
-                try
-                {
-                    ca_exists = std::filesystem::exists(config_.mqtt_tls_ca_cert);
-                }
-                catch (...)
-                {
-                    ca_exists = false;
-                }
-
-                mqtt_log().info("MQTT TLS CA cert configured: '{}' (exists={})", config_.mqtt_tls_ca_cert, ca_exists);
-
-                if (ca_exists)
-                {
-                    ssl_builder.trust_store(config_.mqtt_tls_ca_cert);
-                }
-                else
-                {
-                    mqtt_log().warn("MQTT TLS CA cert path not found; falling back to system trust store: '{}'",
-                                    config_.mqtt_tls_ca_cert);
-                }
-            }
-            else
-            {
-                // Some MQTT TLS stacks do not automatically load the platform trust store unless
-                // an explicit trust store is set. Load common CA bundle paths if present.
-                const char* default_ca_paths[] = {
-                    "/etc/ssl/certs/ca-certificates.crt",
-                    "/etc/ssl/cert.pem",
-                };
-
-                bool loaded_default_ca = false;
-                for (const char* path : default_ca_paths)
-                {
-                    if (!path)
-                        continue;
-                    try
-                    {
-                        if (std::filesystem::exists(path))
-                        {
-                            ssl_builder.trust_store(path);
-                            loaded_default_ca = true;
-                            mqtt_log().info("MQTT TLS CA cert not configured; using default CA bundle: '{}'", path);
-                            break;
-                        }
-                    }
-                    catch (...)
-                    {
-                        // Ignore and try next path.
-                    }
-                }
-                if (!loaded_default_ca)
-                {
-                    mqtt_log().warn("MQTT TLS CA cert not configured and default CA bundles not found; relying on MQTT "
-                                    "TLS defaults");
-                }
-            }
-            conn_opts.set_ssl(ssl_builder.finalize());
-        }
-
-        mqtt_log().info("Connecting to MQTT broker: {}:{} ({})", mqtt_broker_, mqtt_port_,
-                        use_tls ? "TLS enabled" : "TLS disabled");
-
-        auto token = client_->connect(conn_opts);
-        if (!token->wait_for(std::chrono::seconds(10)))
-        {
-            throw std::runtime_error("MQTT connect timed out after 10s");
-        }
-
-        connected_ = true;
-        mqtt_log().info("Connected to MQTT broker successfully");
-        resubscribe_registered_topics();
-
-        std::lock_guard<std::mutex> lock(telemetry_mutex_);
-        for (const auto& twin_uuid : twin_uuids_)
-        {
-            if (!contains_uuid(twin_uuids_with_telemetry_start_, twin_uuid))
-            {
-                twin_uuids_with_telemetry_start_.push_back(twin_uuid);
-                publish_connect_message(twin_uuid);
-                publish_telemetry_start_message(twin_uuid);
-            }
-        }
-    }
-    catch (const mqtt::exception& exc)
-    {
-        std::string message = std::string("MQTT connection error: ") + exc.what();
-        if (mqtt_port_ == 1883 && use_tls)
-        {
-            message += " Hint: port 1883 is usually non-TLS. Set CYBERWAVE_MQTT_USE_TLS=false, "
-                       "or use port 8883 for TLS.";
-        }
-        mqtt_log().error("{}", message);
-        throw std::runtime_error(message);
-    }
-}
-
-void CyberwaveMQTTClient::disconnect()
-{
-    if (!connected_)
-    {
-        return;
-    }
-
-    try
-    {
-        std::vector<std::string> tracked_twins;
-        {
-            std::lock_guard<std::mutex> lock(telemetry_mutex_);
-            tracked_twins = twin_uuids_;
-        }
-        for (const auto& twin_uuid : tracked_twins)
-        {
-            publish_disconnect_message(twin_uuid);
-            publish_telemetry_end(twin_uuid);
-        }
-
-        auto token = client_->disconnect();
-        if (!token->wait_for(std::chrono::seconds(5)))
-        {
-            mqtt_log().warn("MQTT disconnect timed out after 5s; forcing local disconnect state");
-        }
-        connected_ = false;
-        mqtt_log().info("Disconnected from MQTT broker");
-    }
-    catch (const mqtt::exception& exc)
-    {
-        mqtt_log().error("MQTT disconnect error: {}", exc.what());
-    }
-}
-
-bool CyberwaveMQTTClient::is_connected() const { return connected_; }
-
-std::string CyberwaveMQTTClient::get_topic_prefix() const { return topic_prefix_; }
+// ── Telemetry lifecycle ─────────────────────────────────────────────────────
 
 void CyberwaveMQTTClient::publish_connect_message(const std::string& twin_uuid)
 {
@@ -499,174 +783,7 @@ void CyberwaveMQTTClient::publish_initial_observation(const std::string& twin_uu
                                                                             {"timestamp", now_seconds()}});
 }
 
-SubscriptionId CyberwaveMQTTClient::subscribe_with_id(const std::string& topic, MessageCallback callback, int qos)
-{
-    SubscriptionId subscription_id = 0;
-    {
-        std::lock_guard<std::mutex> lock(callbacks_mutex_);
-        subscription_id = next_subscription_id_++;
-        message_callbacks_[topic].push_back({subscription_id, std::move(callback)});
-        const auto qos_it = subscription_qos_.find(topic);
-        if (qos_it == subscription_qos_.end())
-        {
-            subscription_qos_[topic] = qos;
-        }
-        else if (qos > qos_it->second)
-        {
-            subscription_qos_[topic] = qos;
-        }
-    }
-
-    if (!connected_)
-    {
-        mqtt_log().warn("Cannot subscribe to {}: not connected to MQTT broker", topic);
-        return subscription_id;
-    }
-
-    try
-    {
-        auto token = client_->subscribe(topic, qos);
-        if (!token->wait_for(std::chrono::seconds(5)))
-        {
-            mqtt_log().warn("MQTT subscribe timed out after 5s: {} (continuing; broker may still complete "
-                            "subscription asynchronously)",
-                            topic);
-        }
-        mqtt_log().info("Subscribed to topic: {}", topic);
-    }
-    catch (const mqtt::exception& exc)
-    {
-        mqtt_log().error("MQTT subscribe error: {}", exc.what());
-        return subscription_id;
-    }
-
-    return subscription_id;
-}
-
-void CyberwaveMQTTClient::subscribe(const std::string& topic, MessageCallback callback, int qos)
-{
-    (void)subscribe_with_id(topic, std::move(callback), qos);
-}
-
-void CyberwaveMQTTClient::subscribe(const std::string& topic, std::function<void(const json& message)> callback,
-                                    int qos)
-{
-    subscribe(
-        topic, [callback = std::move(callback)](const std::string&, const json& message) { callback(message); }, qos);
-}
-
-void CyberwaveMQTTClient::unsubscribe(SubscriptionId subscription_id)
-{
-    std::vector<std::string> topics_to_unsubscribe;
-    {
-        std::lock_guard<std::mutex> lock(callbacks_mutex_);
-        for (auto callbacks_it = message_callbacks_.begin(); callbacks_it != message_callbacks_.end();)
-        {
-            auto& callbacks = callbacks_it->second;
-            callbacks.erase(std::remove_if(callbacks.begin(), callbacks.end(),
-                                           [subscription_id](const RegisteredCallback& registered)
-                                           { return registered.id == subscription_id; }),
-                            callbacks.end());
-
-            if (callbacks.empty())
-            {
-                topics_to_unsubscribe.push_back(callbacks_it->first);
-                subscription_qos_.erase(callbacks_it->first);
-                callbacks_it = message_callbacks_.erase(callbacks_it);
-            }
-            else
-            {
-                ++callbacks_it;
-            }
-        }
-    }
-
-    if (!connected_)
-    {
-        return;
-    }
-
-    for (const auto& topic : topics_to_unsubscribe)
-    {
-        try
-        {
-            auto token = client_->unsubscribe(topic);
-            if (!token->wait_for(std::chrono::seconds(5)))
-            {
-                mqtt_log().warn("MQTT unsubscribe timed out after 5s: {}", topic);
-            }
-        }
-        catch (const mqtt::exception& exc)
-        {
-            mqtt_log().error("MQTT unsubscribe error: {}", exc.what());
-        }
-    }
-}
-
-void CyberwaveMQTTClient::publish(const std::string& topic, const json& message, int qos)
-{
-    if (!connected_)
-    {
-        mqtt_log().warn("Cannot publish to {}: not connected to MQTT broker", topic);
-        return;
-    }
-
-    try
-    {
-        json payload_json = message;
-        if (payload_json.is_object() && !payload_json.contains("session_id"))
-        {
-            payload_json["session_id"] = client_id_;
-        }
-        std::string payload = payload_json.dump();
-        auto msg = mqtt::make_message(topic, payload);
-        msg->set_qos(qos);
-        auto token = client_->publish(msg);
-        // QoS 0 is fire-and-forget; waiting can introduce artificial backpressure
-        // and timeout noise under high frame rates.
-        if (qos <= 0)
-        {
-            return;
-        }
-        if (!token->wait_for(std::chrono::seconds(5)))
-        {
-            mqtt_log().warn("MQTT publish timed out after 5s: {}", topic);
-        }
-    }
-    catch (const mqtt::exception& exc)
-    {
-        mqtt_log().error("MQTT publish error: {}", exc.what());
-        return;
-    }
-}
-
-void CyberwaveMQTTClient::publish(const std::string& topic, const std::string& message, int qos)
-{
-    if (!connected_)
-    {
-        mqtt_log().warn("Cannot publish to {}: not connected to MQTT broker", topic);
-        return;
-    }
-
-    try
-    {
-        auto msg = mqtt::make_message(topic, message);
-        msg->set_qos(qos);
-        auto token = client_->publish(msg);
-        if (qos <= 0)
-        {
-            return;
-        }
-        if (!token->wait_for(std::chrono::seconds(5)))
-        {
-            mqtt_log().warn("MQTT publish timed out after 5s: {}", topic);
-        }
-    }
-    catch (const mqtt::exception& exc)
-    {
-        mqtt_log().error("MQTT publish error: {}", exc.what());
-    }
-}
+// ── Twin methods ────────────────────────────────────────────────────────────
 
 void CyberwaveMQTTClient::subscribe_twin_position(const std::string& twin_uuid, MessageCallback callback)
 {
@@ -856,6 +973,8 @@ void CyberwaveMQTTClient::update_joints_state(
     publish(with_prefix("cyberwave/joint/" + twin_uuid + "/update"), message);
 }
 
+// ── Environment methods ─────────────────────────────────────────────────────
+
 void CyberwaveMQTTClient::subscribe_environment(const std::string& environment_uuid, MessageCallback callback)
 {
     subscribe(with_prefix("cyberwave/environment/" + environment_uuid + "/+"), callback);
@@ -872,6 +991,8 @@ void CyberwaveMQTTClient::publish_environment_update(const std::string& environm
     };
     publish(topic, message);
 }
+
+// ── Streaming methods ───────────────────────────────────────────────────────
 
 void CyberwaveMQTTClient::subscribe_video_stream(const std::string& twin_uuid, MessageCallback callback)
 {
@@ -908,6 +1029,8 @@ void CyberwaveMQTTClient::publish_depth_frame(const std::string& twin_uuid, cons
     publish(topic, message);
 }
 
+// ── WebRTC methods ──────────────────────────────────────────────────────────
+
 void CyberwaveMQTTClient::publish_webrtc_message(const std::string& twin_uuid, const json& webrtc_data)
 {
     handle_twin_update_with_telemetry(twin_uuid);
@@ -939,6 +1062,8 @@ void CyberwaveMQTTClient::subscribe_webrtc_messages(const std::string& twin_uuid
     subscribe(with_prefix("cyberwave/twin/" + twin_uuid + "/webrtc-candidate"), callback);
 }
 
+// ── Command methods ─────────────────────────────────────────────────────────
+
 void CyberwaveMQTTClient::publish_command_message(const std::string& twin_uuid, const std::string& status)
 {
     publish_command_message(twin_uuid, json{{"status", status}});
@@ -954,6 +1079,8 @@ void CyberwaveMQTTClient::subscribe_command_message(const std::string& twin_uuid
     subscribe(with_prefix("cyberwave/twin/" + twin_uuid + "/command"), callback);
 }
 
+// ── Ping / pong ─────────────────────────────────────────────────────────────
+
 void CyberwaveMQTTClient::ping(const std::string& resource_uuid)
 {
     publish(with_prefix("cyberwave/ping/" + resource_uuid + "/request"),
@@ -964,6 +1091,8 @@ void CyberwaveMQTTClient::subscribe_pong(const std::string& resource_uuid, Messa
 {
     subscribe(with_prefix("cyberwave/pong/" + resource_uuid + "/response"), callback);
 }
+
+// ── Message dispatch ────────────────────────────────────────────────────────
 
 void CyberwaveMQTTClient::handle_message(const std::string& topic, const std::string& payload)
 {
@@ -1017,38 +1146,7 @@ void CyberwaveMQTTClient::handle_message(const std::string& topic, const std::st
     }
 }
 
-void CyberwaveMQTTClient::resubscribe_registered_topics()
-{
-    std::vector<std::pair<std::string, int>> topics;
-    {
-        std::lock_guard<std::mutex> lock(callbacks_mutex_);
-        topics.reserve(subscription_qos_.size());
-        for (const auto& [topic, qos] : subscription_qos_)
-        {
-            topics.emplace_back(topic, qos);
-        }
-    }
-
-    for (const auto& [topic, qos] : topics)
-    {
-        try
-        {
-            auto token = client_->subscribe(topic, qos);
-            if (!token->wait_for(std::chrono::seconds(5)))
-            {
-                mqtt_log().warn("MQTT resubscribe timed out after 5s: {}", topic);
-            }
-            else
-            {
-                mqtt_log().info("Resubscribed to topic: {}", topic);
-            }
-        }
-        catch (const mqtt::exception& exc)
-        {
-            mqtt_log().error("MQTT resubscribe error for {}: {}", topic, exc.what());
-        }
-    }
-}
+// ── Topic matching ──────────────────────────────────────────────────────────
 
 bool CyberwaveMQTTClient::topic_matches(const std::string& topic, const std::string& pattern)
 {
@@ -1095,50 +1193,5 @@ std::vector<std::string> CyberwaveMQTTClient::split_topic(const std::string& top
     }
     return parts;
 }
-
-void CyberwaveMQTTClient::MQTTCallback::message_arrived(mqtt::const_message_ptr msg)
-{
-    client_.handle_message(msg->get_topic(), msg->to_string());
-}
-
-void CyberwaveMQTTClient::MQTTCallback::connected(const std::string& cause)
-{
-    client_.reconnect_attempts_ = 0;
-    client_.connected_ = true;
-    if (cause.empty())
-    {
-        mqtt_log().info("MQTT connection established");
-    }
-    else
-    {
-        mqtt_log().info("MQTT connection established (cause: {})", cause);
-    }
-    client_.resubscribe_registered_topics();
-}
-
-void CyberwaveMQTTClient::MQTTCallback::connection_lost(const std::string& cause)
-{
-    if (cause.empty())
-    {
-        mqtt_log().warn("MQTT connection lost");
-    }
-    else
-    {
-        mqtt_log().warn("MQTT connection lost: {}", cause);
-    }
-    client_.connected_ = false;
-    client_.reconnect_attempts_ += 1;
-    if (client_.reconnect_attempts_ < client_.max_reconnect_attempts_)
-    {
-        mqtt_log().info("Attempting to reconnect ({}/{})...", client_.reconnect_attempts_,
-                        client_.max_reconnect_attempts_);
-    }
-    else
-    {
-        mqtt_log().error("Max reconnection attempts reached");
-    }
-}
-
-void CyberwaveMQTTClient::MQTTCallback::delivery_complete(mqtt::delivery_token_ptr token) { (void)token; }
 
 } // namespace cyberwave

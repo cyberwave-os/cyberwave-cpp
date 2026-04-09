@@ -24,8 +24,8 @@
 #include <cyberwave/twin.h>
 #include <cyberwave/twin_subclasses.h>
 #include <cyberwave/twins.h>
-#ifdef CYBERWAVE_HAVE_PAHO_MQTT
-#include <cyberwave/paho_mqtt_adapter.h>
+#ifdef CYBERWAVE_HAVE_MQTT
+#include <cyberwave/cyberwave_mqtt_adapter.h>
 #endif
 
 #include <chrono>
@@ -41,11 +41,11 @@ int main()
         cyberwave::Config cfg;
         cfg.load_from_environment();
         cyberwave::Client cw(cfg);
-#ifdef CYBERWAVE_HAVE_PAHO_MQTT
-        std::shared_ptr<cyberwave::PahoMqttAdapter> mqtt_adapter;
+#ifdef CYBERWAVE_HAVE_MQTT
+        std::shared_ptr<cyberwave::CyberwaveMqttAdapter> mqtt_adapter;
         if (!cfg.mqtt_host.empty())
         {
-            mqtt_adapter = std::make_shared<cyberwave::PahoMqttAdapter>(cfg);
+            mqtt_adapter = std::make_shared<cyberwave::CyberwaveMqttAdapter>(cfg);
             mqtt_adapter->connect();
             cw.set_mqtt_client(mqtt_adapter);
         }
