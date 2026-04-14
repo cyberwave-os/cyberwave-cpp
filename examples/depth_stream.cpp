@@ -4,7 +4,7 @@
     Mirrors: examples/realsense_stream.py
 
     Demonstrates:
-     - Wiring the MQTT client via CyberwaveMqttAdapter
+     - Wiring the real Paho MQTT client via PahoMqttAdapter
      - Streaming synthetic depth frames to a digital twin via DepthCameraTwin
      - Stopping on Ctrl+C
 
@@ -17,14 +17,14 @@
         export CYBERWAVE_MQTT_HOST=mqtt.cyberwave.com
         export TWIN_UUID=your-depth-camera-twin-uuid
 
-    Requires: cyberwave_sdk + cyberwave_mqtt_client (libmosquitto)
+    Requires: cyberwave_sdk + cyberwave_mqtt_client (PahoMqttCpp)
 */
 
 #include <cyberwave/camera_streaming.h>
 #include <cyberwave/client.h>
 #include <cyberwave/config.h>
-#include <cyberwave/cyberwave_mqtt_adapter.h>
 #include <cyberwave/exceptions.h>
+#include <cyberwave/paho_mqtt_adapter.h>
 #include <cyberwave/twin_subclasses.h>
 #include <cyberwave/twins.h>
 
@@ -48,7 +48,7 @@ int main()
         cyberwave::Client cw(cfg);
 
         // Wire the real MQTT client. Mirrors Python: Cyberwave(mqtt_host=...) auto-connects.
-        auto adapter = std::make_shared<cyberwave::CyberwaveMqttAdapter>(cfg);
+        auto adapter = std::make_shared<cyberwave::PahoMqttAdapter>(cfg);
         adapter->connect();
         cw.set_mqtt_client(adapter);
 

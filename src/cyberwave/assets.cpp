@@ -302,21 +302,14 @@ bool Asset::fixed_base() const
 
 AssetManager::AssetManager(const Client& client) : client_(client) {}
 
-std::vector<Asset> AssetManager::list(const std::string&) const
+std::vector<Asset> AssetManager::list(const std::string& workspace_id) const
 {
     auto* a = api(client_.get());
     if (!a)
-    {
         throw CyberwaveError("Client has no REST API (missing api_key)");
-    }
     try
     {
-        auto vec =
-            a->srcAppApiAssetsListAssets(boost::optional<int>(), boost::optional<int>(),
-                                         boost::optional<utility::string_t>(), boost::optional<utility::string_t>(),
-                                         boost::optional<utility::string_t>(), boost::optional<utility::string_t>(),
-                                         boost::optional<utility::string_t>(), boost::optional<utility::string_t>())
-                .get();
+        auto vec = a->srcAppApiAssetsListAssets().get();
         std::vector<Asset> out;
         for (auto& ptr : vec)
         {

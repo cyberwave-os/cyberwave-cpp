@@ -35,7 +35,7 @@ cyberwave-cpp/
 │   ├── edge/                    # Edge node base classes
 │   └── ...                      # Assets, environments, workflows, alerts, etc.
 ├── src/cyberwave/               # Implementation files
-├── mqtt/                        # MQTT client (libmosquitto)
+├── mqtt/                        # Paho MQTT adapter
 ├── cmake/                       # CMake package config template
 ├── examples/                    # Example applications
 ├── tests/                       # Unit and integration tests
@@ -75,7 +75,7 @@ Install dependencies:
 sudo apt-get update && sudo apt-get install -y \
   build-essential cmake pkg-config ca-certificates curl git \
   libcpprest-dev libssl-dev libboost-all-dev \
-  nlohmann-json3-dev libmosquitto-dev libspdlog-dev
+  nlohmann-json3-dev libpaho-mqtt-dev libpaho-mqttpp-dev libspdlog-dev
 ```
 
 Build and install:
@@ -94,7 +94,7 @@ sudo cmake --install build
 |---|---|---|
 | `cpprestsdk` | Yes | HTTP client for REST API |
 | `OpenSSL` | Yes | TLS |
-| `libmosquitto` + `nlohmann_json` + `spdlog` | For MQTT | Real-time pub/sub |
+| `paho-mqtt-cpp` + `nlohmann_json` + `spdlog` | For MQTT | Real-time pub/sub |
 | `OpenCV` | Optional | `camera_stream_opencv` example (`./install.sh --with-opencv`) |
 | `libdatachannel` | Optional | WebRTC camera streaming |
 | FFmpeg (`libavcodec`, `libavutil`, `libswscale`) | Optional | H264 encoding in CameraStreamer |
@@ -196,14 +196,14 @@ Scene-level composed schema and environment export helpers now use the canonical
 ```cpp
 #include <cyberwave/client.h>
 #include <cyberwave/config.h>
-#include <cyberwave/cyberwave_mqtt_adapter.h>
+#include <cyberwave/paho_mqtt_adapter.h>
 
 int main() {
     cyberwave::Config config;
     config.load_from_environment();
 
     cyberwave::Client client(config);
-    auto mqtt = std::make_shared<cyberwave::CyberwaveMqttAdapter>(config);
+    auto mqtt = std::make_shared<cyberwave::PahoMqttAdapter>(config);
     mqtt->connect();
     client.set_mqtt_client(mqtt);
 
@@ -275,7 +275,7 @@ try {
 | `cyberwave::WorkflowRun` | Workflow run view with polling and MQTT status subscription helpers |
 | `cyberwave::JointController` | Joint get / set / list / get_all |
 | `cyberwave::WorkflowManager` | List / get / trigger workflows |
-| `cyberwave::CyberwaveMqttAdapter` | libmosquitto-backed `IMqttClient` implementation |
+| `cyberwave::PahoMqttAdapter` | Paho-backed `IMqttClient` implementation |
 | `cyberwave::DataBus` | Typed data-plane facade for publish / subscribe / latest |
 | `cyberwave::FilesystemDataBackend` | Stdlib-backed data transport for development and tests |
 | `cyberwave::HookRegistry` | Worker hook registration surface for upcoming runtime support |
