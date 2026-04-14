@@ -66,9 +66,8 @@ public:
     explicit AssetManager(const Client& client);
 
     /**
-     * @brief List assets.
-     * @param workspace_id Legacy parameter kept for source compatibility. The
-     * backend no longer supports workspace filtering on this endpoint.
+     * @brief List assets, optionally restricted to a workspace.
+     * @param workspace_id Optional workspace UUID filter.
      * @return Asset list.
      */
     std::vector<Asset> list(const std::string& workspace_id = "") const;

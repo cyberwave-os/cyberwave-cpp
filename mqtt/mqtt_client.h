@@ -1,16 +1,16 @@
 #pragma once
 
 #include "constants.h"
-#include <atomic>
-#include <condition_variable>
+#include <chrono>
 #include <cstdint>
 #include <functional>
 #include <map>
 #include <memory>
-#include <mosquitto.h>
+#include <mqtt/async_client.h>
 #include <mutex>
 #include <nlohmann/json.hpp>
 #include <optional>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -68,22 +68,14 @@ struct JointState
     std::optional<double> effort;
 };
 
-// RAII handle for struct mosquitto*
-struct MosquittoDeleter
-{
-    void operator()(struct mosquitto* m) const noexcept;
-};
-using MosquittoPtr = std::unique_ptr<struct mosquitto, MosquittoDeleter>;
-
 // Callback type for message handling
 using MessageCallback = std::function<void(const std::string& topic, const json& message)>;
 
 /**
  * MQTT client wrapper for real-time communication with Cyberwave platform.
  *
- * Uses libmosquitto for the underlying MQTT transport. The background I/O
- * thread (mosquitto_loop_start) drains the outbound queue to the socket,
- * providing natural TCP backpressure without bounded-buffer overflow errors.
+ * Provides high-level methods for publishing and subscribing to twin updates,
+ * joint states, and other real-time events.
  */
 class CyberwaveMQTTClient
 {
@@ -381,10 +373,20 @@ public:
     void publish(const std::string& topic, const std::string& message, int qos = 0);
 
 private:
-    // libmosquitto callback trampolines
-    static void on_connect_cb(struct mosquitto* mosq, void* userdata, int rc);
-    static void on_disconnect_cb(struct mosquitto* mosq, void* userdata, int rc);
-    static void on_message_cb(struct mosquitto* mosq, void* userdata, const struct mosquitto_message* msg);
+    // Internal callback class for Paho MQTT
+    class MQTTCallback : public mqtt::callback
+    {
+    public:
+        explicit MQTTCallback(CyberwaveMQTTClient& client) : client_(client) {}
+
+        void message_arrived(mqtt::const_message_ptr msg) override;
+        void connected(const std::string& cause) override;
+        void connection_lost(const std::string& cause) override;
+        void delivery_complete(mqtt::delivery_token_ptr token) override;
+
+    private:
+        CyberwaveMQTTClient& client_;
+    };
 
     // Helper methods
     std::string generate_client_id();
@@ -411,11 +413,9 @@ private:
     std::string topic_prefix_;
     std::string client_id_;
 
-    MosquittoPtr mosq_;
-    std::atomic<bool> connected_{false};
-    bool loop_started_ = false;
-    std::mutex connect_mutex_;
-    std::condition_variable connect_cv_;
+    std::unique_ptr<mqtt::async_client> client_;
+    std::unique_ptr<MQTTCallback> callback_;
+    bool connected_;
     int reconnect_attempts_{0};
     int max_reconnect_attempts_{5};
 
@@ -432,6 +432,10 @@ private:
     std::mutex telemetry_mutex_;
     std::vector<std::string> twin_uuids_;
     std::vector<std::string> twin_uuids_with_telemetry_start_;
+
+    friend class MQTTCallback;
 };
 
 } // namespace cyberwave
+
+// End of CYBERWAVE_MQTT_CLIENT_H

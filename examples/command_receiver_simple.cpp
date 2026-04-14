@@ -4,7 +4,7 @@
     Mirrors: examples/command_receiver_simple.py
 
     Demonstrates:
-     - Wiring the MQTT client into the SDK via CyberwaveMqttAdapter
+     - Wiring the real Paho MQTT client into the SDK via PahoMqttAdapter
      - Subscribing to command messages for a twin via MQTT
      - Responding with publish_command_message()
      - Running a blocking event loop (Ctrl+C to stop)
@@ -24,13 +24,13 @@
         3. Send a command to the twin's command topic:
                Payload: {"command": "greetings"}
 
-    Requires: cyberwave_sdk + cyberwave_mqtt_client (libmosquitto)
+    Requires: cyberwave_sdk + cyberwave_mqtt_client (PahoMqttCpp)
 */
 
 #include <cyberwave/client.h>
 #include <cyberwave/config.h>
-#include <cyberwave/cyberwave_mqtt_adapter.h>
 #include <cyberwave/exceptions.h>
+#include <cyberwave/paho_mqtt_adapter.h>
 
 #include <chrono>
 #include <csignal>
@@ -60,9 +60,9 @@ int main()
         cfg.load_from_environment();
         cyberwave::Client client(cfg);
 
-        // Create and connect the MQTT client via the adapter.
+        // Create and connect the real Paho MQTT client via the adapter.
         // Mirrors Python: client = Cyberwave(..., mqtt_host=...) which auto-creates mqtt.
-        auto adapter = std::make_shared<cyberwave::CyberwaveMqttAdapter>(cfg);
+        auto adapter = std::make_shared<cyberwave::PahoMqttAdapter>(cfg);
         adapter->connect();
         client.set_mqtt_client(adapter);
 

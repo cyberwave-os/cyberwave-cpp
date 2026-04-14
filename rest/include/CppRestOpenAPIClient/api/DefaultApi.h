@@ -502,23 +502,7 @@ public:
     /// <remarks>
     /// 
     /// </remarks>
-    /// <param name="limit"> (optional, default to 0)</param>
-    /// <param name="offset"> (optional, default to 0)</param>
-    /// <param name="registryId"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="registryVendor"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="owned"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="search"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="metadataKey"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="metadataValue"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::vector<std::shared_ptr<AssetListSchema>>> srcAppApiAssetsListAssets(
-        boost::optional<int32_t> limit,
-        boost::optional<int32_t> offset,
-        boost::optional<utility::string_t> registryId,
-        boost::optional<utility::string_t> registryVendor,
-        boost::optional<utility::string_t> owned,
-        boost::optional<utility::string_t> search,
-        boost::optional<utility::string_t> metadataKey,
-        boost::optional<utility::string_t> metadataValue
     ) const;
     /// <summary>
     /// List Primitive Assets
