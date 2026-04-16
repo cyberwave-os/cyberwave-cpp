@@ -3526,7 +3526,7 @@ pplx::task<std::shared_ptr<InitiateLargeUploadResponse>> DefaultApi::srcAppApiAs
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<AssetListSchema>>> DefaultApi::srcAppApiAssetsListAssets() const
+pplx::task<std::vector<std::shared_ptr<AssetListSchema>>> DefaultApi::srcAppApiAssetsListAssets(boost::optional<int32_t> limit, boost::optional<int32_t> offset, boost::optional<utility::string_t> registryId, boost::optional<utility::string_t> registryVendor, boost::optional<utility::string_t> owned, boost::optional<utility::string_t> search, boost::optional<utility::string_t> metadataKey, boost::optional<utility::string_t> metadataValue) const
 {
 
 
@@ -3567,6 +3567,38 @@ pplx::task<std::vector<std::shared_ptr<AssetListSchema>>> DefaultApi::srcAppApiA
 
     std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
 
+    if (limit)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("limit")] = ApiClient::parameterToString(*limit);
+    }
+    if (offset)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("offset")] = ApiClient::parameterToString(*offset);
+    }
+    if (registryId)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("registry_id")] = ApiClient::parameterToString(*registryId);
+    }
+    if (registryVendor)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("registry_vendor")] = ApiClient::parameterToString(*registryVendor);
+    }
+    if (owned)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("owned")] = ApiClient::parameterToString(*owned);
+    }
+    if (search)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("search")] = ApiClient::parameterToString(*search);
+    }
+    if (metadataKey)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("metadata_key")] = ApiClient::parameterToString(*metadataKey);
+    }
+    if (metadataValue)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("metadata_value")] = ApiClient::parameterToString(*metadataValue);
+    }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
     utility::string_t localVarRequestHttpContentType;
@@ -14207,6 +14239,158 @@ pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> DefaultApi::sr
         return localVarResult;
     });
 }
+pplx::task<std::shared_ptr<ReplayTimelineEventsResponseSchema>> DefaultApi::srcAppApiEnvironmentsRecordingsGetRecordingTimelineEvents(utility::string_t uuid, utility::string_t recordingUuid, boost::optional<utility::string_t> twinUuid, boost::optional<bool> includeAlerts, boost::optional<bool> includeTelemetry, boost::optional<utility::string_t> telemetryEventTypes, boost::optional<int32_t> limitPerKind) const
+{
+
+
+    std::shared_ptr<const ApiConfiguration> localVarApiConfiguration( m_ApiClient->getConfiguration() );
+    utility::string_t localVarPath = utility::conversions::to_string_t("/api/v1/environments/{uuid}/recordings/{recording_uuid}/timeline-events");
+    boost::replace_all(localVarPath, utility::conversions::to_string_t("{") + utility::conversions::to_string_t("uuid") + utility::conversions::to_string_t("}"), web::uri::encode_uri(ApiClient::parameterToString(uuid)));
+    boost::replace_all(localVarPath, utility::conversions::to_string_t("{") + utility::conversions::to_string_t("recording_uuid") + utility::conversions::to_string_t("}"), web::uri::encode_uri(ApiClient::parameterToString(recordingUuid)));
+
+    std::map<utility::string_t, utility::string_t> localVarQueryParams;
+    std::map<utility::string_t, utility::string_t> localVarHeaderParams( localVarApiConfiguration->getDefaultHeaders() );
+    std::map<utility::string_t, utility::string_t> localVarFormParams;
+    std::map<utility::string_t, std::shared_ptr<HttpContent>> localVarFileParams;
+
+    std::unordered_set<utility::string_t> localVarResponseHttpContentTypes;
+    localVarResponseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+
+    utility::string_t localVarResponseHttpContentType;
+
+    // use JSON if possible
+    if ( localVarResponseHttpContentTypes.size() == 0 )
+    {
+        localVarResponseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // JSON
+    else if ( localVarResponseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != localVarResponseHttpContentTypes.end() )
+    {
+        localVarResponseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( localVarResponseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != localVarResponseHttpContentTypes.end() )
+    {
+        localVarResponseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else
+    {
+        throw ApiException(400, utility::conversions::to_string_t("DefaultApi->srcAppApiEnvironmentsRecordingsGetRecordingTimelineEvents does not produce any supported media type"));
+    }
+
+    localVarHeaderParams[utility::conversions::to_string_t("Accept")] = localVarResponseHttpContentType;
+
+    std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
+
+    if (twinUuid)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("twin_uuid")] = ApiClient::parameterToString(*twinUuid);
+    }
+    if (includeAlerts)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("include_alerts")] = ApiClient::parameterToString(*includeAlerts);
+    }
+    if (includeTelemetry)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("include_telemetry")] = ApiClient::parameterToString(*includeTelemetry);
+    }
+    if (telemetryEventTypes)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("telemetry_event_types")] = ApiClient::parameterToString(*telemetryEventTypes);
+    }
+    if (limitPerKind)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("limit_per_kind")] = ApiClient::parameterToString(*limitPerKind);
+    }
+
+    std::shared_ptr<IHttpBody> localVarHttpBody;
+    utility::string_t localVarRequestHttpContentType;
+
+    // use JSON if possible
+    if ( localVarConsumeHttpContentTypes.size() == 0 || localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != localVarConsumeHttpContentTypes.end() )
+    {
+        localVarRequestHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != localVarConsumeHttpContentTypes.end() )
+    {
+        localVarRequestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else if (localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/x-www-form-urlencoded")) != localVarConsumeHttpContentTypes.end())
+    {
+        localVarRequestHttpContentType = utility::conversions::to_string_t("application/x-www-form-urlencoded");
+    }
+    else
+    {
+        throw ApiException(415, utility::conversions::to_string_t("DefaultApi->srcAppApiEnvironmentsRecordingsGetRecordingTimelineEvents does not consume any supported media type"));
+    }
+
+    // authentication (CustomTokenAuthentication) required
+    {
+        utility::string_t localVarApiKey = localVarApiConfiguration->getApiKey(utility::conversions::to_string_t("CustomTokenAuthentication"));
+        if ( localVarApiKey.size() > 0 )
+        {
+            localVarHeaderParams[utility::conversions::to_string_t("Authorization")] = localVarApiKey;
+        }
+    }
+
+    return m_ApiClient->callApi(localVarPath, utility::conversions::to_string_t("GET"), localVarQueryParams, localVarHttpBody, localVarHeaderParams, localVarFormParams, localVarFileParams, localVarRequestHttpContentType)
+    .then([=, this](web::http::http_response localVarResponse)
+    {
+        if (m_ApiClient->getResponseHandler())
+        {
+            m_ApiClient->getResponseHandler()(localVarResponse.status_code(), localVarResponse.headers());
+        }
+
+        // 1xx - informational : OK
+        // 2xx - successful       : OK
+        // 3xx - redirection   : OK
+        // 4xx - client error  : not OK
+        // 5xx - client error  : not OK
+        if (localVarResponse.status_code() >= 400)
+        {
+            throw ApiException(localVarResponse.status_code()
+                , utility::conversions::to_string_t("error calling srcAppApiEnvironmentsRecordingsGetRecordingTimelineEvents: ") + localVarResponse.reason_phrase()
+                , std::make_shared<std::stringstream>(localVarResponse.extract_utf8string(true).get()));
+        }
+
+        // check response content type
+        if(localVarResponse.headers().has(utility::conversions::to_string_t("Content-Type")))
+        {
+            utility::string_t localVarContentType = localVarResponse.headers()[utility::conversions::to_string_t("Content-Type")];
+            if( localVarContentType.find(localVarResponseHttpContentType) == std::string::npos )
+            {
+                throw ApiException(500
+                    , utility::conversions::to_string_t("error calling srcAppApiEnvironmentsRecordingsGetRecordingTimelineEvents: unexpected response type: ") + localVarContentType
+                    , std::make_shared<std::stringstream>(localVarResponse.extract_utf8string(true).get()));
+            }
+        }
+
+        return localVarResponse.extract_string();
+    })
+    .then([=, this](utility::string_t localVarResponse)
+    {
+        std::shared_ptr<ReplayTimelineEventsResponseSchema> localVarResult(new ReplayTimelineEventsResponseSchema());
+
+        if(localVarResponseHttpContentType == utility::conversions::to_string_t("application/json"))
+        {
+            web::json::value localVarJson = web::json::value::parse(localVarResponse);
+
+            ModelBase::fromJson(localVarJson, localVarResult);
+        }
+        // else if(localVarResponseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
+        // {
+        // TODO multipart response parsing
+        // }
+        else
+        {
+            throw ApiException(500
+                , utility::conversions::to_string_t("error calling srcAppApiEnvironmentsRecordingsGetRecordingTimelineEvents: unsupported response type"));
+        }
+
+        return localVarResult;
+    });
+}
 pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> DefaultApi::srcAppApiEnvironmentsRecordingsProcessAllEnvironmentSessions(utility::string_t uuid) const
 {
 
@@ -18382,313 +18566,6 @@ pplx::task<std::shared_ptr<EpisodeSchema>> DefaultApi::srcAppApiEpisodeUpdateEpi
         {
             throw ApiException(500
                 , utility::conversions::to_string_t("error calling srcAppApiEpisodeUpdateEpisode: unsupported response type"));
-        }
-
-        return localVarResult;
-    });
-}
-pplx::task<std::shared_ptr<BusinessEventSchema>> DefaultApi::srcAppApiEventsCreateBusinessEvent(std::shared_ptr<BusinessEventCreateSchema> businessEventCreateSchema) const
-{
-
-    // verify the required parameter 'businessEventCreateSchema' is set
-    if (businessEventCreateSchema == nullptr)
-    {
-        throw ApiException(400, utility::conversions::to_string_t("Missing required parameter 'businessEventCreateSchema' when calling DefaultApi->srcAppApiEventsCreateBusinessEvent"));
-    }
-
-
-    std::shared_ptr<const ApiConfiguration> localVarApiConfiguration( m_ApiClient->getConfiguration() );
-    utility::string_t localVarPath = utility::conversions::to_string_t("/api/v1/events");
-
-    std::map<utility::string_t, utility::string_t> localVarQueryParams;
-    std::map<utility::string_t, utility::string_t> localVarHeaderParams( localVarApiConfiguration->getDefaultHeaders() );
-    std::map<utility::string_t, utility::string_t> localVarFormParams;
-    std::map<utility::string_t, std::shared_ptr<HttpContent>> localVarFileParams;
-
-    std::unordered_set<utility::string_t> localVarResponseHttpContentTypes;
-    localVarResponseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
-
-    utility::string_t localVarResponseHttpContentType;
-
-    // use JSON if possible
-    if ( localVarResponseHttpContentTypes.size() == 0 )
-    {
-        localVarResponseHttpContentType = utility::conversions::to_string_t("application/json");
-    }
-    // JSON
-    else if ( localVarResponseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != localVarResponseHttpContentTypes.end() )
-    {
-        localVarResponseHttpContentType = utility::conversions::to_string_t("application/json");
-    }
-    // multipart formdata
-    else if( localVarResponseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != localVarResponseHttpContentTypes.end() )
-    {
-        localVarResponseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
-    }
-    else
-    {
-        throw ApiException(400, utility::conversions::to_string_t("DefaultApi->srcAppApiEventsCreateBusinessEvent does not produce any supported media type"));
-    }
-
-    localVarHeaderParams[utility::conversions::to_string_t("Accept")] = localVarResponseHttpContentType;
-
-    std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
-    localVarConsumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
-
-
-    std::shared_ptr<IHttpBody> localVarHttpBody;
-    utility::string_t localVarRequestHttpContentType;
-
-    // use JSON if possible
-    if ( localVarConsumeHttpContentTypes.size() == 0 || localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != localVarConsumeHttpContentTypes.end() )
-    {
-        localVarRequestHttpContentType = utility::conversions::to_string_t("application/json");
-        web::json::value localVarJson;
-
-        localVarJson = ModelBase::toJson(businessEventCreateSchema);
-        
-
-        localVarHttpBody = std::shared_ptr<IHttpBody>( new JsonBody( localVarJson ) );
-    }
-    // multipart formdata
-    else if( localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != localVarConsumeHttpContentTypes.end() )
-    {
-        localVarRequestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
-        std::shared_ptr<MultipartFormData> localVarMultipart(new MultipartFormData);
-
-        if(businessEventCreateSchema.get())
-        {
-            businessEventCreateSchema->toMultipart(localVarMultipart, utility::conversions::to_string_t("businessEventCreateSchema"));
-        }
-        
-
-        localVarHttpBody = localVarMultipart;
-        localVarRequestHttpContentType += utility::conversions::to_string_t("; boundary=") + localVarMultipart->getBoundary();
-    }
-    else if (localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/x-www-form-urlencoded")) != localVarConsumeHttpContentTypes.end())
-    {
-        localVarRequestHttpContentType = utility::conversions::to_string_t("application/x-www-form-urlencoded");
-    }
-    else
-    {
-        throw ApiException(415, utility::conversions::to_string_t("DefaultApi->srcAppApiEventsCreateBusinessEvent does not consume any supported media type"));
-    }
-
-    // authentication (CustomTokenAuthentication) required
-    {
-        utility::string_t localVarApiKey = localVarApiConfiguration->getApiKey(utility::conversions::to_string_t("CustomTokenAuthentication"));
-        if ( localVarApiKey.size() > 0 )
-        {
-            localVarHeaderParams[utility::conversions::to_string_t("Authorization")] = localVarApiKey;
-        }
-    }
-
-    return m_ApiClient->callApi(localVarPath, utility::conversions::to_string_t("POST"), localVarQueryParams, localVarHttpBody, localVarHeaderParams, localVarFormParams, localVarFileParams, localVarRequestHttpContentType)
-    .then([=, this](web::http::http_response localVarResponse)
-    {
-        if (m_ApiClient->getResponseHandler())
-        {
-            m_ApiClient->getResponseHandler()(localVarResponse.status_code(), localVarResponse.headers());
-        }
-
-        // 1xx - informational : OK
-        // 2xx - successful       : OK
-        // 3xx - redirection   : OK
-        // 4xx - client error  : not OK
-        // 5xx - client error  : not OK
-        if (localVarResponse.status_code() >= 400)
-        {
-            throw ApiException(localVarResponse.status_code()
-                , utility::conversions::to_string_t("error calling srcAppApiEventsCreateBusinessEvent: ") + localVarResponse.reason_phrase()
-                , std::make_shared<std::stringstream>(localVarResponse.extract_utf8string(true).get()));
-        }
-
-        // check response content type
-        if(localVarResponse.headers().has(utility::conversions::to_string_t("Content-Type")))
-        {
-            utility::string_t localVarContentType = localVarResponse.headers()[utility::conversions::to_string_t("Content-Type")];
-            if( localVarContentType.find(localVarResponseHttpContentType) == std::string::npos )
-            {
-                throw ApiException(500
-                    , utility::conversions::to_string_t("error calling srcAppApiEventsCreateBusinessEvent: unexpected response type: ") + localVarContentType
-                    , std::make_shared<std::stringstream>(localVarResponse.extract_utf8string(true).get()));
-            }
-        }
-
-        return localVarResponse.extract_string();
-    })
-    .then([=, this](utility::string_t localVarResponse)
-    {
-        std::shared_ptr<BusinessEventSchema> localVarResult(new BusinessEventSchema());
-
-        if(localVarResponseHttpContentType == utility::conversions::to_string_t("application/json"))
-        {
-            web::json::value localVarJson = web::json::value::parse(localVarResponse);
-
-            ModelBase::fromJson(localVarJson, localVarResult);
-        }
-        // else if(localVarResponseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
-        // {
-        // TODO multipart response parsing
-        // }
-        else
-        {
-            throw ApiException(500
-                , utility::conversions::to_string_t("error calling srcAppApiEventsCreateBusinessEvent: unsupported response type"));
-        }
-
-        return localVarResult;
-    });
-}
-pplx::task<std::shared_ptr<BusinessEventListResponseSchema>> DefaultApi::srcAppApiEventsListLiveEvents(boost::optional<utility::string_t> environmentUuid, boost::optional<utility::string_t> source, boost::optional<utility::string_t> severity, boost::optional<utility::string_t> eventType, boost::optional<int32_t> lastTimestampMs, boost::optional<int32_t> limit) const
-{
-
-
-    std::shared_ptr<const ApiConfiguration> localVarApiConfiguration( m_ApiClient->getConfiguration() );
-    utility::string_t localVarPath = utility::conversions::to_string_t("/api/v1/events/live");
-
-    std::map<utility::string_t, utility::string_t> localVarQueryParams;
-    std::map<utility::string_t, utility::string_t> localVarHeaderParams( localVarApiConfiguration->getDefaultHeaders() );
-    std::map<utility::string_t, utility::string_t> localVarFormParams;
-    std::map<utility::string_t, std::shared_ptr<HttpContent>> localVarFileParams;
-
-    std::unordered_set<utility::string_t> localVarResponseHttpContentTypes;
-    localVarResponseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
-
-    utility::string_t localVarResponseHttpContentType;
-
-    // use JSON if possible
-    if ( localVarResponseHttpContentTypes.size() == 0 )
-    {
-        localVarResponseHttpContentType = utility::conversions::to_string_t("application/json");
-    }
-    // JSON
-    else if ( localVarResponseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != localVarResponseHttpContentTypes.end() )
-    {
-        localVarResponseHttpContentType = utility::conversions::to_string_t("application/json");
-    }
-    // multipart formdata
-    else if( localVarResponseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != localVarResponseHttpContentTypes.end() )
-    {
-        localVarResponseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
-    }
-    else
-    {
-        throw ApiException(400, utility::conversions::to_string_t("DefaultApi->srcAppApiEventsListLiveEvents does not produce any supported media type"));
-    }
-
-    localVarHeaderParams[utility::conversions::to_string_t("Accept")] = localVarResponseHttpContentType;
-
-    std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
-
-    if (environmentUuid)
-    {
-        localVarQueryParams[utility::conversions::to_string_t("environment_uuid")] = ApiClient::parameterToString(*environmentUuid);
-    }
-    if (source)
-    {
-        localVarQueryParams[utility::conversions::to_string_t("source")] = ApiClient::parameterToString(*source);
-    }
-    if (severity)
-    {
-        localVarQueryParams[utility::conversions::to_string_t("severity")] = ApiClient::parameterToString(*severity);
-    }
-    if (eventType)
-    {
-        localVarQueryParams[utility::conversions::to_string_t("event_type")] = ApiClient::parameterToString(*eventType);
-    }
-    if (lastTimestampMs)
-    {
-        localVarQueryParams[utility::conversions::to_string_t("last_timestamp_ms")] = ApiClient::parameterToString(*lastTimestampMs);
-    }
-    if (limit)
-    {
-        localVarQueryParams[utility::conversions::to_string_t("limit")] = ApiClient::parameterToString(*limit);
-    }
-
-    std::shared_ptr<IHttpBody> localVarHttpBody;
-    utility::string_t localVarRequestHttpContentType;
-
-    // use JSON if possible
-    if ( localVarConsumeHttpContentTypes.size() == 0 || localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != localVarConsumeHttpContentTypes.end() )
-    {
-        localVarRequestHttpContentType = utility::conversions::to_string_t("application/json");
-    }
-    // multipart formdata
-    else if( localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != localVarConsumeHttpContentTypes.end() )
-    {
-        localVarRequestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
-    }
-    else if (localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/x-www-form-urlencoded")) != localVarConsumeHttpContentTypes.end())
-    {
-        localVarRequestHttpContentType = utility::conversions::to_string_t("application/x-www-form-urlencoded");
-    }
-    else
-    {
-        throw ApiException(415, utility::conversions::to_string_t("DefaultApi->srcAppApiEventsListLiveEvents does not consume any supported media type"));
-    }
-
-    // authentication (CustomTokenAuthentication) required
-    {
-        utility::string_t localVarApiKey = localVarApiConfiguration->getApiKey(utility::conversions::to_string_t("CustomTokenAuthentication"));
-        if ( localVarApiKey.size() > 0 )
-        {
-            localVarHeaderParams[utility::conversions::to_string_t("Authorization")] = localVarApiKey;
-        }
-    }
-
-    return m_ApiClient->callApi(localVarPath, utility::conversions::to_string_t("GET"), localVarQueryParams, localVarHttpBody, localVarHeaderParams, localVarFormParams, localVarFileParams, localVarRequestHttpContentType)
-    .then([=, this](web::http::http_response localVarResponse)
-    {
-        if (m_ApiClient->getResponseHandler())
-        {
-            m_ApiClient->getResponseHandler()(localVarResponse.status_code(), localVarResponse.headers());
-        }
-
-        // 1xx - informational : OK
-        // 2xx - successful       : OK
-        // 3xx - redirection   : OK
-        // 4xx - client error  : not OK
-        // 5xx - client error  : not OK
-        if (localVarResponse.status_code() >= 400)
-        {
-            throw ApiException(localVarResponse.status_code()
-                , utility::conversions::to_string_t("error calling srcAppApiEventsListLiveEvents: ") + localVarResponse.reason_phrase()
-                , std::make_shared<std::stringstream>(localVarResponse.extract_utf8string(true).get()));
-        }
-
-        // check response content type
-        if(localVarResponse.headers().has(utility::conversions::to_string_t("Content-Type")))
-        {
-            utility::string_t localVarContentType = localVarResponse.headers()[utility::conversions::to_string_t("Content-Type")];
-            if( localVarContentType.find(localVarResponseHttpContentType) == std::string::npos )
-            {
-                throw ApiException(500
-                    , utility::conversions::to_string_t("error calling srcAppApiEventsListLiveEvents: unexpected response type: ") + localVarContentType
-                    , std::make_shared<std::stringstream>(localVarResponse.extract_utf8string(true).get()));
-            }
-        }
-
-        return localVarResponse.extract_string();
-    })
-    .then([=, this](utility::string_t localVarResponse)
-    {
-        std::shared_ptr<BusinessEventListResponseSchema> localVarResult(new BusinessEventListResponseSchema());
-
-        if(localVarResponseHttpContentType == utility::conversions::to_string_t("application/json"))
-        {
-            web::json::value localVarJson = web::json::value::parse(localVarResponse);
-
-            ModelBase::fromJson(localVarJson, localVarResult);
-        }
-        // else if(localVarResponseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
-        // {
-        // TODO multipart response parsing
-        // }
-        else
-        {
-            throw ApiException(500
-                , utility::conversions::to_string_t("error calling srcAppApiEventsListLiveEvents: unsupported response type"));
         }
 
         return localVarResult;
@@ -23697,7 +23574,7 @@ pplx::task<std::map<utility::string_t, utility::string_t>> DefaultApi::srcAppApi
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlmodelsListMlmodels(boost::optional<utility::string_t> deployment, boost::optional<bool> edgeCompatible) const
+pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlmodelsListMlmodels(boost::optional<utility::string_t> deployment, boost::optional<bool> edgeCompatible, boost::optional<utility::string_t> modelExternalId) const
 {
 
 
@@ -23745,6 +23622,10 @@ pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlm
     if (edgeCompatible)
     {
         localVarQueryParams[utility::conversions::to_string_t("edge_compatible")] = ApiClient::parameterToString(*edgeCompatible);
+    }
+    if (modelExternalId)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("model_external_id")] = ApiClient::parameterToString(*modelExternalId);
     }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
@@ -30212,7 +30093,7 @@ pplx::task<std::shared_ptr<TwinDriverLogsResponseSchema>> DefaultApi::srcAppApiT
         return localVarResult;
     });
 }
-pplx::task<void> DefaultApi::srcAppApiTwinsGetTwinLatestFrame(utility::string_t uuid, boost::optional<bool> mock) const
+pplx::task<void> DefaultApi::srcAppApiTwinsGetTwinLatestFrame(utility::string_t uuid, boost::optional<bool> mock, boost::optional<utility::string_t> sensorId, boost::optional<utility::string_t> sourceType) const
 {
 
 
@@ -30256,6 +30137,14 @@ pplx::task<void> DefaultApi::srcAppApiTwinsGetTwinLatestFrame(utility::string_t 
     if (mock)
     {
         localVarQueryParams[utility::conversions::to_string_t("mock")] = ApiClient::parameterToString(*mock);
+    }
+    if (sensorId)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("sensor_id")] = ApiClient::parameterToString(*sensorId);
+    }
+    if (sourceType)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("source_type")] = ApiClient::parameterToString(*sourceType);
     }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
@@ -32686,6 +32575,160 @@ pplx::task<std::shared_ptr<TwinSchema>> DefaultApi::srcAppApiTwinsUpdateTwinStat
         return localVarResult;
     });
 }
+pplx::task<std::shared_ptr<URDFProjectSchema>> DefaultApi::srcAppApiUrdfCompleteLargeUrdfZipUpload(utility::string_t uuid, std::shared_ptr<CompleteLargeUploadSchema> completeLargeUploadSchema) const
+{
+
+    // verify the required parameter 'completeLargeUploadSchema' is set
+    if (completeLargeUploadSchema == nullptr)
+    {
+        throw ApiException(400, utility::conversions::to_string_t("Missing required parameter 'completeLargeUploadSchema' when calling DefaultApi->srcAppApiUrdfCompleteLargeUrdfZipUpload"));
+    }
+
+
+    std::shared_ptr<const ApiConfiguration> localVarApiConfiguration( m_ApiClient->getConfiguration() );
+    utility::string_t localVarPath = utility::conversions::to_string_t("/api/v1/urdf-projects/{uuid}/complete-large-zip-upload");
+    boost::replace_all(localVarPath, utility::conversions::to_string_t("{") + utility::conversions::to_string_t("uuid") + utility::conversions::to_string_t("}"), web::uri::encode_uri(ApiClient::parameterToString(uuid)));
+
+    std::map<utility::string_t, utility::string_t> localVarQueryParams;
+    std::map<utility::string_t, utility::string_t> localVarHeaderParams( localVarApiConfiguration->getDefaultHeaders() );
+    std::map<utility::string_t, utility::string_t> localVarFormParams;
+    std::map<utility::string_t, std::shared_ptr<HttpContent>> localVarFileParams;
+
+    std::unordered_set<utility::string_t> localVarResponseHttpContentTypes;
+    localVarResponseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+
+    utility::string_t localVarResponseHttpContentType;
+
+    // use JSON if possible
+    if ( localVarResponseHttpContentTypes.size() == 0 )
+    {
+        localVarResponseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // JSON
+    else if ( localVarResponseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != localVarResponseHttpContentTypes.end() )
+    {
+        localVarResponseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( localVarResponseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != localVarResponseHttpContentTypes.end() )
+    {
+        localVarResponseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else
+    {
+        throw ApiException(400, utility::conversions::to_string_t("DefaultApi->srcAppApiUrdfCompleteLargeUrdfZipUpload does not produce any supported media type"));
+    }
+
+    localVarHeaderParams[utility::conversions::to_string_t("Accept")] = localVarResponseHttpContentType;
+
+    std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
+    localVarConsumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+
+
+    std::shared_ptr<IHttpBody> localVarHttpBody;
+    utility::string_t localVarRequestHttpContentType;
+
+    // use JSON if possible
+    if ( localVarConsumeHttpContentTypes.size() == 0 || localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != localVarConsumeHttpContentTypes.end() )
+    {
+        localVarRequestHttpContentType = utility::conversions::to_string_t("application/json");
+        web::json::value localVarJson;
+
+        localVarJson = ModelBase::toJson(completeLargeUploadSchema);
+        
+
+        localVarHttpBody = std::shared_ptr<IHttpBody>( new JsonBody( localVarJson ) );
+    }
+    // multipart formdata
+    else if( localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != localVarConsumeHttpContentTypes.end() )
+    {
+        localVarRequestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+        std::shared_ptr<MultipartFormData> localVarMultipart(new MultipartFormData);
+
+        if(completeLargeUploadSchema.get())
+        {
+            completeLargeUploadSchema->toMultipart(localVarMultipart, utility::conversions::to_string_t("completeLargeUploadSchema"));
+        }
+        
+
+        localVarHttpBody = localVarMultipart;
+        localVarRequestHttpContentType += utility::conversions::to_string_t("; boundary=") + localVarMultipart->getBoundary();
+    }
+    else if (localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/x-www-form-urlencoded")) != localVarConsumeHttpContentTypes.end())
+    {
+        localVarRequestHttpContentType = utility::conversions::to_string_t("application/x-www-form-urlencoded");
+    }
+    else
+    {
+        throw ApiException(415, utility::conversions::to_string_t("DefaultApi->srcAppApiUrdfCompleteLargeUrdfZipUpload does not consume any supported media type"));
+    }
+
+    // authentication (CustomTokenAuthentication) required
+    {
+        utility::string_t localVarApiKey = localVarApiConfiguration->getApiKey(utility::conversions::to_string_t("CustomTokenAuthentication"));
+        if ( localVarApiKey.size() > 0 )
+        {
+            localVarHeaderParams[utility::conversions::to_string_t("Authorization")] = localVarApiKey;
+        }
+    }
+
+    return m_ApiClient->callApi(localVarPath, utility::conversions::to_string_t("POST"), localVarQueryParams, localVarHttpBody, localVarHeaderParams, localVarFormParams, localVarFileParams, localVarRequestHttpContentType)
+    .then([=, this](web::http::http_response localVarResponse)
+    {
+        if (m_ApiClient->getResponseHandler())
+        {
+            m_ApiClient->getResponseHandler()(localVarResponse.status_code(), localVarResponse.headers());
+        }
+
+        // 1xx - informational : OK
+        // 2xx - successful       : OK
+        // 3xx - redirection   : OK
+        // 4xx - client error  : not OK
+        // 5xx - client error  : not OK
+        if (localVarResponse.status_code() >= 400)
+        {
+            throw ApiException(localVarResponse.status_code()
+                , utility::conversions::to_string_t("error calling srcAppApiUrdfCompleteLargeUrdfZipUpload: ") + localVarResponse.reason_phrase()
+                , std::make_shared<std::stringstream>(localVarResponse.extract_utf8string(true).get()));
+        }
+
+        // check response content type
+        if(localVarResponse.headers().has(utility::conversions::to_string_t("Content-Type")))
+        {
+            utility::string_t localVarContentType = localVarResponse.headers()[utility::conversions::to_string_t("Content-Type")];
+            if( localVarContentType.find(localVarResponseHttpContentType) == std::string::npos )
+            {
+                throw ApiException(500
+                    , utility::conversions::to_string_t("error calling srcAppApiUrdfCompleteLargeUrdfZipUpload: unexpected response type: ") + localVarContentType
+                    , std::make_shared<std::stringstream>(localVarResponse.extract_utf8string(true).get()));
+            }
+        }
+
+        return localVarResponse.extract_string();
+    })
+    .then([=, this](utility::string_t localVarResponse)
+    {
+        std::shared_ptr<URDFProjectSchema> localVarResult(new URDFProjectSchema());
+
+        if(localVarResponseHttpContentType == utility::conversions::to_string_t("application/json"))
+        {
+            web::json::value localVarJson = web::json::value::parse(localVarResponse);
+
+            ModelBase::fromJson(localVarJson, localVarResult);
+        }
+        // else if(localVarResponseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
+        // {
+        // TODO multipart response parsing
+        // }
+        else
+        {
+            throw ApiException(500
+                , utility::conversions::to_string_t("error calling srcAppApiUrdfCompleteLargeUrdfZipUpload: unsupported response type"));
+        }
+
+        return localVarResult;
+    });
+}
 pplx::task<std::shared_ptr<URDFProjectSchema>> DefaultApi::srcAppApiUrdfCreateUrdfProject(std::shared_ptr<URDFProjectCreateSchema> uRDFProjectCreateSchema) const
 {
 
@@ -33883,6 +33926,160 @@ pplx::task<std::shared_ptr<URDFProjectSchema>> DefaultApi::srcAppApiUrdfGetUrdfP
         {
             throw ApiException(500
                 , utility::conversions::to_string_t("error calling srcAppApiUrdfGetUrdfProject: unsupported response type"));
+        }
+
+        return localVarResult;
+    });
+}
+pplx::task<std::shared_ptr<InitiateLargeUploadResponse>> DefaultApi::srcAppApiUrdfInitiateLargeUrdfZipUpload(utility::string_t uuid, std::shared_ptr<InitiateLargeUploadSchema> initiateLargeUploadSchema) const
+{
+
+    // verify the required parameter 'initiateLargeUploadSchema' is set
+    if (initiateLargeUploadSchema == nullptr)
+    {
+        throw ApiException(400, utility::conversions::to_string_t("Missing required parameter 'initiateLargeUploadSchema' when calling DefaultApi->srcAppApiUrdfInitiateLargeUrdfZipUpload"));
+    }
+
+
+    std::shared_ptr<const ApiConfiguration> localVarApiConfiguration( m_ApiClient->getConfiguration() );
+    utility::string_t localVarPath = utility::conversions::to_string_t("/api/v1/urdf-projects/{uuid}/initiate-large-zip-upload");
+    boost::replace_all(localVarPath, utility::conversions::to_string_t("{") + utility::conversions::to_string_t("uuid") + utility::conversions::to_string_t("}"), web::uri::encode_uri(ApiClient::parameterToString(uuid)));
+
+    std::map<utility::string_t, utility::string_t> localVarQueryParams;
+    std::map<utility::string_t, utility::string_t> localVarHeaderParams( localVarApiConfiguration->getDefaultHeaders() );
+    std::map<utility::string_t, utility::string_t> localVarFormParams;
+    std::map<utility::string_t, std::shared_ptr<HttpContent>> localVarFileParams;
+
+    std::unordered_set<utility::string_t> localVarResponseHttpContentTypes;
+    localVarResponseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+
+    utility::string_t localVarResponseHttpContentType;
+
+    // use JSON if possible
+    if ( localVarResponseHttpContentTypes.size() == 0 )
+    {
+        localVarResponseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // JSON
+    else if ( localVarResponseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != localVarResponseHttpContentTypes.end() )
+    {
+        localVarResponseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( localVarResponseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != localVarResponseHttpContentTypes.end() )
+    {
+        localVarResponseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else
+    {
+        throw ApiException(400, utility::conversions::to_string_t("DefaultApi->srcAppApiUrdfInitiateLargeUrdfZipUpload does not produce any supported media type"));
+    }
+
+    localVarHeaderParams[utility::conversions::to_string_t("Accept")] = localVarResponseHttpContentType;
+
+    std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
+    localVarConsumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+
+
+    std::shared_ptr<IHttpBody> localVarHttpBody;
+    utility::string_t localVarRequestHttpContentType;
+
+    // use JSON if possible
+    if ( localVarConsumeHttpContentTypes.size() == 0 || localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != localVarConsumeHttpContentTypes.end() )
+    {
+        localVarRequestHttpContentType = utility::conversions::to_string_t("application/json");
+        web::json::value localVarJson;
+
+        localVarJson = ModelBase::toJson(initiateLargeUploadSchema);
+        
+
+        localVarHttpBody = std::shared_ptr<IHttpBody>( new JsonBody( localVarJson ) );
+    }
+    // multipart formdata
+    else if( localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != localVarConsumeHttpContentTypes.end() )
+    {
+        localVarRequestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+        std::shared_ptr<MultipartFormData> localVarMultipart(new MultipartFormData);
+
+        if(initiateLargeUploadSchema.get())
+        {
+            initiateLargeUploadSchema->toMultipart(localVarMultipart, utility::conversions::to_string_t("initiateLargeUploadSchema"));
+        }
+        
+
+        localVarHttpBody = localVarMultipart;
+        localVarRequestHttpContentType += utility::conversions::to_string_t("; boundary=") + localVarMultipart->getBoundary();
+    }
+    else if (localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/x-www-form-urlencoded")) != localVarConsumeHttpContentTypes.end())
+    {
+        localVarRequestHttpContentType = utility::conversions::to_string_t("application/x-www-form-urlencoded");
+    }
+    else
+    {
+        throw ApiException(415, utility::conversions::to_string_t("DefaultApi->srcAppApiUrdfInitiateLargeUrdfZipUpload does not consume any supported media type"));
+    }
+
+    // authentication (CustomTokenAuthentication) required
+    {
+        utility::string_t localVarApiKey = localVarApiConfiguration->getApiKey(utility::conversions::to_string_t("CustomTokenAuthentication"));
+        if ( localVarApiKey.size() > 0 )
+        {
+            localVarHeaderParams[utility::conversions::to_string_t("Authorization")] = localVarApiKey;
+        }
+    }
+
+    return m_ApiClient->callApi(localVarPath, utility::conversions::to_string_t("POST"), localVarQueryParams, localVarHttpBody, localVarHeaderParams, localVarFormParams, localVarFileParams, localVarRequestHttpContentType)
+    .then([=, this](web::http::http_response localVarResponse)
+    {
+        if (m_ApiClient->getResponseHandler())
+        {
+            m_ApiClient->getResponseHandler()(localVarResponse.status_code(), localVarResponse.headers());
+        }
+
+        // 1xx - informational : OK
+        // 2xx - successful       : OK
+        // 3xx - redirection   : OK
+        // 4xx - client error  : not OK
+        // 5xx - client error  : not OK
+        if (localVarResponse.status_code() >= 400)
+        {
+            throw ApiException(localVarResponse.status_code()
+                , utility::conversions::to_string_t("error calling srcAppApiUrdfInitiateLargeUrdfZipUpload: ") + localVarResponse.reason_phrase()
+                , std::make_shared<std::stringstream>(localVarResponse.extract_utf8string(true).get()));
+        }
+
+        // check response content type
+        if(localVarResponse.headers().has(utility::conversions::to_string_t("Content-Type")))
+        {
+            utility::string_t localVarContentType = localVarResponse.headers()[utility::conversions::to_string_t("Content-Type")];
+            if( localVarContentType.find(localVarResponseHttpContentType) == std::string::npos )
+            {
+                throw ApiException(500
+                    , utility::conversions::to_string_t("error calling srcAppApiUrdfInitiateLargeUrdfZipUpload: unexpected response type: ") + localVarContentType
+                    , std::make_shared<std::stringstream>(localVarResponse.extract_utf8string(true).get()));
+            }
+        }
+
+        return localVarResponse.extract_string();
+    })
+    .then([=, this](utility::string_t localVarResponse)
+    {
+        std::shared_ptr<InitiateLargeUploadResponse> localVarResult(new InitiateLargeUploadResponse());
+
+        if(localVarResponseHttpContentType == utility::conversions::to_string_t("application/json"))
+        {
+            web::json::value localVarJson = web::json::value::parse(localVarResponse);
+
+            ModelBase::fromJson(localVarJson, localVarResult);
+        }
+        // else if(localVarResponseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
+        // {
+        // TODO multipart response parsing
+        // }
+        else
+        {
+            throw ApiException(500
+                , utility::conversions::to_string_t("error calling srcAppApiUrdfInitiateLargeUrdfZipUpload: unsupported response type"));
         }
 
         return localVarResult;
@@ -39407,7 +39604,7 @@ pplx::task<std::map<utility::string_t, std::vector<std::shared_ptr<OrganizationW
         return localVarResult;
     });
 }
-pplx::task<std::map<utility::string_t, std::vector<std::shared_ptr<OrganizationSchema>>>> DefaultApi::srcUsersApiOrganizationsListOrganizations() const
+pplx::task<std::map<utility::string_t, std::vector<std::shared_ptr<OrganizationSchema>>>> DefaultApi::srcUsersApiOrganizationsListOrganizations(boost::optional<bool> all) const
 {
 
 
@@ -39448,6 +39645,10 @@ pplx::task<std::map<utility::string_t, std::vector<std::shared_ptr<OrganizationS
 
     std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
 
+    if (all)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("all")] = ApiClient::parameterToString(*all);
+    }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
     utility::string_t localVarRequestHttpContentType;

@@ -5,7 +5,7 @@
 
     Demonstrates:
      - Using affect() to direct commands to the real robot or simulation
-     - Wiring the real Paho MQTT client via PahoMqttAdapter
+     - Wiring the MQTT client via CyberwaveMqttAdapter
      - Sending a move_forward command via LocomoteTwin
 
     Before running:
@@ -13,13 +13,13 @@
         export CYBERWAVE_MQTT_HOST=mqtt.cyberwave.com
         export TWIN_UUID=your-go2-twin-uuid   # or leave unset to use first twin
 
-    Requires: cyberwave_sdk + cyberwave_mqtt_client (PahoMqttCpp)
+    Requires: cyberwave_sdk + cyberwave_mqtt_client (libmosquitto)
 */
 
 #include <cyberwave/client.h>
 #include <cyberwave/config.h>
+#include <cyberwave/cyberwave_mqtt_adapter.h>
 #include <cyberwave/exceptions.h>
-#include <cyberwave/paho_mqtt_adapter.h>
 #include <cyberwave/twin_subclasses.h>
 #include <cyberwave/twins.h>
 
@@ -41,7 +41,7 @@ int main()
         cw.affect(affect_mode && *affect_mode ? affect_mode : "simulation");
 
         // Wire the real MQTT client. Mirrors Python: Cyberwave(mqtt_host=...) auto-connects.
-        auto adapter = std::make_shared<cyberwave::PahoMqttAdapter>(cfg);
+        auto adapter = std::make_shared<cyberwave::CyberwaveMqttAdapter>(cfg);
         adapter->connect();
         cw.set_mqtt_client(adapter);
 

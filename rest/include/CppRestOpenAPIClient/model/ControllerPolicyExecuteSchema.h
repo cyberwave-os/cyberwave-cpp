@@ -18,6 +18,7 @@
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_ControllerPolicyExecuteSchema_H_
 #define ORG_OPENAPITOOLS_CLIENT_MODEL_ControllerPolicyExecuteSchema_H_
 
+#include <stdexcept>
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
@@ -55,6 +56,15 @@ public:
     /////////////////////////////////////////////
     /// ControllerPolicyExecuteSchema members
 
+    enum class ModeEnum
+    {
+        LIVE,
+        SIMULATION,
+    };
+
+    ModeEnum toModeEnum(const utility::string_t& value) const;
+    const utility::string_t fromModeEnum(const ModeEnum value) const;
+
 
     utility::string_t getTwinUuid() const;
     bool twinUuidIsSet() const;
@@ -70,6 +80,11 @@ public:
     bool executionIsSet() const;
     void unsetExecution();
     void setExecution(const utility::string_t& value);
+
+    ModeEnum getMode() const;
+    bool modeIsSet() const;
+    void unsetMode();
+    void setMode(const ModeEnum value);
 
     int32_t getMaxSteps() const;
     bool maxStepsIsSet() const;
@@ -105,6 +120,8 @@ protected:
 
     utility::string_t m_Execution;
     bool m_ExecutionIsSet;
+
+    boost::optional<ModeEnum> m_Mode;
 
     boost::optional<int32_t> m_Max_steps;
 

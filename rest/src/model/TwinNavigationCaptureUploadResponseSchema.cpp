@@ -47,16 +47,6 @@ web::json::value TwinNavigationCaptureUploadResponseSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("file_url"))] = ModelBase::toJson(m_File_url.get());
     }
-    if(m_Event_uuid.has_value())
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("event_uuid"))] = ModelBase::toJson(m_Event_uuid.get());
-    }
-    if(m_Event_type.has_value())
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("event_type"))] = ModelBase::toJson(m_Event_type.get());
-    }
     if(m_Triggered_workflow_uuidsIsSet)
     {
         
@@ -93,28 +83,6 @@ bool TwinNavigationCaptureUploadResponseSchema::fromJson(const web::json::value&
             utility::string_t refVal_setFileUrl;
             ok &= ModelBase::fromJson(fieldValue, refVal_setFileUrl);
             setFileUrl(refVal_setFileUrl);
-            
-        }
-    }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("event_uuid"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("event_uuid")));
-        if(!fieldValue.is_null())
-        {
-            utility::string_t refVal_setEventUuid;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setEventUuid);
-            setEventUuid(refVal_setEventUuid);
-            
-        }
-    }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("event_type"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("event_type")));
-        if(!fieldValue.is_null())
-        {
-            utility::string_t refVal_setEventType;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setEventType);
-            setEventType(refVal_setEventType);
             
         }
     }
@@ -158,14 +126,6 @@ void TwinNavigationCaptureUploadResponseSchema::toMultipart(std::shared_ptr<Mult
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("file_url")), m_File_url.get()));
     }
-    if(m_Event_uuid.has_value())
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("event_uuid")), m_Event_uuid.get()));
-    }
-    if(m_Event_type.has_value())
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("event_type")), m_Event_type.get()));
-    }
     if(m_Triggered_workflow_uuidsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("triggered_workflow_uuids")), m_Triggered_workflow_uuids));
@@ -196,18 +156,6 @@ bool TwinNavigationCaptureUploadResponseSchema::fromMultiPart(std::shared_ptr<Mu
         utility::string_t refVal_setFileUrl;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("file_url"))), refVal_setFileUrl );
         setFileUrl(refVal_setFileUrl);
-    }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("event_uuid"))))
-    {
-        utility::string_t refVal_setEventUuid;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("event_uuid"))), refVal_setEventUuid );
-        setEventUuid(refVal_setEventUuid);
-    }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("event_type"))))
-    {
-        utility::string_t refVal_setEventType;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("event_type"))), refVal_setEventType );
-        setEventType(refVal_setEventType);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("triggered_workflow_uuids"))))
     {
@@ -265,46 +213,6 @@ bool TwinNavigationCaptureUploadResponseSchema::fileUrlIsSet() const
 void TwinNavigationCaptureUploadResponseSchema::unsetFile_url()
 {
     m_File_url.reset();
-}
-utility::string_t TwinNavigationCaptureUploadResponseSchema::getEventUuid() const
-{
-    return m_Event_uuid.get();
-}
-
-
-void TwinNavigationCaptureUploadResponseSchema::setEventUuid(const utility::string_t& value)
-{
-    m_Event_uuid = value;
-}
-
-bool TwinNavigationCaptureUploadResponseSchema::eventUuidIsSet() const
-{
-    return m_Event_uuid.has_value();
-}
-
-void TwinNavigationCaptureUploadResponseSchema::unsetEvent_uuid()
-{
-    m_Event_uuid.reset();
-}
-utility::string_t TwinNavigationCaptureUploadResponseSchema::getEventType() const
-{
-    return m_Event_type.get();
-}
-
-
-void TwinNavigationCaptureUploadResponseSchema::setEventType(const utility::string_t& value)
-{
-    m_Event_type = value;
-}
-
-bool TwinNavigationCaptureUploadResponseSchema::eventTypeIsSet() const
-{
-    return m_Event_type.has_value();
-}
-
-void TwinNavigationCaptureUploadResponseSchema::unsetEvent_type()
-{
-    m_Event_type.reset();
 }
 std::vector<utility::string_t> TwinNavigationCaptureUploadResponseSchema::getTriggeredWorkflowUuids() const
 {

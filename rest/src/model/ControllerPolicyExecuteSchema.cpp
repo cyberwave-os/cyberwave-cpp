@@ -55,6 +55,13 @@ web::json::value ControllerPolicyExecuteSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("execution"))] = ModelBase::toJson(m_Execution);
     }
+    if(m_Mode.has_value())
+    {
+        
+        utility::string_t refVal = fromModeEnum(m_Mode.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("mode"))] = ModelBase::toJson(refVal);
+        
+    }
     if(m_Max_steps.has_value())
     {
         
@@ -117,6 +124,18 @@ bool ControllerPolicyExecuteSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setExecution;
             ok &= ModelBase::fromJson(fieldValue, refVal_setExecution);
             setExecution(refVal_setExecution);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("mode"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("mode")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setMode;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setMode);
+            
+            setMode(toModeEnum(refVal_setMode));
             
         }
     }
@@ -197,6 +216,10 @@ void ControllerPolicyExecuteSchema::toMultipart(std::shared_ptr<MultipartFormDat
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("execution")), m_Execution));
     }
+    if(m_Mode.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("mode")), fromModeEnum(m_Mode.get())));
+    }
     if(m_Max_steps.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("max_steps")), m_Max_steps.get()));
@@ -246,6 +269,12 @@ bool ControllerPolicyExecuteSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("execution"))), refVal_setExecution );
         setExecution(refVal_setExecution);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("mode"))))
+    {
+        utility::string_t refVal_setMode;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("mode"))), refVal_setMode );
+        setMode(toModeEnum(refVal_setMode));
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("max_steps"))))
     {
         int32_t refVal_setMaxSteps;
@@ -277,6 +306,33 @@ bool ControllerPolicyExecuteSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         setServerMode(refVal_setServerMode);
     }
     return ok;
+}
+
+ControllerPolicyExecuteSchema::ModeEnum ControllerPolicyExecuteSchema::toModeEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("live")) {
+        return ModeEnum::LIVE;
+    }
+    
+    if (value == utility::conversions::to_string_t("simulation")) {
+        return ModeEnum::SIMULATION;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to ModeEnum");
+}
+
+
+const utility::string_t ControllerPolicyExecuteSchema::fromModeEnum(const ModeEnum value) const
+{
+    switch(value)
+    {
+        
+        case ModeEnum::LIVE: return utility::conversions::to_string_t("live");
+        
+        case ModeEnum::SIMULATION: return utility::conversions::to_string_t("simulation");
+        
+    }
 }
 
 
@@ -341,6 +397,26 @@ bool ControllerPolicyExecuteSchema::executionIsSet() const
 void ControllerPolicyExecuteSchema::unsetExecution()
 {
     m_ExecutionIsSet = false;
+}
+ControllerPolicyExecuteSchema::ModeEnum ControllerPolicyExecuteSchema::getMode() const
+{
+    return m_Mode.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setMode(const ModeEnum value)
+{
+    m_Mode = value;
+}
+
+bool ControllerPolicyExecuteSchema::modeIsSet() const
+{
+    return m_Mode.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetMode()
+{
+    m_Mode.reset();
 }
 int32_t ControllerPolicyExecuteSchema::getMaxSteps() const
 {

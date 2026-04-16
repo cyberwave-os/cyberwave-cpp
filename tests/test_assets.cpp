@@ -133,6 +133,38 @@ static void test_assets_list_throws_without_api_key()
     assert(threw);
 }
 
+static void test_assets_list_accepts_legacy_workspace_argument()
+{
+    std::string request_query;
+
+    TestHttpServer server(
+        [&](web::http::http_request request)
+        {
+            const std::string path = to_std(request.relative_uri().path());
+            if (path == "/api/v1/assets")
+            {
+                request_query = to_std(request.relative_uri().query());
+                request.reply(web::http::status_codes::OK,
+                              to_utility("[{\"uuid\":\"asset-uuid\",\"name\":\"Camera\"}]"),
+                              to_utility("application/json"));
+                return;
+            }
+
+            request.reply(web::http::status_codes::NotFound, to_utility("not found"));
+        });
+
+    Config cfg;
+    cfg.base_url = server.base_url();
+    cfg.api_key = "token";
+    Client client(cfg);
+    AssetManager assets = client.assets();
+
+    const auto listed_assets = assets.list("workspace-legacy");
+    assert(listed_assets.size() == 1);
+    assert(listed_assets.front().uuid() == "asset-uuid");
+    assert(request_query.empty());
+}
+
 /** get_by_registry_id delegates to get() → throws without api key */
 static void test_assets_get_by_registry_id_throws_without_api_key()
 {
@@ -482,6 +514,7 @@ int main()
     test_asset_view_from_asset_schema();
     test_asset_view_from_asset_list_schema();
     test_assets_list_throws_without_api_key();
+    test_assets_list_accepts_legacy_workspace_argument();
     test_assets_get_by_registry_id_throws_without_api_key();
     test_assets_get_universal_schema_throws_without_api_key();
     test_assets_patch_universal_schema_throws_without_api_key();

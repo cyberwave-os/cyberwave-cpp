@@ -10,35 +10,33 @@
  */
 
 /*
- * BusinessEventListResponseSchema.h
+ * UpdateFeatureDefinitionRequest.h
  *
  * 
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_BusinessEventListResponseSchema_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_BusinessEventListResponseSchema_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_UpdateFeatureDefinitionRequest_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_UpdateFeatureDefinitionRequest_H_
 
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
-#include <vector>
-#include "CppRestOpenAPIClient/model/BusinessEventSchema.h"
+#include <cpprest/details/basic_types.h>
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
-class BusinessEventSchema;
 
 
-class  BusinessEventListResponseSchema
+class  UpdateFeatureDefinitionRequest
     : public ModelBase
 {
 public:
-    BusinessEventListResponseSchema();
-    virtual ~BusinessEventListResponseSchema();
+    UpdateFeatureDefinitionRequest();
+    virtual ~UpdateFeatureDefinitionRequest();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -53,26 +51,24 @@ public:
 
 
     /////////////////////////////////////////////
-    /// BusinessEventListResponseSchema members
+    /// UpdateFeatureDefinitionRequest members
 
 
-    bool isSuccess() const;
-    bool successIsSet() const;
-    void unsetSuccess();
-    void setSuccess(bool value);
+    utility::string_t getLabel() const;
+    bool labelIsSet() const;
+    void unsetLabel();
+    void setLabel(const utility::string_t& value);
 
-    std::vector<std::shared_ptr<BusinessEventSchema>> getEvents() const;
-    bool eventsIsSet() const;
-    void unsetEvents();
-    void setEvents(const std::vector<std::shared_ptr<BusinessEventSchema>>& value);
+    utility::string_t getDescription() const;
+    bool descriptionIsSet() const;
+    void unsetDescription();
+    void setDescription(const utility::string_t& value);
 
 
 protected:
-    bool m_Success;
-    bool m_SuccessIsSet;
+    boost::optional<utility::string_t> m_Label;
 
-    std::vector<std::shared_ptr<BusinessEventSchema>> m_Events;
-    bool m_EventsIsSet;
+    boost::optional<utility::string_t> m_Description;
 
 };
 
@@ -82,4 +78,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_BusinessEventListResponseSchema_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_UpdateFeatureDefinitionRequest_H_ */

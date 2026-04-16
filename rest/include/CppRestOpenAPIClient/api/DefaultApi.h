@@ -37,9 +37,6 @@
 #include "CppRestOpenAPIClient/model/AttachmentCreateSchema.h"
 #include "CppRestOpenAPIClient/model/AttachmentSchema.h"
 #include "CppRestOpenAPIClient/model/BulkJointStatesUpdateSchema.h"
-#include "CppRestOpenAPIClient/model/BusinessEventCreateSchema.h"
-#include "CppRestOpenAPIClient/model/BusinessEventListResponseSchema.h"
-#include "CppRestOpenAPIClient/model/BusinessEventSchema.h"
 #include "CppRestOpenAPIClient/model/CameraConfigUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/CompleteLargeUploadSchema.h"
 #include "CppRestOpenAPIClient/model/ControllerPolicyCreateSchema.h"
@@ -123,6 +120,7 @@
 #include "CppRestOpenAPIClient/model/RecordingGenerationResponseSchema.h"
 #include "CppRestOpenAPIClient/model/ReloadCapabilitiesBulkSchema.h"
 #include "CppRestOpenAPIClient/model/RemoveMemberResponse.h"
+#include "CppRestOpenAPIClient/model/ReplayTimelineEventsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/Response.h"
 #include "CppRestOpenAPIClient/model/RobotDescriptionSchema.h"
 #include "CppRestOpenAPIClient/model/ShareSchema.h"
@@ -502,7 +500,23 @@ public:
     /// <remarks>
     /// 
     /// </remarks>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="offset"> (optional, default to 0)</param>
+    /// <param name="registryId"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="registryVendor"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="owned"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="search"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="metadataKey"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="metadataValue"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::vector<std::shared_ptr<AssetListSchema>>> srcAppApiAssetsListAssets(
+        boost::optional<int32_t> limit,
+        boost::optional<int32_t> offset,
+        boost::optional<utility::string_t> registryId,
+        boost::optional<utility::string_t> registryVendor,
+        boost::optional<utility::string_t> owned,
+        boost::optional<utility::string_t> search,
+        boost::optional<utility::string_t> metadataKey,
+        boost::optional<utility::string_t> metadataValue
     ) const;
     /// <summary>
     /// List Primitive Assets
@@ -1377,6 +1391,28 @@ public:
         boost::optional<int32_t> sampleRateHz
     ) const;
     /// <summary>
+    /// Get Recording Timeline Events
+    /// </summary>
+    /// <remarks>
+    /// Return replay timeline markers for alerts and telemetry within a recording window.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="recordingUuid"></param>
+    /// <param name="twinUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="includeAlerts"> (optional, default to false)</param>
+    /// <param name="includeTelemetry"> (optional, default to false)</param>
+    /// <param name="telemetryEventTypes"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="limitPerKind"> (optional, default to 0)</param>
+    pplx::task<std::shared_ptr<ReplayTimelineEventsResponseSchema>> srcAppApiEnvironmentsRecordingsGetRecordingTimelineEvents(
+        utility::string_t uuid,
+        utility::string_t recordingUuid,
+        boost::optional<utility::string_t> twinUuid,
+        boost::optional<bool> includeAlerts,
+        boost::optional<bool> includeTelemetry,
+        boost::optional<utility::string_t> telemetryEventTypes,
+        boost::optional<int32_t> limitPerKind
+    ) const;
+    /// <summary>
     /// Process All Environment Sessions
     /// </summary>
     /// <remarks>
@@ -1701,36 +1737,6 @@ public:
     pplx::task<std::shared_ptr<EpisodeSchema>> srcAppApiEpisodeUpdateEpisode(
         utility::string_t uuid,
         std::shared_ptr<EpisodeUpdateSchema> episodeUpdateSchema
-    ) const;
-    /// <summary>
-    /// Create Business Event
-    /// </summary>
-    /// <remarks>
-    /// Create a business event and trigger matching workflows.  Sources: sensor, robot, edge_node, workflow, user, system  For ML model events, use source&#x3D;&#39;edge_node&#39; or &#39;system&#39; and include model details in the data field: {\&quot;model\&quot;: \&quot;yolo-v8\&quot;, \&quot;version\&quot;: \&quot;1.0\&quot;, ...}
-    /// </remarks>
-    /// <param name="businessEventCreateSchema"></param>
-    pplx::task<std::shared_ptr<BusinessEventSchema>> srcAppApiEventsCreateBusinessEvent(
-        std::shared_ptr<BusinessEventCreateSchema> businessEventCreateSchema
-    ) const;
-    /// <summary>
-    /// List Live Events
-    /// </summary>
-    /// <remarks>
-    /// Get recent business events for live visualization.  Supports filtering by: - environment_uuid: Filter by environment - source: Filter by source type (sensor, robot, edge_node, workflow, user, system) - severity: Filter by severity level (DEBUG, INFO, WARNING, ERROR, CRITICAL) - event_type: Filter by event type (exact match) - last_timestamp_ms: Get events after this timestamp (for polling)
-    /// </remarks>
-    /// <param name="environmentUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="source"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="severity"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="eventType"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="lastTimestampMs"> (optional, default to 0)</param>
-    /// <param name="limit"> (optional, default to 0)</param>
-    pplx::task<std::shared_ptr<BusinessEventListResponseSchema>> srcAppApiEventsListLiveEvents(
-        boost::optional<utility::string_t> environmentUuid,
-        boost::optional<utility::string_t> source,
-        boost::optional<utility::string_t> severity,
-        boost::optional<utility::string_t> eventType,
-        boost::optional<int32_t> lastTimestampMs,
-        boost::optional<int32_t> limit
     ) const;
     /// <summary>
     /// Get Task Execution
@@ -2164,13 +2170,15 @@ public:
     /// List Mlmodels
     /// </summary>
     /// <remarks>
-    /// List all ML models for the authenticated user&#39;s workspace.  Query params:     deployment: Filter by deployment type (cloud, edge, hybrid)     edge_compatible: If true, return only edge or hybrid models
+    /// List all ML models for the authenticated user&#39;s workspace.  Query params:     deployment: Filter by deployment type (cloud, edge, hybrid)     edge_compatible: If true, return only edge or hybrid models     model_external_id: Filter by exact model_external_id (e.g. \&quot;yolov8n.pt\&quot;)
     /// </remarks>
     /// <param name="deployment"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="edgeCompatible"> (optional, default to false)</param>
+    /// <param name="modelExternalId"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> srcAppApiMlmodelsListMlmodels(
         boost::optional<utility::string_t> deployment,
-        boost::optional<bool> edgeCompatible
+        boost::optional<bool> edgeCompatible,
+        boost::optional<utility::string_t> modelExternalId
     ) const;
     /// <summary>
     /// Update Mlmodel
@@ -2682,9 +2690,13 @@ public:
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="mock"> (optional, default to false)</param>
+    /// <param name="sensorId"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="sourceType"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<void> srcAppApiTwinsGetTwinLatestFrame(
         utility::string_t uuid,
-        boost::optional<bool> mock
+        boost::optional<bool> mock,
+        boost::optional<utility::string_t> sensorId,
+        boost::optional<utility::string_t> sourceType
     ) const;
     /// <summary>
     /// Get Twin Latest Metrics
@@ -2875,6 +2887,18 @@ public:
         std::shared_ptr<TwinStateUpdateSchema> twinStateUpdateSchema
     ) const;
     /// <summary>
+    /// Complete Large Urdf Zip Upload
+    /// </summary>
+    /// <remarks>
+    /// Complete a large URDF ZIP upload: validate the staged object, move it to the temp path used by the normal processing pipeline, and enqueue processing.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="completeLargeUploadSchema"></param>
+    pplx::task<std::shared_ptr<URDFProjectSchema>> srcAppApiUrdfCompleteLargeUrdfZipUpload(
+        utility::string_t uuid,
+        std::shared_ptr<CompleteLargeUploadSchema> completeLargeUploadSchema
+    ) const;
+    /// <summary>
     /// Create Urdf Project
     /// </summary>
     /// <remarks>
@@ -2969,6 +2993,18 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::shared_ptr<URDFProjectSchema>> srcAppApiUrdfGetUrdfProject(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Initiate Large Urdf Zip Upload
+    /// </summary>
+    /// <remarks>
+    /// Initiate a large URDF project ZIP upload via a direct-to-storage signed URL.  Use this when the ZIP exceeds reverse-proxy body limits (multipart POST to &#x60;&#x60;/zip-file&#x60;&#x60; may return 413).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="initiateLargeUploadSchema"></param>
+    pplx::task<std::shared_ptr<InitiateLargeUploadResponse>> srcAppApiUrdfInitiateLargeUrdfZipUpload(
+        utility::string_t uuid,
+        std::shared_ptr<InitiateLargeUploadSchema> initiateLargeUploadSchema
     ) const;
     /// <summary>
     /// List Urdf Projects
@@ -3408,7 +3444,9 @@ public:
     /// <remarks>
     /// List all organizations
     /// </remarks>
+    /// <param name="all"> (optional, default to false)</param>
     pplx::task<std::map<utility::string_t, std::vector<std::shared_ptr<OrganizationSchema>>>> srcUsersApiOrganizationsListOrganizations(
+        boost::optional<bool> all
     ) const;
     /// <summary>
     /// Remove Organization Member
