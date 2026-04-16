@@ -163,8 +163,7 @@ install_deps_debian() {
         libssl-dev \
         libboost-all-dev \
         nlohmann-json3-dev \
-        libpaho-mqtt-dev \
-        libpaho-mqttpp-dev \
+        libmosquitto-dev \
         libspdlog-dev
 
     if [[ "$WITH_GRPC" -eq 1 ]]; then

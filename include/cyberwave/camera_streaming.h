@@ -10,9 +10,12 @@
 #include <array>
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <cstdint>
+#include <functional>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <thread>
 #include <vector>
@@ -68,7 +71,8 @@ public:
     CameraStreamer(std::shared_ptr<IMqttClient> mqtt, const std::string& twin_uuid,
                    std::shared_ptr<IFrameSource> source, int fps = 30, std::string sensor_name = "",
                    bool enable_webrtc = false, bool enable_mqtt_video_fallback = true,
-                   std::string webrtc_stun_url = "stun:stun.l.google.com:19302");
+                   std::string webrtc_stun_url = "stun:stun.l.google.com:19302",
+                   std::vector<std::string> webrtc_turn_servers = {});
     ~CameraStreamer();
 
     CameraStreamer(const CameraStreamer&) = delete;
@@ -77,6 +81,14 @@ public:
     void start();
     void stop();
     bool running() const noexcept { return running_.load(); }
+
+    /**
+     * @brief Inject a log callback so WebRTC state messages use the caller's logger.
+     *
+     * Call before start(). If not set, the streamer uses its own default logger
+     * which may have a different format from the rest of the application.
+     */
+    void set_log_callback(std::function<void(const std::string&)> fn);
 
 private:
     void stream_loop();
@@ -94,17 +106,25 @@ private:
     bool enable_webrtc_{false};
     bool enable_mqtt_video_fallback_{true};
     std::string webrtc_stun_url_;
+    std::vector<std::string> webrtc_turn_servers_;
     std::unique_ptr<WebRTCAdapter> webrtc_adapter_;
 
     // Optional: JPEG -> Annex-B H264 conversion when WebRTC is enabled.
     std::unique_ptr<JpegToH264EncoderImpl> h264_encoder_;
     std::uint64_t frame_counter_{0};
 
+    // MQTT fallback rate-limiting: cap at ~5fps to avoid flooding the broker.
+    static constexpr double mqtt_fallback_min_interval_s_{0.2};
+    double mqtt_fallback_last_send_ts_{0.0};
+
     // Stream health telemetry published by the streamer itself.
     double edge_health_stream_started_at_seconds_{0.0};
     double edge_health_last_publish_ts_seconds_{0.0};
     double edge_health_last_frame_ts_seconds_{0.0};
     std::uint64_t edge_health_frames_sent_{0};
+
+    // Optional logger injected by the caller for consistent log formatting.
+    std::function<void(const std::string&)> log_fn_;
 };
 
 /**
@@ -144,6 +164,12 @@ struct IDepthSource
 
 /**
  * @brief Streamer that publishes depth and optional point-cloud payloads.
+ *
+ * Pointcloud publishes run on a dedicated background thread with a
+ * single-slot "latest wins" buffer so that the acquisition loop is never
+ * blocked by MQTT back-pressure.  If the network cannot keep up, stale
+ * frames are silently replaced by newer ones — the correct behaviour for
+ * real-time sensor streams.
  */
 class DepthStreamer
 {
@@ -161,6 +187,7 @@ public:
 
 private:
     void stream_loop();
+    void pointcloud_publish_loop();
 
     std::shared_ptr<IMqttClient> mqtt_;
     std::string twin_uuid_;
@@ -170,6 +197,14 @@ private:
     bool publish_pointcloud_{true};
     std::atomic<bool> running_{false};
     std::thread thread_;
+
+    // Single-slot latest-wins buffer for async pointcloud publishing.
+    std::thread pc_publish_thread_;
+    std::mutex pc_mutex_;
+    std::condition_variable pc_cv_;
+    std::string pc_pending_topic_;
+    std::string pc_pending_payload_;
+    bool pc_has_pending_{false};
 };
 
 /**

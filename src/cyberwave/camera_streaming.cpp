@@ -27,6 +27,8 @@
 
 #if CYBERWAVE_HAS_LIBDATACHANNEL
 #include <rtc/rtc.hpp>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 #endif
 
 // Important: these includes must live at file scope (not inside namespace cyberwave),
@@ -111,11 +113,16 @@ class WebRTCAdapter
 public:
     using PublishSignalCallback = std::function<void(const Json&)>;
 
+    using LogCallback = std::function<void(const std::string&)>;
+
     struct Config
     {
         std::string sensor{"default"};
         std::string stun_url{"stun:stun.l.google.com:19302"};
+        std::vector<std::string> turn_servers;
         bool recording{false};
+        /// Optional logger for informational WebRTC state messages.
+        LogCallback log_fn;
     };
 
     virtual ~WebRTCAdapter() = default;
@@ -630,7 +637,7 @@ private:
             codec_ctx_->bit_rate = static_cast<std::int64_t>(h264_bitrate_kbps_) * 1000LL;
             codec_ctx_->gop_size = std::max(1, h264_gop_size_);
             codec_ctx_->max_b_frames = 0;
-            codec_ctx_->thread_count = 1;
+            codec_ctx_->thread_count = 0; // 0 = auto-detect optimal thread count
 
             if (codec_name_ == "libx264")
             {
@@ -768,6 +775,7 @@ public:
         }
 
         publish_signal_ = std::move(publish_signal);
+        log_fn_ = cfg.log_fn;
         sensor_ = cfg.sensor;
         recording_ = cfg.recording;
 
@@ -776,6 +784,10 @@ public:
         {
             rtc_cfg.iceServers.emplace_back(cfg.stun_url);
         }
+        for (const auto& turn : cfg.turn_servers)
+        {
+            rtc_cfg.iceServers.emplace_back(turn);
+        }
         rtc_cfg.disableAutoNegotiation = true;
 
         peer_connection_ = std::make_shared<rtc::PeerConnection>(rtc_cfg);
@@ -783,7 +795,8 @@ public:
 
         ssrc_ = 1 + (std::rand() % 0xFFFFFFFEu);
         auto video_description = rtc::Description::Video("video", rtc::Description::Direction::SendOnly);
-        video_description.addH264Codec(payload_type_h264_);
+        video_description.addH264Codec(payload_type_h264_,
+                                       "profile-level-id=42001f;packetization-mode=1;level-asymmetry-allowed=1");
         video_description.addSSRC(ssrc_, cname_, msid_, track_id_);
         video_track_ = peer_connection_->addTrack(video_description);
 
@@ -799,7 +812,10 @@ public:
         video_track_->setMediaHandler(packetizer);
         video_track_->onOpen([this]() {});
 
+        log("[WebRTCAdapter] Calling setLocalDescription (stun={})", cfg.stun_url);
         peer_connection_->setLocalDescription();
+        log("[WebRTCAdapter] setLocalDescription returned, gatheringState={}",
+            static_cast<int>(peer_connection_->gatheringState()));
         started_ = true;
     }
 
@@ -888,6 +904,10 @@ public:
         {
             return false;
         }
+        if (!connected_)
+        {
+            return false;
+        }
 
         try
         {
@@ -913,6 +933,7 @@ private:
         peer_connection_->onStateChange(
             [this](rtc::PeerConnection::State state)
             {
+                log("[WebRTCAdapter] onStateChange: state={}", static_cast<int>(state));
                 std::lock_guard<std::mutex> lock(mutex_);
                 connected_ = (state == rtc::PeerConnection::State::Connected);
             });
@@ -920,6 +941,7 @@ private:
         peer_connection_->onGatheringStateChange(
             [this](rtc::PeerConnection::GatheringState state)
             {
+                log("[WebRTCAdapter] onGatheringStateChange: state={}", static_cast<int>(state));
                 if (state != rtc::PeerConnection::GatheringState::Complete)
                 {
                     return;
@@ -979,6 +1001,7 @@ private:
     std::optional<std::string> local_sdp_;
     std::string sensor_{};
     bool recording_{false};
+    LogCallback log_fn_;
 
     std::atomic<bool> started_{false};
     bool connected_{false};
@@ -990,6 +1013,20 @@ private:
     static constexpr const char* cname_{"cw-cyberwave-cpp"};
     static constexpr const char* msid_{"cw-cyberwave-cpp-stream"};
     static constexpr const char* track_id_{"cw-cyberwave-cpp-video"};
+
+    template <typename... Args>
+    void log(fmt::format_string<Args...> fmt_str, Args&&... args) const
+    {
+        auto msg = fmt::format(fmt_str, std::forward<Args>(args)...);
+        if (log_fn_)
+        {
+            log_fn_(msg);
+        }
+        else
+        {
+            spdlog::info("{}", msg);
+        }
+    }
 };
 
 std::unique_ptr<WebRTCAdapter> create_webrtc_adapter() { return std::make_unique<LibDataChannelWebRTCAdapter>(); }
@@ -1015,14 +1052,18 @@ bool VirtualFrameSource::next_frame(VideoFrame& frame_out)
 // --- CameraStreamer ---
 CameraStreamer::CameraStreamer(std::shared_ptr<IMqttClient> mqtt, const std::string& twin_uuid,
                                std::shared_ptr<IFrameSource> source, int fps, std::string sensor_name,
-                               bool enable_webrtc, bool enable_mqtt_video_fallback, std::string webrtc_stun_url)
+                               bool enable_webrtc, bool enable_mqtt_video_fallback, std::string webrtc_stun_url,
+                               std::vector<std::string> webrtc_turn_servers)
     : mqtt_(std::move(mqtt)), twin_uuid_(twin_uuid), source_(std::move(source)), fps_(fps > 0 ? fps : 30),
       sensor_name_(std::move(sensor_name)), enable_webrtc_(enable_webrtc),
-      enable_mqtt_video_fallback_(enable_mqtt_video_fallback), webrtc_stun_url_(std::move(webrtc_stun_url))
+      enable_mqtt_video_fallback_(enable_mqtt_video_fallback), webrtc_stun_url_(std::move(webrtc_stun_url)),
+      webrtc_turn_servers_(std::move(webrtc_turn_servers))
 {
 }
 
 CameraStreamer::~CameraStreamer() { stop(); }
+
+void CameraStreamer::set_log_callback(std::function<void(const std::string&)> fn) { log_fn_ = std::move(fn); }
 
 void CameraStreamer::start()
 {
@@ -1077,7 +1118,9 @@ void CameraStreamer::start()
             WebRTCAdapter::Config cfg;
             cfg.sensor = sensor_name_;
             cfg.stun_url = webrtc_stun_url_;
+            cfg.turn_servers = webrtc_turn_servers_;
             cfg.recording = false;
+            cfg.log_fn = log_fn_;
             webrtc_adapter_->start(cfg,
                                    [this](const Json& payload)
                                    {
@@ -1152,9 +1195,13 @@ void CameraStreamer::stream_loop()
             bool sent_to_cloud = false;
             if (enable_webrtc_ && webrtc_adapter_)
             {
-                // Frame index is used as the RTP timestamp basis.
-                const std::uint64_t webrtc_ts_us =
-                    frame_counter_ * (1000000ULL / std::max<std::uint64_t>(1, static_cast<std::uint64_t>(fps_)));
+                // Use actual wall-clock time for RTP timestamps so the browser's
+                // jitter buffer sees timestamps that match real frame arrival timing.
+                // A frame-counter * (1/fps) approach drifts when the source delivers
+                // at a different rate than the configured fps (e.g. 25fps MJPEG vs
+                // 30fps config), causing the jitter buffer to grow unboundedly.
+                const std::uint64_t webrtc_ts_us = static_cast<std::uint64_t>(
+                    std::chrono::duration_cast<std::chrono::microseconds>(frame_start.time_since_epoch()).count());
 
                 if (!h264_encoder_)
                 {
@@ -1187,14 +1234,19 @@ void CameraStreamer::stream_loop()
             if (!sent_via_webrtc && enable_mqtt_video_fallback_ && mqtt_ && mqtt_->is_connected() &&
                 !frame.jpeg_fallback.empty())
             {
-                std::string b64 = base64_encode(frame.jpeg_fallback.data(), frame.jpeg_fallback.size());
-                web::json::value payload = web::json::value::object();
-                payload[from_std("type")] = web::json::value::string(from_std("jpeg"));
-                payload[from_std("data")] = web::json::value::string(from_std(b64));
-                payload[from_std("timestamp")] = timestamp_now();
-                std::string topic = mqtt_->get_topic_prefix() + "cyberwave/twin/" + twin_uuid_ + "/video";
-                mqtt_->publish(topic, json_serialize(payload));
-                sent_to_cloud = true;
+                const double now_ts = timestamp_now();
+                if ((now_ts - mqtt_fallback_last_send_ts_) >= mqtt_fallback_min_interval_s_)
+                {
+                    std::string b64 = base64_encode(frame.jpeg_fallback.data(), frame.jpeg_fallback.size());
+                    web::json::value payload = web::json::value::object();
+                    payload[from_std("type")] = web::json::value::string(from_std("jpeg"));
+                    payload[from_std("data")] = web::json::value::string(from_std(b64));
+                    payload[from_std("timestamp")] = web::json::value::number(now_ts);
+                    std::string topic = mqtt_->get_topic_prefix() + "cyberwave/twin/" + twin_uuid_ + "/video";
+                    mqtt_->publish(topic, json_serialize(payload));
+                    mqtt_fallback_last_send_ts_ = now_ts;
+                    sent_to_cloud = true;
+                }
             }
 
             if (sent_to_cloud)
@@ -1301,16 +1353,51 @@ void DepthStreamer::start()
         running_ = false;
         return;
     }
+    if (publish_pointcloud_)
+    {
+        pc_publish_thread_ = std::thread(&DepthStreamer::pointcloud_publish_loop, this);
+    }
     thread_ = std::thread(&DepthStreamer::stream_loop, this);
 }
 
 void DepthStreamer::stop()
 {
     running_ = false;
+    pc_cv_.notify_all();
+    if (pc_publish_thread_.joinable())
+    {
+        pc_publish_thread_.join();
+        pc_publish_thread_ = std::thread();
+    }
     if (thread_.joinable())
     {
         thread_.join();
         thread_ = std::thread();
+    }
+}
+
+void DepthStreamer::pointcloud_publish_loop()
+{
+    while (running_ && mqtt_ && mqtt_->is_connected())
+    {
+        std::string topic;
+        std::string payload;
+        {
+            std::unique_lock<std::mutex> lock(pc_mutex_);
+            pc_cv_.wait(lock, [this] { return pc_has_pending_ || !running_; });
+            if (!running_ && !pc_has_pending_)
+                break;
+            topic = std::move(pc_pending_topic_);
+            payload = std::move(pc_pending_payload_);
+            pc_has_pending_ = false;
+        }
+        try
+        {
+            mqtt_->publish(topic, payload);
+        }
+        catch (...)
+        {
+        }
     }
 }
 
@@ -1325,13 +1412,11 @@ void DepthStreamer::stream_loop()
         DepthFrame frame;
         if (publish_depth_ && source_ && source_->next_depth_frame(frame) && !frame.data.empty())
         {
-            // Encode raw 16-bit depth as base64
             std::string b64 = base64_encode(reinterpret_cast<const unsigned char*>(frame.data.data()),
                                             frame.data.size() * sizeof(uint16_t));
             web::json::value data = web::json::value::object();
             data[from_std("width")] = frame.width;
             data[from_std("height")] = frame.height;
-            // Match Python SDK contract exactly for backend parity.
             data[from_std("dtype")] = web::json::value::string(from_std("uint16"));
             data[from_std("depth_binary")] = web::json::value::string(from_std(b64));
             web::json::value payload = web::json::value::object();
@@ -1342,20 +1427,28 @@ void DepthStreamer::stream_loop()
             mqtt_->publish(depth_topic, json_serialize(payload));
         }
 
-        // Point cloud → /pointcloud (if source supports it)
+        // Pointcloud → hand off to the dedicated publish thread (non-blocking).
+        // The slot overwrites any unsent payload, so the publisher always sends
+        // the freshest frame and stale data is dropped — not queued.
         std::vector<PointXYZRGB> cloud;
         if (publish_pointcloud_ && source_ && source_->next_point_cloud(cloud) && !cloud.empty())
         {
-            // Match Python/backend/frontend contract:
-            // {"type":"pointcloud","data":"<base64 float32 xyzrgb bytes>","timestamp":...}
             std::string bytes_b64 =
                 base64_encode(reinterpret_cast<const unsigned char*>(cloud.data()), cloud.size() * sizeof(PointXYZRGB));
             web::json::value pc_payload = web::json::value::object();
             pc_payload[from_std("type")] = web::json::value::string(from_std("pointcloud"));
             pc_payload[from_std("data")] = web::json::value::string(from_std(bytes_b64));
+            pc_payload[from_std("point_count")] = web::json::value::number(static_cast<int>(cloud.size()));
+            pc_payload[from_std("point_stride")] = web::json::value::number(6);
             pc_payload[from_std("timestamp")] = timestamp_now();
             std::string pc_topic = mqtt_->get_topic_prefix() + "cyberwave/twin/" + twin_uuid_ + "/pointcloud";
-            mqtt_->publish(pc_topic, json_serialize(pc_payload));
+            {
+                std::lock_guard<std::mutex> lock(pc_mutex_);
+                pc_pending_topic_ = std::move(pc_topic);
+                pc_pending_payload_ = json_serialize(pc_payload);
+                pc_has_pending_ = true;
+            }
+            pc_cv_.notify_one();
         }
 
         auto elapsed = std::chrono::steady_clock::now() - frame_start;
@@ -1364,6 +1457,7 @@ void DepthStreamer::stream_loop()
             std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::steady_clock::duration>(sleep_dur));
     }
     running_ = false;
+    pc_cv_.notify_all();
 }
 
 } // namespace cyberwave
