@@ -152,6 +152,14 @@ if(CYBERWAVE_ENABLE_WEBRTC)
         target_link_libraries(cyberwave_sdk PRIVATE datachannel)
     endif()
     target_compile_definitions(cyberwave_sdk PRIVATE CYBERWAVE_HAS_LIBDATACHANNEL=1)
+
+    # camera_streaming.cpp uses spdlog/fmt for logging inside the WebRTC code path.
+    # Define SPDLOG_HEADER_ONLY and FMT_HEADER_ONLY so that all spdlog and fmt
+    # symbols are fully instantiated inside camera_streaming.cpp.o without linking
+    # against a compiled libspdlog.so or libfmt.so.  This avoids exporting a
+    # shared-library dependency into the installed CMake targets file, which would
+    # break downstream consumers that don't have spdlog on their CMake search path.
+    target_compile_definitions(cyberwave_sdk PRIVATE SPDLOG_HEADER_ONLY FMT_HEADER_ONLY)
 endif()
 
 # Install targets and package config so downstream users can find_package(CyberwaveCppSDK CONFIG REQUIRED).
@@ -181,7 +189,7 @@ install(
     FILES_MATCHING PATTERN "*.h"
 )
 
-# paho_mqtt_adapter.h includes this public header.
+# cyberwave_mqtt_adapter.h includes this public header.
 install(
     FILES ${CMAKE_CURRENT_SOURCE_DIR}/mqtt/mqtt_client.h
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cyberwave
@@ -265,7 +273,7 @@ if(CYBERWAVE_BUILD_EXAMPLES)
     # MQTT broker. Set CYBERWAVE_API_KEY and CYBERWAVE_BASE_URL before running.
     # ---------------------------------------------------------------------------
 
-    # REST-only examples: build unconditionally (no Paho required).
+    # REST-only examples: build unconditionally (no MQTT lib required).
     foreach(_ex quickstart compact alerts workflows capture_frame)
         add_executable(example_${_ex} examples/${_ex}.cpp)
         target_link_libraries(example_${_ex} PRIVATE cyberwave_sdk)
@@ -273,14 +281,16 @@ if(CYBERWAVE_BUILD_EXAMPLES)
             RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples)
     endforeach()
 
-    # MQTT examples: only built when PahoMqttCpp (and its deps) are available.
-    # They use PahoMqttAdapter to wire the real Paho MQTT client into the SDK.
-    find_package(PahoMqttCpp QUIET)
+    # MQTT examples: only built when libmosquitto (and its deps) are available.
+    find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND AND NOT TARGET PkgConfig::MOSQUITTO)
+        pkg_check_modules(MOSQUITTO QUIET IMPORTED_TARGET libmosquitto)
+    endif()
     find_package(nlohmann_json QUIET)
     find_package(spdlog QUIET)
 
-    if(PahoMqttCpp_FOUND AND nlohmann_json_FOUND AND spdlog_FOUND)
-        message(STATUS "PahoMqttCpp found — building MQTT examples (camera_stream, depth_stream, command_receiver_simple, go2_locomotion)")
+    if(TARGET PkgConfig::MOSQUITTO AND nlohmann_json_FOUND AND spdlog_FOUND)
+        message(STATUS "libmosquitto found — building MQTT examples (camera_stream, depth_stream, command_receiver_simple, go2_locomotion)")
 
         # Build the mqtt/ subdirectory to get the cyberwave_mqtt_client target.
         # EXCLUDE_FROM_ALL avoids polluting `make all` / `cmake --build`.
@@ -288,18 +298,18 @@ if(CYBERWAVE_BUILD_EXAMPLES)
 
         foreach(_ex camera_stream depth_stream command_receiver_simple go2_locomotion)
             add_executable(example_${_ex} examples/${_ex}.cpp)
-            # mqtt/ directory provides mqtt_client.h (needed by paho_mqtt_adapter.h)
+            # mqtt/ directory provides mqtt_client.h (needed by cyberwave_mqtt_adapter.h)
             target_include_directories(example_${_ex} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mqtt)
             target_link_libraries(example_${_ex} PRIVATE cyberwave_sdk cyberwave_mqtt_client)
             set_target_properties(example_${_ex} PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples)
         endforeach()
 
-        # quickstart can optionally auto-wire MQTT subscriptions when the Paho-backed
+        # quickstart can optionally auto-wire MQTT subscriptions when the MQTT
         # adapter is available.
         target_include_directories(example_quickstart PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mqtt)
         target_link_libraries(example_quickstart PRIVATE cyberwave_mqtt_client)
-        target_compile_definitions(example_quickstart PRIVATE CYBERWAVE_HAVE_PAHO_MQTT=1)
+        target_compile_definitions(example_quickstart PRIVATE CYBERWAVE_HAVE_MQTT=1)
 
         # Optional OpenCV frame-source example for the raw VideoFrame contract.
         find_package(OpenCV QUIET COMPONENTS core imgproc videoio)
@@ -320,7 +330,7 @@ if(CYBERWAVE_BUILD_EXAMPLES)
             message(STATUS "OpenCV not found — skipping MQTT example camera_stream_opencv.")
         endif()
     else()
-        message(STATUS "PahoMqttCpp not found — MQTT examples skipped (camera_stream, depth_stream, command_receiver_simple, go2_locomotion).")
-        message(STATUS "  Install paho-mqtt-cpp, nlohmann-json and spdlog to build them.")
+        message(STATUS "libmosquitto not found — MQTT examples skipped (camera_stream, depth_stream, command_receiver_simple, go2_locomotion).")
+        message(STATUS "  Install libmosquitto-dev, nlohmann-json and spdlog to build them.")
     endif()
 endif()

@@ -67,16 +67,6 @@ public:
     void unsetFile_url();
     void setFileUrl(const utility::string_t& value);
 
-    utility::string_t getEventUuid() const;
-    bool eventUuidIsSet() const;
-    void unsetEvent_uuid();
-    void setEventUuid(const utility::string_t& value);
-
-    utility::string_t getEventType() const;
-    bool eventTypeIsSet() const;
-    void unsetEvent_type();
-    void setEventType(const utility::string_t& value);
-
     std::vector<utility::string_t> getTriggeredWorkflowUuids() const;
     bool triggeredWorkflowUuidsIsSet() const;
     void unsetTriggered_workflow_uuids();
@@ -93,10 +83,6 @@ protected:
     bool m_Attachment_uuidIsSet;
 
     boost::optional<utility::string_t> m_File_url;
-
-    boost::optional<utility::string_t> m_Event_uuid;
-
-    boost::optional<utility::string_t> m_Event_type;
 
     std::vector<utility::string_t> m_Triggered_workflow_uuids;
     bool m_Triggered_workflow_uuidsIsSet;

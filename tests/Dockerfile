@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libboost-all-dev \
     nlohmann-json3-dev \
-    libpaho-mqtt-cpp-dev \
+    libmosquitto-dev \
     libspdlog-dev \
     pkg-config \
     git \
@@ -55,7 +55,7 @@ RUN apt-get update && apt-get install -y \
     libboost-system1.74.0 \
     libboost-thread1.74.0 \
     libboost-chrono1.74.0 \
-    libpaho-mqttpp3-1 \
+    libmosquitto1 \
     curl \
     && rm -rf /var/lib/apt/lists/*
 

@@ -59,7 +59,8 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/../mqtt/mqtt_client.cpp)
     message(STATUS "Found mqtt sources; building cyberwave_mqtt_client and mqtt_example in-tree")
 
     # Find required packages for mqtt implementation
-    find_package(PahoMqttCpp REQUIRED)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(MOSQUITTO REQUIRED IMPORTED_TARGET libmosquitto)
     find_package(nlohmann_json REQUIRED)
     find_package(spdlog REQUIRED)
 
@@ -72,7 +73,7 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/../mqtt/mqtt_client.cpp)
             /usr/local/include
     )
     target_link_libraries(cyberwave_mqtt_client
-        PUBLIC PahoMqttCpp::paho-mqttpp3
+        PUBLIC PkgConfig::MOSQUITTO
         PRIVATE nlohmann_json::nlohmann_json spdlog::spdlog
     )
 

@@ -23,11 +23,16 @@
 #include "CppRestOpenAPIClient/ApiClient.h"
 
 #include "CppRestOpenAPIClient/model/AvailableFeaturesSchema.h"
+#include "CppRestOpenAPIClient/model/CreateFeatureDefinitionRequest.h"
+#include "CppRestOpenAPIClient/model/EnableGlobalFeatureRequest.h"
 #include "CppRestOpenAPIClient/model/EnableOrgFeatureRequest.h"
+#include "CppRestOpenAPIClient/model/FeatureDefinitionSchema.h"
+#include "CppRestOpenAPIClient/model/GlobalFeatureSchema.h"
 #include "CppRestOpenAPIClient/model/GrantUserFeatureRequest.h"
 #include "CppRestOpenAPIClient/model/MyFeaturesResponseSchema.h"
 #include "CppRestOpenAPIClient/model/OrgFeatureSchema.h"
 #include "CppRestOpenAPIClient/model/RevokeUserFeatureRequest.h"
+#include "CppRestOpenAPIClient/model/UpdateFeatureDefinitionRequest.h"
 #include "CppRestOpenAPIClient/model/UserFeatureSchema.h"
 #include "CppRestOpenAPIClient/model/UserSearchResultSchema.h"
 #include <vector>
@@ -52,6 +57,16 @@ public:
     virtual ~FeaturesApi();
 
     /// <summary>
+    /// Create Feature Definition
+    /// </summary>
+    /// <remarks>
+    /// Create a new feature definition. Staff only.
+    /// </remarks>
+    /// <param name="createFeatureDefinitionRequest"></param>
+    pplx::task<std::shared_ptr<FeatureDefinitionSchema>> srcAppApiFeaturesCreateFeatureDefinition(
+        std::shared_ptr<CreateFeatureDefinitionRequest> createFeatureDefinitionRequest
+    ) const;
+    /// <summary>
     /// Delete User Feature
     /// </summary>
     /// <remarks>
@@ -64,6 +79,16 @@ public:
         utility::string_t feature
     ) const;
     /// <summary>
+    /// Disable Global Feature
+    /// </summary>
+    /// <remarks>
+    /// Disable a feature for all users. Staff only.
+    /// </remarks>
+    /// <param name="enableGlobalFeatureRequest"></param>
+    pplx::task<void> srcAppApiFeaturesDisableGlobalFeature(
+        std::shared_ptr<EnableGlobalFeatureRequest> enableGlobalFeatureRequest
+    ) const;
+    /// <summary>
     /// Disable Org Feature
     /// </summary>
     /// <remarks>
@@ -72,6 +97,16 @@ public:
     /// <param name="enableOrgFeatureRequest"></param>
     pplx::task<void> srcAppApiFeaturesDisableOrgFeature(
         std::shared_ptr<EnableOrgFeatureRequest> enableOrgFeatureRequest
+    ) const;
+    /// <summary>
+    /// Enable Global Feature
+    /// </summary>
+    /// <remarks>
+    /// Enable a feature for all users. Staff only.
+    /// </remarks>
+    /// <param name="enableGlobalFeatureRequest"></param>
+    pplx::task<std::shared_ptr<GlobalFeatureSchema>> srcAppApiFeaturesEnableGlobalFeature(
+        std::shared_ptr<EnableGlobalFeatureRequest> enableGlobalFeatureRequest
     ) const;
     /// <summary>
     /// Enable Org Feature
@@ -110,14 +145,34 @@ public:
         std::shared_ptr<GrantUserFeatureRequest> grantUserFeatureRequest
     ) const;
     /// <summary>
+    /// List Feature Definitions
+    /// </summary>
+    /// <remarks>
+    /// List all feature definitions. Staff only.
+    /// </remarks>
+    pplx::task<std::vector<std::shared_ptr<FeatureDefinitionSchema>>> srcAppApiFeaturesListFeatureDefinitions(
+    ) const;
+    /// <summary>
+    /// List Global Features
+    /// </summary>
+    /// <remarks>
+    /// List global feature flags. Staff only.
+    /// </remarks>
+    /// <param name="feature"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::vector<std::shared_ptr<GlobalFeatureSchema>>> srcAppApiFeaturesListGlobalFeatures(
+        boost::optional<utility::string_t> feature
+    ) const;
+    /// <summary>
     /// List Org Features
     /// </summary>
     /// <remarks>
     /// List all organization-level feature flags. Staff only.
     /// </remarks>
     /// <param name="feature"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="organizationUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::vector<std::shared_ptr<OrgFeatureSchema>>> srcAppApiFeaturesListOrgFeatures(
-        boost::optional<utility::string_t> feature
+        boost::optional<utility::string_t> feature,
+        boost::optional<utility::string_t> organizationUuid
     ) const;
     /// <summary>
     /// List User Features
@@ -148,6 +203,18 @@ public:
     /// <param name="q"></param>
     pplx::task<std::vector<std::shared_ptr<UserSearchResultSchema>>> srcAppApiFeaturesSearchUsers(
         utility::string_t q
+    ) const;
+    /// <summary>
+    /// Update Feature Definition
+    /// </summary>
+    /// <remarks>
+    /// Update a feature definition&#39;s metadata. Staff only.
+    /// </remarks>
+    /// <param name="code"></param>
+    /// <param name="updateFeatureDefinitionRequest"></param>
+    pplx::task<std::shared_ptr<FeatureDefinitionSchema>> srcAppApiFeaturesUpdateFeatureDefinition(
+        utility::string_t code,
+        std::shared_ptr<UpdateFeatureDefinitionRequest> updateFeatureDefinitionRequest
     ) const;
 
 protected:
