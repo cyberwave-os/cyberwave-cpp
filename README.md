@@ -74,7 +74,9 @@ Install dependencies:
 # Ubuntu/Debian
 sudo apt-get update && sudo apt-get install -y \
   build-essential cmake pkg-config ca-certificates curl git \
-  libcpprest-dev libssl-dev libboost-all-dev \
+  libcpprest-dev libssl-dev libboost-dev \
+  libboost-system-dev libboost-thread-dev libboost-chrono-dev \
+  libboost-filesystem-dev libboost-random-dev \
   nlohmann-json3-dev libmosquitto-dev libspdlog-dev
 ```
 

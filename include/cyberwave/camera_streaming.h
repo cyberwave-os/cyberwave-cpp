@@ -90,6 +90,15 @@ public:
      */
     void set_log_callback(std::function<void(const std::string&)> fn);
 
+    /**
+     * @brief Enable or disable recording in the WebRTC offer sent to the media service.
+     *
+     * Call before start(). When true, the media service SFU will record the stream
+     * and produce MP4/Parquet artifacts. Default is false (matching the Python SDK's
+     * explicit _should_record pattern).
+     */
+    void set_recording(bool recording) { recording_ = recording; }
+
 private:
     void stream_loop();
     void publish_edge_health(double now_seconds);
@@ -105,6 +114,7 @@ private:
     std::string sensor_name_{};
     bool enable_webrtc_{false};
     bool enable_mqtt_video_fallback_{true};
+    bool recording_{false};
     std::string webrtc_stun_url_;
     std::vector<std::string> webrtc_turn_servers_;
     std::unique_ptr<WebRTCAdapter> webrtc_adapter_;

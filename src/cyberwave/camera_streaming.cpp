@@ -463,6 +463,10 @@ struct JpegToH264EncoderImpl
         h264_preset_ = get_env_or_default("CYBERWAVE_H264_PRESET", "veryfast");
         h264_bitrate_kbps_ = get_env_positive_or_throw("CYBERWAVE_H264_BITRATE_KBPS", 2500);
         h264_gop_size_ = get_env_positive_or_throw("CYBERWAVE_H264_GOP", std::max(1, fps_ * 2));
+        {
+            const char* raw = std::getenv("CYBERWAVE_H264_THREADS");
+            h264_threads_ = (raw != nullptr) ? std::max(0, std::stoi(raw)) : 0;
+        }
     }
 
     ~JpegToH264EncoderImpl() { cleanup(); }
@@ -637,7 +641,7 @@ private:
             codec_ctx_->bit_rate = static_cast<std::int64_t>(h264_bitrate_kbps_) * 1000LL;
             codec_ctx_->gop_size = std::max(1, h264_gop_size_);
             codec_ctx_->max_b_frames = 0;
-            codec_ctx_->thread_count = 0; // 0 = auto-detect optimal thread count
+            codec_ctx_->thread_count = h264_threads_; // 0 = auto; 1 = single-threaded (minimal CPU steal)
 
             if (codec_name_ == "libx264")
             {
@@ -727,6 +731,7 @@ private:
     std::string h264_preset_;
     int h264_bitrate_kbps_{2500};
     int h264_gop_size_{60};
+    int h264_threads_{0};
 
     int codec_width_{0};
     int codec_height_{0};
@@ -821,16 +826,26 @@ public:
 
     void stop() override
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        started_ = false;
-        connected_ = false;
-        remote_description_set_ = false;
-        local_sdp_.reset();
-        video_track_.reset();
-        peer_connection_.reset();
-        rtp_config_.reset();
-        ssrc_ = 0;
-        publish_signal_ = nullptr;
+        // Move peer_connection out of the lock scope before destroying it.
+        // PeerConnection destruction fires onStateChange callbacks that
+        // acquire mutex_, causing a deadlock if we hold it during reset().
+        std::shared_ptr<rtc::PeerConnection> pc_to_destroy;
+        std::shared_ptr<rtc::Track> track_to_destroy;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            started_ = false;
+            connected_ = false;
+            remote_description_set_ = false;
+            local_sdp_.reset();
+            track_to_destroy = std::move(video_track_);
+            pc_to_destroy = std::move(peer_connection_);
+            rtp_config_.reset();
+            ssrc_ = 0;
+            publish_signal_ = nullptr;
+        }
+        // Destroy outside the lock to avoid deadlock with callbacks.
+        track_to_destroy.reset();
+        pc_to_destroy.reset();
     }
 
     bool handle_answer(const Json& answer) override
@@ -1119,7 +1134,7 @@ void CameraStreamer::start()
             cfg.sensor = sensor_name_;
             cfg.stun_url = webrtc_stun_url_;
             cfg.turn_servers = webrtc_turn_servers_;
-            cfg.recording = false;
+            cfg.recording = recording_;
             cfg.log_fn = log_fn_;
             webrtc_adapter_->start(cfg,
                                    [this](const Json& payload)

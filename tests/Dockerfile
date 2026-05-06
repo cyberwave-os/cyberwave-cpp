@@ -7,12 +7,17 @@ FROM ubuntu:22.04 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install build dependencies (REST + MQTT test)
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
     libcpprest-dev \
     libssl-dev \
-    libboost-all-dev \
+    libboost-dev \
+    libboost-system-dev \
+    libboost-thread-dev \
+    libboost-chrono-dev \
+    libboost-filesystem-dev \
+    libboost-random-dev \
     nlohmann-json3-dev \
     libmosquitto-dev \
     libspdlog-dev \
