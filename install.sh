@@ -17,6 +17,7 @@ WITH_OPENCV=0
 WITHOUT_FFMPEG=0
 WITHOUT_WEBRTC=0
 RUN_TESTS=0
+DEPS_ONLY=0
 
 usage() {
     cat <<'EOF'
@@ -39,6 +40,7 @@ Options:
   --without-ffmpeg                   Skip FFmpeg dev libs (disables H264 encoding in CameraStreamer)
   --without-webrtc                   Disable WebRTC support (skips LibDataChannel fetch)
   --run-tests                        Run ctest after build
+  --deps-only                        Install dependencies and exit (for Docker layer caching)
   -h, --help                         Show this help
 
 Examples:
@@ -135,6 +137,10 @@ parse_args() {
                 RUN_TESTS=1
                 shift
                 ;;
+            --deps-only)
+                DEPS_ONLY=1
+                shift
+                ;;
             -h|--help)
                 usage
                 exit 0
@@ -161,7 +167,12 @@ install_deps_debian() {
         openjdk-17-jre-headless \
         libcpprest-dev \
         libssl-dev \
-        libboost-all-dev \
+        libboost-dev \
+        libboost-system-dev \
+        libboost-thread-dev \
+        libboost-chrono-dev \
+        libboost-filesystem-dev \
+        libboost-random-dev \
         nlohmann-json3-dev \
         libmosquitto-dev \
         libspdlog-dev
@@ -420,6 +431,12 @@ main() {
     log "OpenAPI URL: ${OPENAPI_URL}"
 
     install_deps
+
+    if [[ "${DEPS_ONLY}" -eq 1 ]]; then
+        log "Dependencies installed (--deps-only). Exiting."
+        return
+    fi
+
     ensure_rest_sources
     configure_build_install
     configure_build_install_mqtt

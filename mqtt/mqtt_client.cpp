@@ -739,6 +739,10 @@ void CyberwaveMQTTClient::publish_telemetry_start_message(const std::string& twi
         {
             message["observations"] = metadata.at("observations");
         }
+        if (metadata.contains("camera_participants"))
+        {
+            message["camera_participants"] = metadata.at("camera_participants");
+        }
     }
     publish(with_prefix("cyberwave/twin/" + twin_uuid + "/telemetry"), message);
 }

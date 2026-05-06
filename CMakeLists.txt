@@ -142,6 +142,7 @@ if(CYBERWAVE_ENABLE_WEBRTC)
             libdatachannel
             GIT_REPOSITORY https://github.com/paullouisageneau/libdatachannel.git
             GIT_TAG v0.22.4
+            GIT_SHALLOW TRUE
         )
         set(NO_WEBSOCKET ON CACHE BOOL "" FORCE)
         set(NO_MEDIA OFF CACHE BOOL "" FORCE)

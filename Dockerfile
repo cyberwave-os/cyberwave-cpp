@@ -6,10 +6,15 @@ ARG OPENAPI_URL=https://api.cyberwave.com/api/v1/openapi.json
 
 WORKDIR /opt/cyberwave-cpp
 
+# Copy only install.sh first so the apt layer is cached across source changes.
+COPY install.sh /opt/cyberwave-cpp/install.sh
+RUN ./install.sh --deps-only && rm -rf /var/lib/apt/lists/*
+
+# Now copy the rest of the source tree.
 COPY . /opt/cyberwave-cpp
 
 # Build and install the SDK in a clean environment (tests built but not run here).
-RUN ./install.sh --openapi-url "${OPENAPI_URL}" --run-tests
+RUN ./install.sh --skip-deps --openapi-url "${OPENAPI_URL}" --run-tests
 
 # Build examples separately to verify they compile against the installed SDK.
 RUN cmake -S examples -B /tmp/examples-build \

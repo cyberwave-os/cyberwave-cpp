@@ -105,7 +105,12 @@ sudo apt-get install -y \
     cmake \
     libcpprest-dev \
     libssl-dev \
-    libboost-all-dev \
+    libboost-dev \
+    libboost-system-dev \
+    libboost-thread-dev \
+    libboost-chrono-dev \
+    libboost-filesystem-dev \
+    libboost-random-dev \
     nlohmann-json3-dev
 ```
 
