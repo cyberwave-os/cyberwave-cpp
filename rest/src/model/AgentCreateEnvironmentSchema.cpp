@@ -11,14 +11,14 @@
 
 
 
-#include "CppRestOpenAPIClient/model/EnvironmentAssistantCreateSchema.h"
+#include "CppRestOpenAPIClient/model/AgentCreateEnvironmentSchema.h"
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
-EnvironmentAssistantCreateSchema::EnvironmentAssistantCreateSchema()
+AgentCreateEnvironmentSchema::AgentCreateEnvironmentSchema()
 {
     m_Prompt = utility::conversions::to_string_t("");
     m_PromptIsSet = false;
@@ -26,16 +26,16 @@ EnvironmentAssistantCreateSchema::EnvironmentAssistantCreateSchema()
     m_Cyberwave_api_keyIsSet = false;
 }
 
-EnvironmentAssistantCreateSchema::~EnvironmentAssistantCreateSchema()
+AgentCreateEnvironmentSchema::~AgentCreateEnvironmentSchema()
 {
 }
 
-void EnvironmentAssistantCreateSchema::validate()
+void AgentCreateEnvironmentSchema::validate()
 {
     // TODO: implement validation
 }
 
-web::json::value EnvironmentAssistantCreateSchema::toJson() const
+web::json::value AgentCreateEnvironmentSchema::toJson() const
 {
     web::json::value val = web::json::value::object();
     if(m_PromptIsSet)
@@ -67,7 +67,7 @@ web::json::value EnvironmentAssistantCreateSchema::toJson() const
     return val;
 }
 
-bool EnvironmentAssistantCreateSchema::fromJson(const web::json::value& val)
+bool AgentCreateEnvironmentSchema::fromJson(const web::json::value& val)
 {
     bool ok = true;
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("prompt"))))
@@ -128,7 +128,7 @@ bool EnvironmentAssistantCreateSchema::fromJson(const web::json::value& val)
     return ok;
 }
 
-void EnvironmentAssistantCreateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix) const
+void AgentCreateEnvironmentSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix) const
 {
     utility::string_t namePrefix = prefix;
     if(namePrefix.size() > 0 && namePrefix.substr(namePrefix.size() - 1) != utility::conversions::to_string_t(_XPLATSTR(".")))
@@ -157,7 +157,7 @@ void EnvironmentAssistantCreateSchema::toMultipart(std::shared_ptr<MultipartForm
     }
 }
 
-bool EnvironmentAssistantCreateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix)
+bool AgentCreateEnvironmentSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix)
 {
     bool ok = true;
     utility::string_t namePrefix = prefix;
@@ -200,105 +200,105 @@ bool EnvironmentAssistantCreateSchema::fromMultiPart(std::shared_ptr<MultipartFo
 }
 
 
-utility::string_t EnvironmentAssistantCreateSchema::getPrompt() const
+utility::string_t AgentCreateEnvironmentSchema::getPrompt() const
 {
     return m_Prompt;
 }
 
 
-void EnvironmentAssistantCreateSchema::setPrompt(const utility::string_t& value)
+void AgentCreateEnvironmentSchema::setPrompt(const utility::string_t& value)
 {
     m_Prompt = value;
     m_PromptIsSet = true;
 }
 
-bool EnvironmentAssistantCreateSchema::promptIsSet() const
+bool AgentCreateEnvironmentSchema::promptIsSet() const
 {
     return m_PromptIsSet;
 }
 
-void EnvironmentAssistantCreateSchema::unsetPrompt()
+void AgentCreateEnvironmentSchema::unsetPrompt()
 {
     m_PromptIsSet = false;
 }
-utility::string_t EnvironmentAssistantCreateSchema::getCyberwaveApiKey() const
+utility::string_t AgentCreateEnvironmentSchema::getCyberwaveApiKey() const
 {
     return m_Cyberwave_api_key;
 }
 
 
-void EnvironmentAssistantCreateSchema::setCyberwaveApiKey(const utility::string_t& value)
+void AgentCreateEnvironmentSchema::setCyberwaveApiKey(const utility::string_t& value)
 {
     m_Cyberwave_api_key = value;
     m_Cyberwave_api_keyIsSet = true;
 }
 
-bool EnvironmentAssistantCreateSchema::cyberwaveApiKeyIsSet() const
+bool AgentCreateEnvironmentSchema::cyberwaveApiKeyIsSet() const
 {
     return m_Cyberwave_api_keyIsSet;
 }
 
-void EnvironmentAssistantCreateSchema::unsetCyberwave_api_key()
+void AgentCreateEnvironmentSchema::unsetCyberwave_api_key()
 {
     m_Cyberwave_api_keyIsSet = false;
 }
-utility::string_t EnvironmentAssistantCreateSchema::getWorkspaceUuid() const
+utility::string_t AgentCreateEnvironmentSchema::getWorkspaceUuid() const
 {
     return m_Workspace_uuid.get();
 }
 
 
-void EnvironmentAssistantCreateSchema::setWorkspaceUuid(const utility::string_t& value)
+void AgentCreateEnvironmentSchema::setWorkspaceUuid(const utility::string_t& value)
 {
     m_Workspace_uuid = value;
 }
 
-bool EnvironmentAssistantCreateSchema::workspaceUuidIsSet() const
+bool AgentCreateEnvironmentSchema::workspaceUuidIsSet() const
 {
     return m_Workspace_uuid.has_value();
 }
 
-void EnvironmentAssistantCreateSchema::unsetWorkspace_uuid()
+void AgentCreateEnvironmentSchema::unsetWorkspace_uuid()
 {
     m_Workspace_uuid.reset();
 }
-utility::string_t EnvironmentAssistantCreateSchema::getProjectUuid() const
+utility::string_t AgentCreateEnvironmentSchema::getProjectUuid() const
 {
     return m_Project_uuid.get();
 }
 
 
-void EnvironmentAssistantCreateSchema::setProjectUuid(const utility::string_t& value)
+void AgentCreateEnvironmentSchema::setProjectUuid(const utility::string_t& value)
 {
     m_Project_uuid = value;
 }
 
-bool EnvironmentAssistantCreateSchema::projectUuidIsSet() const
+bool AgentCreateEnvironmentSchema::projectUuidIsSet() const
 {
     return m_Project_uuid.has_value();
 }
 
-void EnvironmentAssistantCreateSchema::unsetProject_uuid()
+void AgentCreateEnvironmentSchema::unsetProject_uuid()
 {
     m_Project_uuid.reset();
 }
-utility::string_t EnvironmentAssistantCreateSchema::getMlmodelUuid() const
+utility::string_t AgentCreateEnvironmentSchema::getMlmodelUuid() const
 {
     return m_Mlmodel_uuid.get();
 }
 
 
-void EnvironmentAssistantCreateSchema::setMlmodelUuid(const utility::string_t& value)
+void AgentCreateEnvironmentSchema::setMlmodelUuid(const utility::string_t& value)
 {
     m_Mlmodel_uuid = value;
 }
 
-bool EnvironmentAssistantCreateSchema::mlmodelUuidIsSet() const
+bool AgentCreateEnvironmentSchema::mlmodelUuidIsSet() const
 {
     return m_Mlmodel_uuid.has_value();
 }
 
-void EnvironmentAssistantCreateSchema::unsetMlmodel_uuid()
+void AgentCreateEnvironmentSchema::unsetMlmodel_uuid()
 {
     m_Mlmodel_uuid.reset();
 }

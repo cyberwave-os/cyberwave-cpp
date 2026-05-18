@@ -1272,7 +1272,7 @@ pplx::task<std::vector<std::shared_ptr<DeferredTaskExecutionResponseSchema>>> Cl
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<CloudNodeWorkloadSchema>>> CloudNodeWorkloadsApi::srcAppApiCloudNodeWorkloadsListWorkloads(boost::optional<utility::string_t> status, boost::optional<utility::string_t> statuses, boost::optional<utility::string_t> profileSlug, boost::optional<utility::string_t> workspaceUuid, boost::optional<utility::string_t> commandType, boost::optional<utility::string_t> twinUuid, boost::optional<utility::string_t> controllerPolicyUuid, boost::optional<utility::string_t> environmentUuid) const
+pplx::task<std::vector<std::shared_ptr<CloudNodeWorkloadSchema>>> CloudNodeWorkloadsApi::srcAppApiCloudNodeWorkloadsListWorkloads(boost::optional<utility::string_t> status, boost::optional<utility::string_t> statuses, boost::optional<utility::string_t> profileSlug, boost::optional<utility::string_t> workspaceUuid, boost::optional<utility::string_t> commandType, boost::optional<utility::string_t> twinUuid, boost::optional<utility::string_t> controllerPolicyUuid, boost::optional<utility::string_t> environmentUuid, boost::optional<utility::string_t> mlmodelUuid) const
 {
 
 
@@ -1344,6 +1344,10 @@ pplx::task<std::vector<std::shared_ptr<CloudNodeWorkloadSchema>>> CloudNodeWorkl
     if (environmentUuid)
     {
         localVarQueryParams[utility::conversions::to_string_t("environment_uuid")] = ApiClient::parameterToString(*environmentUuid);
+    }
+    if (mlmodelUuid)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("mlmodel_uuid")] = ApiClient::parameterToString(*mlmodelUuid);
     }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
@@ -1438,7 +1442,7 @@ pplx::task<std::vector<std::shared_ptr<CloudNodeWorkloadSchema>>> CloudNodeWorkl
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<CloudNodeWorkloadSchema>> CloudNodeWorkloadsApi::srcAppApiCloudNodeWorkloadsMarkWorkloadCompleted(utility::string_t uuid) const
+pplx::task<std::shared_ptr<CloudNodeWorkloadSchema>> CloudNodeWorkloadsApi::srcAppApiCloudNodeWorkloadsMarkWorkloadCompleted(utility::string_t uuid, boost::optional<std::shared_ptr<CloudNodeWorkloadCompleteSchema>> cloudNodeWorkloadCompleteSchema) const
 {
 
 
@@ -1479,6 +1483,7 @@ pplx::task<std::shared_ptr<CloudNodeWorkloadSchema>> CloudNodeWorkloadsApi::srcA
     localVarHeaderParams[utility::conversions::to_string_t("Accept")] = localVarResponseHttpContentType;
 
     std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
+    localVarConsumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
 
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
@@ -1488,11 +1493,27 @@ pplx::task<std::shared_ptr<CloudNodeWorkloadSchema>> CloudNodeWorkloadsApi::srcA
     if ( localVarConsumeHttpContentTypes.size() == 0 || localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != localVarConsumeHttpContentTypes.end() )
     {
         localVarRequestHttpContentType = utility::conversions::to_string_t("application/json");
+        web::json::value localVarJson;
+
+        if (cloudNodeWorkloadCompleteSchema)
+            localVarJson = ModelBase::toJson(*cloudNodeWorkloadCompleteSchema);
+
+        localVarHttpBody = std::shared_ptr<IHttpBody>( new JsonBody( localVarJson ) );
     }
     // multipart formdata
     else if( localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != localVarConsumeHttpContentTypes.end() )
     {
         localVarRequestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+        std::shared_ptr<MultipartFormData> localVarMultipart(new MultipartFormData);
+
+        if(cloudNodeWorkloadCompleteSchema && (*cloudNodeWorkloadCompleteSchema).get())
+        {
+            (*cloudNodeWorkloadCompleteSchema)->toMultipart(localVarMultipart, utility::conversions::to_string_t("cloudNodeWorkloadCompleteSchema"));
+        }
+        
+
+        localVarHttpBody = localVarMultipart;
+        localVarRequestHttpContentType += utility::conversions::to_string_t("; boundary=") + localVarMultipart->getBoundary();
     }
     else if (localVarConsumeHttpContentTypes.find(utility::conversions::to_string_t("application/x-www-form-urlencoded")) != localVarConsumeHttpContentTypes.end())
     {

@@ -1,6 +1,7 @@
 #include "cyberwave/motion.h"
 #include "cyberwave/client.h"
 #include "cyberwave/client_internal.h"
+#include "cyberwave/exceptions.h"
 #include "cyberwave/twin.h"
 
 #include "CppRestOpenAPIClient/api/DefaultApi.h"
@@ -21,6 +22,21 @@ namespace
 org::openapitools::client::api::DefaultApi* api(const Client& client) { return ClientAccess::default_api(&client); }
 
 utility::string_t from_std(const std::string& s) { return utility::conversions::to_string_t(s); }
+
+org::openapitools::client::model::TwinActionRequestSchema::Action_typeEnum
+action_type_from_string(const std::string& action_type)
+{
+    using ActionType = org::openapitools::client::model::TwinActionRequestSchema::Action_typeEnum;
+    if (action_type == "pose")
+        return ActionType::POSE;
+    if (action_type == "movement")
+        return ActionType::MOVEMENT;
+    if (action_type == "animation")
+        return ActionType::ANIMATION;
+    if (action_type == "plan")
+        return ActionType::PLAN;
+    throw CyberwaveError("Unsupported twin motion action type: " + action_type);
+}
 
 // Fill common rich params into a TwinActionRequestSchema.
 void fill_action_rich(org::openapitools::client::model::TwinActionRequestSchema& req,
@@ -155,7 +171,7 @@ void TwinMotionHandle::pose(const std::string& name, const std::string& environm
     if (!a)
         return;
     auto req = std::make_shared<org::openapitools::client::model::TwinActionRequestSchema>();
-    req->setActionType(from_std("pose"));
+    req->setActionType(action_type_from_string("pose"));
     if (!name.empty())
         req->setName(from_std(name));
     fill_action_rich(*req, environment_uuid, preview, sync, source_type, transition_ms, hold_ms, scope);
@@ -177,7 +193,7 @@ void TwinMotionHandle::animation(const std::string& name, const std::string& env
     if (!a)
         return;
     auto req = std::make_shared<org::openapitools::client::model::TwinActionRequestSchema>();
-    req->setActionType(from_std("animation"));
+    req->setActionType(action_type_from_string("animation"));
     req->setName(from_std(name));
     fill_action_rich(*req, environment_uuid, preview, sync, source_type, transition_ms, hold_ms, scope);
     a->srcAppApiTwinsExecuteTwinAction(from_std(twin_.uuid()), req).get();
@@ -190,7 +206,7 @@ void TwinMotionHandle::plan(const std::string& plan_json, const std::string& env
     if (!a)
         return;
     auto req = std::make_shared<org::openapitools::client::model::TwinActionRequestSchema>();
-    req->setActionType(from_std("plan"));
+    req->setActionType(action_type_from_string("plan"));
     web::json::value j = web::json::value::parse(from_std(plan_json));
     auto plan_schema = std::make_shared<org::openapitools::client::model::MotionPlanSchema>();
     if (plan_schema->fromJson(j))
@@ -207,7 +223,7 @@ void TwinMotionHandle::plan_legacy(const std::string& action_type, const std::st
     if (!a)
         return;
     auto req = std::make_shared<org::openapitools::client::model::TwinActionRequestSchema>();
-    req->setActionType(from_std(action_type));
+    req->setActionType(action_type_from_string(action_type));
     web::json::value j = web::json::value::parse(from_std(plan_json));
     auto plan_schema = std::make_shared<org::openapitools::client::model::MotionPlanSchema>();
     if (plan_schema->fromJson(j))

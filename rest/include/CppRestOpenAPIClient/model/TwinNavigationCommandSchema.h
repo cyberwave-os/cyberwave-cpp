@@ -23,6 +23,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/Relative_Translation.h"
 #include <cpprest/details/basic_types.h>
 #include "CppRestOpenAPIClient/model/NavigationWaypointSchema.h"
 #include <map>
@@ -66,6 +67,7 @@ public:
         STOP,
         PAUSE,
         RESUME,
+        RELATIVE_MOVE,
     };
 
     CommandEnum toCommandEnum(const utility::string_t& value) const;
@@ -96,6 +98,16 @@ public:
     bool waypointsIsSet() const;
     void unsetWaypoints();
     void setWaypoints(const std::vector<std::shared_ptr<NavigationWaypointSchema>>& value);
+
+    std::shared_ptr<Relative_Translation> getRelativeTranslation() const;
+    bool relativeTranslationIsSet() const;
+    void unsetRelative_translation();
+    void setRelativeTranslation(const std::shared_ptr<Relative_Translation>& value);
+
+    utility::string_t getFrame() const;
+    bool frameIsSet() const;
+    void unsetFrame();
+    void setFrame(const utility::string_t& value);
 
     utility::string_t getControllerPolicyUuid() const;
     bool controllerPolicyUuidIsSet() const;
@@ -139,6 +151,10 @@ protected:
     boost::optional<double> m_Yaw;
 
     boost::optional<std::vector<std::shared_ptr<NavigationWaypointSchema>>> m_Waypoints;
+
+    boost::optional<std::shared_ptr<Relative_Translation>> m_Relative_translation;
+
+    boost::optional<utility::string_t> m_Frame;
 
     boost::optional<utility::string_t> m_Controller_policy_uuid;
 

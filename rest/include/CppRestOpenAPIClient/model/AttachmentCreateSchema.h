@@ -66,6 +66,16 @@ public:
     void unsetTwin_uuid();
     void setTwinUuid(const utility::string_t& value);
 
+    utility::string_t getEnvironmentUuid() const;
+    bool environmentUuidIsSet() const;
+    void unsetEnvironment_uuid();
+    void setEnvironmentUuid(const utility::string_t& value);
+
+    utility::string_t getWorkspaceUuid() const;
+    bool workspaceUuidIsSet() const;
+    void unsetWorkspace_uuid();
+    void setWorkspaceUuid(const utility::string_t& value);
+
     std::map<utility::string_t, std::shared_ptr<AnyType>> getMetadata() const;
     bool metadataIsSet() const;
     void unsetMetadata();
@@ -76,6 +86,10 @@ protected:
     boost::optional<utility::string_t> m_Asset_uuid;
 
     boost::optional<utility::string_t> m_Twin_uuid;
+
+    boost::optional<utility::string_t> m_Environment_uuid;
+
+    boost::optional<utility::string_t> m_Workspace_uuid;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
 

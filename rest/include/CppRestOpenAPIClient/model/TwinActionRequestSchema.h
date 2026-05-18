@@ -57,19 +57,30 @@ public:
     /////////////////////////////////////////////
     /// TwinActionRequestSchema members
 
+    enum class Action_typeEnum
+    {
+        POSE,
+        MOVEMENT,
+        ANIMATION,
+        PLAN,
+    };
     enum class ExecutionEnum
     {
         ASYNC,
     };
 
+    Action_typeEnum toAction_typeEnum(const utility::string_t& value) const;
+    const utility::string_t fromAction_typeEnum(const Action_typeEnum value) const;
+
+
     ExecutionEnum toExecutionEnum(const utility::string_t& value) const;
     const utility::string_t fromExecutionEnum(const ExecutionEnum value) const;
 
 
-    utility::string_t getActionType() const;
+    Action_typeEnum getActionType() const;
     bool actionTypeIsSet() const;
     void unsetAction_type();
-    void setActionType(const utility::string_t& value);
+    void setActionType(const Action_typeEnum value);
 
     utility::string_t getName() const;
     bool nameIsSet() const;
@@ -128,7 +139,7 @@ public:
 
 
 protected:
-    utility::string_t m_Action_type;
+    Action_typeEnum m_Action_type;
     bool m_Action_typeIsSet;
 
     boost::optional<utility::string_t> m_Name;

@@ -12,7 +12,7 @@
 /*
  * DatasetImportInitSchema.h
  *
- * Request schema for &#x60;&#x60;POST /datasets/import&#x60;&#x60; (HF Hub or zip upload).  For &#x60;&#x60;source&#x3D;\&quot;zip\&quot;&#x60;&#x60;: returns a signed URL for direct GCS upload (HTTP 200). For &#x60;&#x60;source&#x3D;\&quot;hf\&quot;&#x60;&#x60;: queues metadata import on the worker (HTTP 202).  No &#x60;&#x60;format&#x60;&#x60; field — detection happens server-side after bytes land.  &#x60;&#x60;name&#x60;&#x60; is required for &#x60;&#x60;zip&#x60;&#x60; imports. For &#x60;&#x60;hf&#x60;&#x60; imports it is optional: if omitted, the dataset&#39;s name is set to the upstream &#x60;&#x60;\&quot;&lt;owner&gt;/&lt;repo&gt;\&quot;&#x60;&#x60; from &#x60;&#x60;hf_repo_id&#x60;&#x60;.
+ * Request schema for &#x60;&#x60;POST /datasets/import&#x60;&#x60; (HF Hub or zip upload).  For &#x60;&#x60;source&#x3D;\&quot;zip\&quot;&#x60;&#x60;: returns a signed URL for direct GCS upload (HTTP 200). For &#x60;&#x60;source&#x3D;\&quot;hf\&quot;&#x60;&#x60;: queues metadata import on the worker (HTTP 202).  No &#x60;&#x60;format&#x60;&#x60; field — detection happens server-side after bytes land.  &#x60;&#x60;name&#x60;&#x60; is required for &#x60;&#x60;zip&#x60;&#x60; imports. For &#x60;&#x60;hf&#x60;&#x60; imports it is optional: if omitted, the dataset&#39;s name is set to the upstream &#x60;&#x60;\&quot;&lt;owner&gt;/&lt;repo&gt;\&quot;&#x60;&#x60; from &#x60;&#x60;hf_repo_id&#x60;&#x60;.  &#x60;&#x60;visibility&#x60;&#x60; controls who can see the dataset after import. When &#x60;&#x60;None&#x60;&#x60; (the default), the dataset is created with &#x60;&#x60;Visibility.WORKSPACE&#x60;&#x60; so workspace members can see it immediately, which is the expected default for a deliberate import action.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_DatasetImportInitSchema_H_
@@ -33,7 +33,7 @@ namespace model {
 
 
 /// <summary>
-/// Request schema for &#x60;&#x60;POST /datasets/import&#x60;&#x60; (HF Hub or zip upload).  For &#x60;&#x60;source&#x3D;\&quot;zip\&quot;&#x60;&#x60;: returns a signed URL for direct GCS upload (HTTP 200). For &#x60;&#x60;source&#x3D;\&quot;hf\&quot;&#x60;&#x60;: queues metadata import on the worker (HTTP 202).  No &#x60;&#x60;format&#x60;&#x60; field — detection happens server-side after bytes land.  &#x60;&#x60;name&#x60;&#x60; is required for &#x60;&#x60;zip&#x60;&#x60; imports. For &#x60;&#x60;hf&#x60;&#x60; imports it is optional: if omitted, the dataset&#39;s name is set to the upstream &#x60;&#x60;\&quot;&lt;owner&gt;/&lt;repo&gt;\&quot;&#x60;&#x60; from &#x60;&#x60;hf_repo_id&#x60;&#x60;.
+/// Request schema for &#x60;&#x60;POST /datasets/import&#x60;&#x60; (HF Hub or zip upload).  For &#x60;&#x60;source&#x3D;\&quot;zip\&quot;&#x60;&#x60;: returns a signed URL for direct GCS upload (HTTP 200). For &#x60;&#x60;source&#x3D;\&quot;hf\&quot;&#x60;&#x60;: queues metadata import on the worker (HTTP 202).  No &#x60;&#x60;format&#x60;&#x60; field — detection happens server-side after bytes land.  &#x60;&#x60;name&#x60;&#x60; is required for &#x60;&#x60;zip&#x60;&#x60; imports. For &#x60;&#x60;hf&#x60;&#x60; imports it is optional: if omitted, the dataset&#39;s name is set to the upstream &#x60;&#x60;\&quot;&lt;owner&gt;/&lt;repo&gt;\&quot;&#x60;&#x60; from &#x60;&#x60;hf_repo_id&#x60;&#x60;.  &#x60;&#x60;visibility&#x60;&#x60; controls who can see the dataset after import. When &#x60;&#x60;None&#x60;&#x60; (the default), the dataset is created with &#x60;&#x60;Visibility.WORKSPACE&#x60;&#x60; so workspace members can see it immediately, which is the expected default for a deliberate import action.
 /// </summary>
 class  DatasetImportInitSchema
     : public ModelBase
@@ -62,9 +62,20 @@ public:
         HF,
         ZIP,
     };
+    enum class VisibilityEnum
+    {
+        PRIVATE,
+        WORKSPACE,
+        ORG,
+        PUBLIC,
+    };
 
     SourceEnum toSourceEnum(const utility::string_t& value) const;
     const utility::string_t fromSourceEnum(const SourceEnum value) const;
+
+
+    VisibilityEnum toVisibilityEnum(const utility::string_t& value) const;
+    const utility::string_t fromVisibilityEnum(const VisibilityEnum value) const;
 
 
     SourceEnum getSource() const;
@@ -102,6 +113,11 @@ public:
     void unsetHf_subset();
     void setHfSubset(const utility::string_t& value);
 
+    VisibilityEnum getVisibility() const;
+    bool visibilityIsSet() const;
+    void unsetVisibility();
+    void setVisibility(const VisibilityEnum value);
+
 
 protected:
     SourceEnum m_Source;
@@ -119,6 +135,8 @@ protected:
     boost::optional<utility::string_t> m_Hf_revision;
 
     boost::optional<utility::string_t> m_Hf_subset;
+
+    boost::optional<VisibilityEnum> m_Visibility;
 
 };
 

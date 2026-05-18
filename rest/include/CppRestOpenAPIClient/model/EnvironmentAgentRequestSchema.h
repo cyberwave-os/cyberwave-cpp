@@ -10,13 +10,13 @@
  */
 
 /*
- * EnvironmentAssistantRequestSchema.h
+ * EnvironmentAgentRequestSchema.h
  *
- * Request schema for the environment MCP assistant.
+ * Request schema for the environment MCP agent.
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantRequestSchema_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantRequestSchema_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAgentRequestSchema_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAgentRequestSchema_H_
 
 #include <boost/optional.hpp>
 
@@ -25,6 +25,7 @@
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include <vector>
+#include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
 namespace openapitools {
@@ -34,14 +35,14 @@ namespace model {
 
 
 /// <summary>
-/// Request schema for the environment MCP assistant.
+/// Request schema for the environment MCP agent.
 /// </summary>
-class  EnvironmentAssistantRequestSchema
+class  EnvironmentAgentRequestSchema
     : public ModelBase
 {
 public:
-    EnvironmentAssistantRequestSchema();
-    virtual ~EnvironmentAssistantRequestSchema();
+    EnvironmentAgentRequestSchema();
+    virtual ~EnvironmentAgentRequestSchema();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -56,7 +57,7 @@ public:
 
 
     /////////////////////////////////////////////
-    /// EnvironmentAssistantRequestSchema members
+    /// EnvironmentAgentRequestSchema members
 
 
     utility::string_t getMessage() const;
@@ -74,10 +75,35 @@ public:
     void unsetHistory();
     void setHistory(const std::vector<std::map<utility::string_t, utility::string_t>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getPendingConfirmation() const;
+    bool pendingConfirmationIsSet() const;
+    void unsetPending_confirmation();
+    void setPendingConfirmation(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getCurrentTwins() const;
+    bool currentTwinsIsSet() const;
+    void unsetCurrent_twins();
+    void setCurrentTwins(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
+
     utility::string_t getMlmodelUuid() const;
     bool mlmodelUuidIsSet() const;
     void unsetMlmodel_uuid();
     void setMlmodelUuid(const utility::string_t& value);
+
+    utility::string_t getImageBase64() const;
+    bool imageBase64IsSet() const;
+    void unsetImage_base64();
+    void setImageBase64(const utility::string_t& value);
+
+    utility::string_t getImageMimeType() const;
+    bool imageMimeTypeIsSet() const;
+    void unsetImage_mime_type();
+    void setImageMimeType(const utility::string_t& value);
+
+    utility::string_t getImageName() const;
+    bool imageNameIsSet() const;
+    void unsetImage_name();
+    void setImageName(const utility::string_t& value);
 
 
 protected:
@@ -90,7 +116,18 @@ protected:
     std::vector<std::map<utility::string_t, utility::string_t>> m_History;
     bool m_HistoryIsSet;
 
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Pending_confirmation;
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Current_twins;
+    bool m_Current_twinsIsSet;
+
     boost::optional<utility::string_t> m_Mlmodel_uuid;
+
+    boost::optional<utility::string_t> m_Image_base64;
+
+    boost::optional<utility::string_t> m_Image_mime_type;
+
+    boost::optional<utility::string_t> m_Image_name;
 
 };
 
@@ -100,4 +137,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantRequestSchema_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAgentRequestSchema_H_ */
