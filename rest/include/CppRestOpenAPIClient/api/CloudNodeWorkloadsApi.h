@@ -25,6 +25,7 @@
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadAssignSchema.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadAttachmentResponseSchema.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadAttachmentSchema.h"
+#include "CppRestOpenAPIClient/model/CloudNodeWorkloadCompleteSchema.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadCreateSchema.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadResultSchema.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadSchema.h"
@@ -147,7 +148,7 @@ public:
     /// List Workloads
     /// </summary>
     /// <remarks>
-    /// List all Cloud Node workloads visible to the authenticated user.  Optionally filter by status, profile_slug, workspace_uuid, command_type, twin_uuid, controller_policy_uuid, or environment_uuid.
+    /// List all Cloud Node workloads visible to the authenticated user.  Optionally filter by status, profile_slug, workspace_uuid, command_type, twin_uuid, controller_policy_uuid, environment_uuid, or mlmodel_uuid.
     /// </remarks>
     /// <param name="status"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="statuses"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
@@ -157,6 +158,7 @@ public:
     /// <param name="twinUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="controllerPolicyUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="environmentUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="mlmodelUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::vector<std::shared_ptr<CloudNodeWorkloadSchema>>> srcAppApiCloudNodeWorkloadsListWorkloads(
         boost::optional<utility::string_t> status,
         boost::optional<utility::string_t> statuses,
@@ -165,17 +167,20 @@ public:
         boost::optional<utility::string_t> commandType,
         boost::optional<utility::string_t> twinUuid,
         boost::optional<utility::string_t> controllerPolicyUuid,
-        boost::optional<utility::string_t> environmentUuid
+        boost::optional<utility::string_t> environmentUuid,
+        boost::optional<utility::string_t> mlmodelUuid
     ) const;
     /// <summary>
     /// Mark Workload Completed
     /// </summary>
     /// <remarks>
-    /// Mark a workload as completed.
+    /// Mark a workload as completed.  Accepts an optional JSON body with &#x60;&#x60;result&#x60;&#x60; (dict) and &#x60;&#x60;success&#x60;&#x60; (bool) so that cloud-node processes can upload inline result data at completion time without a separate API call.
     /// </remarks>
     /// <param name="uuid"></param>
+    /// <param name="cloudNodeWorkloadCompleteSchema"> (optional)</param>
     pplx::task<std::shared_ptr<CloudNodeWorkloadSchema>> srcAppApiCloudNodeWorkloadsMarkWorkloadCompleted(
-        utility::string_t uuid
+        utility::string_t uuid,
+        boost::optional<std::shared_ptr<CloudNodeWorkloadCompleteSchema>> cloudNodeWorkloadCompleteSchema
     ) const;
     /// <summary>
     /// Mark Workload Failed

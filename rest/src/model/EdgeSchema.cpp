@@ -32,6 +32,8 @@ EdgeSchema::EdgeSchema()
     m_StatusIsSet = false;
     m_Is_online = false;
     m_Is_onlineIsSet = false;
+    m_Liveness_state = utility::conversions::to_string_t("");
+    m_Liveness_stateIsSet = false;
     m_Created_at = utility::datetime();
     m_Created_atIsSet = false;
     m_Updated_at = utility::datetime();
@@ -91,10 +93,20 @@ web::json::value EdgeSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("is_online"))] = ModelBase::toJson(m_Is_online);
     }
+    if(m_Liveness_stateIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("liveness_state"))] = ModelBase::toJson(m_Liveness_state);
+    }
     if(m_Last_heartbeat.has_value())
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("last_heartbeat"))] = ModelBase::toJson(m_Last_heartbeat.get());
+    }
+    if(m_Last_seen_at.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("last_seen_at"))] = ModelBase::toJson(m_Last_seen_at.get());
     }
     if(m_Last_ip_address.has_value())
     {
@@ -216,6 +228,17 @@ bool EdgeSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("liveness_state"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("liveness_state")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setLivenessState;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setLivenessState);
+            setLivenessState(refVal_setLivenessState);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("last_heartbeat"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("last_heartbeat")));
@@ -224,6 +247,17 @@ bool EdgeSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setLastHeartbeat;
             ok &= ModelBase::fromJson(fieldValue, refVal_setLastHeartbeat);
             setLastHeartbeat(refVal_setLastHeartbeat);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("last_seen_at"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("last_seen_at")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setLastSeenAt;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setLastSeenAt);
+            setLastSeenAt(refVal_setLastSeenAt);
             
         }
     }
@@ -324,9 +358,17 @@ void EdgeSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("is_online")), m_Is_online));
     }
+    if(m_Liveness_stateIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("liveness_state")), m_Liveness_state));
+    }
     if(m_Last_heartbeat.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("last_heartbeat")), m_Last_heartbeat.get()));
+    }
+    if(m_Last_seen_at.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("last_seen_at")), m_Last_seen_at.get()));
     }
     if(m_Last_ip_address.has_value())
     {
@@ -407,11 +449,23 @@ bool EdgeSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("is_online"))), refVal_setIsOnline );
         setIsOnline(refVal_setIsOnline);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("liveness_state"))))
+    {
+        utility::string_t refVal_setLivenessState;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("liveness_state"))), refVal_setLivenessState );
+        setLivenessState(refVal_setLivenessState);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("last_heartbeat"))))
     {
         utility::string_t refVal_setLastHeartbeat;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("last_heartbeat"))), refVal_setLastHeartbeat );
         setLastHeartbeat(refVal_setLastHeartbeat);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("last_seen_at"))))
+    {
+        utility::string_t refVal_setLastSeenAt;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("last_seen_at"))), refVal_setLastSeenAt );
+        setLastSeenAt(refVal_setLastSeenAt);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("last_ip_address"))))
     {
@@ -612,6 +666,27 @@ void EdgeSchema::unsetIs_online()
 {
     m_Is_onlineIsSet = false;
 }
+utility::string_t EdgeSchema::getLivenessState() const
+{
+    return m_Liveness_state;
+}
+
+
+void EdgeSchema::setLivenessState(const utility::string_t& value)
+{
+    m_Liveness_state = value;
+    m_Liveness_stateIsSet = true;
+}
+
+bool EdgeSchema::livenessStateIsSet() const
+{
+    return m_Liveness_stateIsSet;
+}
+
+void EdgeSchema::unsetLiveness_state()
+{
+    m_Liveness_stateIsSet = false;
+}
 utility::string_t EdgeSchema::getLastHeartbeat() const
 {
     return m_Last_heartbeat.get();
@@ -631,6 +706,26 @@ bool EdgeSchema::lastHeartbeatIsSet() const
 void EdgeSchema::unsetLast_heartbeat()
 {
     m_Last_heartbeat.reset();
+}
+utility::string_t EdgeSchema::getLastSeenAt() const
+{
+    return m_Last_seen_at.get();
+}
+
+
+void EdgeSchema::setLastSeenAt(const utility::string_t& value)
+{
+    m_Last_seen_at = value;
+}
+
+bool EdgeSchema::lastSeenAtIsSet() const
+{
+    return m_Last_seen_at.has_value();
+}
+
+void EdgeSchema::unsetLast_seen_at()
+{
+    m_Last_seen_at.reset();
 }
 utility::string_t EdgeSchema::getLastIpAddress() const
 {

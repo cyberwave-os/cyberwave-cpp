@@ -20,7 +20,6 @@ namespace model {
 
 TwinActionRequestSchema::TwinActionRequestSchema()
 {
-    m_Action_type = utility::conversions::to_string_t("");
     m_Action_typeIsSet = false;
     m_Scope = utility::conversions::to_string_t("");
     m_ScopeIsSet = false;
@@ -44,7 +43,9 @@ web::json::value TwinActionRequestSchema::toJson() const
     if(m_Action_typeIsSet)
     {
         
-        val[utility::conversions::to_string_t(_XPLATSTR("action_type"))] = ModelBase::toJson(m_Action_type);
+        utility::string_t refVal = fromAction_typeEnum(m_Action_type);
+        val[utility::conversions::to_string_t(_XPLATSTR("action_type"))] = ModelBase::toJson(refVal);
+        
     }
     if(m_Name.has_value())
     {
@@ -117,7 +118,8 @@ bool TwinActionRequestSchema::fromJson(const web::json::value& val)
         {
             utility::string_t refVal_setActionType;
             ok &= ModelBase::fromJson(fieldValue, refVal_setActionType);
-            setActionType(refVal_setActionType);
+            
+            setActionType(toAction_typeEnum(refVal_setActionType));
             
         }
     }
@@ -255,7 +257,7 @@ void TwinActionRequestSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     }
     if(m_Action_typeIsSet)
     {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("action_type")), m_Action_type));
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("action_type")), fromAction_typeEnum(m_Action_type)));
     }
     if(m_Name.has_value())
     {
@@ -316,7 +318,7 @@ bool TwinActionRequestSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
     {
         utility::string_t refVal_setActionType;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("action_type"))), refVal_setActionType );
-        setActionType(refVal_setActionType);
+        setActionType(toAction_typeEnum(refVal_setActionType));
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("name"))))
     {
@@ -387,6 +389,45 @@ bool TwinActionRequestSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
     return ok;
 }
 
+TwinActionRequestSchema::Action_typeEnum TwinActionRequestSchema::toAction_typeEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("pose")) {
+        return Action_typeEnum::POSE;
+    }
+    
+    if (value == utility::conversions::to_string_t("movement")) {
+        return Action_typeEnum::MOVEMENT;
+    }
+    
+    if (value == utility::conversions::to_string_t("animation")) {
+        return Action_typeEnum::ANIMATION;
+    }
+    
+    if (value == utility::conversions::to_string_t("plan")) {
+        return Action_typeEnum::PLAN;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to Action_typeEnum");
+}
+
+
+const utility::string_t TwinActionRequestSchema::fromAction_typeEnum(const Action_typeEnum value) const
+{
+    switch(value)
+    {
+        
+        case Action_typeEnum::POSE: return utility::conversions::to_string_t("pose");
+        
+        case Action_typeEnum::MOVEMENT: return utility::conversions::to_string_t("movement");
+        
+        case Action_typeEnum::ANIMATION: return utility::conversions::to_string_t("animation");
+        
+        case Action_typeEnum::PLAN: return utility::conversions::to_string_t("plan");
+        
+    }
+}
+
 TwinActionRequestSchema::ExecutionEnum TwinActionRequestSchema::toExecutionEnum(const utility::string_t& value) const
 {
     
@@ -409,13 +450,13 @@ const utility::string_t TwinActionRequestSchema::fromExecutionEnum(const Executi
 }
 
 
-utility::string_t TwinActionRequestSchema::getActionType() const
+TwinActionRequestSchema::Action_typeEnum TwinActionRequestSchema::getActionType() const
 {
     return m_Action_type;
 }
 
 
-void TwinActionRequestSchema::setActionType(const utility::string_t& value)
+void TwinActionRequestSchema::setActionType(const Action_typeEnum value)
 {
     m_Action_type = value;
     m_Action_typeIsSet = true;

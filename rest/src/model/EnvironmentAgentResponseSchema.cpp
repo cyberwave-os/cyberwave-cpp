@@ -11,30 +11,31 @@
 
 
 
-#include "CppRestOpenAPIClient/model/EnvironmentAssistantResponseSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentAgentResponseSchema.h"
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
-EnvironmentAssistantResponseSchema::EnvironmentAssistantResponseSchema()
+EnvironmentAgentResponseSchema::EnvironmentAgentResponseSchema()
 {
     m_Answer = utility::conversions::to_string_t("");
     m_AnswerIsSet = false;
     m_Tool_callsIsSet = false;
+    m_Structured_resultsIsSet = false;
 }
 
-EnvironmentAssistantResponseSchema::~EnvironmentAssistantResponseSchema()
+EnvironmentAgentResponseSchema::~EnvironmentAgentResponseSchema()
 {
 }
 
-void EnvironmentAssistantResponseSchema::validate()
+void EnvironmentAgentResponseSchema::validate()
 {
     // TODO: implement validation
 }
 
-web::json::value EnvironmentAssistantResponseSchema::toJson() const
+web::json::value EnvironmentAgentResponseSchema::toJson() const
 {
     web::json::value val = web::json::value::object();
     if(m_AnswerIsSet)
@@ -47,11 +48,16 @@ web::json::value EnvironmentAssistantResponseSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("tool_calls"))] = ModelBase::toJson(m_Tool_calls);
     }
+    if(m_Structured_resultsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("structured_results"))] = ModelBase::toJson(m_Structured_results);
+    }
 
     return val;
 }
 
-bool EnvironmentAssistantResponseSchema::fromJson(const web::json::value& val)
+bool EnvironmentAgentResponseSchema::fromJson(const web::json::value& val)
 {
     bool ok = true;
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("answer"))))
@@ -76,10 +82,21 @@ bool EnvironmentAssistantResponseSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("structured_results"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("structured_results")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setStructuredResults;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setStructuredResults);
+            setStructuredResults(refVal_setStructuredResults);
+            
+        }
+    }
     return ok;
 }
 
-void EnvironmentAssistantResponseSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix) const
+void EnvironmentAgentResponseSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix) const
 {
     utility::string_t namePrefix = prefix;
     if(namePrefix.size() > 0 && namePrefix.substr(namePrefix.size() - 1) != utility::conversions::to_string_t(_XPLATSTR(".")))
@@ -94,9 +111,13 @@ void EnvironmentAssistantResponseSchema::toMultipart(std::shared_ptr<MultipartFo
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("tool_calls")), m_Tool_calls));
     }
+    if(m_Structured_resultsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("structured_results")), m_Structured_results));
+    }
 }
 
-bool EnvironmentAssistantResponseSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix)
+bool EnvironmentAgentResponseSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix)
 {
     bool ok = true;
     utility::string_t namePrefix = prefix;
@@ -117,51 +138,78 @@ bool EnvironmentAssistantResponseSchema::fromMultiPart(std::shared_ptr<Multipart
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("tool_calls"))), refVal_setToolCalls );
         setToolCalls(refVal_setToolCalls);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("structured_results"))))
+    {
+        std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setStructuredResults;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("structured_results"))), refVal_setStructuredResults );
+        setStructuredResults(refVal_setStructuredResults);
+    }
     return ok;
 }
 
 
-utility::string_t EnvironmentAssistantResponseSchema::getAnswer() const
+utility::string_t EnvironmentAgentResponseSchema::getAnswer() const
 {
     return m_Answer;
 }
 
 
-void EnvironmentAssistantResponseSchema::setAnswer(const utility::string_t& value)
+void EnvironmentAgentResponseSchema::setAnswer(const utility::string_t& value)
 {
     m_Answer = value;
     m_AnswerIsSet = true;
 }
 
-bool EnvironmentAssistantResponseSchema::answerIsSet() const
+bool EnvironmentAgentResponseSchema::answerIsSet() const
 {
     return m_AnswerIsSet;
 }
 
-void EnvironmentAssistantResponseSchema::unsetAnswer()
+void EnvironmentAgentResponseSchema::unsetAnswer()
 {
     m_AnswerIsSet = false;
 }
-std::vector<utility::string_t> EnvironmentAssistantResponseSchema::getToolCalls() const
+std::vector<utility::string_t> EnvironmentAgentResponseSchema::getToolCalls() const
 {
     return m_Tool_calls;
 }
 
 
-void EnvironmentAssistantResponseSchema::setToolCalls(const std::vector<utility::string_t>& value)
+void EnvironmentAgentResponseSchema::setToolCalls(const std::vector<utility::string_t>& value)
 {
     m_Tool_calls = value;
     m_Tool_callsIsSet = true;
 }
 
-bool EnvironmentAssistantResponseSchema::toolCallsIsSet() const
+bool EnvironmentAgentResponseSchema::toolCallsIsSet() const
 {
     return m_Tool_callsIsSet;
 }
 
-void EnvironmentAssistantResponseSchema::unsetTool_calls()
+void EnvironmentAgentResponseSchema::unsetTool_calls()
 {
     m_Tool_callsIsSet = false;
+}
+std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> EnvironmentAgentResponseSchema::getStructuredResults() const
+{
+    return m_Structured_results;
+}
+
+
+void EnvironmentAgentResponseSchema::setStructuredResults(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value)
+{
+    m_Structured_results = value;
+    m_Structured_resultsIsSet = true;
+}
+
+bool EnvironmentAgentResponseSchema::structuredResultsIsSet() const
+{
+    return m_Structured_resultsIsSet;
+}
+
+void EnvironmentAgentResponseSchema::unsetStructured_results()
+{
+    m_Structured_resultsIsSet = false;
 }
 
 }

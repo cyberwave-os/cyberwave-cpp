@@ -76,6 +76,11 @@ public:
     void unsetPlan();
     void setPlan(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getTrajectoryPreview() const;
+    bool trajectoryPreviewIsSet() const;
+    void unsetTrajectory_preview();
+    void setTrajectoryPreview(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
     utility::string_t getResolvedScope() const;
     bool resolvedScopeIsSet() const;
     void unsetResolved_scope();
@@ -96,6 +101,8 @@ protected:
     boost::optional<utility::string_t> m_Message;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Plan;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Trajectory_preview;
 
     boost::optional<utility::string_t> m_Resolved_scope;
 

@@ -64,6 +64,11 @@ web::json::value AssetListQuerySchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("search"))] = ModelBase::toJson(m_Search.get());
     }
+    if(m_Tag.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("tag"))] = ModelBase::toJson(m_Tag.get());
+    }
     if(m_Metadata_key.has_value())
     {
         
@@ -157,6 +162,17 @@ bool AssetListQuerySchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("tag"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("tag")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setTag;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTag);
+            setTag(refVal_setTag);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("metadata_key"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("metadata_key")));
@@ -235,6 +251,10 @@ void AssetListQuerySchema::toMultipart(std::shared_ptr<MultipartFormData> multip
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("search")), m_Search.get()));
     }
+    if(m_Tag.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("tag")), m_Tag.get()));
+    }
     if(m_Metadata_key.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata_key")), m_Metadata_key.get()));
@@ -297,6 +317,12 @@ bool AssetListQuerySchema::fromMultiPart(std::shared_ptr<MultipartFormData> mult
         utility::string_t refVal_setSearch;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("search"))), refVal_setSearch );
         setSearch(refVal_setSearch);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("tag"))))
+    {
+        utility::string_t refVal_setTag;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("tag"))), refVal_setTag );
+        setTag(refVal_setTag);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("metadata_key"))))
     {
@@ -443,6 +469,26 @@ bool AssetListQuerySchema::searchIsSet() const
 void AssetListQuerySchema::unsetSearch()
 {
     m_Search.reset();
+}
+utility::string_t AssetListQuerySchema::getTag() const
+{
+    return m_Tag.get();
+}
+
+
+void AssetListQuerySchema::setTag(const utility::string_t& value)
+{
+    m_Tag = value;
+}
+
+bool AssetListQuerySchema::tagIsSet() const
+{
+    return m_Tag.has_value();
+}
+
+void AssetListQuerySchema::unsetTag()
+{
+    m_Tag.reset();
 }
 utility::string_t AssetListQuerySchema::getMetadataKey() const
 {

@@ -12,7 +12,7 @@
 /*
  * TrajectoryInitialStateSchema.h
  *
- * Joint positions the solver should start from.  When omitted, the backend uses a neutral stance (joint midpoints from the URDF limits) — deterministic and safe, avoids leaking twin state into unauthenticated playground calls. An authenticated caller with a &#x60;&#x60;twin_uuid&#x60;&#x60; in scope can fill this from live twin state on the client side; server-side auto-pull is a P5 concern.
+ * Joint positions the solver should start from.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_TrajectoryInitialStateSchema_H_
@@ -33,7 +33,7 @@ namespace model {
 
 
 /// <summary>
-/// Joint positions the solver should start from.  When omitted, the backend uses a neutral stance (joint midpoints from the URDF limits) — deterministic and safe, avoids leaking twin state into unauthenticated playground calls. An authenticated caller with a &#x60;&#x60;twin_uuid&#x60;&#x60; in scope can fill this from live twin state on the client side; server-side auto-pull is a P5 concern.
+/// Joint positions the solver should start from.
 /// </summary>
 class  TrajectoryInitialStateSchema
     : public ModelBase

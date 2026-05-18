@@ -53,6 +53,8 @@
 #include "CppRestOpenAPIClient/model/CreateTaskSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetCreateSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetDebugInfoSchema.h"
+#include "CppRestOpenAPIClient/model/DatasetDownloadProcessingSchema.h"
+#include "CppRestOpenAPIClient/model/DatasetDownloadReadySchema.h"
 #include "CppRestOpenAPIClient/model/DatasetEpisodeManifestSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetHubFilesSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetImportCompleteSchema.h"
@@ -62,6 +64,7 @@
 #include "CppRestOpenAPIClient/model/DatasetListResponseSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetUpdateSchema.h"
+#include "CppRestOpenAPIClient/model/DatasetValidateAssetSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetZipUrlSchema.h"
 #include "CppRestOpenAPIClient/model/DeferredTaskExecutionResponseSchema.h"
 #include "CppRestOpenAPIClient/model/DeliveryAddressCreateSchema.h"
@@ -73,19 +76,21 @@
 #include "CppRestOpenAPIClient/model/EdgeRegisterSchema.h"
 #include "CppRestOpenAPIClient/model/EdgeSchema.h"
 #include "CppRestOpenAPIClient/model/EndSessionResponseSchema.h"
-#include "CppRestOpenAPIClient/model/EnvironmentAssistantCreateResponseSchema.h"
-#include "CppRestOpenAPIClient/model/EnvironmentAssistantCreateSchema.h"
-#include "CppRestOpenAPIClient/model/EnvironmentAssistantRequestSchema.h"
-#include "CppRestOpenAPIClient/model/EnvironmentAssistantResponseSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentCloneSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentNavigationSettingsPatchSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentProceduralPrimitiveCreateSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentProceduralPrimitiveDeleteSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentProceduralPrimitivePatchSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentProceduralPrimitiveSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSnapshotCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSnapshotSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentUniversalSchemaPatchSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentVisualObservationSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentWaypointBulkCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentWaypointSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentWorkflowReplayEventSchema.h"
 #include "CppRestOpenAPIClient/model/EpisodeCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EpisodeSchema.h"
 #include "CppRestOpenAPIClient/model/EpisodeUpdateSchema.h"
@@ -140,6 +145,7 @@
 #include "CppRestOpenAPIClient/model/PermissionsSchema.h"
 #include "CppRestOpenAPIClient/model/PlanSchema.h"
 #include "CppRestOpenAPIClient/model/PopularTagsResponseSchema.h"
+#include "CppRestOpenAPIClient/model/ProceduralPrimitiveTemplateSchema.h"
 #include "CppRestOpenAPIClient/model/ProjectCreateSchema.h"
 #include "CppRestOpenAPIClient/model/ProjectSchema.h"
 #include "CppRestOpenAPIClient/model/ProjectShareResponseSchema.h"
@@ -175,6 +181,7 @@
 #include "CppRestOpenAPIClient/model/TwinCreateSchema.h"
 #include "CppRestOpenAPIClient/model/TwinDriverLogsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinJointCalibrationSchema.h"
+#include "CppRestOpenAPIClient/model/TwinLatestTrackSchema.h"
 #include "CppRestOpenAPIClient/model/TwinMetricsQuerySchema.h"
 #include "CppRestOpenAPIClient/model/TwinMotionResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinNavigationCaptureUploadResponseSchema.h"
@@ -184,6 +191,7 @@
 #include "CppRestOpenAPIClient/model/TwinStateUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/TwinSyncWorkflowsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinTelemetryMetadataSchema.h"
+#include "CppRestOpenAPIClient/model/TwinTelemetryQueryResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinUniversalSchemaPatchSchema.h"
 #include "CppRestOpenAPIClient/model/URDFProjectCreateSchema.h"
 #include "CppRestOpenAPIClient/model/URDFProjectSchema.h"
@@ -282,20 +290,26 @@ public:
     /// List Alerts
     /// </summary>
     /// <remarks>
-    /// List alerts visible to the authenticated user.  Filters: - workspace_uuid: Filter by workspace - twin_uuid: Filter by twin - environment_uuid: Filter by environment - status: Filter by status (comma-separated, e.g. \&quot;active,acknowledged\&quot;) - severity: Filter by severity (comma-separated, e.g. \&quot;error,critical\&quot;) - limit: Max results (default 100)
+    /// List alerts visible to the authenticated user.  Filters: - workspace_uuid: Filter by workspace - twin_uuid: Filter by twin - environment_uuid: Filter by environment - workflow_uuid: Filter by workflow (matches &#x60;&#x60;Alert.workflow&#x60;&#x60;) - status: Filter by status (comma-separated, e.g. \&quot;active,acknowledged\&quot;) - severity: Filter by severity (comma-separated, e.g. \&quot;error,critical\&quot;) - start: Inclusive created_at start datetime (ISO format) - end: Inclusive created_at end datetime (ISO format) - limit: Max results (default 100)
     /// </remarks>
     /// <param name="workspaceUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="twinUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="environmentUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="workflowUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="status"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="severity"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="start"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="end"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="limit"> (optional, default to 0)</param>
     pplx::task<std::vector<std::shared_ptr<AlertSchema>>> srcAppApiAlertsListAlerts(
         boost::optional<utility::string_t> workspaceUuid,
         boost::optional<utility::string_t> twinUuid,
         boost::optional<utility::string_t> environmentUuid,
+        boost::optional<utility::string_t> workflowUuid,
         boost::optional<utility::string_t> status,
         boost::optional<utility::string_t> severity,
+        boost::optional<utility::string_t> start,
+        boost::optional<utility::string_t> end,
         boost::optional<int32_t> limit
     ) const;
     /// <summary>
@@ -554,6 +568,7 @@ public:
     /// <param name="registryVendor"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="owned"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="search"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="tag"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="metadataKey"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="metadataValue"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="minPrice"> (optional, default to 0.0)</param>
@@ -565,6 +580,7 @@ public:
         boost::optional<utility::string_t> registryVendor,
         boost::optional<utility::string_t> owned,
         boost::optional<utility::string_t> search,
+        boost::optional<utility::string_t> tag,
         boost::optional<utility::string_t> metadataKey,
         boost::optional<utility::string_t> metadataValue,
         boost::optional<double> minPrice,
@@ -589,6 +605,16 @@ public:
     pplx::task<std::shared_ptr<LLMResponseSchema>> srcAppApiAssetsLlmGeneration(
         utility::string_t uuid,
         std::shared_ptr<LLMGenerationSchema> lLMGenerationSchema
+    ) const;
+    /// <summary>
+    /// Llm Generation Models
+    /// </summary>
+    /// <remarks>
+    /// Return backend-owned model choices for natural-language movement.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiAssetsLlmGenerationModels(
+        utility::string_t uuid
     ) const;
     /// <summary>
     /// Patch Asset Universal Schema
@@ -901,6 +927,18 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Download Dataset
+    /// </summary>
+    /// <remarks>
+    /// Request a download URL for a dataset in a specific format.  This endpoint is **idempotent**: calling it multiple times will not spawn duplicate conversion tasks.  Supported &#x60;&#x60;format&#x60;&#x60; values (&#x60;&#x60;DatasetType&#x60;&#x60; values) ---------------------------------------------------- - &#x60;&#x60;parquet&#x60;&#x60;   — Cyberwave joined-parquet zip (native datasets only).                   Deprecated alias: &#x60;&#x60;plain&#x60;&#x60;. - &#x60;&#x60;lerobot3&#x60;&#x60;  — LeRobot v3 (Forge writer).                   Deprecated alias: &#x60;&#x60;lerobot&#x60;&#x60;. - &#x60;&#x60;lerobot21&#x60;&#x60; — LeRobot v2.1 (Forge writer). - &#x60;&#x60;rlds&#x60;&#x60;      — RLDS / TF-Record (Open-X-Embodiment style, Forge writer). - &#x60;&#x60;openvla&#x60;&#x60;   — Cyberwave OpenVLA TFDS bundle (Cyberwave-owned writer). - &#x60;&#x60;robodm&#x60;&#x60;    — Berkeley .vla format (Forge writer).  Planned / not yet implemented (returns 422): &#x60;&#x60;mcap&#x60;&#x60;, &#x60;&#x60;gr00t&#x60;&#x60;, &#x60;&#x60;hdf5&#x60;&#x60;, &#x60;&#x60;zarr&#x60;&#x60;, &#x60;&#x60;rosbag&#x60;&#x60;  Returns ------- HTTP 200 (&#x60;&#x60;DatasetDownloadReadySchema&#x60;&#x60;)     The artifact is ready; &#x60;&#x60;signed_url&#x60;&#x60; is valid for 24 h. HTTP 202 (&#x60;&#x60;DatasetDownloadProcessingSchema&#x60;&#x60;)     A conversion task was queued or is already running.     Poll &#x60;&#x60;poll_url&#x60;&#x60; (this endpoint) again until you get a 200. HTTP 422     The format is not supported (either invalid or TODO).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="format"></param>
+    pplx::task<std::shared_ptr<DatasetDownloadReadySchema>> srcAppApiDatasetsDownloadDataset(
+        utility::string_t uuid,
+        utility::string_t format
+    ) const;
+    /// <summary>
     /// Get Dataset
     /// </summary>
     /// <remarks>
@@ -956,7 +994,7 @@ public:
     /// Get Dataset Zip Url
     /// </summary>
     /// <remarks>
-    /// Get a signed URL for the dataset zip file.  Args:     format: Required query parameter. Must be one of &#39;openvla&#39; or &#39;lerobot&#39;.             Specifies which ProcessedDataset format to retrieve.  Returns:     DatasetZipUrlSchema with signed URL for the zip file.  Raises:     HttpError 422: If format is missing or invalid (not openvla/lerobot/lerobot3/lerobot21).     HttpError 404: If no completed ProcessedDataset of the requested format exists.
+    /// Get a signed URL for the dataset zip file.  **Prefer &#x60;&#x60;GET /datasets/{uuid}/download?format&#x3D;...&#x60;&#x60; for new integrations.** This endpoint is kept for backward compatibility.  It now triggers an async conversion when the artifact does not yet exist, returning HTTP 409 with a &#x60;&#x60;status: \&quot;processing\&quot;&#x60;&#x60; body instead of 404.  Args:     format: A &#x60;&#x60;DatasetType&#x60;&#x60; value or legacy alias.             Accepted: &#x60;&#x60;openvla&#x60;&#x60;, &#x60;&#x60;lerobot&#x60;&#x60; / &#x60;&#x60;lerobot3&#x60;&#x60;, &#x60;&#x60;lerobot21&#x60;&#x60;.             The full &#x60;&#x60;DatasetType&#x60;&#x60; vocabulary (&#x60;&#x60;rlds&#x60;&#x60;, &#x60;&#x60;robodm&#x60;&#x60;, …) is             only available via &#x60;&#x60;GET /datasets/{uuid}/download?format&#x3D;…&#x60;&#x60;.  Returns:     &#x60;&#x60;DatasetZipUrlSchema&#x60;&#x60; with &#x60;&#x60;zip_url&#x60;&#x60; when ready (HTTP 200).     &#x60;&#x60;{\&quot;status\&quot;: \&quot;processing\&quot;, \&quot;message\&quot;: ...}&#x60;&#x60; when converting (HTTP 409).  Raises:     HttpError 422: If format is missing or invalid.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="format"></param>
@@ -1037,6 +1075,18 @@ public:
     pplx::task<std::shared_ptr<DatasetSchema>> srcAppApiDatasetsUpdateDataset(
         utility::string_t uuid,
         std::shared_ptr<DatasetUpdateSchema> datasetUpdateSchema
+    ) const;
+    /// <summary>
+    /// Validate Dataset Asset
+    /// </summary>
+    /// <remarks>
+    /// Persist the user&#39;s validated (or overridden) robot asset slug.  Writes &#x60;&#x60;metadata.lerobot.robot_type_slug&#x60;&#x60; to the chosen value and flips &#x60;&#x60;metadata.lerobot.user_validated_asset&#x60;&#x60; to &#x60;&#x60;True&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="datasetValidateAssetSchema"></param>
+    pplx::task<std::shared_ptr<DatasetSchema>> srcAppApiDatasetsValidateDatasetAsset(
+        utility::string_t uuid,
+        std::shared_ptr<DatasetValidateAssetSchema> datasetValidateAssetSchema
     ) const;
     /// <summary>
     /// Discover Twins
@@ -1193,6 +1243,18 @@ public:
         std::shared_ptr<EnvironmentCreateSchema> environmentCreateSchema
     ) const;
     /// <summary>
+    /// Create Environment Procedural Primitive
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="environmentProceduralPrimitiveCreateSchema"></param>
+    pplx::task<std::shared_ptr<EnvironmentProceduralPrimitiveSchema>> srcAppApiEnvironmentsCreateEnvironmentProceduralPrimitive(
+        utility::string_t uuid,
+        std::shared_ptr<EnvironmentProceduralPrimitiveCreateSchema> environmentProceduralPrimitiveCreateSchema
+    ) const;
+    /// <summary>
     /// Create Standalone Environment
     /// </summary>
     /// <remarks>
@@ -1225,6 +1287,18 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Delete Environment Procedural Primitive
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="primitiveId"></param>
+    pplx::task<std::shared_ptr<EnvironmentProceduralPrimitiveDeleteSchema>> srcAppApiEnvironmentsDeleteEnvironmentProceduralPrimitive(
+        utility::string_t uuid,
+        utility::string_t primitiveId
+    ) const;
+    /// <summary>
     /// Delete Environment Waypoint
     /// </summary>
     /// <remarks>
@@ -1235,28 +1309,6 @@ public:
     pplx::task<std::vector<std::shared_ptr<EnvironmentWaypointSchema>>> srcAppApiEnvironmentsDeleteEnvironmentWaypoint(
         utility::string_t uuid,
         utility::string_t waypointId
-    ) const;
-    /// <summary>
-    /// Run the MCP-powered environment assistant
-    /// </summary>
-    /// <remarks>
-    /// Chat with the environment assistant.  The assistant uses an MLModel from the catalog (defaults to GPT-5.2) and the Cyberwave MCP server to inspect and act on environment resources. The OPENAI_API_KEY stays server-side and is never exposed to the client.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="environmentAssistantRequestSchema"></param>
-    pplx::task<std::shared_ptr<EnvironmentAssistantResponseSchema>> srcAppApiEnvironmentsEnvironmentAssistant(
-        utility::string_t uuid,
-        std::shared_ptr<EnvironmentAssistantRequestSchema> environmentAssistantRequestSchema
-    ) const;
-    /// <summary>
-    /// Create an environment from a natural-language prompt
-    /// </summary>
-    /// <remarks>
-    /// Create an empty environment, then let the MCP agent populate it from the user&#39;s prompt. Returns the created environment together with the assistant&#39;s final answer and tool call summary.
-    /// </remarks>
-    /// <param name="environmentAssistantCreateSchema"></param>
-    pplx::task<std::shared_ptr<EnvironmentAssistantCreateResponseSchema>> srcAppApiEnvironmentsEnvironmentAssistantCreate(
-        std::shared_ptr<EnvironmentAssistantCreateSchema> environmentAssistantCreateSchema
     ) const;
     /// <summary>
     /// Get Environment Dirty Twins
@@ -1355,8 +1407,24 @@ public:
     /// Render a static PNG preview for an environment and store it as an attachment.  This endpoint captures the dedicated frontend environment viewer page using the screenshot service, then stores the resulting PNG with metadata linking it to the environment UUID.
     /// </remarks>
     /// <param name="uuid"></param>
+    /// <param name="view"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="cameraPosition"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="target"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="distance"> (optional, default to 0.0)</param>
+    /// <param name="zoom"> (optional, default to 0.0)</param>
+    /// <param name="width"> (optional, default to 0)</param>
+    /// <param name="height"> (optional, default to 0)</param>
+    /// <param name="renderer"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::shared_ptr<AttachmentSchema>> srcAppApiEnvironmentsGenerateEnvironmentPreview(
-        utility::string_t uuid
+        utility::string_t uuid,
+        boost::optional<utility::string_t> view,
+        boost::optional<utility::string_t> cameraPosition,
+        boost::optional<utility::string_t> target,
+        boost::optional<double> distance,
+        boost::optional<double> zoom,
+        boost::optional<int32_t> width,
+        boost::optional<int32_t> height,
+        boost::optional<utility::string_t> renderer
     ) const;
     /// <summary>
     /// Get Environment
@@ -1464,7 +1532,11 @@ public:
     /// <remarks>
     /// 
     /// </remarks>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="offset"> (optional, default to 0)</param>
     pplx::task<std::vector<std::shared_ptr<EnvironmentSchema>>> srcAppApiEnvironmentsListAllEnvironments(
+        boost::optional<int32_t> limit,
+        boost::optional<int32_t> offset
     ) const;
     /// <summary>
     /// List Environment Captures
@@ -1519,14 +1591,36 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// List Environment Workflow Replay Events
+    /// </summary>
+    /// <remarks>
+    /// Return workflow and node execution events bounded to a replay window.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="start"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="end"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="includeNodeExecutions"> (optional, default to false)</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    pplx::task<std::vector<std::shared_ptr<EnvironmentWorkflowReplayEventSchema>>> srcAppApiEnvironmentsListEnvironmentWorkflowReplayEvents(
+        utility::string_t uuid,
+        boost::optional<utility::string_t> start,
+        boost::optional<utility::string_t> end,
+        boost::optional<bool> includeNodeExecutions,
+        boost::optional<int32_t> limit
+    ) const;
+    /// <summary>
     /// List Environments For Project
     /// </summary>
     /// <remarks>
     /// 
     /// </remarks>
     /// <param name="uuid"></param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="offset"> (optional, default to 0)</param>
     pplx::task<std::vector<std::shared_ptr<EnvironmentSchema>>> srcAppApiEnvironmentsListEnvironmentsForProject(
-        utility::string_t uuid
+        utility::string_t uuid,
+        boost::optional<int32_t> limit,
+        boost::optional<int32_t> offset
     ) const;
     /// <summary>
     /// List Templates
@@ -1559,6 +1653,44 @@ public:
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsPatchEnvironmentUniversalSchema(
         utility::string_t uuid,
         std::shared_ptr<EnvironmentUniversalSchemaPatchSchema> environmentUniversalSchemaPatchSchema
+    ) const;
+    /// <summary>
+    /// Preview Environment Procedural Primitive
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="environmentProceduralPrimitiveCreateSchema"></param>
+    pplx::task<std::shared_ptr<EnvironmentProceduralPrimitiveSchema>> srcAppApiEnvironmentsPreviewEnvironmentProceduralPrimitive(
+        utility::string_t uuid,
+        std::shared_ptr<EnvironmentProceduralPrimitiveCreateSchema> environmentProceduralPrimitiveCreateSchema
+    ) const;
+    /// <summary>
+    /// Preview Update Environment Procedural Primitive
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="primitiveId"></param>
+    /// <param name="environmentProceduralPrimitivePatchSchema"></param>
+    pplx::task<std::shared_ptr<EnvironmentProceduralPrimitiveSchema>> srcAppApiEnvironmentsPreviewUpdateEnvironmentProceduralPrimitive(
+        utility::string_t uuid,
+        utility::string_t primitiveId,
+        std::shared_ptr<EnvironmentProceduralPrimitivePatchSchema> environmentProceduralPrimitivePatchSchema
+    ) const;
+    /// <summary>
+    /// Publish Environment Visual Observation
+    /// </summary>
+    /// <remarks>
+    /// Publish browser-rendered visual evidence into the short-lived frame cache.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="image"></param>
+    pplx::task<std::shared_ptr<EnvironmentVisualObservationSchema>> srcAppApiEnvironmentsPublishEnvironmentVisualObservation(
+        utility::string_t uuid,
+        std::shared_ptr<HttpContent> image
     ) const;
     /// <summary>
     /// Batch Delete Recordings
@@ -1603,8 +1735,12 @@ public:
     /// Get all available recordings for an environment (no pagination). Returns lean recording metadata (heavy internal fields omitted). Full playback data is loaded via GET .../recordings/{recording_uuid}/data.  Query params: - start_timestamp: Inclusive calendar day start (yyyy-mm-dd), optional - end_timestamp: Inclusive calendar day end (yyyy-mm-dd), optional   When both are set, only recordings whose time window overlaps   [start_timestamp 00:00 UTC, end_timestamp+1day 00:00 UTC) are returned.
     /// </remarks>
     /// <param name="uuid"></param>
+    /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
     pplx::task<std::shared_ptr<RecordingListResponse>> srcAppApiEnvironmentsRecordingsGetEnvironmentRecordings(
-        utility::string_t uuid
+        utility::string_t uuid,
+        boost::optional<utility::datetime> startTimestamp,
+        boost::optional<utility::datetime> endTimestamp
     ) const;
     /// <summary>
     /// Get Environment Sessions
@@ -1929,6 +2065,20 @@ public:
         utility::string_t projectUuid,
         utility::string_t uuid,
         std::shared_ptr<EnvironmentCreateSchema> environmentCreateSchema
+    ) const;
+    /// <summary>
+    /// Update Environment Procedural Primitive
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="primitiveId"></param>
+    /// <param name="environmentProceduralPrimitivePatchSchema"></param>
+    pplx::task<std::shared_ptr<EnvironmentProceduralPrimitiveSchema>> srcAppApiEnvironmentsUpdateEnvironmentProceduralPrimitive(
+        utility::string_t uuid,
+        utility::string_t primitiveId,
+        std::shared_ptr<EnvironmentProceduralPrimitivePatchSchema> environmentProceduralPrimitivePatchSchema
     ) const;
     /// <summary>
     /// Create Episode
@@ -2645,6 +2795,44 @@ public:
         std::shared_ptr<HttpContent> image
     ) const;
     /// <summary>
+    /// Get Namespaced Procedural Primitive Template
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="r_namespace"></param>
+    /// <param name="templateName"></param>
+    /// <param name="version"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::shared_ptr<ProceduralPrimitiveTemplateSchema>> srcAppApiProceduralPrimitivesGetNamespacedProceduralPrimitiveTemplate(
+        utility::string_t r_namespace,
+        utility::string_t templateName,
+        boost::optional<utility::string_t> version
+    ) const;
+    /// <summary>
+    /// Get Procedural Primitive Template
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="templateKey"></param>
+    /// <param name="version"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::shared_ptr<ProceduralPrimitiveTemplateSchema>> srcAppApiProceduralPrimitivesGetProceduralPrimitiveTemplate(
+        utility::string_t templateKey,
+        boost::optional<utility::string_t> version
+    ) const;
+    /// <summary>
+    /// List Procedural Primitive Templates
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="search"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    pplx::task<std::vector<std::shared_ptr<ProceduralPrimitiveTemplateSchema>>> srcAppApiProceduralPrimitivesListProceduralPrimitiveTemplates(
+        boost::optional<utility::string_t> search,
+        boost::optional<int32_t> limit
+    ) const;
+    /// <summary>
     /// Create Project
     /// </summary>
     /// <remarks>
@@ -2941,6 +3129,18 @@ public:
         std::shared_ptr<UpdateTaskSchema> updateTaskSchema
     ) const;
     /// <summary>
+    /// Cancel Twin Action
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="actionId"></param>
+    pplx::task<std::shared_ptr<TwinActionResponseSchema>> srcAppApiTwinsCancelTwinAction(
+        utility::string_t uuid,
+        utility::string_t actionId
+    ) const;
+    /// <summary>
     /// Create Twin
     /// </summary>
     /// <remarks>
@@ -3052,7 +3252,7 @@ public:
     /// Get Twin Driver Logs
     /// </summary>
     /// <remarks>
-    /// Get persisted driver logs for a twin, newest-first.  Query params: - limit: max rows to return (default 100, max 500) - offset: number of rows to skip (default 0)
+    /// Get persisted driver logs for a twin, newest-first.  Query params: - limit: max rows to return (default 100, max 10000) - offset: number of rows to skip (default 0)
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="limit"> (optional, default to 0)</param>
@@ -3087,6 +3287,20 @@ public:
     /// <param name="uuid"></param>
     pplx::task<void> srcAppApiTwinsGetTwinLatestMetrics(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Twin Latest Track
+    /// </summary>
+    /// <remarks>
+    /// Get the latest stored audio recording for a twin in the requested format.  The &#x60;&#x60;audio_format&#x60;&#x60; query parameter selects the output codec:  - **mp3** (default) — returns the pre-built MP3 created when the   recording ended.  Fastest: no on-demand processing needed. - **ogg** — lossless concat of the original Opus OGG chunks into a   single file (&#x60;&#x60;-c:a copy&#x60;&#x60;).  Created on demand and cached. - **wav** — decodes the original Opus OGG chunks to 16-bit PCM WAV.   Created on demand and cached.  All formats are built from the original OGG (Opus) source chunks grouped by session identifier (sensor + timestamp), so quality is preserved regardless of the requested format.  Query params: - sensor_id: filter by specific microphone sensor (optional) - audio_format: &#x60;&#x60;mp3&#x60;&#x60; | &#x60;&#x60;ogg&#x60;&#x60; | &#x60;&#x60;wav&#x60;&#x60; (default &#x60;&#x60;mp3&#x60;&#x60;)
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="sensorId"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="audioFormat"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::shared_ptr<TwinLatestTrackSchema>> srcAppApiTwinsGetTwinLatestTrack(
+        utility::string_t uuid,
+        boost::optional<utility::string_t> sensorId,
+        boost::optional<utility::string_t> audioFormat
     ) const;
     /// <summary>
     /// Get Twin Links
@@ -3155,6 +3369,26 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::vector<std::shared_ptr<TwinRelationshipSchema>>> srcAppApiTwinsGetTwinRelationships(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Twin Telemetry
+    /// </summary>
+    /// <remarks>
+    /// Get persisted telemetry rows for a twin.  Query params: - start: inclusive start datetime (ISO format) - end: inclusive end datetime (ISO format) - event_types: optional comma-separated TelemetryEvent values - limit: max rows to return (default 100, max 10000) - offset: number of rows to skip
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="start"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="end"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="eventTypes"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="offset"> (optional, default to 0)</param>
+    pplx::task<std::shared_ptr<TwinTelemetryQueryResponseSchema>> srcAppApiTwinsGetTwinTelemetry(
+        utility::string_t uuid,
+        boost::optional<utility::string_t> start,
+        boost::optional<utility::string_t> end,
+        boost::optional<utility::string_t> eventTypes,
+        boost::optional<int32_t> limit,
+        boost::optional<int32_t> offset
     ) const;
     /// <summary>
     /// Get Twin Universal Schema At Path
@@ -3784,7 +4018,17 @@ public:
     /// <remarks>
     /// List all workflows visible to the authenticated user (respects ACL).
     /// </remarks>
+    /// <param name="workspaceUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="kind"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="environmentUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="runOnEdge"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="slug"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::vector<std::shared_ptr<WorkflowSchema>>> srcAppApiWorkflowsListWorkflows(
+        boost::optional<utility::string_t> workspaceUuid,
+        boost::optional<utility::string_t> kind,
+        boost::optional<utility::string_t> environmentUuid,
+        boost::optional<utility::string_t> runOnEdge,
+        boost::optional<utility::string_t> slug
     ) const;
     /// <summary>
     /// Trigger Workflow

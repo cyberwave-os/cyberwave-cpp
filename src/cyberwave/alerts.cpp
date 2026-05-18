@@ -371,10 +371,12 @@ std::vector<Alert> TwinAlertManager::list(const ListOptions& options) const
         sev = from_std(options.severity);
     try
     {
-        auto vec = a->srcAppApiAlertsListAlerts(boost::optional<utility::string_t>(),
-                                                boost::optional<utility::string_t>(from_std(twin_->uuid())),
-                                                boost::optional<utility::string_t>(), st, sev, limit)
-                       .get();
+        auto vec =
+            a->srcAppApiAlertsListAlerts(
+                 boost::optional<utility::string_t>(), boost::optional<utility::string_t>(from_std(twin_->uuid())),
+                 boost::optional<utility::string_t>(), boost::optional<utility::string_t>(), st, sev,
+                 boost::optional<utility::string_t>(), boost::optional<utility::string_t>(), limit)
+                .get();
         std::vector<Alert> out;
         for (auto& ptr : vec)
         {

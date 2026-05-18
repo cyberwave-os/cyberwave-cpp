@@ -10,13 +10,13 @@
  */
 
 /*
- * EnvironmentAssistantCreateSchema.h
+ * AgentCreateEnvironmentSchema.h
  *
- * Request schema for AI-driven environment creation from a prompt.
+ * Request schema for agent-created environments.
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantCreateSchema_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantCreateSchema_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_AgentCreateEnvironmentSchema_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_AgentCreateEnvironmentSchema_H_
 
 #include <boost/optional.hpp>
 
@@ -32,14 +32,14 @@ namespace model {
 
 
 /// <summary>
-/// Request schema for AI-driven environment creation from a prompt.
+/// Request schema for agent-created environments.
 /// </summary>
-class  EnvironmentAssistantCreateSchema
+class  AgentCreateEnvironmentSchema
     : public ModelBase
 {
 public:
-    EnvironmentAssistantCreateSchema();
-    virtual ~EnvironmentAssistantCreateSchema();
+    AgentCreateEnvironmentSchema();
+    virtual ~AgentCreateEnvironmentSchema();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -54,7 +54,7 @@ public:
 
 
     /////////////////////////////////////////////
-    /// EnvironmentAssistantCreateSchema members
+    /// AgentCreateEnvironmentSchema members
 
 
     utility::string_t getPrompt() const;
@@ -104,4 +104,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantCreateSchema_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_AgentCreateEnvironmentSchema_H_ */

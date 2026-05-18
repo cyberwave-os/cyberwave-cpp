@@ -12,7 +12,7 @@
 /*
  * CameraIntrinsicsSchema.h
  *
- * Pinhole intrinsics used to deproject 2D detections into 3D.  Follows the OpenCV / LeRobot convention: &#x60;&#x60;fx&#x60;&#x60;, &#x60;&#x60;fy&#x60;&#x60; are focal lengths in pixels and &#x60;&#x60;cx&#x60;&#x60;, &#x60;&#x60;cy&#x60;&#x60; is the principal point in pixels. Distortion is intentionally out of scope for v1; callers that need it can pass it through :attr:&#x60;MLModelRunSchema.params&#x60; until the field stabilises.
+ * Pinhole intrinsics used to deproject 2D detections into 3D.  Follows the OpenCV / LeRobot convention: &#x60;&#x60;fx&#x60;&#x60;, &#x60;&#x60;fy&#x60;&#x60; are focal lengths in pixels and &#x60;&#x60;cx&#x60;&#x60;, &#x60;&#x60;cy&#x60;&#x60; is the principal point in pixels. Distortion is intentionally out of scope for v1; callers that need it can pass it through :attr:&#x60;MLModelRunSchema.params&#x60; until the field stabilises.  &#x60;&#x60;width&#x60;&#x60; and &#x60;&#x60;height&#x60;&#x60; accept whole-number floats (e.g. &#x60;&#x60;640.0&#x60;&#x60;) and coerce them to &#x60;&#x60;int&#x60;&#x60; so callers that forward raw JSON from camera drivers don&#39;t need to cast on their side.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_CameraIntrinsicsSchema_H_
@@ -31,7 +31,7 @@ namespace model {
 
 
 /// <summary>
-/// Pinhole intrinsics used to deproject 2D detections into 3D.  Follows the OpenCV / LeRobot convention: &#x60;&#x60;fx&#x60;&#x60;, &#x60;&#x60;fy&#x60;&#x60; are focal lengths in pixels and &#x60;&#x60;cx&#x60;&#x60;, &#x60;&#x60;cy&#x60;&#x60; is the principal point in pixels. Distortion is intentionally out of scope for v1; callers that need it can pass it through :attr:&#x60;MLModelRunSchema.params&#x60; until the field stabilises.
+/// Pinhole intrinsics used to deproject 2D detections into 3D.  Follows the OpenCV / LeRobot convention: &#x60;&#x60;fx&#x60;&#x60;, &#x60;&#x60;fy&#x60;&#x60; are focal lengths in pixels and &#x60;&#x60;cx&#x60;&#x60;, &#x60;&#x60;cy&#x60;&#x60; is the principal point in pixels. Distortion is intentionally out of scope for v1; callers that need it can pass it through :attr:&#x60;MLModelRunSchema.params&#x60; until the field stabilises.  &#x60;&#x60;width&#x60;&#x60; and &#x60;&#x60;height&#x60;&#x60; accept whole-number floats (e.g. &#x60;&#x60;640.0&#x60;&#x60;) and coerce them to &#x60;&#x60;int&#x60;&#x60; so callers that forward raw JSON from camera drivers don&#39;t need to cast on their side.
 /// </summary>
 class  CameraIntrinsicsSchema
     : public ModelBase
