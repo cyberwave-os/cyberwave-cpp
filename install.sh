@@ -164,7 +164,6 @@ install_deps_debian() {
         ca-certificates \
         curl \
         git \
-        openjdk-17-jre-headless \
         libcpprest-dev \
         libssl-dev \
         libboost-dev \
@@ -281,27 +280,61 @@ if impl_signature not in cpp_text:
 PY
 }
 
+apply_cmake_patches() {
+    local rest_cmake="${SCRIPT_DIR}/rest/CMakeLists.txt"
+    if [[ ! -f "${rest_cmake}" ]]; then
+        return
+    fi
+
+    # The cpp-restsdk generator adds -Wno-unused-lambda-capture which is
+    # Clang-only and causes "unrecognized command-line option" notes on GCC.
+    # Wrap it in a generator expression so it only applies to Clang.
+    if grep -q '\-Wno-unused-lambda-capture' "${rest_cmake}"; then
+        sed -i.bak 's/-Wno-unused-lambda-capture/$<$<CXX_COMPILER_ID:Clang,AppleClang>:-Wno-unused-lambda-capture>/g' "${rest_cmake}"
+        rm -f "${rest_cmake}.bak"
+        log "Patched rest/CMakeLists.txt: guarded -Wno-unused-lambda-capture for Clang only"
+    fi
+}
+
 generate_rest_sources() {
-    local jar_path tmp_dir backup_dir
+    local tmp_dir backup_dir
     tmp_dir="${SCRIPT_DIR}/rest-tmp"
     backup_dir="${SCRIPT_DIR}/.cache/install-backup"
 
-    if ! have_cmd java; then
-        err "Java runtime not found. Install Java or run without --skip-deps."
-        exit 1
-    fi
-
-    jar_path="$(download_openapi_generator_jar)"
-
     log "Generating REST client from ${OPENAPI_URL}"
-    rm -rf "${tmp_dir}"
+    run_as_root rm -rf "${tmp_dir}"
     mkdir -p "${tmp_dir}"
 
-    java -jar "${jar_path}" generate \
-        -i "${OPENAPI_URL}" \
-        -g cpp-restsdk \
-        -o "${tmp_dir}" \
-        --skip-validate-spec
+    if have_cmd docker; then
+        # Download the spec to a file so the Docker container doesn't need to
+        # reach the host network directly (avoids localhost-inside-container issues).
+        local spec_file
+        spec_file="${SCRIPT_DIR}/.cache/openapi-spec.json"
+        mkdir -p "${SCRIPT_DIR}/.cache"
+        log "Downloading OpenAPI spec to ${spec_file}"
+        curl -fsSL "${OPENAPI_URL}" -o "${spec_file}"
+
+        docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -v "${SCRIPT_DIR}/.cache:/spec:ro" \
+            -v "${tmp_dir}:/local" \
+            "openapitools/openapi-generator-cli:v${OPENAPI_GENERATOR_VERSION}" generate \
+            -i /spec/openapi-spec.json \
+            -g cpp-restsdk \
+            -o /local \
+            --skip-validate-spec
+    elif have_cmd java; then
+        local jar_path
+        jar_path="$(download_openapi_generator_jar)"
+        java -jar "${jar_path}" generate \
+            -i "${OPENAPI_URL}" \
+            -g cpp-restsdk \
+            -o "${tmp_dir}" \
+            --skip-validate-spec
+    else
+        err "Neither Docker nor Java found. Install Docker (preferred) or a Java runtime, or pass --skip-generate-rest."
+        exit 1
+    fi
 
     mkdir -p "${backup_dir}"
     cp "${SCRIPT_DIR}/rest/README.md" "${backup_dir}/rest-README.md" 2>/dev/null || true
@@ -311,9 +344,10 @@ generate_rest_sources() {
     cp -r "${tmp_dir}/." "${SCRIPT_DIR}/rest/"
 
     cp "${backup_dir}/rest-README.md" "${SCRIPT_DIR}/rest/README.md" 2>/dev/null || true
-    rm -rf "${tmp_dir}"
+    run_as_root rm -rf "${tmp_dir}"
 
     apply_openapi_patches
+    apply_cmake_patches
     log "REST sources generated at ${SCRIPT_DIR}/rest"
 }
 
@@ -384,6 +418,23 @@ configure_build_install() {
     local enable_webrtc="ON"
     [[ "${WITHOUT_WEBRTC}" -eq 1 ]] && enable_webrtc="OFF"
 
+    local launcher_flags=()
+    # Honor a launcher set by the caller's environment first (e.g. CI exports
+    # CMAKE_CXX_COMPILER_LAUNCHER=sccache via .github/actions/setup-sccache).
+    # Otherwise auto-detect: prefer sccache (works with shared remote caches
+    # like GCS/S3/Redis), fall back to ccache for purely local caching.
+    if [[ -n "${CMAKE_CXX_COMPILER_LAUNCHER:-}" ]]; then
+        log "Using compiler launcher from environment: ${CMAKE_CXX_COMPILER_LAUNCHER}"
+    elif have_cmd sccache; then
+        launcher_flags+=("-DCMAKE_C_COMPILER_LAUNCHER=sccache")
+        launcher_flags+=("-DCMAKE_CXX_COMPILER_LAUNCHER=sccache")
+        log "sccache found — compiler cache enabled"
+    elif have_cmd ccache; then
+        launcher_flags+=("-DCMAKE_C_COMPILER_LAUNCHER=ccache")
+        launcher_flags+=("-DCMAKE_CXX_COMPILER_LAUNCHER=ccache")
+        log "ccache found — compiler cache enabled"
+    fi
+
     log "Configuring CMake build"
     cmake -S "${SCRIPT_DIR}" -B "${BUILD_DIR}" \
         -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
@@ -391,7 +442,8 @@ configure_build_install() {
         -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
         -DCYBERWAVE_BUILD_TESTS="${build_tests}" \
         -DCYBERWAVE_BUILD_EXAMPLES=OFF \
-        -DCYBERWAVE_ENABLE_WEBRTC="${enable_webrtc}"
+        -DCYBERWAVE_ENABLE_WEBRTC="${enable_webrtc}" \
+        "${launcher_flags[@]}"
 
     log "Building SDK"
     cmake --build "${BUILD_DIR}" --parallel "$(parallel_jobs)"

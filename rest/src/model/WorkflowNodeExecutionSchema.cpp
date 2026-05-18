@@ -33,6 +33,8 @@ WorkflowNodeExecutionSchema::WorkflowNodeExecutionSchema()
     m_Error_message = utility::conversions::to_string_t("");
     m_Error_messageIsSet = false;
     m_MetadataIsSet = false;
+    m_Activation_index = 0;
+    m_Activation_indexIsSet = false;
 }
 
 WorkflowNodeExecutionSchema::~WorkflowNodeExecutionSchema()
@@ -101,6 +103,16 @@ web::json::value WorkflowNodeExecutionSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("metadata"))] = ModelBase::toJson(m_Metadata);
+    }
+    if(m_Activation_indexIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("activation_index"))] = ModelBase::toJson(m_Activation_index);
+    }
+    if(m_Caller_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("caller_uuid"))] = ModelBase::toJson(m_Caller_uuid.get());
     }
 
     return val;
@@ -230,6 +242,28 @@ bool WorkflowNodeExecutionSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("activation_index"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("activation_index")));
+        if(!fieldValue.is_null())
+        {
+            int32_t refVal_setActivationIndex;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setActivationIndex);
+            setActivationIndex(refVal_setActivationIndex);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("caller_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("caller_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setCallerUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCallerUuid);
+            setCallerUuid(refVal_setCallerUuid);
+            
+        }
+    }
     return ok;
 }
 
@@ -283,6 +317,14 @@ void WorkflowNodeExecutionSchema::toMultipart(std::shared_ptr<MultipartFormData>
     if(m_MetadataIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata));
+    }
+    if(m_Activation_indexIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("activation_index")), m_Activation_index));
+    }
+    if(m_Caller_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("caller_uuid")), m_Caller_uuid.get()));
     }
 }
 
@@ -360,6 +402,18 @@ bool WorkflowNodeExecutionSchema::fromMultiPart(std::shared_ptr<MultipartFormDat
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))), refVal_setMetadata );
         setMetadata(refVal_setMetadata);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("activation_index"))))
+    {
+        int32_t refVal_setActivationIndex;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("activation_index"))), refVal_setActivationIndex );
+        setActivationIndex(refVal_setActivationIndex);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("caller_uuid"))))
+    {
+        utility::string_t refVal_setCallerUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("caller_uuid"))), refVal_setCallerUuid );
+        setCallerUuid(refVal_setCallerUuid);
     }
     return ok;
 }
@@ -591,6 +645,46 @@ bool WorkflowNodeExecutionSchema::metadataIsSet() const
 void WorkflowNodeExecutionSchema::unsetMetadata()
 {
     m_MetadataIsSet = false;
+}
+int32_t WorkflowNodeExecutionSchema::getActivationIndex() const
+{
+    return m_Activation_index;
+}
+
+void WorkflowNodeExecutionSchema::setActivationIndex(int32_t value)
+{
+    m_Activation_index = value;
+    m_Activation_indexIsSet = true;
+}
+
+bool WorkflowNodeExecutionSchema::activationIndexIsSet() const
+{
+    return m_Activation_indexIsSet;
+}
+
+void WorkflowNodeExecutionSchema::unsetActivation_index()
+{
+    m_Activation_indexIsSet = false;
+}
+utility::string_t WorkflowNodeExecutionSchema::getCallerUuid() const
+{
+    return m_Caller_uuid.get();
+}
+
+
+void WorkflowNodeExecutionSchema::setCallerUuid(const utility::string_t& value)
+{
+    m_Caller_uuid = value;
+}
+
+bool WorkflowNodeExecutionSchema::callerUuidIsSet() const
+{
+    return m_Caller_uuid.has_value();
+}
+
+void WorkflowNodeExecutionSchema::unsetCaller_uuid()
+{
+    m_Caller_uuid.reset();
 }
 
 }

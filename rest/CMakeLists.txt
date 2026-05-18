@@ -50,7 +50,7 @@ add_library(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 target_compile_options(${PROJECT_NAME}
     PRIVATE
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-            -Wall -Wno-unused-variable -Wno-unused-lambda-capture>
+            -Wall -Wno-unused-variable $<$<CXX_COMPILER_ID:Clang,AppleClang>:-Wno-unused-lambda-capture>>
 )
 
 target_include_directories(${PROJECT_NAME}

@@ -62,6 +62,11 @@ web::json::value EdgeRegisterSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("name"))] = ModelBase::toJson(m_Name);
     }
+    if(m_Host_facts.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("host_facts"))] = ModelBase::toJson(m_Host_facts.get());
+    }
 
     return val;
 }
@@ -113,6 +118,17 @@ bool EdgeRegisterSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("host_facts"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("host_facts")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setHostFacts;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setHostFacts);
+            setHostFacts(refVal_setHostFacts);
+            
+        }
+    }
     return ok;
 }
 
@@ -138,6 +154,10 @@ void EdgeRegisterSchema::toMultipart(std::shared_ptr<MultipartFormData> multipar
     if(m_NameIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("name")), m_Name));
+    }
+    if(m_Host_facts.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("host_facts")), m_Host_facts.get()));
     }
 }
 
@@ -173,6 +193,12 @@ bool EdgeRegisterSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         utility::string_t refVal_setName;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("name"))), refVal_setName );
         setName(refVal_setName);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("host_facts"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setHostFacts;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("host_facts"))), refVal_setHostFacts );
+        setHostFacts(refVal_setHostFacts);
     }
     return ok;
 }
@@ -261,6 +287,26 @@ bool EdgeRegisterSchema::nameIsSet() const
 void EdgeRegisterSchema::unsetName()
 {
     m_NameIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> EdgeRegisterSchema::getHostFacts() const
+{
+    return m_Host_facts.get();
+}
+
+
+void EdgeRegisterSchema::setHostFacts(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Host_facts = value;
+}
+
+bool EdgeRegisterSchema::hostFactsIsSet() const
+{
+    return m_Host_facts.has_value();
+}
+
+void EdgeRegisterSchema::unsetHost_facts()
+{
+    m_Host_facts.reset();
 }
 
 }

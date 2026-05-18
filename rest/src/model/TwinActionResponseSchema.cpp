@@ -56,6 +56,11 @@ web::json::value TwinActionResponseSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("plan"))] = ModelBase::toJson(m_Plan.get());
     }
+    if(m_Trajectory_preview.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("trajectory_preview"))] = ModelBase::toJson(m_Trajectory_preview.get());
+    }
     if(m_Resolved_scope.has_value())
     {
         
@@ -117,6 +122,17 @@ bool TwinActionResponseSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("trajectory_preview"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("trajectory_preview")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setTrajectoryPreview;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTrajectoryPreview);
+            setTrajectoryPreview(refVal_setTrajectoryPreview);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("resolved_scope"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("resolved_scope")));
@@ -165,6 +181,10 @@ void TwinActionResponseSchema::toMultipart(std::shared_ptr<MultipartFormData> mu
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("plan")), m_Plan.get()));
     }
+    if(m_Trajectory_preview.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("trajectory_preview")), m_Trajectory_preview.get()));
+    }
     if(m_Resolved_scope.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("resolved_scope")), m_Resolved_scope.get()));
@@ -207,6 +227,12 @@ bool TwinActionResponseSchema::fromMultiPart(std::shared_ptr<MultipartFormData> 
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setPlan;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("plan"))), refVal_setPlan );
         setPlan(refVal_setPlan);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("trajectory_preview"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setTrajectoryPreview;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("trajectory_preview"))), refVal_setTrajectoryPreview );
+        setTrajectoryPreview(refVal_setTrajectoryPreview);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("resolved_scope"))))
     {
@@ -304,6 +330,26 @@ bool TwinActionResponseSchema::planIsSet() const
 void TwinActionResponseSchema::unsetPlan()
 {
     m_Plan.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> TwinActionResponseSchema::getTrajectoryPreview() const
+{
+    return m_Trajectory_preview.get();
+}
+
+
+void TwinActionResponseSchema::setTrajectoryPreview(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Trajectory_preview = value;
+}
+
+bool TwinActionResponseSchema::trajectoryPreviewIsSet() const
+{
+    return m_Trajectory_preview.has_value();
+}
+
+void TwinActionResponseSchema::unsetTrajectory_preview()
+{
+    m_Trajectory_preview.reset();
 }
 utility::string_t TwinActionResponseSchema::getResolvedScope() const
 {

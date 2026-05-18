@@ -10,20 +10,19 @@
  */
 
 /*
- * EnvironmentAssistantResponseSchema.h
+ * DatasetValidateAssetSchema.h
  *
- * Response schema for the environment MCP assistant.
+ * Payload for &#x60;&#x60;PATCH /datasets/{uuid}/validate-asset&#x60;&#x60;.
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantResponseSchema_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantResponseSchema_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_DatasetValidateAssetSchema_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_DatasetValidateAssetSchema_H_
 
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include <cpprest/details/basic_types.h>
-#include <vector>
 
 namespace org {
 namespace openapitools {
@@ -33,14 +32,14 @@ namespace model {
 
 
 /// <summary>
-/// Response schema for the environment MCP assistant.
+/// Payload for &#x60;&#x60;PATCH /datasets/{uuid}/validate-asset&#x60;&#x60;.
 /// </summary>
-class  EnvironmentAssistantResponseSchema
+class  DatasetValidateAssetSchema
     : public ModelBase
 {
 public:
-    EnvironmentAssistantResponseSchema();
-    virtual ~EnvironmentAssistantResponseSchema();
+    DatasetValidateAssetSchema();
+    virtual ~DatasetValidateAssetSchema();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -55,26 +54,17 @@ public:
 
 
     /////////////////////////////////////////////
-    /// EnvironmentAssistantResponseSchema members
+    /// DatasetValidateAssetSchema members
 
 
-    utility::string_t getAnswer() const;
-    bool answerIsSet() const;
-    void unsetAnswer();
-    void setAnswer(const utility::string_t& value);
-
-    std::vector<utility::string_t> getToolCalls() const;
-    bool toolCallsIsSet() const;
-    void unsetTool_calls();
-    void setToolCalls(const std::vector<utility::string_t>& value);
+    utility::string_t getAssetSlug() const;
+    bool assetSlugIsSet() const;
+    void unsetAsset_slug();
+    void setAssetSlug(const utility::string_t& value);
 
 
 protected:
-    utility::string_t m_Answer;
-    bool m_AnswerIsSet;
-
-    std::vector<utility::string_t> m_Tool_calls;
-    bool m_Tool_callsIsSet;
+    boost::optional<utility::string_t> m_Asset_slug;
 
 };
 
@@ -84,4 +74,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantResponseSchema_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_DatasetValidateAssetSchema_H_ */

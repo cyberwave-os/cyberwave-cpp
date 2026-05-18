@@ -12,7 +12,7 @@
 /*
  * TrajectoryActionSchema.h
  *
- * &#x60;&#x60;action.kind &#x3D; \&quot;target_pose\&quot; | \&quot;trajectory_points\&quot; | \&quot;ee_delta\&quot;&#x60;&#x60;.  Only the fields matching the chosen &#x60;&#x60;kind&#x60;&#x60; must be populated. Validation happens server-side in :func:&#x60;src.lib.motion_utils.trajectory_from_action&#x60;; leaving it as-a-union here keeps the OpenAPI schema compact and the C++ codegen on the edge side happy (&#x60;&#x60;dict[str, Any]&#x60;&#x60; renders as generic JSON, preserving the pattern from migration &#x60;&#x60;0065&#x60;&#x60;).
+ * &#x60;&#x60;action.kind &#x3D; \&quot;target_pose\&quot; | \&quot;trajectory_points\&quot; | \&quot;ee_delta\&quot;&#x60;&#x60;.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_TrajectoryActionSchema_H_
@@ -36,7 +36,7 @@ class TargetPoseSchema;
 
 
 /// <summary>
-/// &#x60;&#x60;action.kind &#x3D; \&quot;target_pose\&quot; | \&quot;trajectory_points\&quot; | \&quot;ee_delta\&quot;&#x60;&#x60;.  Only the fields matching the chosen &#x60;&#x60;kind&#x60;&#x60; must be populated. Validation happens server-side in :func:&#x60;src.lib.motion_utils.trajectory_from_action&#x60;; leaving it as-a-union here keeps the OpenAPI schema compact and the C++ codegen on the edge side happy (&#x60;&#x60;dict[str, Any]&#x60;&#x60; renders as generic JSON, preserving the pattern from migration &#x60;&#x60;0065&#x60;&#x60;).
+/// &#x60;&#x60;action.kind &#x3D; \&quot;target_pose\&quot; | \&quot;trajectory_points\&quot; | \&quot;ee_delta\&quot;&#x60;&#x60;.
 /// </summary>
 class  TrajectoryActionSchema
     : public ModelBase

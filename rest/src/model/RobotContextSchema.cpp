@@ -49,6 +49,11 @@ web::json::value RobotContextSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("frame_id"))] = ModelBase::toJson(m_Frame_id.get());
     }
+    if(m_Checkpoint.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("checkpoint"))] = ModelBase::toJson(m_Checkpoint.get());
+    }
 
     return val;
 }
@@ -89,6 +94,17 @@ bool RobotContextSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("checkpoint"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("checkpoint")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setCheckpoint;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCheckpoint);
+            setCheckpoint(refVal_setCheckpoint);
+            
+        }
+    }
     return ok;
 }
 
@@ -110,6 +126,10 @@ void RobotContextSchema::toMultipart(std::shared_ptr<MultipartFormData> multipar
     if(m_Frame_id.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("frame_id")), m_Frame_id.get()));
+    }
+    if(m_Checkpoint.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("checkpoint")), m_Checkpoint.get()));
     }
 }
 
@@ -139,6 +159,12 @@ bool RobotContextSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         utility::string_t refVal_setFrameId;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("frame_id"))), refVal_setFrameId );
         setFrameId(refVal_setFrameId);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("checkpoint"))))
+    {
+        utility::string_t refVal_setCheckpoint;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("checkpoint"))), refVal_setCheckpoint );
+        setCheckpoint(refVal_setCheckpoint);
     }
     return ok;
 }
@@ -203,6 +229,26 @@ bool RobotContextSchema::frameIdIsSet() const
 void RobotContextSchema::unsetFrame_id()
 {
     m_Frame_id.reset();
+}
+utility::string_t RobotContextSchema::getCheckpoint() const
+{
+    return m_Checkpoint.get();
+}
+
+
+void RobotContextSchema::setCheckpoint(const utility::string_t& value)
+{
+    m_Checkpoint = value;
+}
+
+bool RobotContextSchema::checkpointIsSet() const
+{
+    return m_Checkpoint.has_value();
+}
+
+void RobotContextSchema::unsetCheckpoint()
+{
+    m_Checkpoint.reset();
 }
 
 }

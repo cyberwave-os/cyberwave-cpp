@@ -356,7 +356,8 @@ std::vector<Workflow> WorkflowManager::list() const
         throw CyberwaveError("Client has no REST API (missing api_key)");
     try
     {
-        auto vec = a->srcAppApiWorkflowsListWorkflows().get();
+        auto vec =
+            a->srcAppApiWorkflowsListWorkflows(boost::none, boost::none, boost::none, boost::none, boost::none).get();
         std::vector<Workflow> out;
         for (auto& ptr : vec)
         {

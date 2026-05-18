@@ -62,6 +62,16 @@ web::json::value TwinNavigationCommandSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("waypoints"))] = ModelBase::toJson(m_Waypoints.get());
     }
+    if(m_Relative_translation.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("relative_translation"))] = ModelBase::toJson(m_Relative_translation.get());
+    }
+    if(m_Frame.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("frame"))] = ModelBase::toJson(m_Frame.get());
+    }
     if(m_Controller_policy_uuid.has_value())
     {
         
@@ -152,6 +162,28 @@ bool TwinNavigationCommandSchema::fromJson(const web::json::value& val)
             std::vector<std::shared_ptr<NavigationWaypointSchema>> refVal_setWaypoints;
             ok &= ModelBase::fromJson(fieldValue, refVal_setWaypoints);
             setWaypoints(refVal_setWaypoints);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("relative_translation"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("relative_translation")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<Relative_Translation> refVal_setRelativeTranslation;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRelativeTranslation);
+            setRelativeTranslation(refVal_setRelativeTranslation);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("frame"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("frame")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setFrame;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFrame);
+            setFrame(refVal_setFrame);
             
         }
     }
@@ -251,6 +283,14 @@ void TwinNavigationCommandSchema::toMultipart(std::shared_ptr<MultipartFormData>
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("waypoints")), m_Waypoints.get()));
     }
+    if(m_Relative_translation.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("relative_translation")), m_Relative_translation.get()));
+    }
+    if(m_Frame.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("frame")), m_Frame.get()));
+    }
     if(m_Controller_policy_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid")), m_Controller_policy_uuid.get()));
@@ -316,6 +356,18 @@ bool TwinNavigationCommandSchema::fromMultiPart(std::shared_ptr<MultipartFormDat
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("waypoints"))), refVal_setWaypoints );
         setWaypoints(refVal_setWaypoints);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("relative_translation"))))
+    {
+        std::shared_ptr<Relative_Translation> refVal_setRelativeTranslation;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("relative_translation"))), refVal_setRelativeTranslation );
+        setRelativeTranslation(refVal_setRelativeTranslation);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("frame"))))
+    {
+        utility::string_t refVal_setFrame;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("frame"))), refVal_setFrame );
+        setFrame(refVal_setFrame);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid"))))
     {
         utility::string_t refVal_setControllerPolicyUuid;
@@ -378,6 +430,10 @@ TwinNavigationCommandSchema::CommandEnum TwinNavigationCommandSchema::toCommandE
         return CommandEnum::RESUME;
     }
     
+    if (value == utility::conversions::to_string_t("relative_move")) {
+        return CommandEnum::RELATIVE_MOVE;
+    }
+    
     throw std::invalid_argument("Invalid value for conversion to CommandEnum");
 }
 
@@ -396,6 +452,8 @@ const utility::string_t TwinNavigationCommandSchema::fromCommandEnum(const Comma
         case CommandEnum::PAUSE: return utility::conversions::to_string_t("pause");
         
         case CommandEnum::RESUME: return utility::conversions::to_string_t("resume");
+        
+        case CommandEnum::RELATIVE_MOVE: return utility::conversions::to_string_t("relative_move");
         
     }
 }
@@ -498,6 +556,46 @@ bool TwinNavigationCommandSchema::waypointsIsSet() const
 void TwinNavigationCommandSchema::unsetWaypoints()
 {
     m_Waypoints.reset();
+}
+std::shared_ptr<Relative_Translation> TwinNavigationCommandSchema::getRelativeTranslation() const
+{
+    return m_Relative_translation.get();
+}
+
+
+void TwinNavigationCommandSchema::setRelativeTranslation(const std::shared_ptr<Relative_Translation>& value)
+{
+    m_Relative_translation = value;
+}
+
+bool TwinNavigationCommandSchema::relativeTranslationIsSet() const
+{
+    return m_Relative_translation.has_value();
+}
+
+void TwinNavigationCommandSchema::unsetRelative_translation()
+{
+    m_Relative_translation.reset();
+}
+utility::string_t TwinNavigationCommandSchema::getFrame() const
+{
+    return m_Frame.get();
+}
+
+
+void TwinNavigationCommandSchema::setFrame(const utility::string_t& value)
+{
+    m_Frame = value;
+}
+
+bool TwinNavigationCommandSchema::frameIsSet() const
+{
+    return m_Frame.has_value();
+}
+
+void TwinNavigationCommandSchema::unsetFrame()
+{
+    m_Frame.reset();
 }
 utility::string_t TwinNavigationCommandSchema::getControllerPolicyUuid() const
 {

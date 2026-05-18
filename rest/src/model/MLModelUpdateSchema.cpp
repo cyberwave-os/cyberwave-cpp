@@ -124,6 +124,11 @@ web::json::value MLModelUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("edge_runtime"))] = ModelBase::toJson(m_Edge_runtime.get());
     }
+    if(m_Workspace_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))] = ModelBase::toJson(m_Workspace_uuid.get());
+    }
 
     return val;
 }
@@ -329,6 +334,17 @@ bool MLModelUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setWorkspaceUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setWorkspaceUuid);
+            setWorkspaceUuid(refVal_setWorkspaceUuid);
+            
+        }
+    }
     return ok;
 }
 
@@ -410,6 +426,10 @@ void MLModelUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipa
     if(m_Edge_runtime.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("edge_runtime")), m_Edge_runtime.get()));
+    }
+    if(m_Workspace_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workspace_uuid")), m_Workspace_uuid.get()));
     }
 }
 
@@ -529,6 +549,12 @@ bool MLModelUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multi
         utility::string_t refVal_setEdgeRuntime;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("edge_runtime"))), refVal_setEdgeRuntime );
         setEdgeRuntime(refVal_setEdgeRuntime);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))))
+    {
+        utility::string_t refVal_setWorkspaceUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))), refVal_setWorkspaceUuid );
+        setWorkspaceUuid(refVal_setWorkspaceUuid);
     }
     return ok;
 }
@@ -887,6 +913,26 @@ bool MLModelUpdateSchema::edgeRuntimeIsSet() const
 void MLModelUpdateSchema::unsetEdge_runtime()
 {
     m_Edge_runtime.reset();
+}
+utility::string_t MLModelUpdateSchema::getWorkspaceUuid() const
+{
+    return m_Workspace_uuid.get();
+}
+
+
+void MLModelUpdateSchema::setWorkspaceUuid(const utility::string_t& value)
+{
+    m_Workspace_uuid = value;
+}
+
+bool MLModelUpdateSchema::workspaceUuidIsSet() const
+{
+    return m_Workspace_uuid.has_value();
+}
+
+void MLModelUpdateSchema::unsetWorkspace_uuid()
+{
+    m_Workspace_uuid.reset();
 }
 
 }

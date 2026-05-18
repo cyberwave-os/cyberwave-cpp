@@ -112,6 +112,16 @@ public:
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    int32_t getActivationIndex() const;
+    bool activationIndexIsSet() const;
+    void unsetActivation_index();
+    void setActivationIndex(int32_t value);
+
+    utility::string_t getCallerUuid() const;
+    bool callerUuidIsSet() const;
+    void unsetCaller_uuid();
+    void setCallerUuid(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -143,6 +153,11 @@ protected:
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Metadata;
     bool m_MetadataIsSet;
+
+    int32_t m_Activation_index;
+    bool m_Activation_indexIsSet;
+
+    boost::optional<utility::string_t> m_Caller_uuid;
 
 };
 
