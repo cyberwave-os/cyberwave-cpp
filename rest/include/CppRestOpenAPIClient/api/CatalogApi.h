@@ -22,9 +22,12 @@
 
 #include "CppRestOpenAPIClient/ApiClient.h"
 
+#include "CppRestOpenAPIClient/AnyType.h"
 #include "CppRestOpenAPIClient/model/CatalogSeedOptionsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/CatalogSeedRequestSchema.h"
 #include "CppRestOpenAPIClient/model/CatalogSeedResponseSchema.h"
+#include <map>
+#include <cpprest/details/basic_types.h>
 #include <boost/optional.hpp>
 
 namespace org {
@@ -44,6 +47,20 @@ public:
 
     virtual ~CatalogApi();
 
+    /// <summary>
+    /// Search Catalog
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="query"></param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="offset"> (optional, default to 0)</param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiCatalogSeedSearchCatalog(
+        utility::string_t query,
+        boost::optional<int32_t> limit,
+        boost::optional<int32_t> offset
+    ) const;
     /// <summary>
     /// Seed Catalog
     /// </summary>

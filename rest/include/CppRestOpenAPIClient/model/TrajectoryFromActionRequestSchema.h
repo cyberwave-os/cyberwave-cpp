@@ -12,7 +12,7 @@
 /*
  * TrajectoryFromActionRequestSchema.h
  *
- * Request body for &#x60;&#x60;POST /api/v1/assets/{uuid}/trajectories/from-action&#x60;&#x60;.
+ * Request body for trajectory expansion from a control action.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_TrajectoryFromActionRequestSchema_H_
@@ -37,7 +37,7 @@ class TrajectoryInitialStateSchema;
 
 
 /// <summary>
-/// Request body for &#x60;&#x60;POST /api/v1/assets/{uuid}/trajectories/from-action&#x60;&#x60;.
+/// Request body for trajectory expansion from a control action.
 /// </summary>
 class  TrajectoryFromActionRequestSchema
     : public ModelBase

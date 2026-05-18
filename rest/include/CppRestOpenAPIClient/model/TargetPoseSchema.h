@@ -12,7 +12,7 @@
 /*
  * TargetPoseSchema.h
  *
- * 6-DoF target pose for the end-effector.  Quaternion is &#x60;&#x60;(x, y, z, w)&#x60;&#x60; following the IK-solver convention used in the rest of &#x60;&#x60;cyberwave-rl&#x60;&#x60; (pinocchio). Position is in metres in the asset&#39;s URDF root frame.
+ * 6-DoF target pose for the end-effector.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_TargetPoseSchema_H_
@@ -32,7 +32,7 @@ namespace model {
 
 
 /// <summary>
-/// 6-DoF target pose for the end-effector.  Quaternion is &#x60;&#x60;(x, y, z, w)&#x60;&#x60; following the IK-solver convention used in the rest of &#x60;&#x60;cyberwave-rl&#x60;&#x60; (pinocchio). Position is in metres in the asset&#39;s URDF root frame.
+/// 6-DoF target pose for the end-effector.
 /// </summary>
 class  TargetPoseSchema
     : public ModelBase

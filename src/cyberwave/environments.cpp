@@ -14,6 +14,7 @@
 #include "CppRestOpenAPIClient/model/EnvironmentUniversalSchemaPatchSchema.h"
 #include "CppRestOpenAPIClient/model/TwinSchema.h"
 
+#include <boost/optional.hpp>
 #include <cpprest/details/basic_types.h>
 #include <cpprest/json.h>
 #include <pplx/pplxtasks.h>
@@ -123,14 +124,31 @@ std::vector<Environment> EnvironmentManager::list(const std::string& project_id)
         throw CyberwaveError("Client has no REST API (missing api_key)");
     try
     {
+        constexpr int page_limit = 200;
+        int offset = 0;
         std::vector<std::shared_ptr<org::openapitools::client::model::EnvironmentSchema>> vec;
-        if (!project_id.empty())
+        while (true)
         {
-            vec = a->srcAppApiEnvironmentsListEnvironmentsForProject(from_std(project_id)).get();
-        }
-        else
-        {
-            vec = a->srcAppApiEnvironmentsListAllEnvironments().get();
+            std::vector<std::shared_ptr<org::openapitools::client::model::EnvironmentSchema>> page;
+            if (!project_id.empty())
+            {
+                page =
+                    a->srcAppApiEnvironmentsListEnvironmentsForProject(from_std(project_id), page_limit, offset).get();
+            }
+            else
+            {
+                page = a->srcAppApiEnvironmentsListAllEnvironments(page_limit, offset).get();
+            }
+            if (page.empty())
+            {
+                break;
+            }
+            vec.insert(vec.end(), page.begin(), page.end());
+            if (static_cast<int>(page.size()) < page_limit)
+            {
+                break;
+            }
+            offset += page_limit;
         }
         std::vector<Environment> out;
         for (auto& ptr : vec)
@@ -270,15 +288,14 @@ std::vector<unsigned char> EnvironmentManager::export_mujoco_scene(const std::st
 
 Attachment EnvironmentManager::create_preview(const std::string& environment_id) const
 {
-    auto* a = api(client_.get());
-    if (!a)
-        throw CyberwaveError("Client has no REST API (missing api_key)");
     try
     {
-        auto result = a->srcAppApiEnvironmentsGenerateEnvironmentPreview(from_std(environment_id)).get();
-        if (!result)
-            throw CyberwaveError("Generate environment preview returned no data");
-        return Attachment(std::shared_ptr<void>(std::static_pointer_cast<void>(result)));
+        auto response = detail::request_raw(
+            client_.get(), from_std("/api/v1/environments/" + environment_id + "/preview"), web::http::methods::POST);
+        auto attachment = std::make_shared<org::openapitools::client::model::AttachmentSchema>();
+        if (!attachment->fromJson(detail::parse_json_response(response)))
+            throw CyberwaveError("Generate environment preview returned invalid attachment data");
+        return Attachment(std::shared_ptr<void>(std::static_pointer_cast<void>(attachment)));
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {

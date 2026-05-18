@@ -147,6 +147,11 @@ public:
     void unsetEdge_runtime();
     void setEdgeRuntime(const utility::string_t& value);
 
+    utility::string_t getWorkspaceUuid() const;
+    bool workspaceUuidIsSet() const;
+    void unsetWorkspace_uuid();
+    void setWorkspaceUuid(const utility::string_t& value);
+
 
 protected:
     boost::optional<utility::string_t> m_Name;
@@ -184,6 +189,8 @@ protected:
     boost::optional<bool> m_Can_take_action_as_input;
 
     boost::optional<utility::string_t> m_Edge_runtime;
+
+    boost::optional<utility::string_t> m_Workspace_uuid;
 
 };
 

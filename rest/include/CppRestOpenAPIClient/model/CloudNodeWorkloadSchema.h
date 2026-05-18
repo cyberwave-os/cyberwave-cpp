@@ -154,6 +154,11 @@ public:
     void unsetCommand_params();
     void setCommandParams(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getResults() const;
+    bool resultsIsSet() const;
+    void unsetResults();
+    void setResults(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
     utility::string_t getCallbackTask() const;
     bool callbackTaskIsSet() const;
     void unsetCallback_task();
@@ -220,6 +225,8 @@ protected:
     boost::optional<utility::string_t> m_Command_type;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Command_params;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Results;
 
     boost::optional<utility::string_t> m_Callback_task;
 

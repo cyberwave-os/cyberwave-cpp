@@ -12,7 +12,7 @@
 /*
  * MotionEpisodeSchema.h
  *
- * Canonical dense, time-indexed rollout of joint positions.  @sync cyberwave-frontend/lib/types.ts:MotionEpisode  ADR 0001 (\&quot;Harmonized playground\&quot;) pins this shape as the single domain-level motion artefact flowing through every player, adapter, and dispatch path. LeRobot is *an encoding*, not our domain type — so nothing in this schema mentions it. The matching wire tag on model-run responses is &#x60;&#x60;output_format: \&quot;motion_episode\&quot;&#x60;&#x60;; the legacy &#x60;&#x60;\&quot;lerobot_episode\&quot;&#x60;&#x60; tag is accepted on read for one release (see :class:&#x60;MLModelRunResultSchema&#x60;).  Invariants:   * &#x60;&#x60;len(observation_state) &#x3D;&#x3D; len(action)&#x60;&#x60; when both arrays     are non-empty — one row per frame.   * &#x60;&#x60;observation_state[i]&#x60;&#x60; is length &#x60;&#x60;len(joint_names)&#x60;&#x60; for     every &#x60;&#x60;i&#x60;&#x60; (URDF-joint order, radians for revolute joints).   * &#x60;&#x60;ee_positions[i] &#x3D; (x, y, z)&#x60;&#x60; in metres, in the asset&#39;s     URDF root frame. Optional; populated for EE-only replays     where &#x60;&#x60;observation_state&#x60;&#x60; is empty.   * &#x60;&#x60;fps&#x60;&#x60; &gt; 0.
+ * Canonical dense, time-indexed rollout of joint positions.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_MotionEpisodeSchema_H_
@@ -33,7 +33,7 @@ namespace model {
 
 
 /// <summary>
-/// Canonical dense, time-indexed rollout of joint positions.  @sync cyberwave-frontend/lib/types.ts:MotionEpisode  ADR 0001 (\&quot;Harmonized playground\&quot;) pins this shape as the single domain-level motion artefact flowing through every player, adapter, and dispatch path. LeRobot is *an encoding*, not our domain type — so nothing in this schema mentions it. The matching wire tag on model-run responses is &#x60;&#x60;output_format: \&quot;motion_episode\&quot;&#x60;&#x60;; the legacy &#x60;&#x60;\&quot;lerobot_episode\&quot;&#x60;&#x60; tag is accepted on read for one release (see :class:&#x60;MLModelRunResultSchema&#x60;).  Invariants:   * &#x60;&#x60;len(observation_state) &#x3D;&#x3D; len(action)&#x60;&#x60; when both arrays     are non-empty — one row per frame.   * &#x60;&#x60;observation_state[i]&#x60;&#x60; is length &#x60;&#x60;len(joint_names)&#x60;&#x60; for     every &#x60;&#x60;i&#x60;&#x60; (URDF-joint order, radians for revolute joints).   * &#x60;&#x60;ee_positions[i] &#x3D; (x, y, z)&#x60;&#x60; in metres, in the asset&#39;s     URDF root frame. Optional; populated for EE-only replays     where &#x60;&#x60;observation_state&#x60;&#x60; is empty.   * &#x60;&#x60;fps&#x60;&#x60; &gt; 0.
+/// Canonical dense, time-indexed rollout of joint positions.
 /// </summary>
 class  MotionEpisodeSchema
     : public ModelBase

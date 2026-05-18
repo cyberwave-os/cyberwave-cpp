@@ -11,14 +11,14 @@
 
 
 
-#include "CppRestOpenAPIClient/model/EnvironmentAssistantCreateResponseSchema.h"
+#include "CppRestOpenAPIClient/model/AgentCreateEnvironmentResponseSchema.h"
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
-EnvironmentAssistantCreateResponseSchema::EnvironmentAssistantCreateResponseSchema()
+AgentCreateEnvironmentResponseSchema::AgentCreateEnvironmentResponseSchema()
 {
     m_EnvironmentIsSet = false;
     m_Answer = utility::conversions::to_string_t("");
@@ -26,16 +26,16 @@ EnvironmentAssistantCreateResponseSchema::EnvironmentAssistantCreateResponseSche
     m_Tool_callsIsSet = false;
 }
 
-EnvironmentAssistantCreateResponseSchema::~EnvironmentAssistantCreateResponseSchema()
+AgentCreateEnvironmentResponseSchema::~AgentCreateEnvironmentResponseSchema()
 {
 }
 
-void EnvironmentAssistantCreateResponseSchema::validate()
+void AgentCreateEnvironmentResponseSchema::validate()
 {
     // TODO: implement validation
 }
 
-web::json::value EnvironmentAssistantCreateResponseSchema::toJson() const
+web::json::value AgentCreateEnvironmentResponseSchema::toJson() const
 {
     web::json::value val = web::json::value::object();
     if(m_EnvironmentIsSet)
@@ -53,11 +53,16 @@ web::json::value EnvironmentAssistantCreateResponseSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("tool_calls"))] = ModelBase::toJson(m_Tool_calls);
     }
+    if(m_Proposal.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("proposal"))] = ModelBase::toJson(m_Proposal.get());
+    }
 
     return val;
 }
 
-bool EnvironmentAssistantCreateResponseSchema::fromJson(const web::json::value& val)
+bool AgentCreateEnvironmentResponseSchema::fromJson(const web::json::value& val)
 {
     bool ok = true;
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("environment"))))
@@ -93,10 +98,21 @@ bool EnvironmentAssistantCreateResponseSchema::fromJson(const web::json::value& 
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("proposal"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("proposal")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<AgentProposalSchema> refVal_setProposal;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setProposal);
+            setProposal(refVal_setProposal);
+            
+        }
+    }
     return ok;
 }
 
-void EnvironmentAssistantCreateResponseSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix) const
+void AgentCreateEnvironmentResponseSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix) const
 {
     utility::string_t namePrefix = prefix;
     if(namePrefix.size() > 0 && namePrefix.substr(namePrefix.size() - 1) != utility::conversions::to_string_t(_XPLATSTR(".")))
@@ -115,9 +131,13 @@ void EnvironmentAssistantCreateResponseSchema::toMultipart(std::shared_ptr<Multi
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("tool_calls")), m_Tool_calls));
     }
+    if(m_Proposal.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("proposal")), m_Proposal.get()));
+    }
 }
 
-bool EnvironmentAssistantCreateResponseSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix)
+bool AgentCreateEnvironmentResponseSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix)
 {
     bool ok = true;
     utility::string_t namePrefix = prefix;
@@ -144,72 +164,98 @@ bool EnvironmentAssistantCreateResponseSchema::fromMultiPart(std::shared_ptr<Mul
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("tool_calls"))), refVal_setToolCalls );
         setToolCalls(refVal_setToolCalls);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("proposal"))))
+    {
+        std::shared_ptr<AgentProposalSchema> refVal_setProposal;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("proposal"))), refVal_setProposal );
+        setProposal(refVal_setProposal);
+    }
     return ok;
 }
 
 
-std::shared_ptr<EnvironmentSchema> EnvironmentAssistantCreateResponseSchema::getEnvironment() const
+std::shared_ptr<EnvironmentSchema> AgentCreateEnvironmentResponseSchema::getEnvironment() const
 {
     return m_Environment;
 }
 
 
-void EnvironmentAssistantCreateResponseSchema::setEnvironment(const std::shared_ptr<EnvironmentSchema>& value)
+void AgentCreateEnvironmentResponseSchema::setEnvironment(const std::shared_ptr<EnvironmentSchema>& value)
 {
     m_Environment = value;
     m_EnvironmentIsSet = true;
 }
 
-bool EnvironmentAssistantCreateResponseSchema::environmentIsSet() const
+bool AgentCreateEnvironmentResponseSchema::environmentIsSet() const
 {
     return m_EnvironmentIsSet;
 }
 
-void EnvironmentAssistantCreateResponseSchema::unsetEnvironment()
+void AgentCreateEnvironmentResponseSchema::unsetEnvironment()
 {
     m_EnvironmentIsSet = false;
 }
-utility::string_t EnvironmentAssistantCreateResponseSchema::getAnswer() const
+utility::string_t AgentCreateEnvironmentResponseSchema::getAnswer() const
 {
     return m_Answer;
 }
 
 
-void EnvironmentAssistantCreateResponseSchema::setAnswer(const utility::string_t& value)
+void AgentCreateEnvironmentResponseSchema::setAnswer(const utility::string_t& value)
 {
     m_Answer = value;
     m_AnswerIsSet = true;
 }
 
-bool EnvironmentAssistantCreateResponseSchema::answerIsSet() const
+bool AgentCreateEnvironmentResponseSchema::answerIsSet() const
 {
     return m_AnswerIsSet;
 }
 
-void EnvironmentAssistantCreateResponseSchema::unsetAnswer()
+void AgentCreateEnvironmentResponseSchema::unsetAnswer()
 {
     m_AnswerIsSet = false;
 }
-std::vector<utility::string_t> EnvironmentAssistantCreateResponseSchema::getToolCalls() const
+std::vector<utility::string_t> AgentCreateEnvironmentResponseSchema::getToolCalls() const
 {
     return m_Tool_calls;
 }
 
 
-void EnvironmentAssistantCreateResponseSchema::setToolCalls(const std::vector<utility::string_t>& value)
+void AgentCreateEnvironmentResponseSchema::setToolCalls(const std::vector<utility::string_t>& value)
 {
     m_Tool_calls = value;
     m_Tool_callsIsSet = true;
 }
 
-bool EnvironmentAssistantCreateResponseSchema::toolCallsIsSet() const
+bool AgentCreateEnvironmentResponseSchema::toolCallsIsSet() const
 {
     return m_Tool_callsIsSet;
 }
 
-void EnvironmentAssistantCreateResponseSchema::unsetTool_calls()
+void AgentCreateEnvironmentResponseSchema::unsetTool_calls()
 {
     m_Tool_callsIsSet = false;
+}
+std::shared_ptr<AgentProposalSchema> AgentCreateEnvironmentResponseSchema::getProposal() const
+{
+    return m_Proposal.get();
+}
+
+
+void AgentCreateEnvironmentResponseSchema::setProposal(const std::shared_ptr<AgentProposalSchema>& value)
+{
+    m_Proposal = value;
+}
+
+bool AgentCreateEnvironmentResponseSchema::proposalIsSet() const
+{
+    return m_Proposal.has_value();
+}
+
+void AgentCreateEnvironmentResponseSchema::unsetProposal()
+{
+    m_Proposal.reset();
 }
 
 }
