@@ -315,7 +315,8 @@ std::vector<Asset> AssetManager::list(const std::string&) const
                         boost::optional<int>(), boost::optional<int>(), boost::optional<utility::string_t>(),
                         boost::optional<utility::string_t>(), boost::optional<utility::string_t>(),
                         boost::optional<utility::string_t>(), boost::optional<utility::string_t>(),
-                        boost::optional<utility::string_t>(), boost::optional<double>(), boost::optional<double>())
+                        boost::optional<utility::string_t>(), boost::optional<utility::string_t>(),
+                        boost::optional<double>(), boost::optional<double>())
                        .get();
         std::vector<Asset> out;
         for (auto& ptr : vec)

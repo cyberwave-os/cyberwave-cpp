@@ -44,6 +44,16 @@ web::json::value AttachmentCreateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))] = ModelBase::toJson(m_Twin_uuid.get());
     }
+    if(m_Environment_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))] = ModelBase::toJson(m_Environment_uuid.get());
+    }
+    if(m_Workspace_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))] = ModelBase::toJson(m_Workspace_uuid.get());
+    }
     if(m_Metadata.has_value())
     {
         
@@ -78,6 +88,28 @@ bool AttachmentCreateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("environment_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setEnvironmentUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setEnvironmentUuid);
+            setEnvironmentUuid(refVal_setEnvironmentUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setWorkspaceUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setWorkspaceUuid);
+            setWorkspaceUuid(refVal_setWorkspaceUuid);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("metadata"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("metadata")));
@@ -107,6 +139,14 @@ void AttachmentCreateSchema::toMultipart(std::shared_ptr<MultipartFormData> mult
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("twin_uuid")), m_Twin_uuid.get()));
     }
+    if(m_Environment_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("environment_uuid")), m_Environment_uuid.get()));
+    }
+    if(m_Workspace_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workspace_uuid")), m_Workspace_uuid.get()));
+    }
     if(m_Metadata.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata.get()));
@@ -133,6 +173,18 @@ bool AttachmentCreateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> mu
         utility::string_t refVal_setTwinUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))), refVal_setTwinUuid );
         setTwinUuid(refVal_setTwinUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))))
+    {
+        utility::string_t refVal_setEnvironmentUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))), refVal_setEnvironmentUuid );
+        setEnvironmentUuid(refVal_setEnvironmentUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))))
+    {
+        utility::string_t refVal_setWorkspaceUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))), refVal_setWorkspaceUuid );
+        setWorkspaceUuid(refVal_setWorkspaceUuid);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))))
     {
@@ -183,6 +235,46 @@ bool AttachmentCreateSchema::twinUuidIsSet() const
 void AttachmentCreateSchema::unsetTwin_uuid()
 {
     m_Twin_uuid.reset();
+}
+utility::string_t AttachmentCreateSchema::getEnvironmentUuid() const
+{
+    return m_Environment_uuid.get();
+}
+
+
+void AttachmentCreateSchema::setEnvironmentUuid(const utility::string_t& value)
+{
+    m_Environment_uuid = value;
+}
+
+bool AttachmentCreateSchema::environmentUuidIsSet() const
+{
+    return m_Environment_uuid.has_value();
+}
+
+void AttachmentCreateSchema::unsetEnvironment_uuid()
+{
+    m_Environment_uuid.reset();
+}
+utility::string_t AttachmentCreateSchema::getWorkspaceUuid() const
+{
+    return m_Workspace_uuid.get();
+}
+
+
+void AttachmentCreateSchema::setWorkspaceUuid(const utility::string_t& value)
+{
+    m_Workspace_uuid = value;
+}
+
+bool AttachmentCreateSchema::workspaceUuidIsSet() const
+{
+    return m_Workspace_uuid.has_value();
+}
+
+void AttachmentCreateSchema::unsetWorkspace_uuid()
+{
+    m_Workspace_uuid.reset();
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> AttachmentCreateSchema::getMetadata() const
 {

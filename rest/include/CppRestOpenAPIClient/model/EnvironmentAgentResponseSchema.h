@@ -10,39 +10,39 @@
  */
 
 /*
- * EnvironmentAssistantCreateResponseSchema.h
+ * EnvironmentAgentResponseSchema.h
  *
- * Response schema for AI-driven environment creation.
+ * Response schema for the environment MCP agent.
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantCreateResponseSchema_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantCreateResponseSchema_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAgentResponseSchema_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAgentResponseSchema_H_
 
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include <cpprest/details/basic_types.h>
+#include <map>
 #include <vector>
-#include "CppRestOpenAPIClient/model/EnvironmentSchema.h"
+#include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
-class EnvironmentSchema;
 
 
 /// <summary>
-/// Response schema for AI-driven environment creation.
+/// Response schema for the environment MCP agent.
 /// </summary>
-class  EnvironmentAssistantCreateResponseSchema
+class  EnvironmentAgentResponseSchema
     : public ModelBase
 {
 public:
-    EnvironmentAssistantCreateResponseSchema();
-    virtual ~EnvironmentAssistantCreateResponseSchema();
+    EnvironmentAgentResponseSchema();
+    virtual ~EnvironmentAgentResponseSchema();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -57,13 +57,8 @@ public:
 
 
     /////////////////////////////////////////////
-    /// EnvironmentAssistantCreateResponseSchema members
+    /// EnvironmentAgentResponseSchema members
 
-
-    std::shared_ptr<EnvironmentSchema> getEnvironment() const;
-    bool environmentIsSet() const;
-    void unsetEnvironment();
-    void setEnvironment(const std::shared_ptr<EnvironmentSchema>& value);
 
     utility::string_t getAnswer() const;
     bool answerIsSet() const;
@@ -75,16 +70,21 @@ public:
     void unsetTool_calls();
     void setToolCalls(const std::vector<utility::string_t>& value);
 
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getStructuredResults() const;
+    bool structuredResultsIsSet() const;
+    void unsetStructured_results();
+    void setStructuredResults(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
+
 
 protected:
-    std::shared_ptr<EnvironmentSchema> m_Environment;
-    bool m_EnvironmentIsSet;
-
     utility::string_t m_Answer;
     bool m_AnswerIsSet;
 
     std::vector<utility::string_t> m_Tool_calls;
     bool m_Tool_callsIsSet;
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Structured_results;
+    bool m_Structured_resultsIsSet;
 
 };
 
@@ -94,4 +94,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAssistantCreateResponseSchema_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentAgentResponseSchema_H_ */

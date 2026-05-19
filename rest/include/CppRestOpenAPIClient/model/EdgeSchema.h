@@ -99,10 +99,20 @@ public:
     void unsetIs_online();
     void setIsOnline(bool value);
 
+    utility::string_t getLivenessState() const;
+    bool livenessStateIsSet() const;
+    void unsetLiveness_state();
+    void setLivenessState(const utility::string_t& value);
+
     utility::string_t getLastHeartbeat() const;
     bool lastHeartbeatIsSet() const;
     void unsetLast_heartbeat();
     void setLastHeartbeat(const utility::string_t& value);
+
+    utility::string_t getLastSeenAt() const;
+    bool lastSeenAtIsSet() const;
+    void unsetLast_seen_at();
+    void setLastSeenAt(const utility::string_t& value);
 
     utility::string_t getLastIpAddress() const;
     bool lastIpAddressIsSet() const;
@@ -153,7 +163,12 @@ protected:
     bool m_Is_online;
     bool m_Is_onlineIsSet;
 
+    utility::string_t m_Liveness_state;
+    bool m_Liveness_stateIsSet;
+
     boost::optional<utility::string_t> m_Last_heartbeat;
+
+    boost::optional<utility::string_t> m_Last_seen_at;
 
     boost::optional<utility::string_t> m_Last_ip_address;
 

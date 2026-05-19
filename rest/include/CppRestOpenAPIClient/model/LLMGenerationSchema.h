@@ -59,10 +59,24 @@ public:
     void unsetPrompt();
     void setPrompt(const utility::string_t& value);
 
+    utility::string_t getLlmModelUuid() const;
+    bool llmModelUuidIsSet() const;
+    void unsetLlm_model_uuid();
+    void setLlmModelUuid(const utility::string_t& value);
+
+    utility::string_t getLlmModelName() const;
+    bool llmModelNameIsSet() const;
+    void unsetLlm_model_name();
+    void setLlmModelName(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Prompt;
     bool m_PromptIsSet;
+
+    boost::optional<utility::string_t> m_Llm_model_uuid;
+
+    boost::optional<utility::string_t> m_Llm_model_name;
 
 };
 

@@ -74,6 +74,13 @@ web::json::value DatasetImportInitSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("hf_subset"))] = ModelBase::toJson(m_Hf_subset.get());
     }
+    if(m_Visibility.has_value())
+    {
+        
+        utility::string_t refVal = fromVisibilityEnum(m_Visibility.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("visibility"))] = ModelBase::toJson(refVal);
+        
+    }
 
     return val;
 }
@@ -159,6 +166,18 @@ bool DatasetImportInitSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("visibility"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("visibility")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setVisibility;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setVisibility);
+            
+            setVisibility(toVisibilityEnum(refVal_setVisibility));
+            
+        }
+    }
     return ok;
 }
 
@@ -196,6 +215,10 @@ void DatasetImportInitSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     if(m_Hf_subset.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("hf_subset")), m_Hf_subset.get()));
+    }
+    if(m_Visibility.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("visibility")), fromVisibilityEnum(m_Visibility.get())));
     }
 }
 
@@ -250,6 +273,12 @@ bool DatasetImportInitSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("hf_subset"))), refVal_setHfSubset );
         setHfSubset(refVal_setHfSubset);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("visibility"))))
+    {
+        utility::string_t refVal_setVisibility;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("visibility"))), refVal_setVisibility );
+        setVisibility(toVisibilityEnum(refVal_setVisibility));
+    }
     return ok;
 }
 
@@ -276,6 +305,45 @@ const utility::string_t DatasetImportInitSchema::fromSourceEnum(const SourceEnum
         case SourceEnum::HF: return utility::conversions::to_string_t("hf");
         
         case SourceEnum::ZIP: return utility::conversions::to_string_t("zip");
+        
+    }
+}
+
+DatasetImportInitSchema::VisibilityEnum DatasetImportInitSchema::toVisibilityEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("private")) {
+        return VisibilityEnum::PRIVATE;
+    }
+    
+    if (value == utility::conversions::to_string_t("workspace")) {
+        return VisibilityEnum::WORKSPACE;
+    }
+    
+    if (value == utility::conversions::to_string_t("org")) {
+        return VisibilityEnum::ORG;
+    }
+    
+    if (value == utility::conversions::to_string_t("public")) {
+        return VisibilityEnum::PUBLIC;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to VisibilityEnum");
+}
+
+
+const utility::string_t DatasetImportInitSchema::fromVisibilityEnum(const VisibilityEnum value) const
+{
+    switch(value)
+    {
+        
+        case VisibilityEnum::PRIVATE: return utility::conversions::to_string_t("private");
+        
+        case VisibilityEnum::WORKSPACE: return utility::conversions::to_string_t("workspace");
+        
+        case VisibilityEnum::ORG: return utility::conversions::to_string_t("org");
+        
+        case VisibilityEnum::PUBLIC: return utility::conversions::to_string_t("public");
         
     }
 }
@@ -421,6 +489,26 @@ bool DatasetImportInitSchema::hfSubsetIsSet() const
 void DatasetImportInitSchema::unsetHf_subset()
 {
     m_Hf_subset.reset();
+}
+DatasetImportInitSchema::VisibilityEnum DatasetImportInitSchema::getVisibility() const
+{
+    return m_Visibility.get();
+}
+
+
+void DatasetImportInitSchema::setVisibility(const VisibilityEnum value)
+{
+    m_Visibility = value;
+}
+
+bool DatasetImportInitSchema::visibilityIsSet() const
+{
+    return m_Visibility.has_value();
+}
+
+void DatasetImportInitSchema::unsetVisibility()
+{
+    m_Visibility.reset();
 }
 
 }

@@ -12,7 +12,7 @@
 /*
  * TrajectoryRecipeSchema.h
  *
- * Optional kinematic scaffolding applied around the raw action.  Keeping the recipe separate from &#x60;&#x60;action&#x60;&#x60; means the same target pose can be replayed with different pre-grasp offsets / lift heights without restating the pose. MVP fields mirror what the frontend &#x60;&#x60;graspToEpisode&#x60;&#x60; adapter (P3) needs; grow the schema additively as adapters land.
+ * Optional kinematic scaffolding applied around the raw action.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_TrajectoryRecipeSchema_H_
@@ -33,7 +33,7 @@ namespace model {
 
 
 /// <summary>
-/// Optional kinematic scaffolding applied around the raw action.  Keeping the recipe separate from &#x60;&#x60;action&#x60;&#x60; means the same target pose can be replayed with different pre-grasp offsets / lift heights without restating the pose. MVP fields mirror what the frontend &#x60;&#x60;graspToEpisode&#x60;&#x60; adapter (P3) needs; grow the schema additively as adapters land.
+/// Optional kinematic scaffolding applied around the raw action.
 /// </summary>
 class  TrajectoryRecipeSchema
     : public ModelBase

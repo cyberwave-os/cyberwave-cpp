@@ -84,6 +84,11 @@ public:
     void unsetSearch();
     void setSearch(const utility::string_t& value);
 
+    utility::string_t getTag() const;
+    bool tagIsSet() const;
+    void unsetTag();
+    void setTag(const utility::string_t& value);
+
     utility::string_t getMetadataKey() const;
     bool metadataKeyIsSet() const;
     void unsetMetadata_key();
@@ -117,6 +122,8 @@ protected:
     boost::optional<utility::string_t> m_Owned;
 
     boost::optional<utility::string_t> m_Search;
+
+    boost::optional<utility::string_t> m_Tag;
 
     boost::optional<utility::string_t> m_Metadata_key;
 

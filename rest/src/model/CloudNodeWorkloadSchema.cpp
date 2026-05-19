@@ -143,6 +143,11 @@ web::json::value CloudNodeWorkloadSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("command_params"))] = ModelBase::toJson(m_Command_params.get());
     }
+    if(m_Results.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("results"))] = ModelBase::toJson(m_Results.get());
+    }
     if(m_Callback_task.has_value())
     {
         
@@ -379,6 +384,17 @@ bool CloudNodeWorkloadSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("results"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("results")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setResults;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setResults);
+            setResults(refVal_setResults);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("callback_task"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("callback_task")));
@@ -508,6 +524,10 @@ void CloudNodeWorkloadSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     if(m_Command_params.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("command_params")), m_Command_params.get()));
+    }
+    if(m_Results.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("results")), m_Results.get()));
     }
     if(m_Callback_task.has_value())
     {
@@ -649,6 +669,12 @@ bool CloudNodeWorkloadSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setCommandParams;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("command_params"))), refVal_setCommandParams );
         setCommandParams(refVal_setCommandParams);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("results"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setResults;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("results"))), refVal_setResults );
+        setResults(refVal_setResults);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("callback_task"))))
     {
@@ -1064,6 +1090,26 @@ bool CloudNodeWorkloadSchema::commandParamsIsSet() const
 void CloudNodeWorkloadSchema::unsetCommand_params()
 {
     m_Command_params.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> CloudNodeWorkloadSchema::getResults() const
+{
+    return m_Results.get();
+}
+
+
+void CloudNodeWorkloadSchema::setResults(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Results = value;
+}
+
+bool CloudNodeWorkloadSchema::resultsIsSet() const
+{
+    return m_Results.has_value();
+}
+
+void CloudNodeWorkloadSchema::unsetResults()
+{
+    m_Results.reset();
 }
 utility::string_t CloudNodeWorkloadSchema::getCallbackTask() const
 {

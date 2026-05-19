@@ -72,6 +72,11 @@ public:
     void unsetFrame_id();
     void setFrameId(const utility::string_t& value);
 
+    utility::string_t getCheckpoint() const;
+    bool checkpointIsSet() const;
+    void unsetCheckpoint();
+    void setCheckpoint(const utility::string_t& value);
+
 
 protected:
     boost::optional<utility::string_t> m_Twin_uuid;
@@ -79,6 +84,8 @@ protected:
     boost::optional<utility::string_t> m_Asset_uuid;
 
     boost::optional<utility::string_t> m_Frame_id;
+
+    boost::optional<utility::string_t> m_Checkpoint;
 
 };
 

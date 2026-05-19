@@ -12,7 +12,7 @@
 /*
  * EdgeRegisterSchema.h
  *
- * Schema for registering an edge.
+ * Schema for registering an edge.  &#x60;&#x60;host_facts&#x60;&#x60; is an optional free-form dict carrying static host information (total RAM, CPU model, &#x60;&#x60;/dev/watchdog&#x60;&#x60; presence, kernel, …). When provided, it is merged into &#x60;&#x60;Edge.metadata[&#39;host_facts&#39;]&#x60;&#x60; so the dashboard can render a \&quot;what hardware is this\&quot; row without having to ride MQTT for data that effectively never changes.  See :class:&#x60;cyberwave.edge.host_metrics.HostFacts&#x60; in the SDK for the canonical producer.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_EdgeRegisterSchema_H_
@@ -23,6 +23,8 @@
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include <cpprest/details/basic_types.h>
+#include <map>
+#include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
 namespace openapitools {
@@ -32,7 +34,7 @@ namespace model {
 
 
 /// <summary>
-/// Schema for registering an edge.
+/// Schema for registering an edge.  &#x60;&#x60;host_facts&#x60;&#x60; is an optional free-form dict carrying static host information (total RAM, CPU model, &#x60;&#x60;/dev/watchdog&#x60;&#x60; presence, kernel, …). When provided, it is merged into &#x60;&#x60;Edge.metadata[&#39;host_facts&#39;]&#x60;&#x60; so the dashboard can render a \&quot;what hardware is this\&quot; row without having to ride MQTT for data that effectively never changes.  See :class:&#x60;cyberwave.edge.host_metrics.HostFacts&#x60; in the SDK for the canonical producer.
 /// </summary>
 class  EdgeRegisterSchema
     : public ModelBase
@@ -77,6 +79,11 @@ public:
     void unsetName();
     void setName(const utility::string_t& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getHostFacts() const;
+    bool hostFactsIsSet() const;
+    void unsetHost_facts();
+    void setHostFacts(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
 
 protected:
     utility::string_t m_Fingerprint;
@@ -90,6 +97,8 @@ protected:
 
     utility::string_t m_Name;
     bool m_NameIsSet;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Host_facts;
 
 };
 

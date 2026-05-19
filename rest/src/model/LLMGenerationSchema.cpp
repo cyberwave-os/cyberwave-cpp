@@ -41,6 +41,16 @@ web::json::value LLMGenerationSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("prompt"))] = ModelBase::toJson(m_Prompt);
     }
+    if(m_Llm_model_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("llm_model_uuid"))] = ModelBase::toJson(m_Llm_model_uuid.get());
+    }
+    if(m_Llm_model_name.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("llm_model_name"))] = ModelBase::toJson(m_Llm_model_name.get());
+    }
 
     return val;
 }
@@ -59,6 +69,28 @@ bool LLMGenerationSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("llm_model_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("llm_model_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setLlmModelUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setLlmModelUuid);
+            setLlmModelUuid(refVal_setLlmModelUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("llm_model_name"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("llm_model_name")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setLlmModelName;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setLlmModelName);
+            setLlmModelName(refVal_setLlmModelName);
+            
+        }
+    }
     return ok;
 }
 
@@ -72,6 +104,14 @@ void LLMGenerationSchema::toMultipart(std::shared_ptr<MultipartFormData> multipa
     if(m_PromptIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("prompt")), m_Prompt));
+    }
+    if(m_Llm_model_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("llm_model_uuid")), m_Llm_model_uuid.get()));
+    }
+    if(m_Llm_model_name.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("llm_model_name")), m_Llm_model_name.get()));
     }
 }
 
@@ -89,6 +129,18 @@ bool LLMGenerationSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multi
         utility::string_t refVal_setPrompt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("prompt"))), refVal_setPrompt );
         setPrompt(refVal_setPrompt);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("llm_model_uuid"))))
+    {
+        utility::string_t refVal_setLlmModelUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("llm_model_uuid"))), refVal_setLlmModelUuid );
+        setLlmModelUuid(refVal_setLlmModelUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("llm_model_name"))))
+    {
+        utility::string_t refVal_setLlmModelName;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("llm_model_name"))), refVal_setLlmModelName );
+        setLlmModelName(refVal_setLlmModelName);
     }
     return ok;
 }
@@ -114,6 +166,46 @@ bool LLMGenerationSchema::promptIsSet() const
 void LLMGenerationSchema::unsetPrompt()
 {
     m_PromptIsSet = false;
+}
+utility::string_t LLMGenerationSchema::getLlmModelUuid() const
+{
+    return m_Llm_model_uuid.get();
+}
+
+
+void LLMGenerationSchema::setLlmModelUuid(const utility::string_t& value)
+{
+    m_Llm_model_uuid = value;
+}
+
+bool LLMGenerationSchema::llmModelUuidIsSet() const
+{
+    return m_Llm_model_uuid.has_value();
+}
+
+void LLMGenerationSchema::unsetLlm_model_uuid()
+{
+    m_Llm_model_uuid.reset();
+}
+utility::string_t LLMGenerationSchema::getLlmModelName() const
+{
+    return m_Llm_model_name.get();
+}
+
+
+void LLMGenerationSchema::setLlmModelName(const utility::string_t& value)
+{
+    m_Llm_model_name = value;
+}
+
+bool LLMGenerationSchema::llmModelNameIsSet() const
+{
+    return m_Llm_model_name.has_value();
+}
+
+void LLMGenerationSchema::unsetLlm_model_name()
+{
+    m_Llm_model_name.reset();
 }
 
 }

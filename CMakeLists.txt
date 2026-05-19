@@ -35,6 +35,22 @@ add_subdirectory(rest)
 # Ubuntu 24.04 (fmt 9 + GCC 13 + C++20).
 target_compile_definitions(CppRestOpenAPIClient INTERFACE _TURN_OFF_PLATFORM_STRING)
 
+# Suppress warnings in auto-generated OpenAPI REST client code.
+# The cpp-restsdk generator emits enum-to-string switch statements without a
+# default return path, triggering -Wreturn-type on every model that has enums.
+# These are harmless (the switch is exhaustive) but drown CI logs in noise.
+target_compile_options(CppRestOpenAPIClient PRIVATE -Wno-return-type)
+
+# The generated rest/CMakeLists.txt may contain Clang-only flags like
+# -Wno-unused-lambda-capture.  Strip them on GCC where they produce notes.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    get_target_property(_rest_opts CppRestOpenAPIClient COMPILE_OPTIONS)
+    if(_rest_opts)
+        list(REMOVE_ITEM _rest_opts "-Wno-unused-lambda-capture")
+        set_target_properties(CppRestOpenAPIClient PROPERTIES COMPILE_OPTIONS "${_rest_opts}")
+    endif()
+endif()
+
 # Hand-crafted SDK layer (config, exceptions, client, twin, alerts, workspaces, edges)
 set(CYBERWAVE_SDK_HEADERS
     include/cyberwave/config.h
