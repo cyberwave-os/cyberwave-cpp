@@ -42,6 +42,8 @@ AlertSchema::AlertSchema()
     m_Created_atIsSet = false;
     m_Updated_at = utility::datetime();
     m_Updated_atIsSet = false;
+    m_Dedupe_count = 0;
+    m_Dedupe_countIsSet = false;
 }
 
 AlertSchema::~AlertSchema()
@@ -140,6 +142,16 @@ web::json::value AlertSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("resolved_at"))] = ModelBase::toJson(m_Resolved_at.get());
+    }
+    if(m_Last_seen_at.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("last_seen_at"))] = ModelBase::toJson(m_Last_seen_at.get());
+    }
+    if(m_Dedupe_countIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("dedupe_count"))] = ModelBase::toJson(m_Dedupe_count);
     }
     if(m_Metadata.has_value())
     {
@@ -340,6 +352,28 @@ bool AlertSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("last_seen_at"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("last_seen_at")));
+        if(!fieldValue.is_null())
+        {
+            utility::datetime refVal_setLastSeenAt;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setLastSeenAt);
+            setLastSeenAt(refVal_setLastSeenAt);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("dedupe_count"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("dedupe_count")));
+        if(!fieldValue.is_null())
+        {
+            int32_t refVal_setDedupeCount;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setDedupeCount);
+            setDedupeCount(refVal_setDedupeCount);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("metadata"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("metadata")));
@@ -428,6 +462,14 @@ void AlertSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, cons
     if(m_Resolved_at.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("resolved_at")), m_Resolved_at.get()));
+    }
+    if(m_Last_seen_at.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("last_seen_at")), m_Last_seen_at.get()));
+    }
+    if(m_Dedupe_countIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("dedupe_count")), m_Dedupe_count));
     }
     if(m_Metadata.has_value())
     {
@@ -545,6 +587,18 @@ bool AlertSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, co
         utility::datetime refVal_setResolvedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("resolved_at"))), refVal_setResolvedAt );
         setResolvedAt(refVal_setResolvedAt);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("last_seen_at"))))
+    {
+        utility::datetime refVal_setLastSeenAt;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("last_seen_at"))), refVal_setLastSeenAt );
+        setLastSeenAt(refVal_setLastSeenAt);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("dedupe_count"))))
+    {
+        int32_t refVal_setDedupeCount;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("dedupe_count"))), refVal_setDedupeCount );
+        setDedupeCount(refVal_setDedupeCount);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))))
     {
@@ -906,6 +960,46 @@ bool AlertSchema::resolvedAtIsSet() const
 void AlertSchema::unsetResolved_at()
 {
     m_Resolved_at.reset();
+}
+utility::datetime AlertSchema::getLastSeenAt() const
+{
+    return m_Last_seen_at.get();
+}
+
+
+void AlertSchema::setLastSeenAt(const utility::datetime& value)
+{
+    m_Last_seen_at = value;
+}
+
+bool AlertSchema::lastSeenAtIsSet() const
+{
+    return m_Last_seen_at.has_value();
+}
+
+void AlertSchema::unsetLast_seen_at()
+{
+    m_Last_seen_at.reset();
+}
+int32_t AlertSchema::getDedupeCount() const
+{
+    return m_Dedupe_count;
+}
+
+void AlertSchema::setDedupeCount(int32_t value)
+{
+    m_Dedupe_count = value;
+    m_Dedupe_countIsSet = true;
+}
+
+bool AlertSchema::dedupeCountIsSet() const
+{
+    return m_Dedupe_countIsSet;
+}
+
+void AlertSchema::unsetDedupe_count()
+{
+    m_Dedupe_countIsSet = false;
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> AlertSchema::getMetadata() const
 {

@@ -225,6 +225,11 @@ public:
     void unsetEdge_runtime();
     void setEdgeRuntime(const utility::string_t& value);
 
+    bool isSupportsBuiltinVadFilter() const;
+    bool supportsBuiltinVadFilterIsSet() const;
+    void unsetSupports_builtin_vad_filter();
+    void setSupportsBuiltinVadFilter(bool value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -315,6 +320,9 @@ protected:
     boost::optional<utility::string_t> m_Edge_catalog_id;
 
     boost::optional<utility::string_t> m_Edge_runtime;
+
+    bool m_Supports_builtin_vad_filter;
+    bool m_Supports_builtin_vad_filterIsSet;
 
 };
 

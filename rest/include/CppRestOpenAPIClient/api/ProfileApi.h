@@ -23,10 +23,13 @@
 #include "CppRestOpenAPIClient/ApiClient.h"
 
 #include "CppRestOpenAPIClient/model/ApiTokenContextSchema.h"
+#include "CppRestOpenAPIClient/model/NotificationSettingsSchema.h"
+#include "CppRestOpenAPIClient/model/NotificationSettingsUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/OnboardingCompletionSchema.h"
 #include "CppRestOpenAPIClient/model/PasswordChangeSchema.h"
 #include "CppRestOpenAPIClient/model/ProfileResponseSchema.h"
 #include "CppRestOpenAPIClient/model/ProfileUpdateSchema.h"
+#include "CppRestOpenAPIClient/model/UserStatusSchema.h"
 #include <boost/optional.hpp>
 
 namespace org {
@@ -71,6 +74,32 @@ public:
     /// Return the active API token context for API-token-authenticated requests.
     /// </remarks>
     pplx::task<std::shared_ptr<ApiTokenContextSchema>> srcUsersApiProfileGetApiTokenContext(
+    ) const;
+    /// <summary>
+    /// Get Notification Settings
+    /// </summary>
+    /// <remarks>
+    /// Get the current user&#39;s notification settings, creating defaults if needed.
+    /// </remarks>
+    pplx::task<std::shared_ptr<NotificationSettingsSchema>> srcUsersApiProfileGetNotificationSettings(
+    ) const;
+    /// <summary>
+    /// Get Status
+    /// </summary>
+    /// <remarks>
+    /// Return the current user&#39;s status and profile snapshot.
+    /// </remarks>
+    pplx::task<std::shared_ptr<UserStatusSchema>> srcUsersApiProfileGetStatus(
+    ) const;
+    /// <summary>
+    /// Update Notification Settings
+    /// </summary>
+    /// <remarks>
+    /// Update the current user&#39;s notification settings.
+    /// </remarks>
+    /// <param name="notificationSettingsUpdateSchema"></param>
+    pplx::task<std::shared_ptr<NotificationSettingsSchema>> srcUsersApiProfileUpdateNotificationSettings(
+        std::shared_ptr<NotificationSettingsUpdateSchema> notificationSettingsUpdateSchema
     ) const;
     /// <summary>
     /// Update Profile

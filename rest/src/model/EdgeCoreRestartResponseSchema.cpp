@@ -30,6 +30,7 @@ EdgeCoreRestartResponseSchema::EdgeCoreRestartResponseSchema()
     m_CommandIsSet = false;
     m_Topic = utility::conversions::to_string_t("");
     m_TopicIsSet = false;
+    m_Pre_resolved_alert_uuidsIsSet = false;
 }
 
 EdgeCoreRestartResponseSchema::~EdgeCoreRestartResponseSchema()
@@ -68,6 +69,16 @@ web::json::value EdgeCoreRestartResponseSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("topic"))] = ModelBase::toJson(m_Topic);
+    }
+    if(m_Alert_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("alert_uuid"))] = ModelBase::toJson(m_Alert_uuid.get());
+    }
+    if(m_Pre_resolved_alert_uuidsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("pre_resolved_alert_uuids"))] = ModelBase::toJson(m_Pre_resolved_alert_uuids);
     }
 
     return val;
@@ -131,6 +142,28 @@ bool EdgeCoreRestartResponseSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("alert_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("alert_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setAlertUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAlertUuid);
+            setAlertUuid(refVal_setAlertUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("pre_resolved_alert_uuids"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("pre_resolved_alert_uuids")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<utility::string_t> refVal_setPreResolvedAlertUuids;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPreResolvedAlertUuids);
+            setPreResolvedAlertUuids(refVal_setPreResolvedAlertUuids);
+            
+        }
+    }
     return ok;
 }
 
@@ -160,6 +193,14 @@ void EdgeCoreRestartResponseSchema::toMultipart(std::shared_ptr<MultipartFormDat
     if(m_TopicIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("topic")), m_Topic));
+    }
+    if(m_Alert_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("alert_uuid")), m_Alert_uuid.get()));
+    }
+    if(m_Pre_resolved_alert_uuidsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("pre_resolved_alert_uuids")), m_Pre_resolved_alert_uuids));
     }
 }
 
@@ -201,6 +242,18 @@ bool EdgeCoreRestartResponseSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         utility::string_t refVal_setTopic;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("topic"))), refVal_setTopic );
         setTopic(refVal_setTopic);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("alert_uuid"))))
+    {
+        utility::string_t refVal_setAlertUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("alert_uuid"))), refVal_setAlertUuid );
+        setAlertUuid(refVal_setAlertUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("pre_resolved_alert_uuids"))))
+    {
+        std::vector<utility::string_t> refVal_setPreResolvedAlertUuids;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("pre_resolved_alert_uuids"))), refVal_setPreResolvedAlertUuids );
+        setPreResolvedAlertUuids(refVal_setPreResolvedAlertUuids);
     }
     return ok;
 }
@@ -309,6 +362,47 @@ bool EdgeCoreRestartResponseSchema::topicIsSet() const
 void EdgeCoreRestartResponseSchema::unsetTopic()
 {
     m_TopicIsSet = false;
+}
+utility::string_t EdgeCoreRestartResponseSchema::getAlertUuid() const
+{
+    return m_Alert_uuid.get();
+}
+
+
+void EdgeCoreRestartResponseSchema::setAlertUuid(const utility::string_t& value)
+{
+    m_Alert_uuid = value;
+}
+
+bool EdgeCoreRestartResponseSchema::alertUuidIsSet() const
+{
+    return m_Alert_uuid.has_value();
+}
+
+void EdgeCoreRestartResponseSchema::unsetAlert_uuid()
+{
+    m_Alert_uuid.reset();
+}
+std::vector<utility::string_t> EdgeCoreRestartResponseSchema::getPreResolvedAlertUuids() const
+{
+    return m_Pre_resolved_alert_uuids;
+}
+
+
+void EdgeCoreRestartResponseSchema::setPreResolvedAlertUuids(const std::vector<utility::string_t>& value)
+{
+    m_Pre_resolved_alert_uuids = value;
+    m_Pre_resolved_alert_uuidsIsSet = true;
+}
+
+bool EdgeCoreRestartResponseSchema::preResolvedAlertUuidsIsSet() const
+{
+    return m_Pre_resolved_alert_uuidsIsSet;
+}
+
+void EdgeCoreRestartResponseSchema::unsetPre_resolved_alert_uuids()
+{
+    m_Pre_resolved_alert_uuidsIsSet = false;
 }
 
 }

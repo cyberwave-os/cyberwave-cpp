@@ -12,7 +12,7 @@
 /*
  * EdgeCoreRestartResponseSchema.h
  *
- * Schema for requesting an edge-core restart.
+ * Schema for requesting an edge-core restart.  The &#x60;&#x60;alert_uuid&#x60;&#x60; field is the lifecycle alert that tracks this restart through its &#x60;&#x60;requested → in_progress → completed/failed/ timed_out&#x60;&#x60; phases (see &#x60;&#x60;EDGE_CORE_RESTART_ALERT_TYPE&#x60;&#x60;).  It is &#x60;&#x60;None&#x60;&#x60; only when no environment-scoped alert could be created (typically: edge has no bound twin yet, so we have nothing to attach the alert to).  The MQTT command published to the edge carries the same UUID so edge-core can transition the same alert through its phases without doing a lookup.  &#x60;&#x60;pre_resolved_alert_uuids&#x60;&#x60; lists any prior runtime-failure alerts (see &#x60;&#x60;EDGE_CORE_RESTART_RESOLVABLE_ALERT_TYPES&#x60;&#x60;) that this restart auto-resolved on the edge&#39;s bound twins.  Empty when no matching alerts were active.  The frontend&#39;s toast can read this directly so it can say \&quot;Restart requested. Cleared N prior failure alerts\&quot; without waiting for a re-fetch.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_EdgeCoreRestartResponseSchema_H_
@@ -23,6 +23,7 @@
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include <cpprest/details/basic_types.h>
+#include <vector>
 
 namespace org {
 namespace openapitools {
@@ -32,7 +33,7 @@ namespace model {
 
 
 /// <summary>
-/// Schema for requesting an edge-core restart.
+/// Schema for requesting an edge-core restart.  The &#x60;&#x60;alert_uuid&#x60;&#x60; field is the lifecycle alert that tracks this restart through its &#x60;&#x60;requested → in_progress → completed/failed/ timed_out&#x60;&#x60; phases (see &#x60;&#x60;EDGE_CORE_RESTART_ALERT_TYPE&#x60;&#x60;).  It is &#x60;&#x60;None&#x60;&#x60; only when no environment-scoped alert could be created (typically: edge has no bound twin yet, so we have nothing to attach the alert to).  The MQTT command published to the edge carries the same UUID so edge-core can transition the same alert through its phases without doing a lookup.  &#x60;&#x60;pre_resolved_alert_uuids&#x60;&#x60; lists any prior runtime-failure alerts (see &#x60;&#x60;EDGE_CORE_RESTART_RESOLVABLE_ALERT_TYPES&#x60;&#x60;) that this restart auto-resolved on the edge&#39;s bound twins.  Empty when no matching alerts were active.  The frontend&#39;s toast can read this directly so it can say \&quot;Restart requested. Cleared N prior failure alerts\&quot; without waiting for a re-fetch.
 /// </summary>
 class  EdgeCoreRestartResponseSchema
     : public ModelBase
@@ -82,6 +83,16 @@ public:
     void unsetTopic();
     void setTopic(const utility::string_t& value);
 
+    utility::string_t getAlertUuid() const;
+    bool alertUuidIsSet() const;
+    void unsetAlert_uuid();
+    void setAlertUuid(const utility::string_t& value);
+
+    std::vector<utility::string_t> getPreResolvedAlertUuids() const;
+    bool preResolvedAlertUuidsIsSet() const;
+    void unsetPre_resolved_alert_uuids();
+    void setPreResolvedAlertUuids(const std::vector<utility::string_t>& value);
+
 
 protected:
     bool m_Success;
@@ -98,6 +109,11 @@ protected:
 
     utility::string_t m_Topic;
     bool m_TopicIsSet;
+
+    boost::optional<utility::string_t> m_Alert_uuid;
+
+    std::vector<utility::string_t> m_Pre_resolved_alert_uuids;
+    bool m_Pre_resolved_alert_uuidsIsSet;
 
 };
 

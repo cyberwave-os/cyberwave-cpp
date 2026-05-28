@@ -144,6 +144,16 @@ public:
     void unsetResolved_at();
     void setResolvedAt(const utility::datetime& value);
 
+    utility::datetime getLastSeenAt() const;
+    bool lastSeenAtIsSet() const;
+    void unsetLast_seen_at();
+    void setLastSeenAt(const utility::datetime& value);
+
+    int32_t getDedupeCount() const;
+    bool dedupeCountIsSet() const;
+    void unsetDedupe_count();
+    void setDedupeCount(int32_t value);
+
     std::map<utility::string_t, std::shared_ptr<AnyType>> getMetadata() const;
     bool metadataIsSet() const;
     void unsetMetadata();
@@ -195,6 +205,11 @@ protected:
     bool m_Updated_atIsSet;
 
     boost::optional<utility::datetime> m_Resolved_at;
+
+    boost::optional<utility::datetime> m_Last_seen_at;
+
+    int32_t m_Dedupe_count;
+    bool m_Dedupe_countIsSet;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
 

@@ -70,6 +70,11 @@ public:
     void unsetSeed_mlmodels();
     void setSeedMlmodels(bool value);
 
+    bool isSeedWorkflowTemplates() const;
+    bool seedWorkflowTemplatesIsSet() const;
+    void unsetSeed_workflow_templates();
+    void setSeedWorkflowTemplates(bool value);
+
     std::vector<utility::string_t> getControllerKeys() const;
     bool controllerKeysIsSet() const;
     void unsetController_keys();
@@ -79,6 +84,11 @@ public:
     bool mlmodelKeysIsSet() const;
     void unsetMlmodel_keys();
     void setMlmodelKeys(const std::vector<utility::string_t>& value);
+
+    std::vector<utility::string_t> getWorkflowTemplateKeys() const;
+    bool workflowTemplateKeysIsSet() const;
+    void unsetWorkflow_template_keys();
+    void setWorkflowTemplateKeys(const std::vector<utility::string_t>& value);
 
 
 protected:
@@ -90,9 +100,14 @@ protected:
     bool m_Seed_mlmodels;
     bool m_Seed_mlmodelsIsSet;
 
+    bool m_Seed_workflow_templates;
+    bool m_Seed_workflow_templatesIsSet;
+
     boost::optional<std::vector<utility::string_t>> m_Controller_keys;
 
     boost::optional<std::vector<utility::string_t>> m_Mlmodel_keys;
+
+    boost::optional<std::vector<utility::string_t>> m_Workflow_template_keys;
 
 };
 

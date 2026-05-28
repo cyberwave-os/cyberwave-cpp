@@ -65,6 +65,11 @@ web::json::value CatalogSeedOptionSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("model_provider_name"))] = ModelBase::toJson(m_Model_provider_name.get());
     }
+    if(m_Template_kind.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("template_kind"))] = ModelBase::toJson(m_Template_kind.get());
+    }
 
     return val;
 }
@@ -127,6 +132,17 @@ bool CatalogSeedOptionSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("template_kind"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("template_kind")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setTemplateKind;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTemplateKind);
+            setTemplateKind(refVal_setTemplateKind);
+            
+        }
+    }
     return ok;
 }
 
@@ -156,6 +172,10 @@ void CatalogSeedOptionSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     if(m_Model_provider_name.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("model_provider_name")), m_Model_provider_name.get()));
+    }
+    if(m_Template_kind.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("template_kind")), m_Template_kind.get()));
     }
 }
 
@@ -197,6 +217,12 @@ bool CatalogSeedOptionSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
         utility::string_t refVal_setModelProviderName;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("model_provider_name"))), refVal_setModelProviderName );
         setModelProviderName(refVal_setModelProviderName);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("template_kind"))))
+    {
+        utility::string_t refVal_setTemplateKind;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("template_kind"))), refVal_setTemplateKind );
+        setTemplateKind(refVal_setTemplateKind);
     }
     return ok;
 }
@@ -304,6 +330,26 @@ bool CatalogSeedOptionSchema::modelProviderNameIsSet() const
 void CatalogSeedOptionSchema::unsetModel_provider_name()
 {
     m_Model_provider_name.reset();
+}
+utility::string_t CatalogSeedOptionSchema::getTemplateKind() const
+{
+    return m_Template_kind.get();
+}
+
+
+void CatalogSeedOptionSchema::setTemplateKind(const utility::string_t& value)
+{
+    m_Template_kind = value;
+}
+
+bool CatalogSeedOptionSchema::templateKindIsSet() const
+{
+    return m_Template_kind.has_value();
+}
+
+void CatalogSeedOptionSchema::unsetTemplate_kind()
+{
+    m_Template_kind.reset();
 }
 
 }

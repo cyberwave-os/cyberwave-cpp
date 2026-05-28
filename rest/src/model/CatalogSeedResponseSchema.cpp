@@ -24,6 +24,7 @@ CatalogSeedResponseSchema::CatalogSeedResponseSchema()
     m_Workspace_uuidIsSet = false;
     m_ControllersIsSet = false;
     m_MlmodelsIsSet = false;
+    m_Workflow_templatesIsSet = false;
 }
 
 CatalogSeedResponseSchema::~CatalogSeedResponseSchema()
@@ -52,6 +53,11 @@ web::json::value CatalogSeedResponseSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("mlmodels"))] = ModelBase::toJson(m_Mlmodels);
+    }
+    if(m_Workflow_templatesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("workflow_templates"))] = ModelBase::toJson(m_Workflow_templates);
     }
 
     return val;
@@ -93,6 +99,17 @@ bool CatalogSeedResponseSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("workflow_templates"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("workflow_templates")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<CatalogSeedGroupSchema> refVal_setWorkflowTemplates;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setWorkflowTemplates);
+            setWorkflowTemplates(refVal_setWorkflowTemplates);
+            
+        }
+    }
     return ok;
 }
 
@@ -114,6 +131,10 @@ void CatalogSeedResponseSchema::toMultipart(std::shared_ptr<MultipartFormData> m
     if(m_MlmodelsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("mlmodels")), m_Mlmodels));
+    }
+    if(m_Workflow_templatesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workflow_templates")), m_Workflow_templates));
     }
 }
 
@@ -143,6 +164,12 @@ bool CatalogSeedResponseSchema::fromMultiPart(std::shared_ptr<MultipartFormData>
         std::shared_ptr<CatalogSeedGroupSchema> refVal_setMlmodels;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("mlmodels"))), refVal_setMlmodels );
         setMlmodels(refVal_setMlmodels);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("workflow_templates"))))
+    {
+        std::shared_ptr<CatalogSeedGroupSchema> refVal_setWorkflowTemplates;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workflow_templates"))), refVal_setWorkflowTemplates );
+        setWorkflowTemplates(refVal_setWorkflowTemplates);
     }
     return ok;
 }
@@ -210,6 +237,27 @@ bool CatalogSeedResponseSchema::mlmodelsIsSet() const
 void CatalogSeedResponseSchema::unsetMlmodels()
 {
     m_MlmodelsIsSet = false;
+}
+std::shared_ptr<CatalogSeedGroupSchema> CatalogSeedResponseSchema::getWorkflowTemplates() const
+{
+    return m_Workflow_templates;
+}
+
+
+void CatalogSeedResponseSchema::setWorkflowTemplates(const std::shared_ptr<CatalogSeedGroupSchema>& value)
+{
+    m_Workflow_templates = value;
+    m_Workflow_templatesIsSet = true;
+}
+
+bool CatalogSeedResponseSchema::workflowTemplatesIsSet() const
+{
+    return m_Workflow_templatesIsSet;
+}
+
+void CatalogSeedResponseSchema::unsetWorkflow_templates()
+{
+    m_Workflow_templatesIsSet = false;
 }
 
 }
