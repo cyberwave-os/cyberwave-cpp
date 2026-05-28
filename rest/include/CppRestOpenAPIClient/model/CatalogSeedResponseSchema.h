@@ -71,6 +71,11 @@ public:
     void unsetMlmodels();
     void setMlmodels(const std::shared_ptr<CatalogSeedGroupSchema>& value);
 
+    std::shared_ptr<CatalogSeedGroupSchema> getWorkflowTemplates() const;
+    bool workflowTemplatesIsSet() const;
+    void unsetWorkflow_templates();
+    void setWorkflowTemplates(const std::shared_ptr<CatalogSeedGroupSchema>& value);
+
 
 protected:
     utility::string_t m_Workspace_uuid;
@@ -81,6 +86,9 @@ protected:
 
     std::shared_ptr<CatalogSeedGroupSchema> m_Mlmodels;
     bool m_MlmodelsIsSet;
+
+    std::shared_ptr<CatalogSeedGroupSchema> m_Workflow_templates;
+    bool m_Workflow_templatesIsSet;
 
 };
 

@@ -79,6 +79,11 @@ public:
     void unsetModel_provider_name();
     void setModelProviderName(const utility::string_t& value);
 
+    utility::string_t getTemplateKind() const;
+    bool templateKindIsSet() const;
+    void unsetTemplate_kind();
+    void setTemplateKind(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Key;
@@ -93,6 +98,8 @@ protected:
     boost::optional<utility::string_t> m_Controller_type;
 
     boost::optional<utility::string_t> m_Model_provider_name;
+
+    boost::optional<utility::string_t> m_Template_kind;
 
 };
 

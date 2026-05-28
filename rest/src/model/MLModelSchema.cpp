@@ -62,6 +62,8 @@ MLModelSchema::MLModelSchema()
     m_Is_cloud_compatibleIsSet = false;
     m_Allowed_structured_tasksIsSet = false;
     m_Execution_surfacesIsSet = false;
+    m_Supports_builtin_vad_filter = false;
+    m_Supports_builtin_vad_filterIsSet = false;
 }
 
 MLModelSchema::~MLModelSchema()
@@ -240,6 +242,11 @@ web::json::value MLModelSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("edge_runtime"))] = ModelBase::toJson(m_Edge_runtime.get());
+    }
+    if(m_Supports_builtin_vad_filterIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("supports_builtin_vad_filter"))] = ModelBase::toJson(m_Supports_builtin_vad_filter);
     }
 
     return val;
@@ -611,6 +618,17 @@ bool MLModelSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("supports_builtin_vad_filter"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("supports_builtin_vad_filter")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setSupportsBuiltinVadFilter;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSupportsBuiltinVadFilter);
+            setSupportsBuiltinVadFilter(refVal_setSupportsBuiltinVadFilter);
+            
+        }
+    }
     return ok;
 }
 
@@ -752,6 +770,10 @@ void MLModelSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, co
     if(m_Edge_runtime.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("edge_runtime")), m_Edge_runtime.get()));
+    }
+    if(m_Supports_builtin_vad_filterIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("supports_builtin_vad_filter")), m_Supports_builtin_vad_filter));
     }
 }
 
@@ -961,6 +983,12 @@ bool MLModelSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, 
         utility::string_t refVal_setEdgeRuntime;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("edge_runtime"))), refVal_setEdgeRuntime );
         setEdgeRuntime(refVal_setEdgeRuntime);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("supports_builtin_vad_filter"))))
+    {
+        bool refVal_setSupportsBuiltinVadFilter;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("supports_builtin_vad_filter"))), refVal_setSupportsBuiltinVadFilter );
+        setSupportsBuiltinVadFilter(refVal_setSupportsBuiltinVadFilter);
     }
     return ok;
 }
@@ -1640,6 +1668,26 @@ bool MLModelSchema::edgeRuntimeIsSet() const
 void MLModelSchema::unsetEdge_runtime()
 {
     m_Edge_runtime.reset();
+}
+bool MLModelSchema::isSupportsBuiltinVadFilter() const
+{
+    return m_Supports_builtin_vad_filter;
+}
+
+void MLModelSchema::setSupportsBuiltinVadFilter(bool value)
+{
+    m_Supports_builtin_vad_filter = value;
+    m_Supports_builtin_vad_filterIsSet = true;
+}
+
+bool MLModelSchema::supportsBuiltinVadFilterIsSet() const
+{
+    return m_Supports_builtin_vad_filterIsSet;
+}
+
+void MLModelSchema::unsetSupports_builtin_vad_filter()
+{
+    m_Supports_builtin_vad_filterIsSet = false;
 }
 
 }

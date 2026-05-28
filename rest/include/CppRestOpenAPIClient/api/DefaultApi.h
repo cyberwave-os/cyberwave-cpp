@@ -22,6 +22,7 @@
 
 #include "CppRestOpenAPIClient/ApiClient.h"
 
+#include "CppRestOpenAPIClient/model/AIMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/AddMemberByEmailRequest.h"
 #include "CppRestOpenAPIClient/model/AddMemberByEmailResponse.h"
 #include "CppRestOpenAPIClient/model/AdminLabOverviewSchema.h"
@@ -94,6 +95,7 @@
 #include "CppRestOpenAPIClient/model/EpisodeCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EpisodeSchema.h"
 #include "CppRestOpenAPIClient/model/EpisodeUpdateSchema.h"
+#include "CppRestOpenAPIClient/model/EventMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/ExecuteTaskSchema.h"
 #include "CppRestOpenAPIClient/HttpContent.h"
 #include "CppRestOpenAPIClient/model/Image_Bytes.h"
@@ -164,6 +166,7 @@
 #include "CppRestOpenAPIClient/model/SlugAvailabilitySchema.h"
 #include "CppRestOpenAPIClient/model/SlugCheckSchema.h"
 #include "CppRestOpenAPIClient/model/SpatialFilterZoneSchema.h"
+#include "CppRestOpenAPIClient/model/StorageMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/SyncWithAssetSchema.h"
 #include "CppRestOpenAPIClient/model/TaggedFramesCreateSchema.h"
 #include "CppRestOpenAPIClient/model/TaggedFramesSchema.h"
@@ -216,6 +219,7 @@
 #include "CppRestOpenAPIClient/model/WorkflowNodeUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowRunSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowSchema.h"
+#include "CppRestOpenAPIClient/model/WorkflowSyncToEdgeResponseSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowTemplateSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowTriggerSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowUpdateSchema.h"
@@ -270,7 +274,7 @@ public:
     /// Delete Alert
     /// </summary>
     /// <remarks>
-    /// Delete an alert.
+    /// Removed.  Hard-deleting alerts produced rollup drift (resolved counts, workspace UI dashboards) and conflicted with the alert lifecycle — operators dismiss alerts via &#x60;&#x60;acknowledge&#x60;&#x60; / &#x60;&#x60;resolve&#x60;&#x60; / &#x60;&#x60;silence&#x60;&#x60; (see &#x60;&#x60;AlertStatus&#x60;&#x60;), all of which are reversible. Soft delete still happens automatically when a workspace is deleted.
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<void> srcAppApiAlertsDeleteAlert(
@@ -1124,7 +1128,7 @@ public:
     /// Restart Edge Core
     /// </summary>
     /// <remarks>
-    /// Publish an MQTT restart command for the target edge-core instance.
+    /// Publish an MQTT restart command for the target edge-core instance.  The endpoint also:  - Creates an &#x60;&#x60;edge_core_restart&#x60;&#x60; lifecycle alert (when an   environment can be resolved) so all viewers of the environment   see the deliberate restart, not just the requester.  Edge-core   transitions this alert through &#x60;&#x60;in_progress&#x60;&#x60; → &#x60;&#x60;completed&#x60;&#x60; /   &#x60;&#x60;failed&#x60;&#x60; as the in-process restart runs; the backend reaper   marks it &#x60;&#x60;timed_out&#x60;&#x60; when the command never lands. - Pre-resolves any active \&quot;restart-fixable\&quot; alerts on the bound   twins (see &#x60;&#x60;EDGE_CORE_RESTART_RESOLVABLE_ALERT_TYPES&#x60;&#x60;) so the   workbench is not cluttered with stale failure noise while the   restart proceeds.  Each resolved alert is annotated with the   originating &#x60;&#x60;request_id&#x60;&#x60; so the audit trail is preserved.  Order of operations:  1. Create lifecycle alert (best-effort) 2. Publish MQTT command (fatal if it fails — we never want to    resolve prior alerts without the restart actually being queued) 3. Pre-resolve policy alerts (best-effort) 4. Annotate lifecycle alert with the list of pre-resolved UUIDs
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::shared_ptr<EdgeCoreRestartResponseSchema>> srcAppApiEdgeNodesRestartEdgeCore(
@@ -1445,6 +1449,16 @@ public:
     /// <param name="slug"></param>
     pplx::task<std::shared_ptr<EnvironmentSchema>> srcAppApiEnvironmentsGetEnvironmentBySlug(
         utility::string_t slug
+    ) const;
+    /// <summary>
+    /// Get Environment Deleted Twins
+    /// </summary>
+    /// <remarks>
+    /// List soft-deleted twins belonging to this environment.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::shared_ptr<TwinSchema>>> srcAppApiEnvironmentsGetEnvironmentDeletedTwins(
+        utility::string_t uuid
     ) const;
     /// <summary>
     /// Get Environment Twins
@@ -2431,6 +2445,90 @@ public:
     /// <param name="mapStreamStopSchema"></param>
     pplx::task<std::shared_ptr<MapDataSchema>> srcAppApiMapsStopMapFromStream(
         std::shared_ptr<MapStreamStopSchema> mapStreamStopSchema
+    ) const;
+    /// <summary>
+    /// Get Ai Metrics
+    /// </summary>
+    /// <remarks>
+    /// Return workspace-scoped LLM / embedding / image usage roll-up.  Path params:     &#x60;&#x60;uuid&#x60;&#x60; — workspace UUID (or slug; resolved by the decorator).  Query params:     &#x60;&#x60;start_timestamp&#x60;&#x60; ISO-8601, inclusive lower bound (optional).     &#x60;&#x60;end_timestamp&#x60;&#x60;   ISO-8601, exclusive upper bound (optional).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    pplx::task<std::shared_ptr<AIMetricsSchema>> srcAppApiMetricsAiGetAiMetrics(
+        utility::string_t uuid,
+        boost::optional<utility::datetime> startTimestamp,
+        boost::optional<utility::datetime> endTimestamp
+    ) const;
+    /// <summary>
+    /// Get Organization Ai Metrics
+    /// </summary>
+    /// <remarks>
+    /// Return org-scoped LLM / embedding / image usage roll-up.  Aggregates :class:&#x60;AIUsageRecord&#x60; rows across every workspace in the organization. &#x60;&#x60;Organization&#x60;&#x60; is not a &#x60;&#x60;ShareableModelMixin&#x60;&#x60; so we can&#39;t reuse &#x60;&#x60;@require_read_access&#x60;&#x60;; instead the helper &#x60;&#x60;get_organization_with_metrics_access&#x60;&#x60; enforces the same access bar as the org workspaces listing (owner, &#x60;&#x60;OrgMembership&#x60;&#x60;, or any workspace membership in the org).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    pplx::task<std::shared_ptr<AIMetricsSchema>> srcAppApiMetricsAiGetOrganizationAiMetrics(
+        utility::string_t uuid,
+        boost::optional<utility::datetime> startTimestamp,
+        boost::optional<utility::datetime> endTimestamp
+    ) const;
+    /// <summary>
+    /// Get Event Metrics
+    /// </summary>
+    /// <remarks>
+    /// Return workspace-scoped row counts of stored events.  Path params:     &#x60;&#x60;uuid&#x60;&#x60; workspace UUID *or* slug. The path segment is parsed as a         UUID first; if that fails, &#x60;&#x60;_get_object_or_404&#x60;&#x60; falls back         to a slug lookup (see &#x60;&#x60;SLUG_MODELS&#x60;&#x60; in         &#x60;&#x60;src/lib/decorators/auth.py&#x60;&#x60;). The caller must have read         access on the resolved workspace (active membership, ACL         role, or visibility).  Query params:     &#x60;&#x60;start_timestamp&#x60;&#x60; ISO-8601, inclusive lower bound (optional).     &#x60;&#x60;end_timestamp&#x60;&#x60;   ISO-8601, exclusive upper bound (optional).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    pplx::task<std::shared_ptr<EventMetricsSchema>> srcAppApiMetricsEventsGetEventMetrics(
+        utility::string_t uuid,
+        boost::optional<utility::datetime> startTimestamp,
+        boost::optional<utility::datetime> endTimestamp
+    ) const;
+    /// <summary>
+    /// Get Organization Event Metrics
+    /// </summary>
+    /// <remarks>
+    /// Return organization-scoped event metrics roll-up.  Aggregates the rollup across every workspace in the organization. Access mirrors the org workspaces listing endpoint.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    pplx::task<std::shared_ptr<EventMetricsSchema>> srcAppApiMetricsEventsGetOrganizationEventMetrics(
+        utility::string_t uuid,
+        boost::optional<utility::datetime> startTimestamp,
+        boost::optional<utility::datetime> endTimestamp
+    ) const;
+    /// <summary>
+    /// Get Organization Storage Metrics
+    /// </summary>
+    /// <remarks>
+    /// Return organization-scoped GCS storage roll-up across workspaces.  Aggregates :class:&#x60;GcsObjectStorageSnapshot&#x60; across every workspace in the organization. Access mirrors the org workspaces listing endpoint.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    pplx::task<std::shared_ptr<StorageMetricsSchema>> srcAppApiMetricsStorageGetOrganizationStorageMetrics(
+        utility::string_t uuid,
+        boost::optional<utility::datetime> startTimestamp,
+        boost::optional<utility::datetime> endTimestamp
+    ) const;
+    /// <summary>
+    /// Get Storage Metrics
+    /// </summary>
+    /// <remarks>
+    /// Return workspace-scoped GCS object storage roll-up.  Path params:     &#x60;&#x60;uuid&#x60;&#x60; — workspace UUID (or slug; resolved by the decorator).  Query params:     &#x60;&#x60;start_timestamp&#x60;&#x60; ISO-8601, inclusive lower bound on &#x60;&#x60;snapshot_time&#x60;&#x60;.     &#x60;&#x60;end_timestamp&#x60;&#x60;   ISO-8601, exclusive upper bound on &#x60;&#x60;snapshot_time&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    pplx::task<std::shared_ptr<StorageMetricsSchema>> srcAppApiMetricsStorageGetStorageMetrics(
+        utility::string_t uuid,
+        boost::optional<utility::datetime> startTimestamp,
+        boost::optional<utility::datetime> endTimestamp
     ) const;
     /// <summary>
     /// Cancel Mission Execution
@@ -3465,6 +3563,16 @@ public:
         std::shared_ptr<ReloadCapabilitiesBulkSchema> reloadCapabilitiesBulkSchema
     ) const;
     /// <summary>
+    /// Restore Twin
+    /// </summary>
+    /// <remarks>
+    /// Restore a soft-deleted twin by setting is_deleted&#x3D;False.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<TwinSchema>> srcAppApiTwinsRestoreTwin(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
     /// Sync Twin With Asset
     /// </summary>
     /// <remarks>
@@ -3820,7 +3928,7 @@ public:
     /// Delete Workflow
     /// </summary>
     /// <remarks>
-    /// Soft-delete a workflow.  The row is retained so that in-flight executions, audit logs, and references from edge deployments keep resolving; all read paths filter by &#x60;&#x60;is_deleted&#x3D;False&#x60;&#x60;.
+    /// Soft-delete a workflow and tombstone its executions.  The workflow row is retained so that in-flight executions, audit logs, and references from edge deployments keep resolving; all read paths filter by &#x60;&#x60;is_deleted&#x3D;False&#x60;&#x60;. Goes through &#x60;&#x60;Workflow.delete()&#x60;&#x60; so &#x60;&#x60;WorkflowExecution&#x60;&#x60; / &#x60;&#x60;WorkflowNodeExecution&#x60;&#x60; rows are soft-cascaded (without it the FK &#x60;&#x60;CASCADE&#x60;&#x60; would only fire on hard delete).
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<void> srcAppApiWorkflowsDeleteWorkflow(
@@ -4029,6 +4137,16 @@ public:
         boost::optional<utility::string_t> environmentUuid,
         boost::optional<utility::string_t> runOnEdge,
         boost::optional<utility::string_t> slug
+    ) const;
+    /// <summary>
+    /// Sync Workflow To Edge
+    /// </summary>
+    /// <remarks>
+    /// Force-publish &#x60;&#x60;sync_workflows&#x60;&#x60; MQTT to each edge hosting this workflow.  The activation off→on signal already covers the editor UX (workflows are locked while active; the deactivate→edit→activate cycle re-publishes naturally). This endpoint is the programmatic surface for CLI / SDK / scripted recovery that wants to republish without touching &#x60;&#x60;is_active&#x60;&#x60;, paired with the broader &#x60;&#x60;POST /twins/{uuid}/sync-workflows&#x60;&#x60; (twin-wide fan-out).  Status semantics:  - 200 + populated &#x60;&#x60;request_ids&#x60;&#x60; — at least one publish queued. - 200 + &#x60;&#x60;skipped_reason&#x60;&#x60; and empty body — declarative no-op   (cloud-only, no twin-bound nodes, or every reference filtered   as stale/cross-workspace). No broker call happened, so scripts   can treat this as \&quot;nothing to do\&quot;. - 200 + &#x60;&#x60;skipped_reason: \&quot;MQTT publish failed for N of M twins\&quot;&#x60;&#x60; —   partial broker failure; the queued subset still succeeded. - 500 — total broker failure: the publish was attempted for at   least one twin and every attempt raised. Matches   &#x60;&#x60;POST /twins/{uuid}/sync-workflows&#x60;&#x60;&#39;s \&quot;raise on broker error\&quot;   behaviour so retry/backoff logic can branch on status code.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<WorkflowSyncToEdgeResponseSchema>> srcAppApiWorkflowsSyncWorkflowToEdge(
+        utility::string_t uuid
     ) const;
     /// <summary>
     /// Trigger Workflow

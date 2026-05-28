@@ -24,6 +24,8 @@ CatalogSeedRequestSchema::CatalogSeedRequestSchema()
     m_Seed_controller_policiesIsSet = false;
     m_Seed_mlmodels = false;
     m_Seed_mlmodelsIsSet = false;
+    m_Seed_workflow_templates = false;
+    m_Seed_workflow_templatesIsSet = false;
 }
 
 CatalogSeedRequestSchema::~CatalogSeedRequestSchema()
@@ -53,6 +55,11 @@ web::json::value CatalogSeedRequestSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("seed_mlmodels"))] = ModelBase::toJson(m_Seed_mlmodels);
     }
+    if(m_Seed_workflow_templatesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("seed_workflow_templates"))] = ModelBase::toJson(m_Seed_workflow_templates);
+    }
     if(m_Controller_keys.has_value())
     {
         
@@ -62,6 +69,11 @@ web::json::value CatalogSeedRequestSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("mlmodel_keys"))] = ModelBase::toJson(m_Mlmodel_keys.get());
+    }
+    if(m_Workflow_template_keys.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("workflow_template_keys"))] = ModelBase::toJson(m_Workflow_template_keys.get());
     }
 
     return val;
@@ -103,6 +115,17 @@ bool CatalogSeedRequestSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("seed_workflow_templates"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("seed_workflow_templates")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setSeedWorkflowTemplates;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSeedWorkflowTemplates);
+            setSeedWorkflowTemplates(refVal_setSeedWorkflowTemplates);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("controller_keys"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("controller_keys")));
@@ -122,6 +145,17 @@ bool CatalogSeedRequestSchema::fromJson(const web::json::value& val)
             std::vector<utility::string_t> refVal_setMlmodelKeys;
             ok &= ModelBase::fromJson(fieldValue, refVal_setMlmodelKeys);
             setMlmodelKeys(refVal_setMlmodelKeys);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("workflow_template_keys"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("workflow_template_keys")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<utility::string_t> refVal_setWorkflowTemplateKeys;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setWorkflowTemplateKeys);
+            setWorkflowTemplateKeys(refVal_setWorkflowTemplateKeys);
             
         }
     }
@@ -147,6 +181,10 @@ void CatalogSeedRequestSchema::toMultipart(std::shared_ptr<MultipartFormData> mu
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("seed_mlmodels")), m_Seed_mlmodels));
     }
+    if(m_Seed_workflow_templatesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("seed_workflow_templates")), m_Seed_workflow_templates));
+    }
     if(m_Controller_keys.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controller_keys")), m_Controller_keys.get()));
@@ -154,6 +192,10 @@ void CatalogSeedRequestSchema::toMultipart(std::shared_ptr<MultipartFormData> mu
     if(m_Mlmodel_keys.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("mlmodel_keys")), m_Mlmodel_keys.get()));
+    }
+    if(m_Workflow_template_keys.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workflow_template_keys")), m_Workflow_template_keys.get()));
     }
 }
 
@@ -184,6 +226,12 @@ bool CatalogSeedRequestSchema::fromMultiPart(std::shared_ptr<MultipartFormData> 
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("seed_mlmodels"))), refVal_setSeedMlmodels );
         setSeedMlmodels(refVal_setSeedMlmodels);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("seed_workflow_templates"))))
+    {
+        bool refVal_setSeedWorkflowTemplates;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("seed_workflow_templates"))), refVal_setSeedWorkflowTemplates );
+        setSeedWorkflowTemplates(refVal_setSeedWorkflowTemplates);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("controller_keys"))))
     {
         std::vector<utility::string_t> refVal_setControllerKeys;
@@ -195,6 +243,12 @@ bool CatalogSeedRequestSchema::fromMultiPart(std::shared_ptr<MultipartFormData> 
         std::vector<utility::string_t> refVal_setMlmodelKeys;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("mlmodel_keys"))), refVal_setMlmodelKeys );
         setMlmodelKeys(refVal_setMlmodelKeys);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("workflow_template_keys"))))
+    {
+        std::vector<utility::string_t> refVal_setWorkflowTemplateKeys;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workflow_template_keys"))), refVal_setWorkflowTemplateKeys );
+        setWorkflowTemplateKeys(refVal_setWorkflowTemplateKeys);
     }
     return ok;
 }
@@ -260,6 +314,26 @@ void CatalogSeedRequestSchema::unsetSeed_mlmodels()
 {
     m_Seed_mlmodelsIsSet = false;
 }
+bool CatalogSeedRequestSchema::isSeedWorkflowTemplates() const
+{
+    return m_Seed_workflow_templates;
+}
+
+void CatalogSeedRequestSchema::setSeedWorkflowTemplates(bool value)
+{
+    m_Seed_workflow_templates = value;
+    m_Seed_workflow_templatesIsSet = true;
+}
+
+bool CatalogSeedRequestSchema::seedWorkflowTemplatesIsSet() const
+{
+    return m_Seed_workflow_templatesIsSet;
+}
+
+void CatalogSeedRequestSchema::unsetSeed_workflow_templates()
+{
+    m_Seed_workflow_templatesIsSet = false;
+}
 std::vector<utility::string_t> CatalogSeedRequestSchema::getControllerKeys() const
 {
     return m_Controller_keys.get();
@@ -299,6 +373,26 @@ bool CatalogSeedRequestSchema::mlmodelKeysIsSet() const
 void CatalogSeedRequestSchema::unsetMlmodel_keys()
 {
     m_Mlmodel_keys.reset();
+}
+std::vector<utility::string_t> CatalogSeedRequestSchema::getWorkflowTemplateKeys() const
+{
+    return m_Workflow_template_keys.get();
+}
+
+
+void CatalogSeedRequestSchema::setWorkflowTemplateKeys(const std::vector<utility::string_t>& value)
+{
+    m_Workflow_template_keys = value;
+}
+
+bool CatalogSeedRequestSchema::workflowTemplateKeysIsSet() const
+{
+    return m_Workflow_template_keys.has_value();
+}
+
+void CatalogSeedRequestSchema::unsetWorkflow_template_keys()
+{
+    m_Workflow_template_keys.reset();
 }
 
 }
