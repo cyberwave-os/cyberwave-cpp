@@ -1,6 +1,8 @@
 #pragma once
 
 #include "constants.h"
+#include <cyberwave/mqtt_interface.h>
+
 #include <atomic>
 #include <condition_variable>
 #include <cstdint>
@@ -207,6 +209,18 @@ public:
      * @param scale Scale structure
      */
     void update_twin_scale(const std::string& twin_uuid, const Scale& scale);
+
+    /**
+     * Publish raw GPS data for a twin.
+     *
+     * The GPS payload is stored as a ``twin_gps_update`` telemetry event
+     * in the backend database via Vector.  It does NOT update the twin's
+     * rendered position — use update_twin_position for that.
+     *
+     * @param twin_uuid UUID of the twin
+     * @param fix GPS fix data (latitude, longitude, altitude, satellite metadata)
+     */
+    void update_twin_gps(const std::string& twin_uuid, const GpsFix& fix);
 
     /**
      * Update joint state via MQTT.
@@ -432,6 +446,9 @@ private:
     std::mutex telemetry_mutex_;
     std::vector<std::string> twin_uuids_;
     std::vector<std::string> twin_uuids_with_telemetry_start_;
+
+    std::map<std::string, double> last_gps_update_times_;
+    static constexpr double kGpsMinUpdateIntervalSec = 0.5;
 };
 
 } // namespace cyberwave

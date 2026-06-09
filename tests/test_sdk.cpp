@@ -302,11 +302,14 @@ int main()
     if (allPassed && tests_failed == 0)
     {
         std::cout << COLOR_GREEN << "\n🎉 All tests passed!" << COLOR_RESET << std::endl;
-        return 0;
+        // _Exit skips static destructors. cpprestsdk's pplx::threadpool destructor
+        // crashes on ARM64 Linux due to its weaker memory model; the OS reclaims
+        // resources anyway so skipping destructors is safe for a test binary.
+        _Exit(0);
     }
     else
     {
         std::cout << COLOR_RED << "\n❌ Some tests failed!" << COLOR_RESET << std::endl;
-        return 1;
+        _Exit(1);
     }
 }

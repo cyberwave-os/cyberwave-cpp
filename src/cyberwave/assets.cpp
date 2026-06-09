@@ -384,7 +384,7 @@ Asset AssetManager::update(const std::string& asset_id, const std::string& name,
             body->setName(from_std(name));
         if (!description.empty())
             body->setDescription(from_std(description));
-        auto result = a->srcAppApiAssetsUpdateAsset(from_std(asset_id), body).get();
+        auto result = a->srcAppApiAssetsUpdateAsset(from_std(asset_id), body, boost::none).get();
         if (!result)
             throw CyberwaveError("Update asset returned no data");
         return Asset::from_schema(std::shared_ptr<void>(std::static_pointer_cast<void>(result)));

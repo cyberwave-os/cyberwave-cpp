@@ -228,6 +228,27 @@ Optional MQTT envs:
 - `CYBERWAVE_MQTT_PROTOCOL=5` to request MQTT v5
 - `CYBERWAVE_TWIN_UUID=<uuid>` to keep a default twin UUID in config
 
+#### GPS Telemetry
+
+Publish raw GNSS data for twins equipped with a GPS receiver. GPS data is
+stored in the backend as `twin_gps_update` telemetry events.
+
+```cpp
+cyberwave::GpsFix fix;
+fix.latitude  = 37.7749;
+fix.longitude = -122.4194;
+fix.altitude  = 10.5;
+fix.satellite_count = 12;
+fix.signal_level    = 5;
+fix.compass_heading = 270.0;
+
+// Via CyberwaveMQTTClient
+mqtt_client.update_twin_gps("twin-uuid", fix);
+
+// Via BaseEdgeNode helper
+node.publish_gps("twin-uuid", fix);
+```
+
 ### DataBus (filesystem backend)
 
 ```cpp

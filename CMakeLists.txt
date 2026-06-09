@@ -165,6 +165,9 @@ if(CYBERWAVE_ENABLE_WEBRTC)
         set(NO_EXAMPLES ON CACHE BOOL "" FORCE)
         set(NO_TESTS ON CACHE BOOL "" FORCE)
         set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+        # plog (bundled inside libdatachannel) uses cmake_minimum_required < 3.5,
+        # which CMake 3.30+ rejects unless this floor is set explicitly.
+        set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
         FetchContent_MakeAvailable(libdatachannel)
         target_link_libraries(cyberwave_sdk PRIVATE datachannel)
     endif()
