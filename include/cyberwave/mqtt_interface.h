@@ -11,11 +11,26 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <optional>
 #include <sstream>
 #include <string>
 
 namespace cyberwave
 {
+
+/** @brief Raw GNSS fix data for GPS telemetry publishing. */
+struct GpsFix
+{
+    double latitude = 0.0;
+    double longitude = 0.0;
+    double altitude = 0.0;
+    std::optional<int> satellite_count;
+    std::optional<int> signal_level;
+    std::optional<double> compass_heading;
+    std::optional<double> horizontal_accuracy;
+    std::optional<double> vertical_accuracy;
+    std::optional<std::string> fix_type;
+};
 
 /** @brief Callback type for subscribed MQTT JSON payloads. */
 using MqttMessageHandler = std::function<void(const std::string& json_payload)>;

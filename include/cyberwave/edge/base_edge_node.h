@@ -101,6 +101,9 @@ public:
     void publish_event(const std::string& twin_uuid, const std::string& event_type,
                        const std::map<std::string, std::string>& data);
 
+    /** @brief Publish raw GPS data for a twin.  Stored as a ``twin_gps_update`` event. */
+    void publish_gps(const std::string& twin_uuid, const GpsFix& fix);
+
     /** @brief Publish arbitrary telemetry data for a twin. */
     void publish_telemetry(const std::string& twin_uuid, const std::string& telemetry_type,
                            const std::map<std::string, std::string>& data);

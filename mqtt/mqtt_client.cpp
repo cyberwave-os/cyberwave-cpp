@@ -858,6 +858,37 @@ void CyberwaveMQTTClient::update_twin_scale(const std::string& twin_uuid, const 
     publish(topic, message);
 }
 
+void CyberwaveMQTTClient::update_twin_gps(const std::string& twin_uuid, const GpsFix& fix)
+{
+    if (fix.fix_type && *fix.fix_type == "none")
+        return;
+
+    const double now = now_seconds();
+    const auto last_it = last_gps_update_times_.find(twin_uuid);
+    if (last_it != last_gps_update_times_.end() && (now - last_it->second) < kGpsMinUpdateIntervalSec)
+        return;
+    last_gps_update_times_[twin_uuid] = now;
+
+    const std::string topic = with_prefix("cyberwave/twin/" + twin_uuid + "/gps");
+    json message = {
+        {"source_type", source_type_}, {"latitude", fix.latitude},   {"longitude", fix.longitude},
+        {"altitude", fix.altitude},    {"timestamp", now_seconds()},
+    };
+    if (fix.satellite_count)
+        message["satellite_count"] = *fix.satellite_count;
+    if (fix.signal_level)
+        message["signal_level"] = *fix.signal_level;
+    if (fix.compass_heading)
+        message["compass_heading"] = *fix.compass_heading;
+    if (fix.horizontal_accuracy)
+        message["horizontal_accuracy"] = *fix.horizontal_accuracy;
+    if (fix.vertical_accuracy)
+        message["vertical_accuracy"] = *fix.vertical_accuracy;
+    if (fix.fix_type)
+        message["fix_type"] = *fix.fix_type;
+    publish(topic, message);
+}
+
 void CyberwaveMQTTClient::update_joint_state(const std::string& twin_uuid, const std::string& joint_name,
                                              const JointState& state, const std::string& source_type)
 {

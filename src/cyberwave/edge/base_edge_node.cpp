@@ -242,6 +242,33 @@ void BaseEdgeNode::publish_health(const std::string& twin_uuid, const HealthStat
     mqtt->publish(prefix + "cyberwave/twin/" + twin_uuid + "/edge_health", json_serialize(j));
 }
 
+void BaseEdgeNode::publish_gps(const std::string& twin_uuid, const GpsFix& fix)
+{
+    auto mqtt = client_.get().mqtt_client();
+    if (!mqtt || !mqtt->is_connected())
+        return;
+    std::string prefix = topic_prefix_with(mqtt);
+    web::json::value j = web::json::value::object();
+    j[from_std("source_type")] = web::json::value::string(from_std(config_.source_type));
+    j[from_std("latitude")] = fix.latitude;
+    j[from_std("longitude")] = fix.longitude;
+    j[from_std("altitude")] = fix.altitude;
+    j[from_std("timestamp")] = timestamp_now();
+    if (fix.satellite_count)
+        j[from_std("satellite_count")] = *fix.satellite_count;
+    if (fix.signal_level)
+        j[from_std("signal_level")] = *fix.signal_level;
+    if (fix.compass_heading)
+        j[from_std("compass_heading")] = *fix.compass_heading;
+    if (fix.horizontal_accuracy)
+        j[from_std("horizontal_accuracy")] = *fix.horizontal_accuracy;
+    if (fix.vertical_accuracy)
+        j[from_std("vertical_accuracy")] = *fix.vertical_accuracy;
+    if (fix.fix_type)
+        j[from_std("fix_type")] = web::json::value::string(from_std(*fix.fix_type));
+    mqtt->publish(prefix + "cyberwave/twin/" + twin_uuid + "/gps", json_serialize(j));
+}
+
 void BaseEdgeNode::publish_event(const std::string& twin_uuid, const std::string& event_type,
                                  const std::map<std::string, std::string>& data)
 {
