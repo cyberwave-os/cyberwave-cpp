@@ -41,6 +41,24 @@ public:
         client_.update_joint_state(twin_uuid, joint_name, state);
     }
 
+    using IMqttClient::update_joint_state; // surface base overloads
+    void update_joint_state(const std::string& twin_uuid, const std::string& joint_name, double position_rad,
+                            std::optional<double> velocity, std::optional<double> effort, double timestamp = -1.0,
+                            const std::string& source_type = "") override
+    {
+        JointState state;
+        state.position = position_rad;
+        if (velocity.has_value())
+            state.velocity = *velocity;
+        if (effort.has_value())
+            state.effort = *effort;
+        const std::string st = source_type.empty() ? std::string{} : source_type;
+        if (timestamp >= 0.0)
+            client_.update_joint_state(twin_uuid, joint_name, state, timestamp, st);
+        else
+            client_.update_joint_state(twin_uuid, joint_name, state, st);
+    }
+
     void publish(const std::string& topic, const std::string& json_payload) override
     {
         client_.publish(topic, json_payload, 0);

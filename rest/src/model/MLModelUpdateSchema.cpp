@@ -129,6 +129,11 @@ web::json::value MLModelUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))] = ModelBase::toJson(m_Workspace_uuid.get());
     }
+    if(m_Weights_url.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("weights_url"))] = ModelBase::toJson(m_Weights_url.get());
+    }
 
     return val;
 }
@@ -345,6 +350,17 @@ bool MLModelUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("weights_url"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("weights_url")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setWeightsUrl;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setWeightsUrl);
+            setWeightsUrl(refVal_setWeightsUrl);
+            
+        }
+    }
     return ok;
 }
 
@@ -430,6 +446,10 @@ void MLModelUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipa
     if(m_Workspace_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workspace_uuid")), m_Workspace_uuid.get()));
+    }
+    if(m_Weights_url.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("weights_url")), m_Weights_url.get()));
     }
 }
 
@@ -555,6 +575,12 @@ bool MLModelUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multi
         utility::string_t refVal_setWorkspaceUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))), refVal_setWorkspaceUuid );
         setWorkspaceUuid(refVal_setWorkspaceUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("weights_url"))))
+    {
+        utility::string_t refVal_setWeightsUrl;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("weights_url"))), refVal_setWeightsUrl );
+        setWeightsUrl(refVal_setWeightsUrl);
     }
     return ok;
 }
@@ -933,6 +959,26 @@ bool MLModelUpdateSchema::workspaceUuidIsSet() const
 void MLModelUpdateSchema::unsetWorkspace_uuid()
 {
     m_Workspace_uuid.reset();
+}
+utility::string_t MLModelUpdateSchema::getWeightsUrl() const
+{
+    return m_Weights_url.get();
+}
+
+
+void MLModelUpdateSchema::setWeightsUrl(const utility::string_t& value)
+{
+    m_Weights_url = value;
+}
+
+bool MLModelUpdateSchema::weightsUrlIsSet() const
+{
+    return m_Weights_url.has_value();
+}
+
+void MLModelUpdateSchema::unsetWeights_url()
+{
+    m_Weights_url.reset();
 }
 
 }

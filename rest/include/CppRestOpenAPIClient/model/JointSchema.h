@@ -25,6 +25,7 @@
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include <vector>
+#include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
 namespace openapitools {
@@ -91,6 +92,11 @@ public:
     void unsetOrigin();
     void setOrigin(const std::map<utility::string_t, std::vector<double>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getMimic() const;
+    bool mimicIsSet() const;
+    void unsetMimic();
+    void setMimic(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
 
 protected:
     utility::string_t m_Name;
@@ -110,6 +116,8 @@ protected:
     boost::optional<std::map<utility::string_t, double>> m_Limits;
 
     boost::optional<std::map<utility::string_t, std::vector<double>>> m_Origin;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Mimic;
 
 };
 

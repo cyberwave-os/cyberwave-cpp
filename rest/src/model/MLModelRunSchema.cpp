@@ -124,6 +124,11 @@ web::json::value MLModelRunSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("robot_context"))] = ModelBase::toJson(m_Robot_context.get());
     }
+    if(m_Image_source.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("image_source"))] = ModelBase::toJson(m_Image_source.get());
+    }
 
     return val;
 }
@@ -329,6 +334,17 @@ bool MLModelRunSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("image_source"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("image_source")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setImageSource;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setImageSource);
+            setImageSource(refVal_setImageSource);
+            
+        }
+    }
     return ok;
 }
 
@@ -410,6 +426,10 @@ void MLModelRunSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart,
     if(m_Robot_context.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("robot_context")), m_Robot_context.get()));
+    }
+    if(m_Image_source.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("image_source")), m_Image_source.get()));
     }
 }
 
@@ -529,6 +549,12 @@ bool MLModelRunSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipar
         std::shared_ptr<RobotContextSchema> refVal_setRobotContext;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("robot_context"))), refVal_setRobotContext );
         setRobotContext(refVal_setRobotContext);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("image_source"))))
+    {
+        utility::string_t refVal_setImageSource;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("image_source"))), refVal_setImageSource );
+        setImageSource(refVal_setImageSource);
     }
     return ok;
 }
@@ -893,6 +919,26 @@ bool MLModelRunSchema::robotContextIsSet() const
 void MLModelRunSchema::unsetRobot_context()
 {
     m_Robot_context.reset();
+}
+utility::string_t MLModelRunSchema::getImageSource() const
+{
+    return m_Image_source.get();
+}
+
+
+void MLModelRunSchema::setImageSource(const utility::string_t& value)
+{
+    m_Image_source = value;
+}
+
+bool MLModelRunSchema::imageSourceIsSet() const
+{
+    return m_Image_source.has_value();
+}
+
+void MLModelRunSchema::unsetImage_source()
+{
+    m_Image_source.reset();
 }
 
 }

@@ -23,6 +23,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/ControllerRefSchema.h"
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include "CppRestOpenAPIClient/AnyType.h"
@@ -32,6 +33,7 @@ namespace openapitools {
 namespace client {
 namespace model {
 
+class ControllerRefSchema;
 
 
 /// <summary>
@@ -75,6 +77,21 @@ public:
     const utility::string_t fromKindEnum(const KindEnum value) const;
 
 
+    utility::string_t getActionId() const;
+    bool actionIdIsSet() const;
+    void unsetAction_id();
+    void setActionId(const utility::string_t& value);
+
+    utility::string_t getDisplayLabel() const;
+    bool displayLabelIsSet() const;
+    void unsetDisplay_label();
+    void setDisplayLabel(const utility::string_t& value);
+
+    utility::string_t getPayloadSummary() const;
+    bool payloadSummaryIsSet() const;
+    void unsetPayload_summary();
+    void setPayloadSummary(const utility::string_t& value);
+
     KindEnum getKind() const;
     bool kindIsSet() const;
     void unsetKind();
@@ -84,6 +101,11 @@ public:
     bool dispatchabilityIsSet() const;
     void unsetDispatchability();
     void setDispatchability(const utility::string_t& value);
+
+    utility::string_t getExecutionChannel() const;
+    bool executionChannelIsSet() const;
+    void unsetExecution_channel();
+    void setExecutionChannel(const utility::string_t& value);
 
     utility::string_t getTransport() const;
     bool transportIsSet() const;
@@ -105,6 +127,16 @@ public:
     void unsetRequires_confirmation();
     void setRequiresConfirmation(bool value);
 
+    std::shared_ptr<ControllerRefSchema> getControllerRef() const;
+    bool controllerRefIsSet() const;
+    void unsetController_ref();
+    void setControllerRef(const std::shared_ptr<ControllerRefSchema>& value);
+
+    std::shared_ptr<ControllerRefSchema> getPolicyRef() const;
+    bool policyRefIsSet() const;
+    void unsetPolicy_ref();
+    void setPolicyRef(const std::shared_ptr<ControllerRefSchema>& value);
+
     utility::string_t getControllerPolicyUuid() const;
     bool controllerPolicyUuidIsSet() const;
     void unsetController_policy_uuid();
@@ -122,11 +154,19 @@ public:
 
 
 protected:
+    boost::optional<utility::string_t> m_Action_id;
+
+    boost::optional<utility::string_t> m_Display_label;
+
+    boost::optional<utility::string_t> m_Payload_summary;
+
     KindEnum m_Kind;
     bool m_KindIsSet;
 
     utility::string_t m_Dispatchability;
     bool m_DispatchabilityIsSet;
+
+    boost::optional<utility::string_t> m_Execution_channel;
 
     boost::optional<utility::string_t> m_Transport;
 
@@ -138,6 +178,10 @@ protected:
 
     bool m_Requires_confirmation;
     bool m_Requires_confirmationIsSet;
+
+    boost::optional<std::shared_ptr<ControllerRefSchema>> m_Controller_ref;
+
+    boost::optional<std::shared_ptr<ControllerRefSchema>> m_Policy_ref;
 
     boost::optional<utility::string_t> m_Controller_policy_uuid;
 

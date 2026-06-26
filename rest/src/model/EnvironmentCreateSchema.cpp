@@ -93,6 +93,16 @@ web::json::value EnvironmentCreateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("is_template"))] = ModelBase::toJson(m_Is_template.get());
     }
+    if(m_Twin_asset_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("twin_asset_uuid"))] = ModelBase::toJson(m_Twin_asset_uuid.get());
+    }
+    if(m_Mlmodel_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("mlmodel_uuid"))] = ModelBase::toJson(m_Mlmodel_uuid.get());
+    }
 
     return val;
 }
@@ -221,6 +231,28 @@ bool EnvironmentCreateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("twin_asset_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("twin_asset_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setTwinAssetUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTwinAssetUuid);
+            setTwinAssetUuid(refVal_setTwinAssetUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("mlmodel_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("mlmodel_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setMlmodelUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setMlmodelUuid);
+            setMlmodelUuid(refVal_setMlmodelUuid);
+            
+        }
+    }
     return ok;
 }
 
@@ -274,6 +306,14 @@ void EnvironmentCreateSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     if(m_Is_template.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("is_template")), m_Is_template.get()));
+    }
+    if(m_Twin_asset_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("twin_asset_uuid")), m_Twin_asset_uuid.get()));
+    }
+    if(m_Mlmodel_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("mlmodel_uuid")), m_Mlmodel_uuid.get()));
     }
 }
 
@@ -351,6 +391,18 @@ bool EnvironmentCreateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
         bool refVal_setIsTemplate;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("is_template"))), refVal_setIsTemplate );
         setIsTemplate(refVal_setIsTemplate);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("twin_asset_uuid"))))
+    {
+        utility::string_t refVal_setTwinAssetUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("twin_asset_uuid"))), refVal_setTwinAssetUuid );
+        setTwinAssetUuid(refVal_setTwinAssetUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("mlmodel_uuid"))))
+    {
+        utility::string_t refVal_setMlmodelUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("mlmodel_uuid"))), refVal_setMlmodelUuid );
+        setMlmodelUuid(refVal_setMlmodelUuid);
     }
     return ok;
 }
@@ -576,6 +628,46 @@ bool EnvironmentCreateSchema::isTemplateIsSet() const
 void EnvironmentCreateSchema::unsetIs_template()
 {
     m_Is_template.reset();
+}
+utility::string_t EnvironmentCreateSchema::getTwinAssetUuid() const
+{
+    return m_Twin_asset_uuid.get();
+}
+
+
+void EnvironmentCreateSchema::setTwinAssetUuid(const utility::string_t& value)
+{
+    m_Twin_asset_uuid = value;
+}
+
+bool EnvironmentCreateSchema::twinAssetUuidIsSet() const
+{
+    return m_Twin_asset_uuid.has_value();
+}
+
+void EnvironmentCreateSchema::unsetTwin_asset_uuid()
+{
+    m_Twin_asset_uuid.reset();
+}
+utility::string_t EnvironmentCreateSchema::getMlmodelUuid() const
+{
+    return m_Mlmodel_uuid.get();
+}
+
+
+void EnvironmentCreateSchema::setMlmodelUuid(const utility::string_t& value)
+{
+    m_Mlmodel_uuid = value;
+}
+
+bool EnvironmentCreateSchema::mlmodelUuidIsSet() const
+{
+    return m_Mlmodel_uuid.has_value();
+}
+
+void EnvironmentCreateSchema::unsetMlmodel_uuid()
+{
+    m_Mlmodel_uuid.reset();
 }
 
 }

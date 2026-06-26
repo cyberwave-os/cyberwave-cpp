@@ -78,6 +78,11 @@ public:
     void unsetTarget_twin_uuid();
     void setTargetTwinUuid(const utility::string_t& value);
 
+    utility::string_t getExecutionChannel() const;
+    bool executionChannelIsSet() const;
+    void unsetExecution_channel();
+    void setExecutionChannel(const utility::string_t& value);
+
     utility::string_t getTransport() const;
     bool transportIsSet() const;
     void unsetTransport();
@@ -100,6 +105,8 @@ protected:
 
     utility::string_t m_Target_twin_uuid;
     bool m_Target_twin_uuidIsSet;
+
+    boost::optional<utility::string_t> m_Execution_channel;
 
     boost::optional<utility::string_t> m_Transport;
 

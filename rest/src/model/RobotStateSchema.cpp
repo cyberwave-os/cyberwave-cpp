@@ -54,6 +54,11 @@ web::json::value RobotStateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("ee_pose"))] = ModelBase::toJson(m_Ee_pose.get());
     }
+    if(m_Eef_pose.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("eef_pose"))] = ModelBase::toJson(m_Eef_pose.get());
+    }
     if(m_Gripper_position.has_value())
     {
         
@@ -115,6 +120,17 @@ bool RobotStateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("eef_pose"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("eef_pose")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<double> refVal_setEefPose;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setEefPose);
+            setEefPose(refVal_setEefPose);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("gripper_position"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("gripper_position")));
@@ -163,6 +179,10 @@ void RobotStateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart,
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("ee_pose")), m_Ee_pose.get()));
     }
+    if(m_Eef_pose.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("eef_pose")), m_Eef_pose.get()));
+    }
     if(m_Gripper_position.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("gripper_position")), m_Gripper_position.get()));
@@ -205,6 +225,12 @@ bool RobotStateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipar
         std::shared_ptr<CameraPoseSchema> refVal_setEePose;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("ee_pose"))), refVal_setEePose );
         setEePose(refVal_setEePose);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("eef_pose"))))
+    {
+        std::vector<double> refVal_setEefPose;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("eef_pose"))), refVal_setEefPose );
+        setEefPose(refVal_setEefPose);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("gripper_position"))))
     {
@@ -299,6 +325,25 @@ bool RobotStateSchema::eePoseIsSet() const
 void RobotStateSchema::unsetEe_pose()
 {
     m_Ee_pose.reset();
+}
+std::vector<double> RobotStateSchema::getEefPose() const
+{
+    return m_Eef_pose.get();
+}
+
+void RobotStateSchema::setEefPose(std::vector<double> value)
+{
+    m_Eef_pose = value;
+}
+
+bool RobotStateSchema::eefPoseIsSet() const
+{
+    return m_Eef_pose.has_value();
+}
+
+void RobotStateSchema::unsetEef_pose()
+{
+    m_Eef_pose.reset();
 }
 double RobotStateSchema::getGripperPosition() const
 {

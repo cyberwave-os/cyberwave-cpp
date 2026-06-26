@@ -240,6 +240,24 @@ static void test_assets_rebuild_universal_schema_throws_without_api_key()
     assert(threw);
 }
 
+static void test_assets_get_controller_setup_throws_without_api_key()
+{
+    Config cfg;
+    cfg.api_key = "";
+    Client c(cfg);
+    AssetManager a = c.assets();
+    bool threw = false;
+    try
+    {
+        a.get_controller_setup("some-uuid");
+    }
+    catch (const CyberwaveError&)
+    {
+        threw = true;
+    }
+    assert(threw);
+}
+
 static void test_assets_get_by_registry_id_falls_back_on_not_found()
 {
     std::mutex mutex;
@@ -331,6 +349,107 @@ static void test_assets_get_by_registry_id_does_not_mask_non_not_found_errors()
 
     assert(threw);
     assert(!listed_assets);
+}
+
+static void test_assets_get_controller_setup_uses_backend_resolved_view()
+{
+    std::string auth_header;
+
+    TestHttpServer server(
+        [&](web::http::http_request request)
+        {
+            const std::string path = to_std(request.relative_uri().path());
+            const auto auth = request.headers().find(to_utility("Authorization"));
+            auth_header = auth == request.headers().end() ? "" : to_std(auth->second);
+
+            if (path == "/api/v1/assets/asset-1/controller-setup")
+            {
+                request.reply(web::http::status_codes::OK,
+                              to_utility("{\"asset_uuid\":\"asset-1\","
+                                         "\"controller_configs\":[{"
+                                         "\"id\":\"keyboard\","
+                                         "\"controller_key\":\"controller:keyboard-locomotion:v1\","
+                                         "\"label\":\"Keyboard\","
+                                         "\"is_default\":true,"
+                                         "\"mode\":\"locomotion\"}],"
+                                         "\"primary_controller_key\":\"controller:keyboard-locomotion:v1\","
+                                         "\"runtime_policies\":[{"
+                                         "\"key\":\"physical:edge:controller:edge-current-policy:v1\","
+                                         "\"runtime_kind\":\"physical\","
+                                         "\"backend\":\"edge\","
+                                         "\"controller_key\":\"controller:edge-current-policy:v1\","
+                                         "\"policy_ref\":{\"kind\":\"catalog_seed_id\","
+                                         "\"value\":\"controller:edge-current-policy:v1\"},"
+                                         "\"controller_policy_uuid\":\"policy-uuid\","
+                                         "\"available\":true,"
+                                         "\"runtime_enabled\":true,"
+                                         "\"runtime_target\":{"
+                                         "\"enabled\":true,"
+                                         "\"runtime_kind\":\"physical\","
+                                         "\"backend\":\"edge\","
+                                         "\"adapter\":\"cmd_vel_bridge\","
+                                         "\"source_type\":\"tele\","
+                                         "\"safety_level\":\"operator\","
+                                         "\"input_contract\":\"locomotion.velocity_command.v1\","
+                                         "\"output_contract\":\"locomotion.cmd_vel.v1\"},"
+                                         "\"artifact_readiness\":\"not_required\"}],"
+                                         "\"runtime_options\":[],"
+                                         "\"recommended_setup\":{"
+                                         "\"primary_controller_key\":\"controller:keyboard-locomotion:v1\","
+                                         "\"primary_policy_ref\":{\"kind\":\"catalog_seed_id\","
+                                         "\"value\":\"controller:keyboard-locomotion:v1\"},"
+                                         "\"default_policy_refs\":{\"physical\":{\"edge\":{"
+                                         "\"kind\":\"catalog_seed_id\","
+                                         "\"value\":\"controller:keyboard-locomotion:v1\"}}}}}"),
+                              to_utility("application/json"));
+                return;
+            }
+
+            request.reply(web::http::status_codes::NotFound, to_utility("not found"));
+        });
+
+    Config cfg;
+    cfg.base_url = server.base_url();
+    cfg.api_key = "token";
+    Client client(cfg);
+    AssetManager assets = client.assets();
+
+    const std::string setup = assets.get_controller_setup("asset-1");
+    const auto parsed = web::json::value::parse(to_utility(setup));
+    assert(parsed.at(to_utility("asset_uuid")).as_string() == to_utility("asset-1"));
+    assert(parsed.at(to_utility("runtime_policies"))
+               .as_array()
+               .at(0)
+               .at(to_utility("policy_ref"))
+               .at(to_utility("kind"))
+               .as_string() == to_utility("catalog_seed_id"));
+    assert(parsed.at(to_utility("recommended_setup"))
+               .at(to_utility("default_policy_refs"))
+               .at(to_utility("physical"))
+               .at(to_utility("edge"))
+               .at(to_utility("value"))
+               .as_string() == to_utility("controller:keyboard-locomotion:v1"));
+
+    const AssetControllerSetupView view = assets.get_controller_setup_view("asset-1");
+    assert(view.asset_uuid() == "asset-1");
+    assert(view.primary_controller_key() == "controller:keyboard-locomotion:v1");
+    assert(view.runtime_policy_count() == 1);
+    const PolicyRefPayload primary_ref = view.primary_policy_ref();
+    assert(primary_ref.kind == "catalog_seed_id");
+    assert(primary_ref.value == "controller:keyboard-locomotion:v1");
+    const PolicyRefPayload default_ref = view.default_policy_ref("physical", "edge");
+    assert(default_ref.kind == "catalog_seed_id");
+    assert(default_ref.value == "controller:edge-current-policy:v1");
+    const ControlRuntimeTargetPayload target = view.runtime_target("physical", "edge");
+    assert(target.enabled);
+    assert(target.runtime_kind == "physical");
+    assert(target.backend == "edge");
+    assert(target.adapter == "cmd_vel_bridge");
+    assert(target.source_type == "tele");
+    assert(target.safety_level == "operator");
+    assert(target.input_contract == "locomotion.velocity_command.v1");
+    assert(target.output_contract == "locomotion.cmd_vel.v1");
+    assert(auth_header == "Bearer token");
 }
 
 static void test_assets_upload_glb_falls_back_to_attachment_on_payload_too_large()
@@ -519,8 +638,10 @@ int main()
     test_assets_get_universal_schema_throws_without_api_key();
     test_assets_patch_universal_schema_throws_without_api_key();
     test_assets_rebuild_universal_schema_throws_without_api_key();
+    test_assets_get_controller_setup_throws_without_api_key();
     test_assets_get_by_registry_id_falls_back_on_not_found();
     test_assets_get_by_registry_id_does_not_mask_non_not_found_errors();
+    test_assets_get_controller_setup_uses_backend_resolved_view();
     test_assets_upload_glb_falls_back_to_attachment_on_payload_too_large();
     test_assets_upload_glb_uses_attachment_flow_for_large_files();
     return 0;

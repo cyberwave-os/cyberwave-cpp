@@ -25,14 +25,12 @@
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include "CppRestOpenAPIClient/AnyType.h"
-#include "CppRestOpenAPIClient/model/MotionPlanSchema.h"
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
-class MotionPlanSchema;
 
 
 class  TwinActionStatusSchema
@@ -73,10 +71,10 @@ public:
     void unsetMessage();
     void setMessage(const utility::string_t& value);
 
-    std::shared_ptr<MotionPlanSchema> getPlan() const;
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getPlan() const;
     bool planIsSet() const;
     void unsetPlan();
-    void setPlan(const std::shared_ptr<MotionPlanSchema>& value);
+    void setPlan(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
     utility::string_t getResolvedScope() const;
     bool resolvedScopeIsSet() const;
@@ -103,7 +101,7 @@ protected:
 
     boost::optional<utility::string_t> m_Message;
 
-    boost::optional<std::shared_ptr<MotionPlanSchema>> m_Plan;
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Plan;
 
     boost::optional<utility::string_t> m_Resolved_scope;
 

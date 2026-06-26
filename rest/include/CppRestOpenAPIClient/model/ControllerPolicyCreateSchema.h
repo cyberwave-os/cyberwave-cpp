@@ -97,6 +97,11 @@ public:
     void unsetAsset_uuids();
     void setAssetUuids(const std::vector<utility::string_t>& value);
 
+    utility::string_t getDevice() const;
+    bool deviceIsSet() const;
+    void unsetDevice();
+    void setDevice(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Name;
@@ -119,6 +124,8 @@ protected:
 
     std::vector<utility::string_t> m_Asset_uuids;
     bool m_Asset_uuidsIsSet;
+
+    boost::optional<utility::string_t> m_Device;
 
 };
 

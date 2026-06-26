@@ -25,6 +25,9 @@
 #include "CppRestOpenAPIClient/model/AlertMetricsSection.h"
 #include "CppRestOpenAPIClient/model/WorkflowMetricsSection.h"
 #include <cpprest/details/basic_types.h>
+#include "CppRestOpenAPIClient/model/EventCreditsDayBucket.h"
+#include "CppRestOpenAPIClient/model/EventMetricsTotals.h"
+#include <vector>
 #include "CppRestOpenAPIClient/model/MetricsWindowSchema.h"
 #include "CppRestOpenAPIClient/model/TelemetryMetricsSection.h"
 
@@ -37,6 +40,8 @@ class MetricsWindowSchema;
 class TelemetryMetricsSection;
 class WorkflowMetricsSection;
 class AlertMetricsSection;
+class EventMetricsTotals;
+class EventCreditsDayBucket;
 
 
 /// <summary>
@@ -100,6 +105,16 @@ public:
     void unsetAlerts();
     void setAlerts(const std::shared_ptr<AlertMetricsSection>& value);
 
+    std::shared_ptr<EventMetricsTotals> getTotals() const;
+    bool totalsIsSet() const;
+    void unsetTotals();
+    void setTotals(const std::shared_ptr<EventMetricsTotals>& value);
+
+    std::vector<std::shared_ptr<EventCreditsDayBucket>> getCreditsByDay() const;
+    bool creditsByDayIsSet() const;
+    void unsetCredits_by_day();
+    void setCreditsByDay(const std::vector<std::shared_ptr<EventCreditsDayBucket>>& value);
+
 
 protected:
     boost::optional<utility::string_t> m_Workspace_uuid;
@@ -120,6 +135,12 @@ protected:
 
     std::shared_ptr<AlertMetricsSection> m_Alerts;
     bool m_AlertsIsSet;
+
+    std::shared_ptr<EventMetricsTotals> m_Totals;
+    bool m_TotalsIsSet;
+
+    std::vector<std::shared_ptr<EventCreditsDayBucket>> m_Credits_by_day;
+    bool m_Credits_by_dayIsSet;
 
 };
 

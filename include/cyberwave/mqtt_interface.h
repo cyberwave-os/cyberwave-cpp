@@ -98,10 +98,14 @@ struct IMqttClient
      * Rich single-joint update: position + optional velocity, effort, timestamp, source_type.
      * Default delegates to the pure-virtual 3-arg update_joint_state().
      * Mirrors Python MqttClient.update_joint_state() (single joint).
+     *
+     * ``velocity`` / ``effort`` use ``std::optional<double>``. ``std::nullopt``
+     * means "channel not commanded/measured" and the field MUST be omitted on
+     * the wire. An explicit ``0.0`` is a real command and is preserved.
      */
     virtual void update_joint_state(const std::string& twin_uuid, const std::string& joint_name, double position_rad,
-                                    double /*velocity*/, double /*effort*/, double /*timestamp*/ = -1.0,
-                                    const std::string& /*source_type*/ = "")
+                                    std::optional<double> /*velocity*/, std::optional<double> /*effort*/,
+                                    double /*timestamp*/ = -1.0, const std::string& /*source_type*/ = "")
     {
         update_joint_state(twin_uuid, joint_name, position_rad);
     }

@@ -6,10 +6,12 @@
 #include "cyberwave/exceptions.h"
 #include "cyberwave/joints.h"
 #include "cyberwave/keyboard.h"
+#include "cyberwave/locomotion_contracts.h"
 #include "cyberwave/motion.h"
 #include "cyberwave/mqtt_interface.h"
 #include "cyberwave/navigation.h"
 #include "cyberwave/twins.h"
+#include "rest_helpers.h"
 #include "source_type_utils.h"
 
 #include "CppRestOpenAPIClient/AnyType.h"
@@ -66,6 +68,98 @@ bool json_bool_or_false(const web::json::value& value)
     std::transform(normalized.begin(), normalized.end(), normalized.begin(),
                    [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
     return normalized == "1" || normalized == "true" || normalized == "yes" || normalized == "on";
+}
+
+std::string dispatch_mode_for_client(const Client& client, const std::string& mode)
+{
+    std::string normalized = mode.empty() ? client.config().runtime_mode : mode;
+    std::transform(normalized.begin(), normalized.end(), normalized.begin(),
+                   [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+    if (normalized == "simulation" || normalized == "sim" || normalized == "sim_tele")
+        return "simulation";
+    if (normalized == "preview" || normalized == "playground" || normalized == "kinematic")
+        return "preview";
+    if (normalized == "live" || normalized == "real-world" || normalized == "real" || normalized == "tele" ||
+        normalized == "teleoperation")
+        return "live";
+    throw CyberwaveError("Unknown control mode '" + mode + "'. Use 'live', 'simulation', or 'preview'.");
+}
+
+web::json::value policy_ref_json(const PolicyRefPayload& policy_ref)
+{
+    if (policy_ref.empty())
+        throw CyberwaveError("PolicyRef requires both kind and value");
+    web::json::value value = web::json::value::object();
+    value[detail::to_utility("kind")] = web::json::value::string(detail::to_utility(policy_ref.kind));
+    value[detail::to_utility("value")] = web::json::value::string(detail::to_utility(policy_ref.value));
+    return value;
+}
+
+std::string dispatch_velocity_impl(const Twin& twin, const LocomotionVelocityCommand& command, const std::string& mode,
+                                   const std::string& simulation_backend, const std::string& controller_policy_uuid,
+                                   const PolicyRefPayload* policy_ref)
+{
+    if (!twin.can_locomote())
+        throw CyberwaveError("dispatch_velocity() requires a twin with locomotion capabilities");
+
+    const std::string environment_uuid =
+        !twin.environment_id().empty() ? twin.environment_id() : twin.client().config().environment_id;
+    if (environment_uuid.empty())
+        throw CyberwaveError("Backend velocity dispatch requires the twin environment_uuid or client environment_id");
+
+    validate_locomotion_velocity_command(command, true);
+
+    const std::string dispatch_mode = dispatch_mode_for_client(twin.client(), mode);
+    const std::string runtime_kind = dispatch_mode == "live" ? "physical" : "simulation";
+    const bool include_simulation_backend = runtime_kind == "simulation" && !simulation_backend.empty();
+
+    web::json::value payload = web::json::value::object();
+    payload[detail::to_utility("velocity_command")] = web::json::value::parse(detail::to_utility(command.to_json()));
+    payload[detail::to_utility("runtime_kind")] = web::json::value::string(detail::to_utility(runtime_kind));
+    if (include_simulation_backend)
+    {
+        payload[detail::to_utility("simulation_backend")] =
+            web::json::value::string(detail::to_utility(simulation_backend));
+    }
+    if (policy_ref)
+    {
+        payload[detail::to_utility("policy_ref")] = policy_ref_json(*policy_ref);
+    }
+    if (!controller_policy_uuid.empty())
+    {
+        payload[detail::to_utility("controller_policy_uuid")] =
+            web::json::value::string(detail::to_utility(controller_policy_uuid));
+    }
+
+    web::json::value action = web::json::value::object();
+    action[detail::to_utility("kind")] = web::json::value::string(detail::to_utility("controller_policy_execute"));
+    action[detail::to_utility("target_twin_uuid")] = web::json::value::string(detail::to_utility(twin.uuid()));
+    action[detail::to_utility("payload")] = payload;
+    if (policy_ref)
+    {
+        action[detail::to_utility("policy_ref")] = policy_ref_json(*policy_ref);
+    }
+    if (!controller_policy_uuid.empty())
+    {
+        action[detail::to_utility("controller_policy_uuid")] =
+            web::json::value::string(detail::to_utility(controller_policy_uuid));
+    }
+
+    web::json::value request_body = web::json::value::object();
+    request_body[detail::to_utility("action")] = action;
+    request_body[detail::to_utility("mode")] = web::json::value::string(detail::to_utility(dispatch_mode));
+    request_body[detail::to_utility("confirmed")] = web::json::value::boolean(dispatch_mode == "live");
+    if (include_simulation_backend)
+    {
+        request_body[detail::to_utility("simulation_backend")] =
+            web::json::value::string(detail::to_utility(simulation_backend));
+    }
+
+    const auto response = detail::request_raw(
+        twin.client(),
+        detail::to_utility("/api/v1/agents/environments/" + environment_uuid + "/control/actions/dispatch"),
+        web::http::methods::POST, {}, request_body);
+    return response.text();
 }
 
 CapabilityFlags
@@ -268,7 +362,8 @@ void Twin::edit_scale(double /*x*/, double /*y*/, double /*z*/)
 
 std::map<std::string, double> Twin::get_joint_states() const { return client().twins().get_joint_states(uuid_); }
 
-void Twin::update_joint_state(const std::string& joint_name, double position, double velocity, double effort) const
+void Twin::update_joint_state(const std::string& joint_name, double position, std::optional<double> velocity,
+                              std::optional<double> effort) const
 {
     client().twins().update_joint_state(uuid_, joint_name, position, velocity, effort);
 }
@@ -495,6 +590,65 @@ void Twin::turn_right(double angle_rad, const std::string& source_type)
         << "\",\"command\":\"turn_right\",\"data\":{\"linear_x\":0,\"angular_z\":" << -angle_rad
         << "},\"timestamp\":" << ts << "}";
     mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
+}
+
+std::string Twin::dispatch_velocity(const LocomotionVelocityCommand& command, const std::string& mode,
+                                    const std::string& simulation_backend,
+                                    const std::string& controller_policy_uuid) const
+{
+    return dispatch_velocity_impl(*this, command, mode, simulation_backend, controller_policy_uuid, nullptr);
+}
+
+std::string Twin::dispatch_velocity(const LocomotionVelocityCommand& command, const PolicyRefPayload& policy_ref,
+                                    const std::string& mode, const std::string& simulation_backend) const
+{
+    return dispatch_velocity_impl(*this, command, mode, simulation_backend, "", &policy_ref);
+}
+
+std::string Twin::set_velocity(double linear_x, double linear_y, double angular_z, int duration_ms,
+                               const std::string& gait, const std::string& origin, const std::string& mode,
+                               const std::string& simulation_backend, const std::string& controller_policy_uuid) const
+{
+    return dispatch_velocity(
+        build_locomotion_velocity_command(linear_x, linear_y, angular_z, duration_ms, gait, origin), mode,
+        simulation_backend, controller_policy_uuid);
+}
+
+std::string Twin::drive_forward(double speed, int duration_ms, const std::string& mode,
+                                const std::string& simulation_backend, const std::string& controller_policy_uuid) const
+{
+    return set_velocity(speed, 0.0, 0.0, duration_ms, "walk", "teleop", mode, simulation_backend,
+                        controller_policy_uuid);
+}
+
+std::string Twin::drive_backward(double speed, int duration_ms, const std::string& mode,
+                                 const std::string& simulation_backend, const std::string& controller_policy_uuid) const
+{
+    return set_velocity(-speed, 0.0, 0.0, duration_ms, "walk", "teleop", mode, simulation_backend,
+                        controller_policy_uuid);
+}
+
+std::string Twin::turn_velocity_left(double angular, int duration_ms, const std::string& mode,
+                                     const std::string& simulation_backend,
+                                     const std::string& controller_policy_uuid) const
+{
+    return set_velocity(0.0, 0.0, angular, duration_ms, "walk", "teleop", mode, simulation_backend,
+                        controller_policy_uuid);
+}
+
+std::string Twin::turn_velocity_right(double angular, int duration_ms, const std::string& mode,
+                                      const std::string& simulation_backend,
+                                      const std::string& controller_policy_uuid) const
+{
+    return set_velocity(0.0, 0.0, -angular, duration_ms, "walk", "teleop", mode, simulation_backend,
+                        controller_policy_uuid);
+}
+
+std::string Twin::stop_velocity(const std::string& mode, const std::string& simulation_backend,
+                                const std::string& controller_policy_uuid) const
+{
+    return dispatch_velocity(stop_locomotion_velocity_command("teleop"), mode, simulation_backend,
+                             controller_policy_uuid);
 }
 
 void Twin::takeoff(double altitude_m)

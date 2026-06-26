@@ -60,10 +60,18 @@ public:
     void unsetJoint_states();
     void setJointStates(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    bool isAsHomePosition() const;
+    bool asHomePositionIsSet() const;
+    void unsetAs_home_position();
+    void setAsHomePosition(bool value);
+
 
 protected:
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Joint_states;
     bool m_Joint_statesIsSet;
+
+    bool m_As_home_position;
+    bool m_As_home_positionIsSet;
 
 };
 

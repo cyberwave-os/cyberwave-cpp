@@ -214,6 +214,11 @@ web::json::value TwinSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("capabilities"))] = ModelBase::toJson(m_Capabilities);
     }
+    if(m_Universal_schema.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("universal_schema"))] = ModelBase::toJson(m_Universal_schema.get());
+    }
     if(m_Controller_policy_uuid.has_value())
     {
         
@@ -571,6 +576,17 @@ bool TwinSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("universal_schema"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("universal_schema")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setUniversalSchema;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setUniversalSchema);
+            setUniversalSchema(refVal_setUniversalSchema);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid")));
@@ -846,6 +862,10 @@ void TwinSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("capabilities")), m_Capabilities));
     }
+    if(m_Universal_schema.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("universal_schema")), m_Universal_schema.get()));
+    }
     if(m_Controller_policy_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid")), m_Controller_policy_uuid.get()));
@@ -1066,6 +1086,12 @@ bool TwinSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setCapabilities;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("capabilities"))), refVal_setCapabilities );
         setCapabilities(refVal_setCapabilities);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("universal_schema"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setUniversalSchema;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("universal_schema"))), refVal_setUniversalSchema );
+        setUniversalSchema(refVal_setUniversalSchema);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid"))))
     {
@@ -1669,6 +1695,26 @@ bool TwinSchema::capabilitiesIsSet() const
 void TwinSchema::unsetCapabilities()
 {
     m_CapabilitiesIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> TwinSchema::getUniversalSchema() const
+{
+    return m_Universal_schema.get();
+}
+
+
+void TwinSchema::setUniversalSchema(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Universal_schema = value;
+}
+
+bool TwinSchema::universalSchemaIsSet() const
+{
+    return m_Universal_schema.has_value();
+}
+
+void TwinSchema::unsetUniversal_schema()
+{
+    m_Universal_schema.reset();
 }
 utility::string_t TwinSchema::getControllerPolicyUuid() const
 {

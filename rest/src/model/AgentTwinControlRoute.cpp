@@ -118,6 +118,16 @@ web::json::value AgentTwinControlRoute::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("developer_label"))] = ModelBase::toJson(m_Developer_label.get());
     }
+    if(m_Configuration_hint.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("configuration_hint"))] = ModelBase::toJson(m_Configuration_hint.get());
+    }
+    if(m_Configuration_target.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("configuration_target"))] = ModelBase::toJson(m_Configuration_target.get());
+    }
     if(m_Setup_hint.has_value())
     {
         
@@ -285,6 +295,28 @@ bool AgentTwinControlRoute::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("configuration_hint"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("configuration_hint")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setConfigurationHint;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setConfigurationHint);
+            setConfigurationHint(refVal_setConfigurationHint);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("configuration_target"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("configuration_target")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setConfigurationTarget;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setConfigurationTarget);
+            setConfigurationTarget(refVal_setConfigurationTarget);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("setup_hint"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("setup_hint")));
@@ -379,6 +411,14 @@ void AgentTwinControlRoute::toMultipart(std::shared_ptr<MultipartFormData> multi
     if(m_Developer_label.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("developer_label")), m_Developer_label.get()));
+    }
+    if(m_Configuration_hint.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("configuration_hint")), m_Configuration_hint.get()));
+    }
+    if(m_Configuration_target.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("configuration_target")), m_Configuration_target.get()));
     }
     if(m_Setup_hint.has_value())
     {
@@ -480,6 +520,18 @@ bool AgentTwinControlRoute::fromMultiPart(std::shared_ptr<MultipartFormData> mul
         utility::string_t refVal_setDeveloperLabel;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("developer_label"))), refVal_setDeveloperLabel );
         setDeveloperLabel(refVal_setDeveloperLabel);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("configuration_hint"))))
+    {
+        utility::string_t refVal_setConfigurationHint;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("configuration_hint"))), refVal_setConfigurationHint );
+        setConfigurationHint(refVal_setConfigurationHint);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("configuration_target"))))
+    {
+        utility::string_t refVal_setConfigurationTarget;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("configuration_target"))), refVal_setConfigurationTarget );
+        setConfigurationTarget(refVal_setConfigurationTarget);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("setup_hint"))))
     {
@@ -871,6 +923,46 @@ bool AgentTwinControlRoute::developerLabelIsSet() const
 void AgentTwinControlRoute::unsetDeveloper_label()
 {
     m_Developer_label.reset();
+}
+utility::string_t AgentTwinControlRoute::getConfigurationHint() const
+{
+    return m_Configuration_hint.get();
+}
+
+
+void AgentTwinControlRoute::setConfigurationHint(const utility::string_t& value)
+{
+    m_Configuration_hint = value;
+}
+
+bool AgentTwinControlRoute::configurationHintIsSet() const
+{
+    return m_Configuration_hint.has_value();
+}
+
+void AgentTwinControlRoute::unsetConfiguration_hint()
+{
+    m_Configuration_hint.reset();
+}
+utility::string_t AgentTwinControlRoute::getConfigurationTarget() const
+{
+    return m_Configuration_target.get();
+}
+
+
+void AgentTwinControlRoute::setConfigurationTarget(const utility::string_t& value)
+{
+    m_Configuration_target = value;
+}
+
+bool AgentTwinControlRoute::configurationTargetIsSet() const
+{
+    return m_Configuration_target.has_value();
+}
+
+void AgentTwinControlRoute::unsetConfiguration_target()
+{
+    m_Configuration_target.reset();
 }
 utility::string_t AgentTwinControlRoute::getSetupHint() const
 {

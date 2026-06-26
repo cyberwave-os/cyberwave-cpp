@@ -20,6 +20,8 @@ namespace model {
 
 SimulationStartSchema::SimulationStartSchema()
 {
+    m_Auto_run_controllers = false;
+    m_Auto_run_controllersIsSet = false;
 }
 
 SimulationStartSchema::~SimulationStartSchema()
@@ -50,6 +52,26 @@ web::json::value SimulationStartSchema::toJson() const
         utility::string_t refVal = fromBackendEnum(m_Backend.get());
         val[utility::conversions::to_string_t(_XPLATSTR("backend"))] = ModelBase::toJson(refVal);
         
+    }
+    if(m_Runtime.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("runtime"))] = ModelBase::toJson(m_Runtime.get());
+    }
+    if(m_Timing.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("timing"))] = ModelBase::toJson(m_Timing.get());
+    }
+    if(m_Online_controllers.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("online_controllers"))] = ModelBase::toJson(m_Online_controllers.get());
+    }
+    if(m_Auto_run_controllersIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("auto_run_controllers"))] = ModelBase::toJson(m_Auto_run_controllers);
     }
 
     return val;
@@ -92,6 +114,50 @@ bool SimulationStartSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("runtime"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("runtime")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<SimulationRuntimeOptionsSchema> refVal_setRuntime;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRuntime);
+            setRuntime(refVal_setRuntime);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("timing"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("timing")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<SimulationTimingOptionsSchema> refVal_setTiming;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTiming);
+            setTiming(refVal_setTiming);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("online_controllers"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("online_controllers")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<OnlineControllerSpecSchema>> refVal_setOnlineControllers;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setOnlineControllers);
+            setOnlineControllers(refVal_setOnlineControllers);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("auto_run_controllers"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("auto_run_controllers")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setAutoRunControllers;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAutoRunControllers);
+            setAutoRunControllers(refVal_setAutoRunControllers);
+            
+        }
+    }
     return ok;
 }
 
@@ -113,6 +179,22 @@ void SimulationStartSchema::toMultipart(std::shared_ptr<MultipartFormData> multi
     if(m_Backend.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("backend")), fromBackendEnum(m_Backend.get())));
+    }
+    if(m_Runtime.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("runtime")), m_Runtime.get()));
+    }
+    if(m_Timing.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("timing")), m_Timing.get()));
+    }
+    if(m_Online_controllers.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("online_controllers")), m_Online_controllers.get()));
+    }
+    if(m_Auto_run_controllersIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("auto_run_controllers")), m_Auto_run_controllers));
     }
 }
 
@@ -143,6 +225,30 @@ bool SimulationStartSchema::fromMultiPart(std::shared_ptr<MultipartFormData> mul
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("backend"))), refVal_setBackend );
         setBackend(toBackendEnum(refVal_setBackend));
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("runtime"))))
+    {
+        std::shared_ptr<SimulationRuntimeOptionsSchema> refVal_setRuntime;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("runtime"))), refVal_setRuntime );
+        setRuntime(refVal_setRuntime);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("timing"))))
+    {
+        std::shared_ptr<SimulationTimingOptionsSchema> refVal_setTiming;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("timing"))), refVal_setTiming );
+        setTiming(refVal_setTiming);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("online_controllers"))))
+    {
+        std::vector<std::shared_ptr<OnlineControllerSpecSchema>> refVal_setOnlineControllers;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("online_controllers"))), refVal_setOnlineControllers );
+        setOnlineControllers(refVal_setOnlineControllers);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("auto_run_controllers"))))
+    {
+        bool refVal_setAutoRunControllers;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("auto_run_controllers"))), refVal_setAutoRunControllers );
+        setAutoRunControllers(refVal_setAutoRunControllers);
+    }
     return ok;
 }
 
@@ -157,6 +263,10 @@ SimulationStartSchema::BackendEnum SimulationStartSchema::toBackendEnum(const ut
         return BackendEnum::ISAAC;
     }
     
+    if (value == utility::conversions::to_string_t("mujoco_warp")) {
+        return BackendEnum::MUJOCO_WARP;
+    }
+    
     throw std::invalid_argument("Invalid value for conversion to BackendEnum");
 }
 
@@ -169,6 +279,8 @@ const utility::string_t SimulationStartSchema::fromBackendEnum(const BackendEnum
         case BackendEnum::MUJOCO: return utility::conversions::to_string_t("mujoco");
         
         case BackendEnum::ISAAC: return utility::conversions::to_string_t("isaac");
+        
+        case BackendEnum::MUJOCO_WARP: return utility::conversions::to_string_t("mujoco_warp");
         
     }
 }
@@ -231,6 +343,86 @@ bool SimulationStartSchema::backendIsSet() const
 void SimulationStartSchema::unsetBackend()
 {
     m_Backend.reset();
+}
+std::shared_ptr<SimulationRuntimeOptionsSchema> SimulationStartSchema::getRuntime() const
+{
+    return m_Runtime.get();
+}
+
+
+void SimulationStartSchema::setRuntime(const std::shared_ptr<SimulationRuntimeOptionsSchema>& value)
+{
+    m_Runtime = value;
+}
+
+bool SimulationStartSchema::runtimeIsSet() const
+{
+    return m_Runtime.has_value();
+}
+
+void SimulationStartSchema::unsetRuntime()
+{
+    m_Runtime.reset();
+}
+std::shared_ptr<SimulationTimingOptionsSchema> SimulationStartSchema::getTiming() const
+{
+    return m_Timing.get();
+}
+
+
+void SimulationStartSchema::setTiming(const std::shared_ptr<SimulationTimingOptionsSchema>& value)
+{
+    m_Timing = value;
+}
+
+bool SimulationStartSchema::timingIsSet() const
+{
+    return m_Timing.has_value();
+}
+
+void SimulationStartSchema::unsetTiming()
+{
+    m_Timing.reset();
+}
+std::vector<std::shared_ptr<OnlineControllerSpecSchema>> SimulationStartSchema::getOnlineControllers() const
+{
+    return m_Online_controllers.get();
+}
+
+
+void SimulationStartSchema::setOnlineControllers(const std::vector<std::shared_ptr<OnlineControllerSpecSchema>>& value)
+{
+    m_Online_controllers = value;
+}
+
+bool SimulationStartSchema::onlineControllersIsSet() const
+{
+    return m_Online_controllers.has_value();
+}
+
+void SimulationStartSchema::unsetOnline_controllers()
+{
+    m_Online_controllers.reset();
+}
+bool SimulationStartSchema::isAutoRunControllers() const
+{
+    return m_Auto_run_controllers;
+}
+
+void SimulationStartSchema::setAutoRunControllers(bool value)
+{
+    m_Auto_run_controllers = value;
+    m_Auto_run_controllersIsSet = true;
+}
+
+bool SimulationStartSchema::autoRunControllersIsSet() const
+{
+    return m_Auto_run_controllersIsSet;
+}
+
+void SimulationStartSchema::unsetAuto_run_controllers()
+{
+    m_Auto_run_controllersIsSet = false;
 }
 
 }

@@ -117,6 +117,11 @@ public:
     void unsetUrdf_file();
     void setUrdfFile(const utility::string_t& value);
 
+    utility::string_t getZipFile() const;
+    bool zipFileIsSet() const;
+    void unsetZip_file();
+    void setZipFile(const utility::string_t& value);
+
     utility::string_t getWorkspaceUuid() const;
     bool workspaceUuidIsSet() const;
     void unsetWorkspace_uuid();
@@ -212,6 +217,8 @@ protected:
     boost::optional<utility::string_t> m_Glb_file;
 
     boost::optional<utility::string_t> m_Urdf_file;
+
+    boost::optional<utility::string_t> m_Zip_file;
 
     boost::optional<utility::string_t> m_Workspace_uuid;
 

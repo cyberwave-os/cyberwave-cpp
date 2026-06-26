@@ -152,6 +152,11 @@ public:
     void unsetWorkspace_uuid();
     void setWorkspaceUuid(const utility::string_t& value);
 
+    utility::string_t getWeightsUrl() const;
+    bool weightsUrlIsSet() const;
+    void unsetWeights_url();
+    void setWeightsUrl(const utility::string_t& value);
+
 
 protected:
     boost::optional<utility::string_t> m_Name;
@@ -191,6 +196,8 @@ protected:
     boost::optional<utility::string_t> m_Edge_runtime;
 
     boost::optional<utility::string_t> m_Workspace_uuid;
+
+    boost::optional<utility::string_t> m_Weights_url;
 
 };
 

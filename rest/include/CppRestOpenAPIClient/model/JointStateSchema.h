@@ -12,7 +12,7 @@
 /*
  * JointStateSchema.h
  *
- * 
+ * Single-joint state.  &#x60;&#x60;velocity&#x60;&#x60; / &#x60;&#x60;effort&#x60;&#x60; are optional: &#x60;&#x60;None&#x60;&#x60; means \&quot;not measured / not commanded\&quot;. An explicit &#x60;&#x60;0.0&#x60;&#x60; is a real measurement and preserved.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_JointStateSchema_H_
@@ -31,6 +31,9 @@ namespace model {
 
 
 
+/// <summary>
+/// Single-joint state.  &#x60;&#x60;velocity&#x60;&#x60; / &#x60;&#x60;effort&#x60;&#x60; are optional: &#x60;&#x60;None&#x60;&#x60; means \&quot;not measured / not commanded\&quot;. An explicit &#x60;&#x60;0.0&#x60;&#x60; is a real measurement and preserved.
+/// </summary>
 class  JointStateSchema
     : public ModelBase
 {
@@ -79,14 +82,11 @@ protected:
     utility::string_t m_Name;
     bool m_NameIsSet;
 
-    double m_Position;
-    bool m_PositionIsSet;
+    boost::optional<double> m_Position;
 
-    double m_Velocity;
-    bool m_VelocityIsSet;
+    boost::optional<double> m_Velocity;
 
-    double m_Effort;
-    bool m_EffortIsSet;
+    boost::optional<double> m_Effort;
 
 };
 

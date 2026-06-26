@@ -25,6 +25,8 @@ EventMetricsSchema::EventMetricsSchema()
     m_Workflow_executionsIsSet = false;
     m_Workflow_node_executionsIsSet = false;
     m_AlertsIsSet = false;
+    m_TotalsIsSet = false;
+    m_Credits_by_dayIsSet = false;
 }
 
 EventMetricsSchema::~EventMetricsSchema()
@@ -73,6 +75,16 @@ web::json::value EventMetricsSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("alerts"))] = ModelBase::toJson(m_Alerts);
+    }
+    if(m_TotalsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("totals"))] = ModelBase::toJson(m_Totals);
+    }
+    if(m_Credits_by_dayIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("credits_by_day"))] = ModelBase::toJson(m_Credits_by_day);
     }
 
     return val;
@@ -158,6 +170,28 @@ bool EventMetricsSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("totals"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("totals")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<EventMetricsTotals> refVal_setTotals;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTotals);
+            setTotals(refVal_setTotals);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("credits_by_day"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("credits_by_day")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<EventCreditsDayBucket>> refVal_setCreditsByDay;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCreditsByDay);
+            setCreditsByDay(refVal_setCreditsByDay);
+            
+        }
+    }
     return ok;
 }
 
@@ -195,6 +229,14 @@ void EventMetricsSchema::toMultipart(std::shared_ptr<MultipartFormData> multipar
     if(m_AlertsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("alerts")), m_Alerts));
+    }
+    if(m_TotalsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("totals")), m_Totals));
+    }
+    if(m_Credits_by_dayIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("credits_by_day")), m_Credits_by_day));
     }
 }
 
@@ -248,6 +290,18 @@ bool EventMetricsSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         std::shared_ptr<AlertMetricsSection> refVal_setAlerts;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("alerts"))), refVal_setAlerts );
         setAlerts(refVal_setAlerts);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("totals"))))
+    {
+        std::shared_ptr<EventMetricsTotals> refVal_setTotals;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("totals"))), refVal_setTotals );
+        setTotals(refVal_setTotals);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("credits_by_day"))))
+    {
+        std::vector<std::shared_ptr<EventCreditsDayBucket>> refVal_setCreditsByDay;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("credits_by_day"))), refVal_setCreditsByDay );
+        setCreditsByDay(refVal_setCreditsByDay);
     }
     return ok;
 }
@@ -397,6 +451,48 @@ bool EventMetricsSchema::alertsIsSet() const
 void EventMetricsSchema::unsetAlerts()
 {
     m_AlertsIsSet = false;
+}
+std::shared_ptr<EventMetricsTotals> EventMetricsSchema::getTotals() const
+{
+    return m_Totals;
+}
+
+
+void EventMetricsSchema::setTotals(const std::shared_ptr<EventMetricsTotals>& value)
+{
+    m_Totals = value;
+    m_TotalsIsSet = true;
+}
+
+bool EventMetricsSchema::totalsIsSet() const
+{
+    return m_TotalsIsSet;
+}
+
+void EventMetricsSchema::unsetTotals()
+{
+    m_TotalsIsSet = false;
+}
+std::vector<std::shared_ptr<EventCreditsDayBucket>> EventMetricsSchema::getCreditsByDay() const
+{
+    return m_Credits_by_day;
+}
+
+
+void EventMetricsSchema::setCreditsByDay(const std::vector<std::shared_ptr<EventCreditsDayBucket>>& value)
+{
+    m_Credits_by_day = value;
+    m_Credits_by_dayIsSet = true;
+}
+
+bool EventMetricsSchema::creditsByDayIsSet() const
+{
+    return m_Credits_by_dayIsSet;
+}
+
+void EventMetricsSchema::unsetCredits_by_day()
+{
+    m_Credits_by_dayIsSet = false;
 }
 
 }

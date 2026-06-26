@@ -27,6 +27,7 @@ AIMetricsSchema::AIMetricsSchema()
     m_By_modelIsSet = false;
     m_By_callerIsSet = false;
     m_By_request_kindIsSet = false;
+    m_By_usage_classIsSet = false;
     m_By_dayIsSet = false;
 }
 
@@ -86,6 +87,11 @@ web::json::value AIMetricsSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("by_request_kind"))] = ModelBase::toJson(m_By_request_kind);
+    }
+    if(m_By_usage_classIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("by_usage_class"))] = ModelBase::toJson(m_By_usage_class);
     }
     if(m_By_dayIsSet)
     {
@@ -198,6 +204,17 @@ bool AIMetricsSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("by_usage_class"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("by_usage_class")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AIUsageSummary>> refVal_setByUsageClass;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setByUsageClass);
+            setByUsageClass(refVal_setByUsageClass);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("by_day"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("by_day")));
@@ -254,6 +271,10 @@ void AIMetricsSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, 
     if(m_By_request_kindIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("by_request_kind")), m_By_request_kind));
+    }
+    if(m_By_usage_classIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("by_usage_class")), m_By_usage_class));
     }
     if(m_By_dayIsSet)
     {
@@ -323,6 +344,12 @@ bool AIMetricsSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart
         std::map<utility::string_t, std::shared_ptr<AIUsageSummary>> refVal_setByRequestKind;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("by_request_kind"))), refVal_setByRequestKind );
         setByRequestKind(refVal_setByRequestKind);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("by_usage_class"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AIUsageSummary>> refVal_setByUsageClass;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("by_usage_class"))), refVal_setByUsageClass );
+        setByUsageClass(refVal_setByUsageClass);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("by_day"))))
     {
@@ -520,6 +547,27 @@ bool AIMetricsSchema::byRequestKindIsSet() const
 void AIMetricsSchema::unsetBy_request_kind()
 {
     m_By_request_kindIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AIUsageSummary>> AIMetricsSchema::getByUsageClass() const
+{
+    return m_By_usage_class;
+}
+
+
+void AIMetricsSchema::setByUsageClass(const std::map<utility::string_t, std::shared_ptr<AIUsageSummary>>& value)
+{
+    m_By_usage_class = value;
+    m_By_usage_classIsSet = true;
+}
+
+bool AIMetricsSchema::byUsageClassIsSet() const
+{
+    return m_By_usage_classIsSet;
+}
+
+void AIMetricsSchema::unsetBy_usage_class()
+{
+    m_By_usage_classIsSet = false;
 }
 std::vector<std::shared_ptr<AIUsageDayBucket>> AIMetricsSchema::getByDay() const
 {

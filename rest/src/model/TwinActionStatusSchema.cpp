@@ -118,7 +118,7 @@ bool TwinActionStatusSchema::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("plan")));
         if(!fieldValue.is_null())
         {
-            std::shared_ptr<MotionPlanSchema> refVal_setPlan;
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setPlan;
             ok &= ModelBase::fromJson(fieldValue, refVal_setPlan);
             setPlan(refVal_setPlan);
             
@@ -226,7 +226,7 @@ bool TwinActionStatusSchema::fromMultiPart(std::shared_ptr<MultipartFormData> mu
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("plan"))))
     {
-        std::shared_ptr<MotionPlanSchema> refVal_setPlan;
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setPlan;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("plan"))), refVal_setPlan );
         setPlan(refVal_setPlan);
     }
@@ -314,13 +314,13 @@ void TwinActionStatusSchema::unsetMessage()
 {
     m_Message.reset();
 }
-std::shared_ptr<MotionPlanSchema> TwinActionStatusSchema::getPlan() const
+std::map<utility::string_t, std::shared_ptr<AnyType>> TwinActionStatusSchema::getPlan() const
 {
     return m_Plan.get();
 }
 
 
-void TwinActionStatusSchema::setPlan(const std::shared_ptr<MotionPlanSchema>& value)
+void TwinActionStatusSchema::setPlan(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
 {
     m_Plan = value;
 }

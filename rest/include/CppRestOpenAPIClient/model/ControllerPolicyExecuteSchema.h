@@ -26,6 +26,7 @@
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include <vector>
+#include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
 namespace openapitools {
@@ -61,20 +62,54 @@ public:
         LIVE,
         SIMULATION,
     };
+    enum class Runtime_kindEnum
+    {
+        PHYSICAL,
+        SIMULATION,
+    };
+    enum class DeviceEnum
+    {
+        CPU,
+        GPU,
+    };
+    enum class GaitEnum
+    {
+        WALK,
+        TROT,
+        STAND,
+    };
+    enum class OriginEnum
+    {
+        TELEOP,
+        AI_POLICY,
+        NAVIGATION,
+        WORKFLOW,
+    };
 
     ModeEnum toModeEnum(const utility::string_t& value) const;
     const utility::string_t fromModeEnum(const ModeEnum value) const;
+
+
+    Runtime_kindEnum toRuntime_kindEnum(const utility::string_t& value) const;
+    const utility::string_t fromRuntime_kindEnum(const Runtime_kindEnum value) const;
+
+
+    DeviceEnum toDeviceEnum(const utility::string_t& value) const;
+    const utility::string_t fromDeviceEnum(const DeviceEnum value) const;
+
+
+    GaitEnum toGaitEnum(const utility::string_t& value) const;
+    const utility::string_t fromGaitEnum(const GaitEnum value) const;
+
+
+    OriginEnum toOriginEnum(const utility::string_t& value) const;
+    const utility::string_t fromOriginEnum(const OriginEnum value) const;
 
 
     utility::string_t getTwinUuid() const;
     bool twinUuidIsSet() const;
     void unsetTwin_uuid();
     void setTwinUuid(const utility::string_t& value);
-
-    utility::string_t getInstruction() const;
-    bool instructionIsSet() const;
-    void unsetInstruction();
-    void setInstruction(const utility::string_t& value);
 
     utility::string_t getExecution() const;
     bool executionIsSet() const;
@@ -86,10 +121,75 @@ public:
     void unsetMode();
     void setMode(const ModeEnum value);
 
+    Runtime_kindEnum getRuntimeKind() const;
+    bool runtimeKindIsSet() const;
+    void unsetRuntime_kind();
+    void setRuntimeKind(const Runtime_kindEnum value);
+
+    utility::string_t getSimulationBackend() const;
+    bool simulationBackendIsSet() const;
+    void unsetSimulation_backend();
+    void setSimulationBackend(const utility::string_t& value);
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getPayload() const;
+    bool payloadIsSet() const;
+    void unsetPayload();
+    void setPayload(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    utility::string_t getInstruction() const;
+    bool instructionIsSet() const;
+    void unsetInstruction();
+    void setInstruction(const utility::string_t& value);
+
     int32_t getMaxSteps() const;
     bool maxStepsIsSet() const;
     void unsetMax_steps();
     void setMaxSteps(int32_t value);
+
+    DeviceEnum getDevice() const;
+    bool deviceIsSet() const;
+    void unsetDevice();
+    void setDevice(const DeviceEnum value);
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getVelocityCommand() const;
+    bool velocityCommandIsSet() const;
+    void unsetVelocity_command();
+    void setVelocityCommand(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    double getLinearX() const;
+    bool linearXIsSet() const;
+    void unsetLinear_x();
+    void setLinearX(double value);
+
+    double getLinearY() const;
+    bool linearYIsSet() const;
+    void unsetLinear_y();
+    void setLinearY(double value);
+
+    double getLinearZ() const;
+    bool linearZIsSet() const;
+    void unsetLinear_z();
+    void setLinearZ(double value);
+
+    double getAngularZ() const;
+    bool angularZIsSet() const;
+    void unsetAngular_z();
+    void setAngularZ(double value);
+
+    int32_t getDurationMs() const;
+    bool durationMsIsSet() const;
+    void unsetDuration_ms();
+    void setDurationMs(int32_t value);
+
+    GaitEnum getGait() const;
+    bool gaitIsSet() const;
+    void unsetGait();
+    void setGait(const GaitEnum value);
+
+    OriginEnum getOrigin() const;
+    bool originIsSet() const;
+    void unsetOrigin();
+    void setOrigin(const OriginEnum value);
 
     std::vector<double> getTargetLeftPos() const;
     bool targetLeftPosIsSet() const;
@@ -116,14 +216,39 @@ protected:
     utility::string_t m_Twin_uuid;
     bool m_Twin_uuidIsSet;
 
-    boost::optional<utility::string_t> m_Instruction;
-
     utility::string_t m_Execution;
     bool m_ExecutionIsSet;
 
     boost::optional<ModeEnum> m_Mode;
 
+    boost::optional<Runtime_kindEnum> m_Runtime_kind;
+
+    boost::optional<utility::string_t> m_Simulation_backend;
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> m_Payload;
+    bool m_PayloadIsSet;
+
+    boost::optional<utility::string_t> m_Instruction;
+
     boost::optional<int32_t> m_Max_steps;
+
+    boost::optional<DeviceEnum> m_Device;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Velocity_command;
+
+    boost::optional<double> m_Linear_x;
+
+    boost::optional<double> m_Linear_y;
+
+    boost::optional<double> m_Linear_z;
+
+    boost::optional<double> m_Angular_z;
+
+    boost::optional<int32_t> m_Duration_ms;
+
+    boost::optional<GaitEnum> m_Gait;
+
+    boost::optional<OriginEnum> m_Origin;
 
     boost::optional<std::vector<double>> m_Target_left_pos;
 

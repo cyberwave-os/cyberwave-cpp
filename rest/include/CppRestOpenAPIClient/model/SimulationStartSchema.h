@@ -23,13 +23,20 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/OnlineControllerSpecSchema.h"
+#include "CppRestOpenAPIClient/model/SimulationRuntimeOptionsSchema.h"
+#include "CppRestOpenAPIClient/model/SimulationTimingOptionsSchema.h"
 #include <cpprest/details/basic_types.h>
+#include <vector>
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
+class SimulationRuntimeOptionsSchema;
+class SimulationTimingOptionsSchema;
+class OnlineControllerSpecSchema;
 
 
 /// <summary>
@@ -61,6 +68,7 @@ public:
     {
         MUJOCO,
         ISAAC,
+        MUJOCO_WARP,
     };
 
     BackendEnum toBackendEnum(const utility::string_t& value) const;
@@ -82,6 +90,26 @@ public:
     void unsetBackend();
     void setBackend(const BackendEnum value);
 
+    std::shared_ptr<SimulationRuntimeOptionsSchema> getRuntime() const;
+    bool runtimeIsSet() const;
+    void unsetRuntime();
+    void setRuntime(const std::shared_ptr<SimulationRuntimeOptionsSchema>& value);
+
+    std::shared_ptr<SimulationTimingOptionsSchema> getTiming() const;
+    bool timingIsSet() const;
+    void unsetTiming();
+    void setTiming(const std::shared_ptr<SimulationTimingOptionsSchema>& value);
+
+    std::vector<std::shared_ptr<OnlineControllerSpecSchema>> getOnlineControllers() const;
+    bool onlineControllersIsSet() const;
+    void unsetOnline_controllers();
+    void setOnlineControllers(const std::vector<std::shared_ptr<OnlineControllerSpecSchema>>& value);
+
+    bool isAutoRunControllers() const;
+    bool autoRunControllersIsSet() const;
+    void unsetAuto_run_controllers();
+    void setAutoRunControllers(bool value);
+
 
 protected:
     boost::optional<double> m_Duration;
@@ -89,6 +117,15 @@ protected:
     boost::optional<bool> m_Stream_data;
 
     boost::optional<BackendEnum> m_Backend;
+
+    boost::optional<std::shared_ptr<SimulationRuntimeOptionsSchema>> m_Runtime;
+
+    boost::optional<std::shared_ptr<SimulationTimingOptionsSchema>> m_Timing;
+
+    boost::optional<std::vector<std::shared_ptr<OnlineControllerSpecSchema>>> m_Online_controllers;
+
+    bool m_Auto_run_controllers;
+    bool m_Auto_run_controllersIsSet;
 
 };
 

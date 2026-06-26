@@ -205,6 +205,21 @@ public:
     void unsetPlayground_kind();
     void setPlaygroundKind(const utility::string_t& value);
 
+    utility::string_t getPlaygroundBaseCatalogKey() const;
+    bool playgroundBaseCatalogKeyIsSet() const;
+    void unsetPlayground_base_catalog_key();
+    void setPlaygroundBaseCatalogKey(const utility::string_t& value);
+
+    utility::string_t getPlaygroundBaseModelSlug() const;
+    bool playgroundBaseModelSlugIsSet() const;
+    void unsetPlayground_base_model_slug();
+    void setPlaygroundBaseModelSlug(const utility::string_t& value);
+
+    utility::string_t getPlaygroundBaseModelName() const;
+    bool playgroundBaseModelNameIsSet() const;
+    void unsetPlayground_base_model_name();
+    void setPlaygroundBaseModelName(const utility::string_t& value);
+
     utility::string_t getOutputFamily() const;
     bool outputFamilyIsSet() const;
     void unsetOutput_family();
@@ -239,6 +254,16 @@ public:
     bool supportsBuiltinVadFilterIsSet() const;
     void unsetSupports_builtin_vad_filter();
     void setSupportsBuiltinVadFilter(bool value);
+
+    utility::string_t getWeightsUrl() const;
+    bool weightsUrlIsSet() const;
+    void unsetWeights_url();
+    void setWeightsUrl(const utility::string_t& value);
+
+    std::vector<std::shared_ptr<AnyType>> getRequiredInputs() const;
+    bool requiredInputsIsSet() const;
+    void unsetRequired_inputs();
+    void setRequiredInputs(const std::vector<std::shared_ptr<AnyType>>& value);
 
 
 protected:
@@ -321,6 +346,12 @@ protected:
 
     boost::optional<utility::string_t> m_Playground_kind;
 
+    boost::optional<utility::string_t> m_Playground_base_catalog_key;
+
+    boost::optional<utility::string_t> m_Playground_base_model_slug;
+
+    boost::optional<utility::string_t> m_Playground_base_model_name;
+
     boost::optional<utility::string_t> m_Output_family;
 
     std::vector<utility::string_t> m_Allowed_structured_tasks;
@@ -337,6 +368,11 @@ protected:
 
     bool m_Supports_builtin_vad_filter;
     bool m_Supports_builtin_vad_filterIsSet;
+
+    boost::optional<utility::string_t> m_Weights_url;
+
+    std::vector<std::shared_ptr<AnyType>> m_Required_inputs;
+    bool m_Required_inputsIsSet;
 
 };
 

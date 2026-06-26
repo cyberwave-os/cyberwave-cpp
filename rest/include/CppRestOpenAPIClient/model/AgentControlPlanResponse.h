@@ -12,7 +12,7 @@
 /*
  * AgentControlPlanResponse.h
  *
- * Validated read-only control plan.  The three action lists describe the *same* underlying plan from three angles; clients pick the one they need rather than re-deriving it:  * &#x60;&#x60;actions&#x60;&#x60; — full plan as proposed (advisory + dispatchable, in order). * &#x60;&#x60;dispatchable_actions&#x60;&#x60; — at most one ready-to-execute action; this is   what the dispatch UI should bind to. Backend collapses the plan to a   single dispatchable action when &#x60;&#x60;readiness &#x3D;&#x3D; \&quot;ready\&quot;&#x60;&#x60;. * &#x60;&#x60;advisory_actions&#x60;&#x60; — actions surfaced for context only (e.g. observe   frames, setup guidance) and never directly dispatchable.
+ * Validated read-only control plan.  The three action lists describe the *same* underlying plan from three angles; clients pick the one they need rather than re-deriving it:  * &#x60;&#x60;actions&#x60;&#x60; — full plan as proposed (advisory + dispatchable, in order). * &#x60;&#x60;dispatchable_actions&#x60;&#x60; — ready-to-execute actions. Live plans and   same-twin sequences stay single-action; simulation plans may expose   independent actions for different twins. * &#x60;&#x60;advisory_actions&#x60;&#x60; — actions surfaced for context only (e.g. observe   frames, setup guidance) and never directly dispatchable.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_AgentControlPlanResponse_H_
@@ -25,6 +25,7 @@
 
 #include "CppRestOpenAPIClient/model/AgentControlAction.h"
 #include "CppRestOpenAPIClient/model/AgentTwinControlSurface.h"
+#include "CppRestOpenAPIClient/model/AgentControlVisualizationLayer.h"
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include <vector>
@@ -37,10 +38,11 @@ namespace model {
 
 class AgentControlAction;
 class AgentTwinControlSurface;
+class AgentControlVisualizationLayer;
 
 
 /// <summary>
-/// Validated read-only control plan.  The three action lists describe the *same* underlying plan from three angles; clients pick the one they need rather than re-deriving it:  * &#x60;&#x60;actions&#x60;&#x60; — full plan as proposed (advisory + dispatchable, in order). * &#x60;&#x60;dispatchable_actions&#x60;&#x60; — at most one ready-to-execute action; this is   what the dispatch UI should bind to. Backend collapses the plan to a   single dispatchable action when &#x60;&#x60;readiness &#x3D;&#x3D; \&quot;ready\&quot;&#x60;&#x60;. * &#x60;&#x60;advisory_actions&#x60;&#x60; — actions surfaced for context only (e.g. observe   frames, setup guidance) and never directly dispatchable.
+/// Validated read-only control plan.  The three action lists describe the *same* underlying plan from three angles; clients pick the one they need rather than re-deriving it:  * &#x60;&#x60;actions&#x60;&#x60; — full plan as proposed (advisory + dispatchable, in order). * &#x60;&#x60;dispatchable_actions&#x60;&#x60; — ready-to-execute actions. Live plans and   same-twin sequences stay single-action; simulation plans may expose   independent actions for different twins. * &#x60;&#x60;advisory_actions&#x60;&#x60; — actions surfaced for context only (e.g. observe   frames, setup guidance) and never directly dispatchable.
 /// </summary>
 class  AgentControlPlanResponse
     : public ModelBase
@@ -151,6 +153,21 @@ public:
     void unsetControl_surfaces();
     void setControlSurfaces(const std::vector<std::shared_ptr<AgentTwinControlSurface>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getPlanningScene() const;
+    bool planningSceneIsSet() const;
+    void unsetPlanning_scene();
+    void setPlanningScene(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    std::vector<std::shared_ptr<AgentControlVisualizationLayer>> getVisualizationLayers() const;
+    bool visualizationLayersIsSet() const;
+    void unsetVisualization_layers();
+    void setVisualizationLayers(const std::vector<std::shared_ptr<AgentControlVisualizationLayer>>& value);
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getDispatchBundle() const;
+    bool dispatchBundleIsSet() const;
+    void unsetDispatch_bundle();
+    void setDispatchBundle(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
 
 protected:
     utility::string_t m_Summary;
@@ -190,6 +207,13 @@ protected:
 
     std::vector<std::shared_ptr<AgentTwinControlSurface>> m_Control_surfaces;
     bool m_Control_surfacesIsSet;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Planning_scene;
+
+    std::vector<std::shared_ptr<AgentControlVisualizationLayer>> m_Visualization_layers;
+    bool m_Visualization_layersIsSet;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Dispatch_bundle;
 
 };
 

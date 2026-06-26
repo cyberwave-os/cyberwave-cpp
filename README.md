@@ -189,6 +189,10 @@ Regular `Twin` handles now expose the capability convenience helpers directly, s
 
 Scene-level composed schema and environment export helpers now use the canonical backend routes (`/universal-schema.json`, `/urdf-scene.zip`, `/mujoco-scene.zip`) instead of the older `/exports/...` paths.
 
+### Locomotion Policies
+
+Use `client.assets().get_controller_setup_view(asset_uuid)` to read the backend-resolved controller setup for an asset instead of inspecting raw metadata. The typed setup view exposes the asset UUID, primary preview controller key, runtime policy count, `primary_policy_ref()`, `default_policy_ref(runtime_kind, backend)`, and `runtime_target(runtime_kind, backend)`; `get_controller_setup()` remains available when callers need the raw JSON payload. For velocity policy payloads, include `cyberwave/locomotion_contracts.h` and build `locomotion.velocity_command.v1` commands with `build_locomotion_velocity_command()` or `stop_locomotion_velocity_command()`; the canonical schema is tracked at `contracts/locomotion.velocity_command.v1.schema.json`, and `LOCOMOTION_VELOCITY_COMMAND_REQUIRED_FIELDS` exposes the schema-required keys for custom emitters. `Twin::dispatch_velocity()` and convenience helpers such as `Twin::set_velocity()`, `Twin::drive_forward()`, and `Twin::stop_velocity()` send typed commands through the backend Control Agent dispatch endpoint so SDK callers use the same runtime policy resolver and cancellation semantics as the frontend and Python SDK. When a caller must override the backend default, pass a typed `PolicyRefPayload` to `Twin::dispatch_velocity(command, policy_ref, mode, simulation_backend)`.
+
 ### Asset uploads
 
 `AssetManager::upload_glb()` now mirrors Python's behavior: small GLBs use the standard multipart endpoint, large GLBs switch to the attachment signed-upload flow automatically, and payload-too-large responses on the direct endpoint retry through the attachment path.

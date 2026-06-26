@@ -162,6 +162,11 @@ public:
     void unsetRobot_context();
     void setRobotContext(const std::shared_ptr<RobotContextSchema>& value);
 
+    utility::string_t getImageSource() const;
+    bool imageSourceIsSet() const;
+    void unsetImage_source();
+    void setImageSource(const utility::string_t& value);
+
 
 protected:
     boost::optional<utility::string_t> m_Prompt;
@@ -199,6 +204,8 @@ protected:
     boost::optional<std::shared_ptr<RobotStateSchema>> m_Robot_state;
 
     boost::optional<std::shared_ptr<RobotContextSchema>> m_Robot_context;
+
+    boost::optional<utility::string_t> m_Image_source;
 
 };
 

@@ -434,6 +434,18 @@ TwinNavigationCommandSchema::CommandEnum TwinNavigationCommandSchema::toCommandE
         return CommandEnum::RELATIVE_MOVE;
     }
     
+    if (value == utility::conversions::to_string_t("takeoff")) {
+        return CommandEnum::TAKEOFF;
+    }
+    
+    if (value == utility::conversions::to_string_t("hover")) {
+        return CommandEnum::HOVER;
+    }
+    
+    if (value == utility::conversions::to_string_t("land")) {
+        return CommandEnum::LAND;
+    }
+    
     throw std::invalid_argument("Invalid value for conversion to CommandEnum");
 }
 
@@ -454,6 +466,12 @@ const utility::string_t TwinNavigationCommandSchema::fromCommandEnum(const Comma
         case CommandEnum::RESUME: return utility::conversions::to_string_t("resume");
         
         case CommandEnum::RELATIVE_MOVE: return utility::conversions::to_string_t("relative_move");
+        
+        case CommandEnum::TAKEOFF: return utility::conversions::to_string_t("takeoff");
+        
+        case CommandEnum::HOVER: return utility::conversions::to_string_t("hover");
+        
+        case CommandEnum::LAND: return utility::conversions::to_string_t("land");
         
     }
 }

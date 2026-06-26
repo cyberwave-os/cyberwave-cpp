@@ -105,6 +105,11 @@ public:
     void unsetDispatchability();
     void setDispatchability(const utility::string_t& value);
 
+    utility::string_t getExecutionChannel() const;
+    bool executionChannelIsSet() const;
+    void unsetExecution_channel();
+    void setExecutionChannel(const utility::string_t& value);
+
     utility::string_t getTransport() const;
     bool transportIsSet() const;
     void unsetTransport();
@@ -180,6 +185,16 @@ public:
     void unsetDeveloper_label();
     void setDeveloperLabel(const utility::string_t& value);
 
+    utility::string_t getConfigurationHint() const;
+    bool configurationHintIsSet() const;
+    void unsetConfiguration_hint();
+    void setConfigurationHint(const utility::string_t& value);
+
+    utility::string_t getConfigurationTarget() const;
+    bool configurationTargetIsSet() const;
+    void unsetConfiguration_target();
+    void setConfigurationTarget(const utility::string_t& value);
+
     utility::string_t getSetupHint() const;
     bool setupHintIsSet() const;
     void unsetSetup_hint();
@@ -205,6 +220,9 @@ protected:
 
     utility::string_t m_Dispatchability;
     bool m_DispatchabilityIsSet;
+
+    utility::string_t m_Execution_channel;
+    bool m_Execution_channelIsSet;
 
     utility::string_t m_Transport;
     bool m_TransportIsSet;
@@ -240,6 +258,10 @@ protected:
     boost::optional<utility::string_t> m_Operator_description;
 
     boost::optional<utility::string_t> m_Developer_label;
+
+    boost::optional<utility::string_t> m_Configuration_hint;
+
+    boost::optional<utility::string_t> m_Configuration_target;
 
     boost::optional<utility::string_t> m_Setup_hint;
 

@@ -122,6 +122,11 @@ public:
     void unsetCan_write();
     void setCanWrite(bool value);
 
+    utility::string_t getDevice() const;
+    bool deviceIsSet() const;
+    void unsetDevice();
+    void setDevice(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -159,6 +164,8 @@ protected:
 
     bool m_Can_write;
     bool m_Can_writeIsSet;
+
+    boost::optional<utility::string_t> m_Device;
 
 };
 

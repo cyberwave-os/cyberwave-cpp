@@ -114,6 +114,11 @@ public:
     void unsetBy_request_kind();
     void setByRequestKind(const std::map<utility::string_t, std::shared_ptr<AIUsageSummary>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AIUsageSummary>> getByUsageClass() const;
+    bool byUsageClassIsSet() const;
+    void unsetBy_usage_class();
+    void setByUsageClass(const std::map<utility::string_t, std::shared_ptr<AIUsageSummary>>& value);
+
     std::vector<std::shared_ptr<AIUsageDayBucket>> getByDay() const;
     bool byDayIsSet() const;
     void unsetBy_day();
@@ -145,6 +150,9 @@ protected:
 
     std::map<utility::string_t, std::shared_ptr<AIUsageSummary>> m_By_request_kind;
     bool m_By_request_kindIsSet;
+
+    std::map<utility::string_t, std::shared_ptr<AIUsageSummary>> m_By_usage_class;
+    bool m_By_usage_classIsSet;
 
     std::vector<std::shared_ptr<AIUsageDayBucket>> m_By_day;
     bool m_By_dayIsSet;

@@ -152,6 +152,16 @@ public:
     void unsetDeveloper_label();
     void setDeveloperLabel(const utility::string_t& value);
 
+    utility::string_t getConfigurationHint() const;
+    bool configurationHintIsSet() const;
+    void unsetConfiguration_hint();
+    void setConfigurationHint(const utility::string_t& value);
+
+    utility::string_t getConfigurationTarget() const;
+    bool configurationTargetIsSet() const;
+    void unsetConfiguration_target();
+    void setConfigurationTarget(const utility::string_t& value);
+
     utility::string_t getSetupHint() const;
     bool setupHintIsSet() const;
     void unsetSetup_hint();
@@ -203,6 +213,10 @@ protected:
     boost::optional<utility::string_t> m_Operator_description;
 
     boost::optional<utility::string_t> m_Developer_label;
+
+    boost::optional<utility::string_t> m_Configuration_hint;
+
+    boost::optional<utility::string_t> m_Configuration_target;
 
     boost::optional<utility::string_t> m_Setup_hint;
 

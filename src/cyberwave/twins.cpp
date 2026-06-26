@@ -316,7 +316,7 @@ std::map<std::string, double> TwinManager::get_joint_states(const std::string& t
 }
 
 void TwinManager::update_joint_state(const std::string& twin_id, const std::string& joint_name, double position,
-                                     double velocity, double effort) const
+                                     std::optional<double> velocity, std::optional<double> effort) const
 {
     auto* a = api(client_.get());
     if (!a)
@@ -325,10 +325,12 @@ void TwinManager::update_joint_state(const std::string& twin_id, const std::stri
     {
         auto body = std::make_shared<org::openapitools::client::model::JointStateUpdateSchema>();
         body->setPosition(position);
-        if (velocity != 0.0)
-            body->setVelocity(velocity);
-        if (effort != 0.0)
-            body->setEffort(effort);
+        // Only forward channels that the caller actually supplied. An explicit
+        // value of 0.0 is preserved; std::nullopt means "channel not commanded".
+        if (velocity.has_value())
+            body->setVelocity(*velocity);
+        if (effort.has_value())
+            body->setEffort(*effort);
         a->srcAppApiUrdfUpdateTwinJointState(from_std(twin_id), from_std(joint_name), body).get();
     }
     catch (const org::openapitools::client::api::ApiException& e)

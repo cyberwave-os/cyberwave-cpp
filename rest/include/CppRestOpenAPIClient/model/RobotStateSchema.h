@@ -80,6 +80,11 @@ public:
     void unsetEe_pose();
     void setEePose(const std::shared_ptr<CameraPoseSchema>& value);
 
+    std::vector<double> getEefPose() const;
+    bool eefPoseIsSet() const;
+    void unsetEef_pose();
+    void setEefPose(std::vector<double> value);
+
     double getGripperPosition() const;
     bool gripperPositionIsSet() const;
     void unsetGripper_position();
@@ -99,6 +104,8 @@ protected:
     boost::optional<std::vector<double>> m_Joint_velocities;
 
     boost::optional<std::shared_ptr<CameraPoseSchema>> m_Ee_pose;
+
+    boost::optional<std::vector<double>> m_Eef_pose;
 
     boost::optional<double> m_Gripper_position;
 

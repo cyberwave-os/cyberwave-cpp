@@ -24,6 +24,7 @@ ControllerPolicyExecuteSchema::ControllerPolicyExecuteSchema()
     m_Twin_uuidIsSet = false;
     m_Execution = utility::conversions::to_string_t("");
     m_ExecutionIsSet = false;
+    m_PayloadIsSet = false;
     m_Server_mode = false;
     m_Server_modeIsSet = false;
 }
@@ -45,11 +46,6 @@ web::json::value ControllerPolicyExecuteSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))] = ModelBase::toJson(m_Twin_uuid);
     }
-    if(m_Instruction.has_value())
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("instruction"))] = ModelBase::toJson(m_Instruction.get());
-    }
     if(m_ExecutionIsSet)
     {
         
@@ -62,10 +58,83 @@ web::json::value ControllerPolicyExecuteSchema::toJson() const
         val[utility::conversions::to_string_t(_XPLATSTR("mode"))] = ModelBase::toJson(refVal);
         
     }
+    if(m_Runtime_kind.has_value())
+    {
+        
+        utility::string_t refVal = fromRuntime_kindEnum(m_Runtime_kind.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("runtime_kind"))] = ModelBase::toJson(refVal);
+        
+    }
+    if(m_Simulation_backend.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("simulation_backend"))] = ModelBase::toJson(m_Simulation_backend.get());
+    }
+    if(m_PayloadIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("payload"))] = ModelBase::toJson(m_Payload);
+    }
+    if(m_Instruction.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("instruction"))] = ModelBase::toJson(m_Instruction.get());
+    }
     if(m_Max_steps.has_value())
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("max_steps"))] = ModelBase::toJson(m_Max_steps.get());
+    }
+    if(m_Device.has_value())
+    {
+        
+        utility::string_t refVal = fromDeviceEnum(m_Device.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("device"))] = ModelBase::toJson(refVal);
+        
+    }
+    if(m_Velocity_command.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("velocity_command"))] = ModelBase::toJson(m_Velocity_command.get());
+    }
+    if(m_Linear_x.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("linear_x"))] = ModelBase::toJson(m_Linear_x.get());
+    }
+    if(m_Linear_y.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("linear_y"))] = ModelBase::toJson(m_Linear_y.get());
+    }
+    if(m_Linear_z.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("linear_z"))] = ModelBase::toJson(m_Linear_z.get());
+    }
+    if(m_Angular_z.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("angular_z"))] = ModelBase::toJson(m_Angular_z.get());
+    }
+    if(m_Duration_ms.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("duration_ms"))] = ModelBase::toJson(m_Duration_ms.get());
+    }
+    if(m_Gait.has_value())
+    {
+        
+        utility::string_t refVal = fromGaitEnum(m_Gait.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("gait"))] = ModelBase::toJson(refVal);
+        
+    }
+    if(m_Origin.has_value())
+    {
+        
+        utility::string_t refVal = fromOriginEnum(m_Origin.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("origin"))] = ModelBase::toJson(refVal);
+        
     }
     if(m_Target_left_pos.has_value())
     {
@@ -105,17 +174,6 @@ bool ControllerPolicyExecuteSchema::fromJson(const web::json::value& val)
             
         }
     }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("instruction"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("instruction")));
-        if(!fieldValue.is_null())
-        {
-            utility::string_t refVal_setInstruction;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setInstruction);
-            setInstruction(refVal_setInstruction);
-            
-        }
-    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("execution"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("execution")));
@@ -139,6 +197,51 @@ bool ControllerPolicyExecuteSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("runtime_kind"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("runtime_kind")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setRuntimeKind;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRuntimeKind);
+            
+            setRuntimeKind(toRuntime_kindEnum(refVal_setRuntimeKind));
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("simulation_backend"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("simulation_backend")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setSimulationBackend;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSimulationBackend);
+            setSimulationBackend(refVal_setSimulationBackend);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("payload"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("payload")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setPayload;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPayload);
+            setPayload(refVal_setPayload);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("instruction"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("instruction")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setInstruction;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setInstruction);
+            setInstruction(refVal_setInstruction);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("max_steps"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("max_steps")));
@@ -147,6 +250,108 @@ bool ControllerPolicyExecuteSchema::fromJson(const web::json::value& val)
             int32_t refVal_setMaxSteps;
             ok &= ModelBase::fromJson(fieldValue, refVal_setMaxSteps);
             setMaxSteps(refVal_setMaxSteps);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("device"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("device")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setDevice;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setDevice);
+            
+            setDevice(toDeviceEnum(refVal_setDevice));
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("velocity_command"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("velocity_command")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setVelocityCommand;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setVelocityCommand);
+            setVelocityCommand(refVal_setVelocityCommand);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("linear_x"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("linear_x")));
+        if(!fieldValue.is_null())
+        {
+            double refVal_setLinearX;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setLinearX);
+            setLinearX(refVal_setLinearX);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("linear_y"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("linear_y")));
+        if(!fieldValue.is_null())
+        {
+            double refVal_setLinearY;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setLinearY);
+            setLinearY(refVal_setLinearY);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("linear_z"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("linear_z")));
+        if(!fieldValue.is_null())
+        {
+            double refVal_setLinearZ;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setLinearZ);
+            setLinearZ(refVal_setLinearZ);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("angular_z"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("angular_z")));
+        if(!fieldValue.is_null())
+        {
+            double refVal_setAngularZ;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAngularZ);
+            setAngularZ(refVal_setAngularZ);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("duration_ms"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("duration_ms")));
+        if(!fieldValue.is_null())
+        {
+            int32_t refVal_setDurationMs;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setDurationMs);
+            setDurationMs(refVal_setDurationMs);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("gait"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("gait")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setGait;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setGait);
+            
+            setGait(toGaitEnum(refVal_setGait));
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("origin"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("origin")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setOrigin;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setOrigin);
+            
+            setOrigin(toOriginEnum(refVal_setOrigin));
             
         }
     }
@@ -208,10 +413,6 @@ void ControllerPolicyExecuteSchema::toMultipart(std::shared_ptr<MultipartFormDat
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("twin_uuid")), m_Twin_uuid));
     }
-    if(m_Instruction.has_value())
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("instruction")), m_Instruction.get()));
-    }
     if(m_ExecutionIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("execution")), m_Execution));
@@ -220,9 +421,61 @@ void ControllerPolicyExecuteSchema::toMultipart(std::shared_ptr<MultipartFormDat
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("mode")), fromModeEnum(m_Mode.get())));
     }
+    if(m_Runtime_kind.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("runtime_kind")), fromRuntime_kindEnum(m_Runtime_kind.get())));
+    }
+    if(m_Simulation_backend.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("simulation_backend")), m_Simulation_backend.get()));
+    }
+    if(m_PayloadIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("payload")), m_Payload));
+    }
+    if(m_Instruction.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("instruction")), m_Instruction.get()));
+    }
     if(m_Max_steps.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("max_steps")), m_Max_steps.get()));
+    }
+    if(m_Device.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("device")), fromDeviceEnum(m_Device.get())));
+    }
+    if(m_Velocity_command.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("velocity_command")), m_Velocity_command.get()));
+    }
+    if(m_Linear_x.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("linear_x")), m_Linear_x.get()));
+    }
+    if(m_Linear_y.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("linear_y")), m_Linear_y.get()));
+    }
+    if(m_Linear_z.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("linear_z")), m_Linear_z.get()));
+    }
+    if(m_Angular_z.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("angular_z")), m_Angular_z.get()));
+    }
+    if(m_Duration_ms.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("duration_ms")), m_Duration_ms.get()));
+    }
+    if(m_Gait.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("gait")), fromGaitEnum(m_Gait.get())));
+    }
+    if(m_Origin.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("origin")), fromOriginEnum(m_Origin.get())));
     }
     if(m_Target_left_pos.has_value())
     {
@@ -257,12 +510,6 @@ bool ControllerPolicyExecuteSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))), refVal_setTwinUuid );
         setTwinUuid(refVal_setTwinUuid);
     }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("instruction"))))
-    {
-        utility::string_t refVal_setInstruction;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("instruction"))), refVal_setInstruction );
-        setInstruction(refVal_setInstruction);
-    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("execution"))))
     {
         utility::string_t refVal_setExecution;
@@ -275,11 +522,89 @@ bool ControllerPolicyExecuteSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("mode"))), refVal_setMode );
         setMode(toModeEnum(refVal_setMode));
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("runtime_kind"))))
+    {
+        utility::string_t refVal_setRuntimeKind;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("runtime_kind"))), refVal_setRuntimeKind );
+        setRuntimeKind(toRuntime_kindEnum(refVal_setRuntimeKind));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("simulation_backend"))))
+    {
+        utility::string_t refVal_setSimulationBackend;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("simulation_backend"))), refVal_setSimulationBackend );
+        setSimulationBackend(refVal_setSimulationBackend);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("payload"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setPayload;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("payload"))), refVal_setPayload );
+        setPayload(refVal_setPayload);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("instruction"))))
+    {
+        utility::string_t refVal_setInstruction;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("instruction"))), refVal_setInstruction );
+        setInstruction(refVal_setInstruction);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("max_steps"))))
     {
         int32_t refVal_setMaxSteps;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("max_steps"))), refVal_setMaxSteps );
         setMaxSteps(refVal_setMaxSteps);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("device"))))
+    {
+        utility::string_t refVal_setDevice;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("device"))), refVal_setDevice );
+        setDevice(toDeviceEnum(refVal_setDevice));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("velocity_command"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setVelocityCommand;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("velocity_command"))), refVal_setVelocityCommand );
+        setVelocityCommand(refVal_setVelocityCommand);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("linear_x"))))
+    {
+        double refVal_setLinearX;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("linear_x"))), refVal_setLinearX );
+        setLinearX(refVal_setLinearX);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("linear_y"))))
+    {
+        double refVal_setLinearY;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("linear_y"))), refVal_setLinearY );
+        setLinearY(refVal_setLinearY);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("linear_z"))))
+    {
+        double refVal_setLinearZ;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("linear_z"))), refVal_setLinearZ );
+        setLinearZ(refVal_setLinearZ);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("angular_z"))))
+    {
+        double refVal_setAngularZ;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("angular_z"))), refVal_setAngularZ );
+        setAngularZ(refVal_setAngularZ);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("duration_ms"))))
+    {
+        int32_t refVal_setDurationMs;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("duration_ms"))), refVal_setDurationMs );
+        setDurationMs(refVal_setDurationMs);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("gait"))))
+    {
+        utility::string_t refVal_setGait;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("gait"))), refVal_setGait );
+        setGait(toGaitEnum(refVal_setGait));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("origin"))))
+    {
+        utility::string_t refVal_setOrigin;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("origin"))), refVal_setOrigin );
+        setOrigin(toOriginEnum(refVal_setOrigin));
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("target_left_pos"))))
     {
@@ -335,6 +660,132 @@ const utility::string_t ControllerPolicyExecuteSchema::fromModeEnum(const ModeEn
     }
 }
 
+ControllerPolicyExecuteSchema::Runtime_kindEnum ControllerPolicyExecuteSchema::toRuntime_kindEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("physical")) {
+        return Runtime_kindEnum::PHYSICAL;
+    }
+    
+    if (value == utility::conversions::to_string_t("simulation")) {
+        return Runtime_kindEnum::SIMULATION;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to Runtime_kindEnum");
+}
+
+
+const utility::string_t ControllerPolicyExecuteSchema::fromRuntime_kindEnum(const Runtime_kindEnum value) const
+{
+    switch(value)
+    {
+        
+        case Runtime_kindEnum::PHYSICAL: return utility::conversions::to_string_t("physical");
+        
+        case Runtime_kindEnum::SIMULATION: return utility::conversions::to_string_t("simulation");
+        
+    }
+}
+
+ControllerPolicyExecuteSchema::DeviceEnum ControllerPolicyExecuteSchema::toDeviceEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("cpu")) {
+        return DeviceEnum::CPU;
+    }
+    
+    if (value == utility::conversions::to_string_t("gpu")) {
+        return DeviceEnum::GPU;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to DeviceEnum");
+}
+
+
+const utility::string_t ControllerPolicyExecuteSchema::fromDeviceEnum(const DeviceEnum value) const
+{
+    switch(value)
+    {
+        
+        case DeviceEnum::CPU: return utility::conversions::to_string_t("cpu");
+        
+        case DeviceEnum::GPU: return utility::conversions::to_string_t("gpu");
+        
+    }
+}
+
+ControllerPolicyExecuteSchema::GaitEnum ControllerPolicyExecuteSchema::toGaitEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("walk")) {
+        return GaitEnum::WALK;
+    }
+    
+    if (value == utility::conversions::to_string_t("trot")) {
+        return GaitEnum::TROT;
+    }
+    
+    if (value == utility::conversions::to_string_t("stand")) {
+        return GaitEnum::STAND;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to GaitEnum");
+}
+
+
+const utility::string_t ControllerPolicyExecuteSchema::fromGaitEnum(const GaitEnum value) const
+{
+    switch(value)
+    {
+        
+        case GaitEnum::WALK: return utility::conversions::to_string_t("walk");
+        
+        case GaitEnum::TROT: return utility::conversions::to_string_t("trot");
+        
+        case GaitEnum::STAND: return utility::conversions::to_string_t("stand");
+        
+    }
+}
+
+ControllerPolicyExecuteSchema::OriginEnum ControllerPolicyExecuteSchema::toOriginEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("teleop")) {
+        return OriginEnum::TELEOP;
+    }
+    
+    if (value == utility::conversions::to_string_t("ai_policy")) {
+        return OriginEnum::AI_POLICY;
+    }
+    
+    if (value == utility::conversions::to_string_t("navigation")) {
+        return OriginEnum::NAVIGATION;
+    }
+    
+    if (value == utility::conversions::to_string_t("workflow")) {
+        return OriginEnum::WORKFLOW;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to OriginEnum");
+}
+
+
+const utility::string_t ControllerPolicyExecuteSchema::fromOriginEnum(const OriginEnum value) const
+{
+    switch(value)
+    {
+        
+        case OriginEnum::TELEOP: return utility::conversions::to_string_t("teleop");
+        
+        case OriginEnum::AI_POLICY: return utility::conversions::to_string_t("ai_policy");
+        
+        case OriginEnum::NAVIGATION: return utility::conversions::to_string_t("navigation");
+        
+        case OriginEnum::WORKFLOW: return utility::conversions::to_string_t("workflow");
+        
+    }
+}
+
 
 utility::string_t ControllerPolicyExecuteSchema::getTwinUuid() const
 {
@@ -356,26 +807,6 @@ bool ControllerPolicyExecuteSchema::twinUuidIsSet() const
 void ControllerPolicyExecuteSchema::unsetTwin_uuid()
 {
     m_Twin_uuidIsSet = false;
-}
-utility::string_t ControllerPolicyExecuteSchema::getInstruction() const
-{
-    return m_Instruction.get();
-}
-
-
-void ControllerPolicyExecuteSchema::setInstruction(const utility::string_t& value)
-{
-    m_Instruction = value;
-}
-
-bool ControllerPolicyExecuteSchema::instructionIsSet() const
-{
-    return m_Instruction.has_value();
-}
-
-void ControllerPolicyExecuteSchema::unsetInstruction()
-{
-    m_Instruction.reset();
 }
 utility::string_t ControllerPolicyExecuteSchema::getExecution() const
 {
@@ -418,6 +849,87 @@ void ControllerPolicyExecuteSchema::unsetMode()
 {
     m_Mode.reset();
 }
+ControllerPolicyExecuteSchema::Runtime_kindEnum ControllerPolicyExecuteSchema::getRuntimeKind() const
+{
+    return m_Runtime_kind.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setRuntimeKind(const Runtime_kindEnum value)
+{
+    m_Runtime_kind = value;
+}
+
+bool ControllerPolicyExecuteSchema::runtimeKindIsSet() const
+{
+    return m_Runtime_kind.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetRuntime_kind()
+{
+    m_Runtime_kind.reset();
+}
+utility::string_t ControllerPolicyExecuteSchema::getSimulationBackend() const
+{
+    return m_Simulation_backend.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setSimulationBackend(const utility::string_t& value)
+{
+    m_Simulation_backend = value;
+}
+
+bool ControllerPolicyExecuteSchema::simulationBackendIsSet() const
+{
+    return m_Simulation_backend.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetSimulation_backend()
+{
+    m_Simulation_backend.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> ControllerPolicyExecuteSchema::getPayload() const
+{
+    return m_Payload;
+}
+
+
+void ControllerPolicyExecuteSchema::setPayload(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Payload = value;
+    m_PayloadIsSet = true;
+}
+
+bool ControllerPolicyExecuteSchema::payloadIsSet() const
+{
+    return m_PayloadIsSet;
+}
+
+void ControllerPolicyExecuteSchema::unsetPayload()
+{
+    m_PayloadIsSet = false;
+}
+utility::string_t ControllerPolicyExecuteSchema::getInstruction() const
+{
+    return m_Instruction.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setInstruction(const utility::string_t& value)
+{
+    m_Instruction = value;
+}
+
+bool ControllerPolicyExecuteSchema::instructionIsSet() const
+{
+    return m_Instruction.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetInstruction()
+{
+    m_Instruction.reset();
+}
 int32_t ControllerPolicyExecuteSchema::getMaxSteps() const
 {
     return m_Max_steps.get();
@@ -436,6 +948,181 @@ bool ControllerPolicyExecuteSchema::maxStepsIsSet() const
 void ControllerPolicyExecuteSchema::unsetMax_steps()
 {
     m_Max_steps.reset();
+}
+ControllerPolicyExecuteSchema::DeviceEnum ControllerPolicyExecuteSchema::getDevice() const
+{
+    return m_Device.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setDevice(const DeviceEnum value)
+{
+    m_Device = value;
+}
+
+bool ControllerPolicyExecuteSchema::deviceIsSet() const
+{
+    return m_Device.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetDevice()
+{
+    m_Device.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> ControllerPolicyExecuteSchema::getVelocityCommand() const
+{
+    return m_Velocity_command.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setVelocityCommand(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Velocity_command = value;
+}
+
+bool ControllerPolicyExecuteSchema::velocityCommandIsSet() const
+{
+    return m_Velocity_command.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetVelocity_command()
+{
+    m_Velocity_command.reset();
+}
+double ControllerPolicyExecuteSchema::getLinearX() const
+{
+    return m_Linear_x.get();
+}
+
+void ControllerPolicyExecuteSchema::setLinearX(double value)
+{
+    m_Linear_x = value;
+}
+
+bool ControllerPolicyExecuteSchema::linearXIsSet() const
+{
+    return m_Linear_x.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetLinear_x()
+{
+    m_Linear_x.reset();
+}
+double ControllerPolicyExecuteSchema::getLinearY() const
+{
+    return m_Linear_y.get();
+}
+
+void ControllerPolicyExecuteSchema::setLinearY(double value)
+{
+    m_Linear_y = value;
+}
+
+bool ControllerPolicyExecuteSchema::linearYIsSet() const
+{
+    return m_Linear_y.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetLinear_y()
+{
+    m_Linear_y.reset();
+}
+double ControllerPolicyExecuteSchema::getLinearZ() const
+{
+    return m_Linear_z.get();
+}
+
+void ControllerPolicyExecuteSchema::setLinearZ(double value)
+{
+    m_Linear_z = value;
+}
+
+bool ControllerPolicyExecuteSchema::linearZIsSet() const
+{
+    return m_Linear_z.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetLinear_z()
+{
+    m_Linear_z.reset();
+}
+double ControllerPolicyExecuteSchema::getAngularZ() const
+{
+    return m_Angular_z.get();
+}
+
+void ControllerPolicyExecuteSchema::setAngularZ(double value)
+{
+    m_Angular_z = value;
+}
+
+bool ControllerPolicyExecuteSchema::angularZIsSet() const
+{
+    return m_Angular_z.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetAngular_z()
+{
+    m_Angular_z.reset();
+}
+int32_t ControllerPolicyExecuteSchema::getDurationMs() const
+{
+    return m_Duration_ms.get();
+}
+
+void ControllerPolicyExecuteSchema::setDurationMs(int32_t value)
+{
+    m_Duration_ms = value;
+}
+
+bool ControllerPolicyExecuteSchema::durationMsIsSet() const
+{
+    return m_Duration_ms.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetDuration_ms()
+{
+    m_Duration_ms.reset();
+}
+ControllerPolicyExecuteSchema::GaitEnum ControllerPolicyExecuteSchema::getGait() const
+{
+    return m_Gait.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setGait(const GaitEnum value)
+{
+    m_Gait = value;
+}
+
+bool ControllerPolicyExecuteSchema::gaitIsSet() const
+{
+    return m_Gait.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetGait()
+{
+    m_Gait.reset();
+}
+ControllerPolicyExecuteSchema::OriginEnum ControllerPolicyExecuteSchema::getOrigin() const
+{
+    return m_Origin.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setOrigin(const OriginEnum value)
+{
+    m_Origin = value;
+}
+
+bool ControllerPolicyExecuteSchema::originIsSet() const
+{
+    return m_Origin.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetOrigin()
+{
+    m_Origin.reset();
 }
 std::vector<double> ControllerPolicyExecuteSchema::getTargetLeftPos() const
 {

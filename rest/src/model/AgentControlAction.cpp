@@ -42,6 +42,21 @@ void AgentControlAction::validate()
 web::json::value AgentControlAction::toJson() const
 {
     web::json::value val = web::json::value::object();
+    if(m_Action_id.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("action_id"))] = ModelBase::toJson(m_Action_id.get());
+    }
+    if(m_Display_label.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("display_label"))] = ModelBase::toJson(m_Display_label.get());
+    }
+    if(m_Payload_summary.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("payload_summary"))] = ModelBase::toJson(m_Payload_summary.get());
+    }
     if(m_KindIsSet)
     {
         
@@ -53,6 +68,11 @@ web::json::value AgentControlAction::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("dispatchability"))] = ModelBase::toJson(m_Dispatchability);
+    }
+    if(m_Execution_channel.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("execution_channel"))] = ModelBase::toJson(m_Execution_channel.get());
     }
     if(m_Transport.has_value())
     {
@@ -73,6 +93,16 @@ web::json::value AgentControlAction::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("requires_confirmation"))] = ModelBase::toJson(m_Requires_confirmation);
+    }
+    if(m_Controller_ref.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("controller_ref"))] = ModelBase::toJson(m_Controller_ref.get());
+    }
+    if(m_Policy_ref.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("policy_ref"))] = ModelBase::toJson(m_Policy_ref.get());
     }
     if(m_Controller_policy_uuid.has_value())
     {
@@ -96,6 +126,39 @@ web::json::value AgentControlAction::toJson() const
 bool AgentControlAction::fromJson(const web::json::value& val)
 {
     bool ok = true;
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("action_id"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("action_id")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setActionId;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setActionId);
+            setActionId(refVal_setActionId);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("display_label"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("display_label")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setDisplayLabel;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setDisplayLabel);
+            setDisplayLabel(refVal_setDisplayLabel);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("payload_summary"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("payload_summary")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setPayloadSummary;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPayloadSummary);
+            setPayloadSummary(refVal_setPayloadSummary);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("kind"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("kind")));
@@ -116,6 +179,17 @@ bool AgentControlAction::fromJson(const web::json::value& val)
             utility::string_t refVal_setDispatchability;
             ok &= ModelBase::fromJson(fieldValue, refVal_setDispatchability);
             setDispatchability(refVal_setDispatchability);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("execution_channel")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExecutionChannel;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExecutionChannel);
+            setExecutionChannel(refVal_setExecutionChannel);
             
         }
     }
@@ -163,6 +237,28 @@ bool AgentControlAction::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("controller_ref"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("controller_ref")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<ControllerRefSchema> refVal_setControllerRef;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setControllerRef);
+            setControllerRef(refVal_setControllerRef);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("policy_ref"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("policy_ref")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<ControllerRefSchema> refVal_setPolicyRef;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPolicyRef);
+            setPolicyRef(refVal_setPolicyRef);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid")));
@@ -206,6 +302,18 @@ void AgentControlAction::toMultipart(std::shared_ptr<MultipartFormData> multipar
     {
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
+    if(m_Action_id.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("action_id")), m_Action_id.get()));
+    }
+    if(m_Display_label.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("display_label")), m_Display_label.get()));
+    }
+    if(m_Payload_summary.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("payload_summary")), m_Payload_summary.get()));
+    }
     if(m_KindIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("kind")), fromKindEnum(m_Kind)));
@@ -213,6 +321,10 @@ void AgentControlAction::toMultipart(std::shared_ptr<MultipartFormData> multipar
     if(m_DispatchabilityIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("dispatchability")), m_Dispatchability));
+    }
+    if(m_Execution_channel.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("execution_channel")), m_Execution_channel.get()));
     }
     if(m_Transport.has_value())
     {
@@ -229,6 +341,14 @@ void AgentControlAction::toMultipart(std::shared_ptr<MultipartFormData> multipar
     if(m_Requires_confirmationIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("requires_confirmation")), m_Requires_confirmation));
+    }
+    if(m_Controller_ref.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controller_ref")), m_Controller_ref.get()));
+    }
+    if(m_Policy_ref.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("policy_ref")), m_Policy_ref.get()));
     }
     if(m_Controller_policy_uuid.has_value())
     {
@@ -253,6 +373,24 @@ bool AgentControlAction::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
 
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("action_id"))))
+    {
+        utility::string_t refVal_setActionId;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("action_id"))), refVal_setActionId );
+        setActionId(refVal_setActionId);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("display_label"))))
+    {
+        utility::string_t refVal_setDisplayLabel;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("display_label"))), refVal_setDisplayLabel );
+        setDisplayLabel(refVal_setDisplayLabel);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("payload_summary"))))
+    {
+        utility::string_t refVal_setPayloadSummary;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("payload_summary"))), refVal_setPayloadSummary );
+        setPayloadSummary(refVal_setPayloadSummary);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("kind"))))
     {
         utility::string_t refVal_setKind;
@@ -264,6 +402,12 @@ bool AgentControlAction::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         utility::string_t refVal_setDispatchability;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("dispatchability"))), refVal_setDispatchability );
         setDispatchability(refVal_setDispatchability);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))))
+    {
+        utility::string_t refVal_setExecutionChannel;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))), refVal_setExecutionChannel );
+        setExecutionChannel(refVal_setExecutionChannel);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("transport"))))
     {
@@ -288,6 +432,18 @@ bool AgentControlAction::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         bool refVal_setRequiresConfirmation;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("requires_confirmation"))), refVal_setRequiresConfirmation );
         setRequiresConfirmation(refVal_setRequiresConfirmation);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("controller_ref"))))
+    {
+        std::shared_ptr<ControllerRefSchema> refVal_setControllerRef;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("controller_ref"))), refVal_setControllerRef );
+        setControllerRef(refVal_setControllerRef);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("policy_ref"))))
+    {
+        std::shared_ptr<ControllerRefSchema> refVal_setPolicyRef;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("policy_ref"))), refVal_setPolicyRef );
+        setPolicyRef(refVal_setPolicyRef);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuid"))))
     {
@@ -374,6 +530,66 @@ const utility::string_t AgentControlAction::fromKindEnum(const KindEnum value) c
 }
 
 
+utility::string_t AgentControlAction::getActionId() const
+{
+    return m_Action_id.get();
+}
+
+
+void AgentControlAction::setActionId(const utility::string_t& value)
+{
+    m_Action_id = value;
+}
+
+bool AgentControlAction::actionIdIsSet() const
+{
+    return m_Action_id.has_value();
+}
+
+void AgentControlAction::unsetAction_id()
+{
+    m_Action_id.reset();
+}
+utility::string_t AgentControlAction::getDisplayLabel() const
+{
+    return m_Display_label.get();
+}
+
+
+void AgentControlAction::setDisplayLabel(const utility::string_t& value)
+{
+    m_Display_label = value;
+}
+
+bool AgentControlAction::displayLabelIsSet() const
+{
+    return m_Display_label.has_value();
+}
+
+void AgentControlAction::unsetDisplay_label()
+{
+    m_Display_label.reset();
+}
+utility::string_t AgentControlAction::getPayloadSummary() const
+{
+    return m_Payload_summary.get();
+}
+
+
+void AgentControlAction::setPayloadSummary(const utility::string_t& value)
+{
+    m_Payload_summary = value;
+}
+
+bool AgentControlAction::payloadSummaryIsSet() const
+{
+    return m_Payload_summary.has_value();
+}
+
+void AgentControlAction::unsetPayload_summary()
+{
+    m_Payload_summary.reset();
+}
 AgentControlAction::KindEnum AgentControlAction::getKind() const
 {
     return m_Kind;
@@ -415,6 +631,26 @@ bool AgentControlAction::dispatchabilityIsSet() const
 void AgentControlAction::unsetDispatchability()
 {
     m_DispatchabilityIsSet = false;
+}
+utility::string_t AgentControlAction::getExecutionChannel() const
+{
+    return m_Execution_channel.get();
+}
+
+
+void AgentControlAction::setExecutionChannel(const utility::string_t& value)
+{
+    m_Execution_channel = value;
+}
+
+bool AgentControlAction::executionChannelIsSet() const
+{
+    return m_Execution_channel.has_value();
+}
+
+void AgentControlAction::unsetExecution_channel()
+{
+    m_Execution_channel.reset();
 }
 utility::string_t AgentControlAction::getTransport() const
 {
@@ -497,6 +733,46 @@ bool AgentControlAction::requiresConfirmationIsSet() const
 void AgentControlAction::unsetRequires_confirmation()
 {
     m_Requires_confirmationIsSet = false;
+}
+std::shared_ptr<ControllerRefSchema> AgentControlAction::getControllerRef() const
+{
+    return m_Controller_ref.get();
+}
+
+
+void AgentControlAction::setControllerRef(const std::shared_ptr<ControllerRefSchema>& value)
+{
+    m_Controller_ref = value;
+}
+
+bool AgentControlAction::controllerRefIsSet() const
+{
+    return m_Controller_ref.has_value();
+}
+
+void AgentControlAction::unsetController_ref()
+{
+    m_Controller_ref.reset();
+}
+std::shared_ptr<ControllerRefSchema> AgentControlAction::getPolicyRef() const
+{
+    return m_Policy_ref.get();
+}
+
+
+void AgentControlAction::setPolicyRef(const std::shared_ptr<ControllerRefSchema>& value)
+{
+    m_Policy_ref = value;
+}
+
+bool AgentControlAction::policyRefIsSet() const
+{
+    return m_Policy_ref.has_value();
+}
+
+void AgentControlAction::unsetPolicy_ref()
+{
+    m_Policy_ref.reset();
 }
 utility::string_t AgentControlAction::getControllerPolicyUuid() const
 {

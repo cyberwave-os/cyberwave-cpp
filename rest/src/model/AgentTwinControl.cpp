@@ -27,6 +27,8 @@ AgentTwinControl::AgentTwinControl()
     m_AvailableIsSet = false;
     m_Dispatchability = utility::conversions::to_string_t("");
     m_DispatchabilityIsSet = false;
+    m_Execution_channel = utility::conversions::to_string_t("");
+    m_Execution_channelIsSet = false;
     m_Transport = utility::conversions::to_string_t("");
     m_TransportIsSet = false;
     m_Requires_confirmation = false;
@@ -34,8 +36,10 @@ AgentTwinControl::AgentTwinControl()
     m_Source_typesIsSet = false;
     m_CommandsIsSet = false;
     m_Controller_policy_uuidsIsSet = false;
+    m_Controller_policy_defaultsIsSet = false;
     m_Missing_capabilitiesIsSet = false;
     m_Sensor_idsIsSet = false;
+    m_Sensor_geometriesIsSet = false;
     m_PosesIsSet = false;
     m_MovementsIsSet = false;
     m_JointsIsSet = false;
@@ -75,6 +79,11 @@ web::json::value AgentTwinControl::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("dispatchability"))] = ModelBase::toJson(m_Dispatchability);
     }
+    if(m_Execution_channelIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("execution_channel"))] = ModelBase::toJson(m_Execution_channel);
+    }
     if(m_TransportIsSet)
     {
         
@@ -105,6 +114,11 @@ web::json::value AgentTwinControl::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuids"))] = ModelBase::toJson(m_Controller_policy_uuids);
     }
+    if(m_Controller_policy_defaultsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("controller_policy_defaults"))] = ModelBase::toJson(m_Controller_policy_defaults);
+    }
     if(m_Asset_uuid.has_value())
     {
         
@@ -124,6 +138,11 @@ web::json::value AgentTwinControl::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("sensor_ids"))] = ModelBase::toJson(m_Sensor_ids);
+    }
+    if(m_Sensor_geometriesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("sensor_geometries"))] = ModelBase::toJson(m_Sensor_geometries);
     }
     if(m_PosesIsSet)
     {
@@ -209,6 +228,17 @@ bool AgentTwinControl::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("execution_channel")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExecutionChannel;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExecutionChannel);
+            setExecutionChannel(refVal_setExecutionChannel);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("transport"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("transport")));
@@ -275,6 +305,17 @@ bool AgentTwinControl::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("controller_policy_defaults"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("controller_policy_defaults")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AgentControllerRuntimeRouteRefSchema>>> refVal_setControllerPolicyDefaults;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setControllerPolicyDefaults);
+            setControllerPolicyDefaults(refVal_setControllerPolicyDefaults);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("asset_uuid")));
@@ -316,6 +357,17 @@ bool AgentTwinControl::fromJson(const web::json::value& val)
             std::vector<utility::string_t> refVal_setSensorIds;
             ok &= ModelBase::fromJson(fieldValue, refVal_setSensorIds);
             setSensorIds(refVal_setSensorIds);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("sensor_geometries"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("sensor_geometries")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setSensorGeometries;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSensorGeometries);
+            setSensorGeometries(refVal_setSensorGeometries);
             
         }
     }
@@ -412,6 +464,10 @@ void AgentTwinControl::toMultipart(std::shared_ptr<MultipartFormData> multipart,
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("dispatchability")), m_Dispatchability));
     }
+    if(m_Execution_channelIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("execution_channel")), m_Execution_channel));
+    }
     if(m_TransportIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("transport")), m_Transport));
@@ -436,6 +492,10 @@ void AgentTwinControl::toMultipart(std::shared_ptr<MultipartFormData> multipart,
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuids")), m_Controller_policy_uuids));
     }
+    if(m_Controller_policy_defaultsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controller_policy_defaults")), m_Controller_policy_defaults));
+    }
     if(m_Asset_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_uuid")), m_Asset_uuid.get()));
@@ -451,6 +511,10 @@ void AgentTwinControl::toMultipart(std::shared_ptr<MultipartFormData> multipart,
     if(m_Sensor_idsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("sensor_ids")), m_Sensor_ids));
+    }
+    if(m_Sensor_geometriesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("sensor_geometries")), m_Sensor_geometries));
     }
     if(m_PosesIsSet)
     {
@@ -511,6 +575,12 @@ bool AgentTwinControl::fromMultiPart(std::shared_ptr<MultipartFormData> multipar
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("dispatchability"))), refVal_setDispatchability );
         setDispatchability(refVal_setDispatchability);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))))
+    {
+        utility::string_t refVal_setExecutionChannel;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))), refVal_setExecutionChannel );
+        setExecutionChannel(refVal_setExecutionChannel);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("transport"))))
     {
         utility::string_t refVal_setTransport;
@@ -547,6 +617,12 @@ bool AgentTwinControl::fromMultiPart(std::shared_ptr<MultipartFormData> multipar
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("controller_policy_uuids"))), refVal_setControllerPolicyUuids );
         setControllerPolicyUuids(refVal_setControllerPolicyUuids);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("controller_policy_defaults"))))
+    {
+        std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AgentControllerRuntimeRouteRefSchema>>> refVal_setControllerPolicyDefaults;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("controller_policy_defaults"))), refVal_setControllerPolicyDefaults );
+        setControllerPolicyDefaults(refVal_setControllerPolicyDefaults);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))))
     {
         utility::string_t refVal_setAssetUuid;
@@ -570,6 +646,12 @@ bool AgentTwinControl::fromMultiPart(std::shared_ptr<MultipartFormData> multipar
         std::vector<utility::string_t> refVal_setSensorIds;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("sensor_ids"))), refVal_setSensorIds );
         setSensorIds(refVal_setSensorIds);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("sensor_geometries"))))
+    {
+        std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setSensorGeometries;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("sensor_geometries"))), refVal_setSensorGeometries );
+        setSensorGeometries(refVal_setSensorGeometries);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("poses"))))
     {
@@ -796,6 +878,27 @@ void AgentTwinControl::unsetDispatchability()
 {
     m_DispatchabilityIsSet = false;
 }
+utility::string_t AgentTwinControl::getExecutionChannel() const
+{
+    return m_Execution_channel;
+}
+
+
+void AgentTwinControl::setExecutionChannel(const utility::string_t& value)
+{
+    m_Execution_channel = value;
+    m_Execution_channelIsSet = true;
+}
+
+bool AgentTwinControl::executionChannelIsSet() const
+{
+    return m_Execution_channelIsSet;
+}
+
+void AgentTwinControl::unsetExecution_channel()
+{
+    m_Execution_channelIsSet = false;
+}
 utility::string_t AgentTwinControl::getTransport() const
 {
     return m_Transport;
@@ -920,6 +1023,27 @@ void AgentTwinControl::unsetController_policy_uuids()
 {
     m_Controller_policy_uuidsIsSet = false;
 }
+std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AgentControllerRuntimeRouteRefSchema>>> AgentTwinControl::getControllerPolicyDefaults() const
+{
+    return m_Controller_policy_defaults;
+}
+
+
+void AgentTwinControl::setControllerPolicyDefaults(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AgentControllerRuntimeRouteRefSchema>>>& value)
+{
+    m_Controller_policy_defaults = value;
+    m_Controller_policy_defaultsIsSet = true;
+}
+
+bool AgentTwinControl::controllerPolicyDefaultsIsSet() const
+{
+    return m_Controller_policy_defaultsIsSet;
+}
+
+void AgentTwinControl::unsetController_policy_defaults()
+{
+    m_Controller_policy_defaultsIsSet = false;
+}
 utility::string_t AgentTwinControl::getAssetUuid() const
 {
     return m_Asset_uuid.get();
@@ -1001,6 +1125,27 @@ bool AgentTwinControl::sensorIdsIsSet() const
 void AgentTwinControl::unsetSensor_ids()
 {
     m_Sensor_idsIsSet = false;
+}
+std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> AgentTwinControl::getSensorGeometries() const
+{
+    return m_Sensor_geometries;
+}
+
+
+void AgentTwinControl::setSensorGeometries(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value)
+{
+    m_Sensor_geometries = value;
+    m_Sensor_geometriesIsSet = true;
+}
+
+bool AgentTwinControl::sensorGeometriesIsSet() const
+{
+    return m_Sensor_geometriesIsSet;
+}
+
+void AgentTwinControl::unsetSensor_geometries()
+{
+    m_Sensor_geometriesIsSet = false;
 }
 std::vector<std::map<utility::string_t, utility::string_t>> AgentTwinControl::getPoses() const
 {

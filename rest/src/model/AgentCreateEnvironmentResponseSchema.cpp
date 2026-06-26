@@ -24,6 +24,7 @@ AgentCreateEnvironmentResponseSchema::AgentCreateEnvironmentResponseSchema()
     m_Answer = utility::conversions::to_string_t("");
     m_AnswerIsSet = false;
     m_Tool_callsIsSet = false;
+    m_Creation_validationIsSet = false;
 }
 
 AgentCreateEnvironmentResponseSchema::~AgentCreateEnvironmentResponseSchema()
@@ -52,6 +53,16 @@ web::json::value AgentCreateEnvironmentResponseSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("tool_calls"))] = ModelBase::toJson(m_Tool_calls);
+    }
+    if(m_Creation_validationIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("creation_validation"))] = ModelBase::toJson(m_Creation_validation);
+    }
+    if(m_Workflow_result.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("workflow_result"))] = ModelBase::toJson(m_Workflow_result.get());
     }
     if(m_Proposal.has_value())
     {
@@ -98,6 +109,28 @@ bool AgentCreateEnvironmentResponseSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("creation_validation"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("creation_validation")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setCreationValidation;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCreationValidation);
+            setCreationValidation(refVal_setCreationValidation);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("workflow_result"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("workflow_result")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setWorkflowResult;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setWorkflowResult);
+            setWorkflowResult(refVal_setWorkflowResult);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("proposal"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("proposal")));
@@ -131,6 +164,14 @@ void AgentCreateEnvironmentResponseSchema::toMultipart(std::shared_ptr<Multipart
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("tool_calls")), m_Tool_calls));
     }
+    if(m_Creation_validationIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("creation_validation")), m_Creation_validation));
+    }
+    if(m_Workflow_result.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workflow_result")), m_Workflow_result.get()));
+    }
     if(m_Proposal.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("proposal")), m_Proposal.get()));
@@ -163,6 +204,18 @@ bool AgentCreateEnvironmentResponseSchema::fromMultiPart(std::shared_ptr<Multipa
         std::vector<utility::string_t> refVal_setToolCalls;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("tool_calls"))), refVal_setToolCalls );
         setToolCalls(refVal_setToolCalls);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("creation_validation"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setCreationValidation;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("creation_validation"))), refVal_setCreationValidation );
+        setCreationValidation(refVal_setCreationValidation);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("workflow_result"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setWorkflowResult;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workflow_result"))), refVal_setWorkflowResult );
+        setWorkflowResult(refVal_setWorkflowResult);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("proposal"))))
     {
@@ -236,6 +289,47 @@ bool AgentCreateEnvironmentResponseSchema::toolCallsIsSet() const
 void AgentCreateEnvironmentResponseSchema::unsetTool_calls()
 {
     m_Tool_callsIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> AgentCreateEnvironmentResponseSchema::getCreationValidation() const
+{
+    return m_Creation_validation;
+}
+
+
+void AgentCreateEnvironmentResponseSchema::setCreationValidation(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Creation_validation = value;
+    m_Creation_validationIsSet = true;
+}
+
+bool AgentCreateEnvironmentResponseSchema::creationValidationIsSet() const
+{
+    return m_Creation_validationIsSet;
+}
+
+void AgentCreateEnvironmentResponseSchema::unsetCreation_validation()
+{
+    m_Creation_validationIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> AgentCreateEnvironmentResponseSchema::getWorkflowResult() const
+{
+    return m_Workflow_result.get();
+}
+
+
+void AgentCreateEnvironmentResponseSchema::setWorkflowResult(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Workflow_result = value;
+}
+
+bool AgentCreateEnvironmentResponseSchema::workflowResultIsSet() const
+{
+    return m_Workflow_result.has_value();
+}
+
+void AgentCreateEnvironmentResponseSchema::unsetWorkflow_result()
+{
+    m_Workflow_result.reset();
 }
 std::shared_ptr<AgentProposalSchema> AgentCreateEnvironmentResponseSchema::getProposal() const
 {
