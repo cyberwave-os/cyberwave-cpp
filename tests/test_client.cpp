@@ -81,8 +81,9 @@ struct MockMqttClient : IMqttClient
     bool is_connected() const override { return connected; }
     std::string get_topic_prefix() const override { return ""; }
     void update_joint_state(const std::string&, const std::string&, double) override {}
-    void update_joint_state(const std::string& twin_uuid, const std::string& joint_name, double position_rad, double,
-                            double, double timestamp, const std::string& source_type) override
+    void update_joint_state(const std::string& twin_uuid, const std::string& joint_name, double position_rad,
+                            std::optional<double>, std::optional<double>, double timestamp,
+                            const std::string& source_type) override
     {
         last_joint_twin_uuid = twin_uuid;
         last_joint_name = joint_name;
@@ -202,6 +203,85 @@ static void test_twin_from_rest_supports_capability_helpers()
     assert(payload.at("source_type") == "tele");
     assert(payload.at("command") == "move_forward");
     assert(payload.at("data").at("linear_x") == 1.25);
+}
+
+static void test_twin_dispatch_velocity_uses_backend_control()
+{
+    std::vector<nlohmann::json> dispatch_bodies;
+
+    TestHttpServer server(
+        [&](web::http::http_request request)
+        {
+            const std::string path = to_std(request.relative_uri().path());
+            if (path == "/api/v1/twins/loco-twin")
+            {
+                request.reply(web::http::status_codes::OK,
+                              to_utility("{\"uuid\":\"loco-twin\",\"name\":\"Locomote Twin\","
+                                         "\"environment_uuid\":\"env-123\","
+                                         "\"capabilities\":{\"can_locomote\":true}}"),
+                              to_utility("application/json"));
+                return;
+            }
+            if (path == "/api/v1/agents/environments/env-123/control/actions/dispatch")
+            {
+                dispatch_bodies.push_back(nlohmann::json::parse(to_std(request.extract_string().get())));
+                request.reply(web::http::status_codes::OK,
+                              to_utility("{\"action_id\":\"action-1\",\"status\":\"queued\","
+                                         "\"message\":\"queued\"}"),
+                              to_utility("application/json"));
+                return;
+            }
+
+            request.reply(web::http::status_codes::NotFound, to_utility("not found"));
+        });
+
+    Config cfg;
+    cfg.base_url = server.base_url();
+    cfg.api_key = "key";
+    Client c(cfg);
+
+    Twin t = c.twin("loco-twin");
+    const auto response = nlohmann::json::parse(t.dispatch_velocity(
+        build_locomotion_velocity_command(0.4, 0.0, 0.1, 750, "trot", "teleop"), "simulation", "mujoco"));
+
+    assert(response.at("action_id") == "action-1");
+    const auto dispatch_body = dispatch_bodies.at(0);
+    assert(dispatch_body.at("mode") == "simulation");
+    assert(dispatch_body.at("confirmed") == false);
+    assert(dispatch_body.at("simulation_backend") == "mujoco");
+    const auto action = dispatch_body.at("action");
+    assert(action.at("kind") == "controller_policy_execute");
+    assert(action.at("target_twin_uuid") == "loco-twin");
+    const auto payload = action.at("payload");
+    assert(payload.at("runtime_kind") == "simulation");
+    assert(payload.at("simulation_backend") == "mujoco");
+    assert(payload.at("velocity_command").at("contract") == LOCOMOTION_VELOCITY_COMMAND_CONTRACT);
+    assert(payload.at("velocity_command").at("linear_x") == 0.4);
+    assert(payload.at("velocity_command").at("angular_z") == 0.1);
+
+    t.drive_forward(0.25, 1000, "simulation", "mujoco");
+    const auto drive_payload = dispatch_bodies.at(1).at("action").at("payload");
+    assert(drive_payload.at("velocity_command").at("linear_x") == 0.25);
+    assert(drive_payload.at("velocity_command").at("duration_ms") == 1000);
+
+    t.turn_velocity_right(0.6, 1000, "simulation", "mujoco");
+    const auto turn_payload = dispatch_bodies.at(2).at("action").at("payload");
+    assert(turn_payload.at("velocity_command").at("angular_z") == -0.6);
+
+    t.stop_velocity("simulation", "mujoco");
+    const auto stop_payload = dispatch_bodies.at(3).at("action").at("payload");
+    assert(stop_payload.at("velocity_command").at("linear_x") == 0.0);
+    assert(stop_payload.at("velocity_command").at("angular_z") == 0.0);
+    assert(stop_payload.at("velocity_command").at("duration_ms") == 0);
+    assert(stop_payload.at("velocity_command").at("gait") == "stand");
+
+    t.dispatch_velocity(build_locomotion_velocity_command(0.2, 0.0, 0.0, 500, "walk", "teleop"),
+                        PolicyRefPayload{"catalog_seed_id", "controller:go2-mujoco-velocity-policy:v1"}, "simulation",
+                        "mujoco");
+    const auto policy_ref_action = dispatch_bodies.at(4).at("action");
+    assert(policy_ref_action.at("policy_ref").at("kind") == "catalog_seed_id");
+    assert(policy_ref_action.at("policy_ref").at("value") == "controller:go2-mujoco-velocity-policy:v1");
+    assert(policy_ref_action.at("payload").at("policy_ref").at("kind") == "catalog_seed_id");
 }
 
 static void test_twin_resolves_asset_key_and_reuses_existing_twin()
@@ -670,6 +750,7 @@ int main()
     test_twin_stub();
     test_twin_fetches_existing_twin_from_rest();
     test_twin_from_rest_supports_capability_helpers();
+    test_twin_dispatch_velocity_uses_backend_control();
     test_twin_resolves_asset_key_and_reuses_existing_twin();
     test_twin_creates_missing_asset_twin();
     test_twin_bootstraps_quickstart_context_when_environment_missing();

@@ -182,6 +182,11 @@ public:
     void unsetCapabilities();
     void setCapabilities(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getUniversalSchema() const;
+    bool universalSchemaIsSet() const;
+    void unsetUniversal_schema();
+    void setUniversalSchema(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
     utility::string_t getControllerPolicyUuid() const;
     bool controllerPolicyUuidIsSet() const;
     void unsetController_policy_uuid();
@@ -327,6 +332,8 @@ protected:
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Capabilities;
     bool m_CapabilitiesIsSet;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Universal_schema;
 
     boost::optional<utility::string_t> m_Controller_policy_uuid;
 

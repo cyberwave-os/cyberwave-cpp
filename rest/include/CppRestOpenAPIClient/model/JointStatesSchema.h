@@ -12,7 +12,7 @@
 /*
  * JointStatesSchema.h
  *
- * 
+ * ROS-style &#x60;&#x60;sensor_msgs/JointState&#x60;&#x60; projection.  &#x60;&#x60;velocity&#x60;&#x60; / &#x60;&#x60;effort&#x60;&#x60; arrays follow ROS semantics: an empty array means the channel is not measured/commanded for any joint. They are only populated when every reported joint carries an explicit value.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_JointStatesSchema_H_
@@ -33,6 +33,9 @@ namespace model {
 
 
 
+/// <summary>
+/// ROS-style &#x60;&#x60;sensor_msgs/JointState&#x60;&#x60; projection.  &#x60;&#x60;velocity&#x60;&#x60; / &#x60;&#x60;effort&#x60;&#x60; arrays follow ROS semantics: an empty array means the channel is not measured/commanded for any joint. They are only populated when every reported joint carries an explicit value.
+/// </summary>
 class  JointStatesSchema
     : public ModelBase
 {

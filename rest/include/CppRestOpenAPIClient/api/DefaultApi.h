@@ -28,30 +28,48 @@
 #include "CppRestOpenAPIClient/model/AdminLabOverviewSchema.h"
 #include "CppRestOpenAPIClient/model/AlertSchema.h"
 #include "CppRestOpenAPIClient/AnyType.h"
-#include "CppRestOpenAPIClient/model/AssetCatalogImportSchema.h"
+#include "CppRestOpenAPIClient/model/AssetControlProfilePatchSchema.h"
+#include "CppRestOpenAPIClient/model/AssetControlProfileSchema.h"
+#include "CppRestOpenAPIClient/model/AssetControlProfileSettingsPatchSchema.h"
+#include "CppRestOpenAPIClient/model/AssetControlRoutePatchSchema.h"
 #include "CppRestOpenAPIClient/model/AssetCreateSchema.h"
 #include "CppRestOpenAPIClient/model/AssetCreateWithURDFSchema.h"
 #include "CppRestOpenAPIClient/model/AssetGLBFromAttachmentSchema.h"
 #include "CppRestOpenAPIClient/model/AssetListSchema.h"
 #include "CppRestOpenAPIClient/model/AssetSchema.h"
+#include "CppRestOpenAPIClient/model/AssetSchemaVariantListSchema.h"
+#include "CppRestOpenAPIClient/model/AssetSchemaVariantSchema.h"
+#include "CppRestOpenAPIClient/model/AssetSchemaVariantUpsertSchema.h"
 #include "CppRestOpenAPIClient/model/AssetUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/AttachmentCreateSchema.h"
 #include "CppRestOpenAPIClient/model/AttachmentSchema.h"
+#include "CppRestOpenAPIClient/model/AutoTopupConfigSchema.h"
+#include "CppRestOpenAPIClient/model/AutoTopupUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/BatchDeleteRecordingsSchema.h"
 #include "CppRestOpenAPIClient/model/BillingDetailsSchema.h"
 #include "CppRestOpenAPIClient/model/BillingDetailsUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/BulkJointStatesUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/CameraConfigUpdateSchema.h"
+#include "CppRestOpenAPIClient/model/ChargeSavedCardRequestSchema.h"
+#include "CppRestOpenAPIClient/model/ChargeSavedCardResponseSchema.h"
 #include "CppRestOpenAPIClient/model/CompleteLargeUploadSchema.h"
+#include "CppRestOpenAPIClient/model/ComputeMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/ControllerPolicyCreateSchema.h"
 #include "CppRestOpenAPIClient/model/ControllerPolicyExecuteResponseSchema.h"
 #include "CppRestOpenAPIClient/model/ControllerPolicyExecuteSchema.h"
 #include "CppRestOpenAPIClient/model/ControllerPolicySchema.h"
+#include "CppRestOpenAPIClient/model/ControllerPolicyStopEnvironmentSchema.h"
+#include "CppRestOpenAPIClient/model/ControllerPolicyStopResponseSchema.h"
+#include "CppRestOpenAPIClient/model/ControllerPolicyStopSchema.h"
 #include "CppRestOpenAPIClient/model/ControllerPolicyUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/CreateAlertSchema.h"
 #include "CppRestOpenAPIClient/model/CreateMissionExecutionSchema.h"
 #include "CppRestOpenAPIClient/model/CreateMissionSchema.h"
 #include "CppRestOpenAPIClient/model/CreateTaskSchema.h"
+#include "CppRestOpenAPIClient/model/CreditLedgerEntrySchema.h"
+#include "CppRestOpenAPIClient/model/CreditRateCardSchema.h"
+#include "CppRestOpenAPIClient/model/CreditTopUpRequestSchema.h"
+#include "CppRestOpenAPIClient/model/CreditTopUpResponseSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetCreateSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetDebugInfoSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetDownloadProcessingSchema.h"
@@ -97,6 +115,9 @@
 #include "CppRestOpenAPIClient/model/EpisodeUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/EventMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/ExecuteTaskSchema.h"
+#include "CppRestOpenAPIClient/model/FinalizeTopupRequestSchema.h"
+#include "CppRestOpenAPIClient/model/FinalizeTopupResponseSchema.h"
+#include "CppRestOpenAPIClient/model/GeneratePromoCodeRequestSchema.h"
 #include "CppRestOpenAPIClient/HttpContent.h"
 #include "CppRestOpenAPIClient/model/Image_Bytes.h"
 #include "CppRestOpenAPIClient/model/ImportResultSchema.h"
@@ -115,6 +136,10 @@
 #include "CppRestOpenAPIClient/model/LabStatusResponseSchema.h"
 #include "CppRestOpenAPIClient/model/LinkShareCreateSchema.h"
 #include "CppRestOpenAPIClient/model/LinkShareRevokeSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelArtifactCompleteResponseSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelArtifactCompleteSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelArtifactUploadInitResponseSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelArtifactUploadInitSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelCreateSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelEdgeRuntimeListSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelEvaluateSchema.h"
@@ -139,13 +164,19 @@
 #include "CppRestOpenAPIClient/model/MotionEpisodeSchema.h"
 #include "CppRestOpenAPIClient/Object.h"
 #include "CppRestOpenAPIClient/model/OccupancyMapCreateSchema.h"
+#include "CppRestOpenAPIClient/model/OnlineControllerSessionSchema.h"
 #include "CppRestOpenAPIClient/model/OrgMembersResponse.h"
 #include "CppRestOpenAPIClient/model/OrganizationCreateSchema.h"
+#include "CppRestOpenAPIClient/model/OrganizationCreditAccountSchema.h"
+#include "CppRestOpenAPIClient/model/OrganizationCreditBlockRequestSchema.h"
+#include "CppRestOpenAPIClient/model/OrganizationCreditBlockResponseSchema.h"
 #include "CppRestOpenAPIClient/model/OrganizationSchema.h"
 #include "CppRestOpenAPIClient/model/OrganizationUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/OrganizationWorkspaceSchema.h"
 #include "CppRestOpenAPIClient/model/PairTwinSchema.h"
 #include "CppRestOpenAPIClient/model/Payload.h"
+#include "CppRestOpenAPIClient/model/PaymentConfigSchema.h"
+#include "CppRestOpenAPIClient/model/PaymentMethodSchema.h"
 #include "CppRestOpenAPIClient/model/PermissionsSchema.h"
 #include "CppRestOpenAPIClient/model/PlanSchema.h"
 #include "CppRestOpenAPIClient/model/PopularTagsResponseSchema.h"
@@ -153,18 +184,52 @@
 #include "CppRestOpenAPIClient/model/ProjectCreateSchema.h"
 #include "CppRestOpenAPIClient/model/ProjectSchema.h"
 #include "CppRestOpenAPIClient/model/ProjectShareResponseSchema.h"
+#include "CppRestOpenAPIClient/model/PromoCodeSchema.h"
+#include "CppRestOpenAPIClient/model/PublicPricingSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskActionSpecSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskCheckpointCreateSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskCheckpointPublishControllerResponseSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskCheckpointPublishControllerSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskCheckpointSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskCloneSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskCreateSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskImportResultSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskInferenceLaunchSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskInferenceRunSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskObservationSpecSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskOrchestrationHintsSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskPolicyProvenanceSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskRLConfigSpecSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskRegenerateSceneSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskSceneEntitiesReplaceSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskSceneEntityCreateSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskSceneEntityHintsResponseSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskSceneEntitySchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskSceneEntityUpdateSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskSourceFileListEntrySchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskSourceFileSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskSourceFileUpsertSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskTaskSpecResponseSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskTaskSpecUpsertSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskTaskSpecValidateResponseSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingDetailSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingGenerationResponseSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingListResponse.h"
 #include "CppRestOpenAPIClient/model/RecordingSourcesEnvelopeSchema.h"
+#include "CppRestOpenAPIClient/model/RedeemCouponRequestSchema.h"
+#include "CppRestOpenAPIClient/model/RedeemCouponResponseSchema.h"
 #include "CppRestOpenAPIClient/model/ReloadCapabilitiesBulkSchema.h"
 #include "CppRestOpenAPIClient/model/RemoveMemberResponse.h"
 #include "CppRestOpenAPIClient/model/ReplayTimelineEventsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/ResourceMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/Response.h"
 #include "CppRestOpenAPIClient/model/RobotDescriptionSchema.h"
+#include "CppRestOpenAPIClient/model/SetupIntentResponseSchema.h"
 #include "CppRestOpenAPIClient/model/ShareSchema.h"
 #include "CppRestOpenAPIClient/model/SharesResponseSchema.h"
+#include "CppRestOpenAPIClient/model/SimulationPoseCommitSchema.h"
 #include "CppRestOpenAPIClient/model/SimulationStartSchema.h"
 #include "CppRestOpenAPIClient/model/SlugAvailabilitySchema.h"
 #include "CppRestOpenAPIClient/model/SlugCheckSchema.h"
@@ -176,9 +241,14 @@
 #include "CppRestOpenAPIClient/model/TaggedFramesUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/TaskExecutionSchema.h"
 #include "CppRestOpenAPIClient/model/TaskSchema.h"
+#include "CppRestOpenAPIClient/model/TaxPreviewRequestSchema.h"
+#include "CppRestOpenAPIClient/model/TaxPreviewResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TeamMemberResponse.h"
 #include "CppRestOpenAPIClient/model/TemplateEnvironmentSchema.h"
+#include "CppRestOpenAPIClient/model/TopupIntentRequestSchema.h"
+#include "CppRestOpenAPIClient/model/TopupIntentResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TrajectoryFromActionRequestSchema.h"
+#include "CppRestOpenAPIClient/model/TransactionInvoiceSchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionRequestSchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionStatusSchema.h"
@@ -186,6 +256,7 @@
 #include "CppRestOpenAPIClient/model/TwinConnectionEventSchema.h"
 #include "CppRestOpenAPIClient/model/TwinCreateSchema.h"
 #include "CppRestOpenAPIClient/model/TwinDriverLogsResponseSchema.h"
+#include "CppRestOpenAPIClient/model/TwinDriverSchemaSetSchema.h"
 #include "CppRestOpenAPIClient/model/TwinJointCalibrationSchema.h"
 #include "CppRestOpenAPIClient/model/TwinLatestTrackSchema.h"
 #include "CppRestOpenAPIClient/model/TwinMetricsQuerySchema.h"
@@ -253,6 +324,98 @@ public:
 
     virtual ~DefaultApi();
 
+    /// <summary>
+    /// Apply Asset Control Profile Recommendation
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<AssetControlProfileSchema>> applyAssetControlBindingRecommendation(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Apply Asset Control Profile Recommendation
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<AssetControlProfileSchema>> applyAssetControlProfileRecommendation(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Asset Control Profile View
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<AssetControlProfileSchema>> getAssetControlBindings(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Asset Control Profile View
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<AssetControlProfileSchema>> getAssetControlProfileView(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Patch Asset Control Profile Settings
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="optionId"></param>
+    /// <param name="assetControlProfileSettingsPatchSchema"></param>
+    pplx::task<std::shared_ptr<AssetControlProfileSchema>> patchAssetControlBindingSettings(
+        utility::string_t uuid,
+        utility::string_t optionId,
+        std::shared_ptr<AssetControlProfileSettingsPatchSchema> assetControlProfileSettingsPatchSchema
+    ) const;
+    /// <summary>
+    /// Patch Asset Control Profile
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="assetControlProfilePatchSchema"></param>
+    pplx::task<std::shared_ptr<AssetControlProfileSchema>> patchAssetControlBindings(
+        utility::string_t uuid,
+        std::shared_ptr<AssetControlProfilePatchSchema> assetControlProfilePatchSchema
+    ) const;
+    /// <summary>
+    /// Patch Asset Control Profile
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="assetControlProfilePatchSchema"></param>
+    pplx::task<std::shared_ptr<AssetControlProfileSchema>> patchAssetControlProfile(
+        utility::string_t uuid,
+        std::shared_ptr<AssetControlProfilePatchSchema> assetControlProfilePatchSchema
+    ) const;
+    /// <summary>
+    /// Patch Asset Control Profile Settings
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="optionId"></param>
+    /// <param name="assetControlProfileSettingsPatchSchema"></param>
+    pplx::task<std::shared_ptr<AssetControlProfileSchema>> patchAssetControlProfileSettings(
+        utility::string_t uuid,
+        utility::string_t optionId,
+        std::shared_ptr<AssetControlProfileSettingsPatchSchema> assetControlProfileSettingsPatchSchema
+    ) const;
     /// <summary>
     /// Acknowledge Alert
     /// </summary>
@@ -440,6 +603,30 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Delete Asset Schema Variant
+    /// </summary>
+    /// <remarks>
+    /// Delete a DB-backed schema variant.  Rejects &#x60;&#x60;kind&#x3D;base&#x60;&#x60; (canonical, not deletable here). Returns 404 when the variant is not present.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="kind"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiAssetsDeleteAssetSchemaVariant(
+        utility::string_t uuid,
+        utility::string_t kind
+    ) const;
+    /// <summary>
+    /// Download Asset Schema
+    /// </summary>
+    /// <remarks>
+    /// Download the chosen schema as JSON.  &#x60;&#x60;kind&#x3D;base&#x60;&#x60; (default) returns &#x60;&#x60;Asset.universal_schema&#x60;&#x60;; &#x60;&#x60;kind&#x3D;simplified_mesh&#x60;&#x60; returns the matching variant payload.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="kind"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiAssetsDownloadAssetSchema(
+        utility::string_t uuid,
+        boost::optional<utility::string_t> kind
+    ) const;
+    /// <summary>
     /// Export Asset
     /// </summary>
     /// <remarks>
@@ -473,7 +660,7 @@ public:
     /// Get Asset Controllers
     /// </summary>
     /// <remarks>
-    /// 
+    /// Deprecated alias for published SDK clients.  The control-profile endpoint is the canonical asset-control surface; this keeps the older &#x60;&#x60;GET /assets/{uuid}/controllers&#x60;&#x60; SDK method working for one compatibility window.
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::vector<std::shared_ptr<ControllerPolicySchema>>> srcAppApiAssetsGetAssetControllers(
@@ -488,6 +675,18 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiAssetsGetAssetKinematics(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Asset Schema Variant
+    /// </summary>
+    /// <remarks>
+    /// Return metadata for a single schema variant (no schema payload).  Use &#x60;&#x60;GET /assets/{uuid}/schema.json?kind&#x3D;...&#x60;&#x60; to download the JSON.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="kind"></param>
+    pplx::task<std::shared_ptr<AssetSchemaVariantSchema>> srcAppApiAssetsGetAssetSchemaVariant(
+        utility::string_t uuid,
+        utility::string_t kind
     ) const;
     /// <summary>
     /// Get Asset Universal Schema
@@ -542,16 +741,6 @@ public:
         boost::optional<utility::string_t> customRegistryId
     ) const;
     /// <summary>
-    /// Import Catalog Asset
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="assetCatalogImportSchema"></param>
-    pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsImportCatalogAsset(
-        std::shared_ptr<AssetCatalogImportSchema> assetCatalogImportSchema
-    ) const;
-    /// <summary>
     /// Initiate Large Glb Upload
     /// </summary>
     /// <remarks>
@@ -562,6 +751,16 @@ public:
     pplx::task<std::shared_ptr<InitiateLargeUploadResponse>> srcAppApiAssetsInitiateLargeGlbUpload(
         utility::string_t uuid,
         std::shared_ptr<InitiateLargeUploadSchema> initiateLargeUploadSchema
+    ) const;
+    /// <summary>
+    /// List Asset Schema Variants
+    /// </summary>
+    /// <remarks>
+    /// List schema variants for an asset.  Includes a virtual &#x60;&#x60;base&#x60;&#x60; entry when &#x60;&#x60;Asset.universal_schema&#x60;&#x60; is set, plus all DB-backed variants. Read-only endpoint that respects &#x60;&#x60;Asset.can_read&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<AssetSchemaVariantListSchema>> srcAppApiAssetsListAssetSchemaVariants(
+        utility::string_t uuid
     ) const;
     /// <summary>
     /// List Assets
@@ -622,6 +821,20 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiAssetsLlmGenerationModels(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Patch Asset Control Route
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="routeId"></param>
+    /// <param name="assetControlRoutePatchSchema"></param>
+    pplx::task<std::shared_ptr<AssetControlProfileSchema>> srcAppApiAssetsPatchAssetControlRoute(
+        utility::string_t uuid,
+        utility::string_t routeId,
+        std::shared_ptr<AssetControlRoutePatchSchema> assetControlRoutePatchSchema
     ) const;
     /// <summary>
     /// Patch Asset Universal Schema
@@ -730,6 +943,20 @@ public:
     pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsUploadThumbnailFile(
         utility::string_t uuid,
         std::shared_ptr<HttpContent> file
+    ) const;
+    /// <summary>
+    /// Upsert Asset Schema Variant
+    /// </summary>
+    /// <remarks>
+    /// Create or replace a schema variant for an asset.  V1 accepts &#x60;&#x60;kind&#x3D;simplified_mesh&#x60;&#x60; only; the &#x60;&#x60;base&#x60;&#x60; schema is canonical and rejected here.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="kind"></param>
+    /// <param name="assetSchemaVariantUpsertSchema"></param>
+    pplx::task<std::shared_ptr<AssetSchemaVariantSchema>> srcAppApiAssetsUpsertAssetSchemaVariant(
+        utility::string_t uuid,
+        utility::string_t kind,
+        std::shared_ptr<AssetSchemaVariantUpsertSchema> assetSchemaVariantUpsertSchema
     ) const;
     /// <summary>
     /// Vlm Generation
@@ -894,6 +1121,16 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Get Rl Task Provenance
+    /// </summary>
+    /// <remarks>
+    /// Return provenance report for an RL-task-backed controller policy.  Resolves the source RLTask, checkpoint, and weights attachment from the controller metadata and reports whether each still exists.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<RLTaskPolicyProvenanceSchema>> srcAppApiControllerPoliciesGetRlTaskProvenance(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
     /// List Controller Policies
     /// </summary>
     /// <remarks>
@@ -906,6 +1143,28 @@ public:
         boost::optional<utility::string_t> workspaceUuid
     ) const;
     /// <summary>
+    /// Stop Controller Policy
+    /// </summary>
+    /// <remarks>
+    /// Stop active online-controller workloads for a twin/policy pair.  Cancels all active (pending/assigned/running/finalizing) controller-host workloads that match the policy and twin. Does not stop the simulation.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="controllerPolicyStopSchema"></param>
+    pplx::task<std::shared_ptr<ControllerPolicyStopResponseSchema>> srcAppApiControllerPoliciesStopControllerPolicy(
+        utility::string_t uuid,
+        std::shared_ptr<ControllerPolicyStopSchema> controllerPolicyStopSchema
+    ) const;
+    /// <summary>
+    /// Stop Environment Controllers
+    /// </summary>
+    /// <remarks>
+    /// Stop all active online-controller workloads in an environment.  Called on mode transitions (sim/live -&gt; edit) and simulation stops.
+    /// </remarks>
+    /// <param name="controllerPolicyStopEnvironmentSchema"></param>
+    pplx::task<void> srcAppApiControllerPoliciesStopEnvironmentControllers(
+        std::shared_ptr<ControllerPolicyStopEnvironmentSchema> controllerPolicyStopEnvironmentSchema
+    ) const;
+    /// <summary>
     /// Update Controller Policy
     /// </summary>
     /// <remarks>
@@ -916,6 +1175,84 @@ public:
     pplx::task<std::shared_ptr<ControllerPolicySchema>> srcAppApiControllerPoliciesUpdateControllerPolicy(
         utility::string_t uuid,
         std::shared_ptr<ControllerPolicyUpdateSchema> controllerPolicyUpdateSchema
+    ) const;
+    /// <summary>
+    /// List Credit Rate Cards
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="category"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="isActive"> (optional, default to false)</param>
+    pplx::task<std::vector<std::shared_ptr<CreditRateCardSchema>>> srcAppApiCreditsAdminListCreditRateCards(
+        boost::optional<utility::string_t> category,
+        boost::optional<bool> isActive
+    ) const;
+    /// <summary>
+    /// Set Organization Credit Block
+    /// </summary>
+    /// <remarks>
+    /// Force-block (or unblock) an organization from spending credits (staff-only).  A force-block applies regardless of balance or whether credit enforcement is enabled for the org, and survives balance-driven status refreshes until an operator clears it.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="organizationCreditBlockRequestSchema"></param>
+    pplx::task<std::shared_ptr<OrganizationCreditBlockResponseSchema>> srcAppApiCreditsAdminSetOrganizationCreditBlock(
+        utility::string_t uuid,
+        std::shared_ptr<OrganizationCreditBlockRequestSchema> organizationCreditBlockRequestSchema
+    ) const;
+    /// <summary>
+    /// Decrease Organization Credits
+    /// </summary>
+    /// <remarks>
+    /// Administratively remove credits from an organization&#39;s balance.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="creditTopUpRequestSchema"></param>
+    pplx::task<std::shared_ptr<CreditTopUpResponseSchema>> srcAppApiCreditsDecreaseOrganizationCredits(
+        utility::string_t uuid,
+        std::shared_ptr<CreditTopUpRequestSchema> creditTopUpRequestSchema
+    ) const;
+    /// <summary>
+    /// Get Organization Credits
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<OrganizationCreditAccountSchema>> srcAppApiCreditsGetOrganizationCredits(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Public Pricing
+    /// </summary>
+    /// <remarks>
+    /// Public pricing snapshot for the marketing pricing page (no auth).
+    /// </remarks>
+    pplx::task<std::shared_ptr<PublicPricingSchema>> srcAppApiCreditsGetPublicPricing(
+    ) const;
+    /// <summary>
+    /// List Organization Credit Ledger
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    pplx::task<std::vector<std::shared_ptr<CreditLedgerEntrySchema>>> srcAppApiCreditsListOrganizationCreditLedger(
+        utility::string_t uuid,
+        boost::optional<int32_t> limit
+    ) const;
+    /// <summary>
+    /// Top Up Organization Credits
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="creditTopUpRequestSchema"></param>
+    pplx::task<std::shared_ptr<CreditTopUpResponseSchema>> srcAppApiCreditsTopUpOrganizationCredits(
+        utility::string_t uuid,
+        std::shared_ptr<CreditTopUpRequestSchema> creditTopUpRequestSchema
     ) const;
     /// <summary>
     /// Complete Dataset Import
@@ -1419,6 +1756,16 @@ public:
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<void> srcAppApiEnvironmentsExportsGetEnvironmentUrdfSceneZipDirect(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Mjlab Scene Package Zip
+    /// </summary>
+    /// <remarks>
+    /// Generate and return a runnable mjlab task package ZIP.  The package contains everything MjlabBackend needs to boot a simulation from this environment: scene_cfg.py, scene_bindings.py, env_cfg.py, registry.py, and per-entity MJCF models with assets.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<void> srcAppApiEnvironmentsExportsGetMjlabScenePackageZip(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -1948,6 +2295,18 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Commit Environment Simulation Poses
+    /// </summary>
+    /// <remarks>
+    /// Explicitly commit simulator poses into authored editor state.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="simulationPoseCommitSchema"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSimulationCommitEnvironmentSimulationPoses(
+        utility::string_t uuid,
+        std::shared_ptr<SimulationPoseCommitSchema> simulationPoseCommitSchema
+    ) const;
+    /// <summary>
     /// Create Environment Simulation
     /// </summary>
     /// <remarks>
@@ -1968,6 +2327,18 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSimulationGetEnvironmentSimulations(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// List Online Controller Sessions
+    /// </summary>
+    /// <remarks>
+    /// Return authoritative online controller session lifecycle for an environment.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="activeOnly"> (optional, default to false)</param>
+    pplx::task<std::vector<std::shared_ptr<OnlineControllerSessionSchema>>> srcAppApiEnvironmentsSimulationListOnlineControllerSessions(
+        utility::string_t uuid,
+        boost::optional<bool> activeOnly
     ) const;
     /// <summary>
     /// Reset Environment
@@ -2110,6 +2481,18 @@ public:
         utility::string_t uuid,
         utility::string_t primitiveId,
         std::shared_ptr<EnvironmentProceduralPrimitivePatchSchema> environmentProceduralPrimitivePatchSchema
+    ) const;
+    /// <summary>
+    /// Upload Environment Thumbnail
+    /// </summary>
+    /// <remarks>
+    /// Save a browser-captured screenshot as the environment&#39;s thumbnail.  The frontend&#39;s environment viewer snapshots its WebGL canvas (JPEG, see &#x60;&#x60;environment-thumbnail-capture-handler.tsx&#x60;&#x60;) on a dwell timer while the env is open, and posts the bytes here. This bypasses the Celery + headless screenshot path for any env the user has actually opened — cheaper, faster, and the resulting image reflects the framing the user chose rather than a default isometric view. Accepts both &#x60;&#x60;image/jpeg&#x60;&#x60; and &#x60;&#x60;image/png&#x60;&#x60;; bytes are stored as-is with no re-encoding.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="image"></param>
+    pplx::task<std::shared_ptr<AttachmentSchema>> srcAppApiEnvironmentsUploadEnvironmentThumbnail(
+        utility::string_t uuid,
+        std::shared_ptr<HttpContent> image
     ) const;
     /// <summary>
     /// Create Episode
@@ -2492,6 +2875,34 @@ public:
         boost::optional<utility::datetime> endTimestamp
     ) const;
     /// <summary>
+    /// Get Compute Metrics
+    /// </summary>
+    /// <remarks>
+    /// Return workspace-scoped billed compute usage roll-up.  Query params:     &#x60;&#x60;start_timestamp&#x60;&#x60; ISO-8601, inclusive lower bound on &#x60;&#x60;billing_ended_at&#x60;&#x60;.     &#x60;&#x60;end_timestamp&#x60;&#x60;   ISO-8601, exclusive upper bound on &#x60;&#x60;billing_ended_at&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    pplx::task<std::shared_ptr<ComputeMetricsSchema>> srcAppApiMetricsComputeGetComputeMetrics(
+        utility::string_t uuid,
+        boost::optional<utility::datetime> startTimestamp,
+        boost::optional<utility::datetime> endTimestamp
+    ) const;
+    /// <summary>
+    /// Get Organization Compute Metrics
+    /// </summary>
+    /// <remarks>
+    /// Return org-scoped billed compute usage roll-up across workspaces.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    pplx::task<std::shared_ptr<ComputeMetricsSchema>> srcAppApiMetricsComputeGetOrganizationComputeMetrics(
+        utility::string_t uuid,
+        boost::optional<utility::datetime> startTimestamp,
+        boost::optional<utility::datetime> endTimestamp
+    ) const;
+    /// <summary>
     /// Get Event Metrics
     /// </summary>
     /// <remarks>
@@ -2672,6 +3083,18 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Complete Mlmodel Artifact Upload
+    /// </summary>
+    /// <remarks>
+    /// Register uploaded artifacts in MLModel metadata after signed PUT uploads.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="mLModelArtifactCompleteSchema"></param>
+    pplx::task<std::shared_ptr<MLModelArtifactCompleteResponseSchema>> srcAppApiMlmodelsCompleteMlmodelArtifactUpload(
+        utility::string_t uuid,
+        std::shared_ptr<MLModelArtifactCompleteSchema> mLModelArtifactCompleteSchema
+    ) const;
+    /// <summary>
     /// Create Mlmodel
     /// </summary>
     /// <remarks>
@@ -2744,12 +3167,16 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
-    /// List Benchmark Suites
+    /// Initiate Mlmodel Artifact Upload
     /// </summary>
     /// <remarks>
-    /// Return the registered perception benchmark suites.  Anonymous like &#x60;&#x60;/mlmodels/structured-actions&#x60;&#x60; so the frontend can preload the list of suites on the public model detail page before the user signs in. Declared adjacent to the structured-action catalog so both literal routes precede the &#x60;&#x60;/{uuid}&#x60;&#x60; parameterised routes in Ninja&#39;s match order.
+    /// Create signed PUT URLs for ML model or controller-policy artifacts.
     /// </remarks>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiMlmodelsListBenchmarkSuites(
+    /// <param name="uuid"></param>
+    /// <param name="mLModelArtifactUploadInitSchema"></param>
+    pplx::task<std::shared_ptr<MLModelArtifactUploadInitResponseSchema>> srcAppApiMlmodelsInitiateMlmodelArtifactUpload(
+        utility::string_t uuid,
+        std::shared_ptr<MLModelArtifactUploadInitSchema> mLModelArtifactUploadInitSchema
     ) const;
     /// <summary>
     /// List Compatible Catalog Entries
@@ -2823,11 +3250,23 @@ public:
     /// Run Mlmodel
     /// </summary>
     /// <remarks>
-    /// Run a model synchronously for the Model Playground.  Sync path (200): direct provider call (Google / OpenAI / custom HTTP). Async path (202): cloud-node workload required (e.g. Tencent Im2Mesh).     The response includes &#x60;&#x60;workload_uuid&#x60;&#x60; that the client can poll via     &#x60;&#x60;GET /api/v1/cloud-node-workloads/{uuid}&#x60;&#x60;.  Edge-only models are rejected with HTTP 400 - use the Python SDK or &#x60;&#x60;cyberwave model bind&#x60;&#x60; CLI to run them.
+    /// Run a cloud-hosted model for product/automation callers.  Sync path (200): direct provider call (Google / OpenAI / custom HTTP). Async path (202): cloud-node workload required (e.g. Tencent Im2Mesh).     The response includes &#x60;&#x60;workload_uuid&#x60;&#x60; that the client can poll via     &#x60;&#x60;GET /api/v1/cloud-node-workloads/{uuid}&#x60;&#x60;.  Edge-only models are rejected with HTTP 400 - use the Python SDK or &#x60;&#x60;cyberwave model bind&#x60;&#x60; CLI to run them.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="mLModelRunSchema"></param>
     pplx::task<std::shared_ptr<MLModelRunResultSchema>> srcAppApiMlmodelsRunMlmodel(
+        utility::string_t uuid,
+        std::shared_ptr<MLModelRunSchema> mLModelRunSchema
+    ) const;
+    /// <summary>
+    /// Run Mlmodel Playground
+    /// </summary>
+    /// <remarks>
+    /// Run a model from the in-app Model Playground (catalog try-it surface).  Browser-only (CSRF-guarded via &#x60;&#x60;@require_same_origin&#x60;&#x60;) and open to unauthenticated users so public models can be tried without signing in. Playground runs are not credit-gated at zero balance. Use &#x60;&#x60;POST /mlmodels/{uuid}/run&#x60;&#x60; for SDK, workflow, and automation callers.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="mLModelRunSchema"></param>
+    pplx::task<std::shared_ptr<MLModelRunResultSchema>> srcAppApiMlmodelsRunMlmodelPlayground(
         utility::string_t uuid,
         std::shared_ptr<MLModelRunSchema> mLModelRunSchema
     ) const;
@@ -2948,6 +3387,184 @@ public:
     pplx::task<std::shared_ptr<TwinNavigationCaptureUploadResponseSchema>> srcAppApiNavigationUploadNavigationCapture(
         utility::string_t uuid,
         std::shared_ptr<HttpContent> image
+    ) const;
+    /// <summary>
+    /// Charge Saved Card
+    /// </summary>
+    /// <remarks>
+    /// Charge a saved payment method to purchase credits off-session.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="chargeSavedCardRequestSchema"></param>
+    pplx::task<std::shared_ptr<ChargeSavedCardResponseSchema>> srcAppApiPaymentsChargeSavedCard(
+        utility::string_t uuid,
+        std::shared_ptr<ChargeSavedCardRequestSchema> chargeSavedCardRequestSchema
+    ) const;
+    /// <summary>
+    /// Create Setup Intent
+    /// </summary>
+    /// <remarks>
+    /// Create a Stripe SetupIntent for saving a card for future off-session charges.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<SetupIntentResponseSchema>> srcAppApiPaymentsCreateSetupIntent(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Create Topup Intent
+    /// </summary>
+    /// <remarks>
+    /// Create a PaymentIntent for credit top-up.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="topupIntentRequestSchema"></param>
+    pplx::task<std::shared_ptr<TopupIntentResponseSchema>> srcAppApiPaymentsCreateTopupIntent(
+        utility::string_t uuid,
+        std::shared_ptr<TopupIntentRequestSchema> topupIntentRequestSchema
+    ) const;
+    /// <summary>
+    /// Detach Payment Method
+    /// </summary>
+    /// <remarks>
+    /// Detach/remove a saved payment method.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="methodId"></param>
+    pplx::task<void> srcAppApiPaymentsDetachPaymentMethod(
+        utility::string_t uuid,
+        utility::string_t methodId
+    ) const;
+    /// <summary>
+    /// Disable Auto Topup
+    /// </summary>
+    /// <remarks>
+    /// Disable auto top-up for the organization.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<void> srcAppApiPaymentsDisableAutoTopup(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Finalize Topup
+    /// </summary>
+    /// <remarks>
+    /// Grant credits for a Payment Element charge confirmed client-side.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="finalizeTopupRequestSchema"></param>
+    pplx::task<std::shared_ptr<FinalizeTopupResponseSchema>> srcAppApiPaymentsFinalizeTopup(
+        utility::string_t uuid,
+        std::shared_ptr<FinalizeTopupRequestSchema> finalizeTopupRequestSchema
+    ) const;
+    /// <summary>
+    /// Generate Promo Code
+    /// </summary>
+    /// <remarks>
+    /// Generate an org-bound promotion code carrying credits (staff only).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="generatePromoCodeRequestSchema"></param>
+    pplx::task<std::shared_ptr<PromoCodeSchema>> srcAppApiPaymentsGeneratePromoCode(
+        utility::string_t uuid,
+        std::shared_ptr<GeneratePromoCodeRequestSchema> generatePromoCodeRequestSchema
+    ) const;
+    /// <summary>
+    /// Get Auto Topup Config
+    /// </summary>
+    /// <remarks>
+    /// Get current auto top-up configuration.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<AutoTopupConfigSchema>> srcAppApiPaymentsGetAutoTopupConfig(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Payment Config
+    /// </summary>
+    /// <remarks>
+    /// Get payment configuration (publishable key, currency) for frontend.
+    /// </remarks>
+    pplx::task<std::shared_ptr<PaymentConfigSchema>> srcAppApiPaymentsGetPaymentConfig(
+    ) const;
+    /// <summary>
+    /// Get Transaction Invoice
+    /// </summary>
+    /// <remarks>
+    /// Resolve the downloadable Stripe invoice for a top-up transaction.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="transactionUuid"></param>
+    pplx::task<std::shared_ptr<TransactionInvoiceSchema>> srcAppApiPaymentsGetTransactionInvoice(
+        utility::string_t uuid,
+        utility::string_t transactionUuid
+    ) const;
+    /// <summary>
+    /// List Payment Methods
+    /// </summary>
+    /// <remarks>
+    /// List saved payment methods for organization.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::shared_ptr<PaymentMethodSchema>>> srcAppApiPaymentsListPaymentMethods(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// List Promo Codes
+    /// </summary>
+    /// <remarks>
+    /// List promotion codes bound to this organization (staff only).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::shared_ptr<PromoCodeSchema>>> srcAppApiPaymentsListPromoCodes(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Preview Tax
+    /// </summary>
+    /// <remarks>
+    /// Preview tax breakdown for a prospective top-up without charging.  Returns net / tax / total so the frontend can display the full breakdown before the user confirms the purchase.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="taxPreviewRequestSchema"></param>
+    pplx::task<std::shared_ptr<TaxPreviewResponseSchema>> srcAppApiPaymentsPreviewTax(
+        utility::string_t uuid,
+        std::shared_ptr<TaxPreviewRequestSchema> taxPreviewRequestSchema
+    ) const;
+    /// <summary>
+    /// Redeem Coupon
+    /// </summary>
+    /// <remarks>
+    /// Redeem a coupon for free credits.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="redeemCouponRequestSchema"></param>
+    pplx::task<std::shared_ptr<RedeemCouponResponseSchema>> srcAppApiPaymentsRedeemCoupon(
+        utility::string_t uuid,
+        std::shared_ptr<RedeemCouponRequestSchema> redeemCouponRequestSchema
+    ) const;
+    /// <summary>
+    /// Revoke Promo Code
+    /// </summary>
+    /// <remarks>
+    /// Revoke (deactivate) a generated promotion code (staff only).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="promoCodeId"></param>
+    pplx::task<void> srcAppApiPaymentsRevokePromoCode(
+        utility::string_t uuid,
+        utility::string_t promoCodeId
+    ) const;
+    /// <summary>
+    /// Update Auto Topup Config
+    /// </summary>
+    /// <remarks>
+    /// Enable or update auto top-up configuration.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="autoTopupUpdateSchema"></param>
+    pplx::task<std::shared_ptr<AutoTopupConfigSchema>> srcAppApiPaymentsUpdateAutoTopupConfig(
+        utility::string_t uuid,
+        std::shared_ptr<AutoTopupUpdateSchema> autoTopupUpdateSchema
     ) const;
     /// <summary>
     /// Get Namespaced Procedural Primitive Template
@@ -3114,6 +3731,464 @@ public:
     pplx::task<std::shared_ptr<ProjectSchema>> srcAppApiProjectsUpdateProject(
         utility::string_t uuid,
         std::shared_ptr<ProjectCreateSchema> projectCreateSchema
+    ) const;
+    /// <summary>
+    /// Clone Rl Task
+    /// </summary>
+    /// <remarks>
+    /// Duplicate an RL task definition into a new row.  Copies the task metadata + runtime contract + source files + scene entities. Checkpoints and inference runs are intentionally **not** cloned: they snapshot specific weights and dispatched workloads, so the clone starts as a fresh task that hasn&#39;t trained yet.  Defaults to creating the clone in the source task&#39;s workspace under the name &#x60;&#x60;\&quot;Copy of &lt;source name&gt;\&quot;&#x60;&#x60; (deduplicated automatically by the slug uniqueness logic). The destination workspace must be a workspace the caller has access to.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskCloneSchema"> (optional)</param>
+    pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksCloneRlTask(
+        utility::string_t uuid,
+        boost::optional<std::shared_ptr<RLTaskCloneSchema>> rLTaskCloneSchema
+    ) const;
+    /// <summary>
+    /// Create Rl Task
+    /// </summary>
+    /// <remarks>
+    /// Create a new RL task.
+    /// </remarks>
+    /// <param name="rLTaskCreateSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksCreateRlTask(
+        std::shared_ptr<RLTaskCreateSchema> rLTaskCreateSchema
+    ) const;
+    /// <summary>
+    /// Create Rl Task From Zip
+    /// </summary>
+    /// <remarks>
+    /// Create an RL task from an existing task/plugin ZIP.
+    /// </remarks>
+    /// <param name="zipFile"></param>
+    /// <param name="name"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="environmentUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="workspaceUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="stripTopLevelFolder"> (optional, default to false)</param>
+    pplx::task<std::shared_ptr<RLTaskImportResultSchema>> srcAppApiRlTasksCreateRlTaskFromZip(
+        std::shared_ptr<HttpContent> zipFile,
+        boost::optional<utility::string_t> name,
+        boost::optional<utility::string_t> environmentUuid,
+        boost::optional<utility::string_t> workspaceUuid,
+        boost::optional<bool> stripTopLevelFolder
+    ) const;
+    /// <summary>
+    /// Delete Rl Task
+    /// </summary>
+    /// <remarks>
+    /// Soft-delete an RL task.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<void> srcAppApiRlTasksDeleteRlTask(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Delete Rl Task Source File
+    /// </summary>
+    /// <remarks>
+    /// Delete a single user-owned source file by path.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="path"></param>
+    pplx::task<void> srcAppApiRlTasksDeleteRlTaskSourceFile(
+        utility::string_t uuid,
+        utility::string_t path
+    ) const;
+    /// <summary>
+    /// Export Rl Task Zip
+    /// </summary>
+    /// <remarks>
+    /// Build the runnable plugin ZIP for an RL task.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<void> srcAppApiRlTasksExportsExportRlTaskZip(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Regenerate Rl Task Scene Cfg
+    /// </summary>
+    /// <remarks>
+    /// Regenerate the Cyberwave-owned SceneCfg source file at &#x60;&#x60;scene_cfg_path&#x60;&#x60;.  The user controls *where* the file is written (any safe relative path inside the task tree); we never enforce a particular import statement in the surrounding user code.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskRegenerateSceneSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksExportsRegenerateRlTaskSceneCfg(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskRegenerateSceneSchema> rLTaskRegenerateSceneSchema
+    ) const;
+    /// <summary>
+    /// Get Rl Task
+    /// </summary>
+    /// <remarks>
+    /// Get an RL task by UUID or slug.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksGetRlTask(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Rl Task Actions
+    /// </summary>
+    /// <remarks>
+    /// Return the persisted action spec for the RL task.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<RLTaskActionSpecSchema>> srcAppApiRlTasksGetRlTaskActions(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Rl Task By Slug
+    /// </summary>
+    /// <remarks>
+    /// Look up an RL task by its full unified slug &#x60;&#x60;{ws}/rl-tasks/{entity}&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="slug"></param>
+    pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksGetRlTaskBySlug(
+        utility::string_t slug
+    ) const;
+    /// <summary>
+    /// Get Rl Task Observations
+    /// </summary>
+    /// <remarks>
+    /// Return the persisted observation spec.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<RLTaskObservationSpecSchema>> srcAppApiRlTasksGetRlTaskObservations(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Rl Task Orchestration Hints
+    /// </summary>
+    /// <remarks>
+    /// Return scene-derived hints for the orchestration editor tabs.  The frontend uses this to populate dropdowns (which articulation entities exist, what actuator types are present per entity, which sensors are wired) without re-fetching scene-entity rows.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<RLTaskOrchestrationHintsSchema>> srcAppApiRlTasksGetRlTaskOrchestrationHints(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Rl Task Rl Config
+    /// </summary>
+    /// <remarks>
+    /// Return the persisted RL training config spec.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<RLTaskRLConfigSpecSchema>> srcAppApiRlTasksGetRlTaskRlConfig(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Rl Task Source File
+    /// </summary>
+    /// <remarks>
+    /// Fetch the full content of a single source file by path.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="path"></param>
+    pplx::task<std::shared_ptr<RLTaskSourceFileSchema>> srcAppApiRlTasksGetRlTaskSourceFile(
+        utility::string_t uuid,
+        utility::string_t path
+    ) const;
+    /// <summary>
+    /// Create Rl Task Checkpoint
+    /// </summary>
+    /// <remarks>
+    /// Register a trained policy checkpoint.  Exactly one of &#x60;&#x60;attachment_uuid&#x60;&#x60; and &#x60;&#x60;weights_url&#x60;&#x60; must be set; setting both is rejected. The runtime target / versions / policy interface default to the parent RL task&#39;s values when omitted so the common case stays a one-liner.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskCheckpointCreateSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskCheckpointSchema>> srcAppApiRlTasksInferenceCreateRlTaskCheckpoint(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskCheckpointCreateSchema> rLTaskCheckpointCreateSchema
+    ) const;
+    /// <summary>
+    /// Delete Rl Task Checkpoint
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="checkpointUuid"></param>
+    pplx::task<void> srcAppApiRlTasksInferenceDeleteRlTaskCheckpoint(
+        utility::string_t uuid,
+        utility::string_t checkpointUuid
+    ) const;
+    /// <summary>
+    /// Get Rl Task Checkpoint
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="checkpointUuid"></param>
+    pplx::task<std::shared_ptr<RLTaskCheckpointSchema>> srcAppApiRlTasksInferenceGetRlTaskCheckpoint(
+        utility::string_t uuid,
+        utility::string_t checkpointUuid
+    ) const;
+    /// <summary>
+    /// Launch Rl Task Inference
+    /// </summary>
+    /// <remarks>
+    /// Dispatch an RL task inference workload.  The backend does not run MuJoCo simulation; the dispatched cloud node bootstraps the requested runtime versions, loads the policy weights, and loops the env. Persisting the matching :class:&#x60;RLTaskInferenceRun&#x60; row lets the UI surface \&quot;currently running\&quot; and \&quot;history\&quot; without polling the workload table directly.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskInferenceLaunchSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskInferenceRunSchema>> srcAppApiRlTasksInferenceLaunchRlTaskInference(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskInferenceLaunchSchema> rLTaskInferenceLaunchSchema
+    ) const;
+    /// <summary>
+    /// List Rl Task Checkpoints
+    /// </summary>
+    /// <remarks>
+    /// List checkpoints registered on the RL task (newest first).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::shared_ptr<RLTaskCheckpointSchema>>> srcAppApiRlTasksInferenceListRlTaskCheckpoints(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// List Rl Task Inference Runs
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::shared_ptr<RLTaskInferenceRunSchema>>> srcAppApiRlTasksInferenceListRlTaskInferenceRuns(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Publish Checkpoint Controller
+    /// </summary>
+    /// <remarks>
+    /// Publish an RLTask checkpoint as a ControllerPolicy.  Creates a private &#x60;&#x60;ControllerPolicy&#x60;&#x60; of type &#x60;&#x60;mlmodel&#x60;&#x60; with metadata pointing at the checkpoint and RL task.  The controller can then be assigned to twins through the existing controller picker — this endpoint does not auto-assign anything.  Idempotent: if a controller already exists for the same checkpoint it is returned instead of creating a duplicate.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="checkpointUuid"></param>
+    /// <param name="rLTaskCheckpointPublishControllerSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskCheckpointPublishControllerResponseSchema>> srcAppApiRlTasksInferencePublishCheckpointController(
+        utility::string_t uuid,
+        utility::string_t checkpointUuid,
+        std::shared_ptr<RLTaskCheckpointPublishControllerSchema> rLTaskCheckpointPublishControllerSchema
+    ) const;
+    /// <summary>
+    /// Upload Rl Task Checkpoint
+    /// </summary>
+    /// <remarks>
+    /// Upload a trained policy file and register the matching checkpoint row.  This is the one-call convenience path for users who just trained locally and want to push their &#x60;&#x60;best_agent.pt&#x60;&#x60; back to the task. It atomically creates the underlying :class:&#x60;Attachment&#x60; (scoped to the RL task&#39;s workspace organization) and the :class:&#x60;RLTaskCheckpoint&#x60; row pointing at it. Runtime / interface fields inherit from the parent RL task so the common case stays a single multipart request.  For URL-only registrations (external object storage, automated CI runs) keep using :func:&#x60;create_rl_task_checkpoint&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="file"></param>
+    /// <param name="name"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="description"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="metadata"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::shared_ptr<RLTaskCheckpointSchema>> srcAppApiRlTasksInferenceUploadRlTaskCheckpoint(
+        utility::string_t uuid,
+        std::shared_ptr<HttpContent> file,
+        boost::optional<utility::string_t> name,
+        boost::optional<utility::string_t> description,
+        boost::optional<utility::string_t> metadata
+    ) const;
+    /// <summary>
+    /// List Rl Task Source Files
+    /// </summary>
+    /// <remarks>
+    /// List the source files (without contents) for an RL task.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::shared_ptr<RLTaskSourceFileListEntrySchema>>> srcAppApiRlTasksListRlTaskSourceFiles(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// List Rl Tasks
+    /// </summary>
+    /// <remarks>
+    /// List all RL tasks visible to the authenticated user (respects ACL).
+    /// </remarks>
+    /// <param name="workspaceUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="environmentUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::vector<std::shared_ptr<RLTaskSchema>>> srcAppApiRlTasksListRlTasks(
+        boost::optional<utility::string_t> workspaceUuid,
+        boost::optional<utility::string_t> environmentUuid
+    ) const;
+    /// <summary>
+    /// Create Scene Entity Endpoint
+    /// </summary>
+    /// <remarks>
+    /// Create a single scene-entity row on the RL task.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskSceneEntityCreateSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskSceneEntitySchema>> srcAppApiRlTasksSceneEntitiesCreateSceneEntityEndpoint(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskSceneEntityCreateSchema> rLTaskSceneEntityCreateSchema
+    ) const;
+    /// <summary>
+    /// Delete Scene Entity Endpoint
+    /// </summary>
+    /// <remarks>
+    /// Delete a single scene-entity row.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="entityUuid"></param>
+    pplx::task<void> srcAppApiRlTasksSceneEntitiesDeleteSceneEntityEndpoint(
+        utility::string_t uuid,
+        utility::string_t entityUuid
+    ) const;
+    /// <summary>
+    /// Get Scene Entity Hints
+    /// </summary>
+    /// <remarks>
+    /// Return derived &#x60;&#x60;EntityCfg&#x60;&#x60; hints for every twin in the env.  The composer UI reads this to populate base/kind/initial-state and joint/actuator pickers without forcing users to author mjlab metadata by hand. The endpoint is intentionally read-only and side-effect free; we re-derive on every call so changes to the linked twins / universal schema reflect immediately.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<RLTaskSceneEntityHintsResponseSchema>> srcAppApiRlTasksSceneEntitiesGetSceneEntityHints(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Task Spec
+    /// </summary>
+    /// <remarks>
+    /// Return the deterministic &#x60;&#x60;cyberwave_task_spec.py&#x60;&#x60; for the RL task.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<RLTaskTaskSpecResponseSchema>> srcAppApiRlTasksSceneEntitiesGetTaskSpec(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// List Scene Entities
+    /// </summary>
+    /// <remarks>
+    /// List all scene-entity rows for an RL task in sort_order.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::shared_ptr<RLTaskSceneEntitySchema>>> srcAppApiRlTasksSceneEntitiesListSceneEntities(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Put Task Spec
+    /// </summary>
+    /// <remarks>
+    /// Validate a strict task spec and apply it to the RL task.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskTaskSpecUpsertSchema"></param>
+    pplx::task<std::vector<std::shared_ptr<RLTaskSceneEntitySchema>>> srcAppApiRlTasksSceneEntitiesPutTaskSpec(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskTaskSpecUpsertSchema> rLTaskTaskSpecUpsertSchema
+    ) const;
+    /// <summary>
+    /// Replace Scene Entities Endpoint
+    /// </summary>
+    /// <remarks>
+    /// Replace the RL task&#39;s whole scene-entity set in one transaction.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskSceneEntitiesReplaceSchema"></param>
+    pplx::task<std::vector<std::shared_ptr<RLTaskSceneEntitySchema>>> srcAppApiRlTasksSceneEntitiesReplaceSceneEntitiesEndpoint(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskSceneEntitiesReplaceSchema> rLTaskSceneEntitiesReplaceSchema
+    ) const;
+    /// <summary>
+    /// Update Scene Entity Endpoint
+    /// </summary>
+    /// <remarks>
+    /// Patch a single scene-entity row by UUID.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="entityUuid"></param>
+    /// <param name="rLTaskSceneEntityUpdateSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskSceneEntitySchema>> srcAppApiRlTasksSceneEntitiesUpdateSceneEntityEndpoint(
+        utility::string_t uuid,
+        utility::string_t entityUuid,
+        std::shared_ptr<RLTaskSceneEntityUpdateSchema> rLTaskSceneEntityUpdateSchema
+    ) const;
+    /// <summary>
+    /// Validate Task Spec
+    /// </summary>
+    /// <remarks>
+    /// Validate a strict task-spec without persisting.  Used by the frontend preview before committing an import.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskTaskSpecUpsertSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskTaskSpecValidateResponseSchema>> srcAppApiRlTasksSceneEntitiesValidateTaskSpec(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskTaskSpecUpsertSchema> rLTaskTaskSpecUpsertSchema
+    ) const;
+    /// <summary>
+    /// Update Rl Task
+    /// </summary>
+    /// <remarks>
+    /// Update an RL task.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskUpdateSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksUpdateRlTask(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskUpdateSchema> rLTaskUpdateSchema
+    ) const;
+    /// <summary>
+    /// Update Rl Task Actions
+    /// </summary>
+    /// <remarks>
+    /// Replace the persisted action spec.  The full normalized payload is returned so the editor can mirror server-side defaults (e.g. &#x60;&#x60;schema_version&#x60;&#x60;, populated optional fields) without a follow-up GET.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskActionSpecSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskActionSpecSchema>> srcAppApiRlTasksUpdateRlTaskActions(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskActionSpecSchema> rLTaskActionSpecSchema
+    ) const;
+    /// <summary>
+    /// Update Rl Task From Zip
+    /// </summary>
+    /// <remarks>
+    /// Replace/update the user-owned source files of an RL task from a ZIP.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="zipFile"></param>
+    /// <param name="replaceExisting"> (optional, default to false)</param>
+    /// <param name="stripTopLevelFolder"> (optional, default to false)</param>
+    pplx::task<std::shared_ptr<RLTaskImportResultSchema>> srcAppApiRlTasksUpdateRlTaskFromZip(
+        utility::string_t uuid,
+        std::shared_ptr<HttpContent> zipFile,
+        boost::optional<bool> replaceExisting,
+        boost::optional<bool> stripTopLevelFolder
+    ) const;
+    /// <summary>
+    /// Update Rl Task Observations
+    /// </summary>
+    /// <remarks>
+    /// Replace the persisted observation spec.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskObservationSpecSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskObservationSpecSchema>> srcAppApiRlTasksUpdateRlTaskObservations(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskObservationSpecSchema> rLTaskObservationSpecSchema
+    ) const;
+    /// <summary>
+    /// Update Rl Task Rl Config
+    /// </summary>
+    /// <remarks>
+    /// Replace the persisted RL training config spec.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskRLConfigSpecSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskRLConfigSpecSchema>> srcAppApiRlTasksUpdateRlTaskRlConfig(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskRLConfigSpecSchema> rLTaskRLConfigSpecSchema
+    ) const;
+    /// <summary>
+    /// Upsert Rl Task Source File
+    /// </summary>
+    /// <remarks>
+    /// Upsert a single user-owned source file for an RL task.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTaskSourceFileUpsertSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskSourceFileSchema>> srcAppApiRlTasksUpsertRlTaskSourceFile(
+        utility::string_t uuid,
+        std::shared_ptr<RLTaskSourceFileUpsertSchema> rLTaskSourceFileUpsertSchema
     ) const;
     /// <summary>
     /// Check Entity Slug
@@ -3421,17 +4496,19 @@ public:
     /// Get Twin Latest Frame
     /// </summary>
     /// <remarks>
-    /// Get the latest frame from a twin&#39;s camera stream. Serves the frame directly from Redis without saving to permanent storage.  For multi-camera twins, the media service stores frames with key frame:{twin_uuid}_{sensor_id}:rgb:latest. Pass ?sensor_id&#x3D;wrist_camera to get a specific camera.  Query params: - mock: if true, return a deterministic mock JPEG payload.
+    /// Get the latest frame from a twin&#39;s camera stream. Serves the frame directly from Redis without saving to permanent storage.  For multi-camera twins, the media service stores frames with key frame:{twin_uuid}_{sensor_id}:rgb:latest. Pass ?sensor_id&#x3D;wrist_camera to get a specific camera.  Query params: - mock: if true, return a deterministic mock JPEG payload. - frame_bucket: &#x60;&#x60;\&quot;policy_depth\&quot;&#x60;&#x60; to fetch the policy-resolution depth   frame rendered by cyberwave-sim at the trained observation resolution   (e.g. 32x32). Falls back to the regular frame when unavailable.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="mock"> (optional, default to false)</param>
     /// <param name="sensorId"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="sourceType"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="frameBucket"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<void> srcAppApiTwinsGetTwinLatestFrame(
         utility::string_t uuid,
         boost::optional<bool> mock,
         boost::optional<utility::string_t> sensorId,
-        boost::optional<utility::string_t> sourceType
+        boost::optional<utility::string_t> sourceType,
+        boost::optional<utility::string_t> frameBucket
     ) const;
     /// <summary>
     /// Get Twin Latest Metrics
@@ -3628,6 +4705,18 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::shared_ptr<TwinSchema>> srcAppApiTwinsRestoreTwin(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Set Twin Driver Schema
+    /// </summary>
+    /// <remarks>
+    /// Compile a cw-driver.yml root dict and persist &#x60;&#x60;metadata[\&quot;mqtt\&quot;]&#x60;&#x60; / &#x60;&#x60;zenoh&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="twinDriverSchemaSetSchema"></param>
+    pplx::task<std::shared_ptr<TwinSchema>> srcAppApiTwinsSetTwinDriverSchema(
+        utility::string_t uuid,
+        std::shared_ptr<TwinDriverSchemaSetSchema> twinDriverSchemaSetSchema
     ) const;
     /// <summary>
     /// Sync Twin With Asset

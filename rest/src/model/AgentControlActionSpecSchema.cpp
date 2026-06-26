@@ -25,6 +25,8 @@ AgentControlActionSpecSchema::AgentControlActionSpecSchema()
     m_LabelIsSet = false;
     m_Dispatchability = utility::conversions::to_string_t("");
     m_DispatchabilityIsSet = false;
+    m_Execution_channel = utility::conversions::to_string_t("");
+    m_Execution_channelIsSet = false;
     m_Transport = utility::conversions::to_string_t("");
     m_TransportIsSet = false;
     m_Requires_confirmation = false;
@@ -63,6 +65,11 @@ web::json::value AgentControlActionSpecSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("dispatchability"))] = ModelBase::toJson(m_Dispatchability);
+    }
+    if(m_Execution_channelIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("execution_channel"))] = ModelBase::toJson(m_Execution_channel);
     }
     if(m_TransportIsSet)
     {
@@ -141,6 +148,16 @@ web::json::value AgentControlActionSpecSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("developer_label"))] = ModelBase::toJson(m_Developer_label.get());
     }
+    if(m_Configuration_hint.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("configuration_hint"))] = ModelBase::toJson(m_Configuration_hint.get());
+    }
+    if(m_Configuration_target.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("configuration_target"))] = ModelBase::toJson(m_Configuration_target.get());
+    }
     if(m_Setup_hint.has_value())
     {
         
@@ -194,6 +211,17 @@ bool AgentControlActionSpecSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setDispatchability;
             ok &= ModelBase::fromJson(fieldValue, refVal_setDispatchability);
             setDispatchability(refVal_setDispatchability);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("execution_channel")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExecutionChannel;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExecutionChannel);
+            setExecutionChannel(refVal_setExecutionChannel);
             
         }
     }
@@ -363,6 +391,28 @@ bool AgentControlActionSpecSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("configuration_hint"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("configuration_hint")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setConfigurationHint;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setConfigurationHint);
+            setConfigurationHint(refVal_setConfigurationHint);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("configuration_target"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("configuration_target")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setConfigurationTarget;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setConfigurationTarget);
+            setConfigurationTarget(refVal_setConfigurationTarget);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("setup_hint"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("setup_hint")));
@@ -417,6 +467,10 @@ void AgentControlActionSpecSchema::toMultipart(std::shared_ptr<MultipartFormData
     if(m_DispatchabilityIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("dispatchability")), m_Dispatchability));
+    }
+    if(m_Execution_channelIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("execution_channel")), m_Execution_channel));
     }
     if(m_TransportIsSet)
     {
@@ -478,6 +532,14 @@ void AgentControlActionSpecSchema::toMultipart(std::shared_ptr<MultipartFormData
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("developer_label")), m_Developer_label.get()));
     }
+    if(m_Configuration_hint.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("configuration_hint")), m_Configuration_hint.get()));
+    }
+    if(m_Configuration_target.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("configuration_target")), m_Configuration_target.get()));
+    }
     if(m_Setup_hint.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("setup_hint")), m_Setup_hint.get()));
@@ -518,6 +580,12 @@ bool AgentControlActionSpecSchema::fromMultiPart(std::shared_ptr<MultipartFormDa
         utility::string_t refVal_setDispatchability;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("dispatchability"))), refVal_setDispatchability );
         setDispatchability(refVal_setDispatchability);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))))
+    {
+        utility::string_t refVal_setExecutionChannel;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))), refVal_setExecutionChannel );
+        setExecutionChannel(refVal_setExecutionChannel);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("transport"))))
     {
@@ -608,6 +676,18 @@ bool AgentControlActionSpecSchema::fromMultiPart(std::shared_ptr<MultipartFormDa
         utility::string_t refVal_setDeveloperLabel;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("developer_label"))), refVal_setDeveloperLabel );
         setDeveloperLabel(refVal_setDeveloperLabel);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("configuration_hint"))))
+    {
+        utility::string_t refVal_setConfigurationHint;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("configuration_hint"))), refVal_setConfigurationHint );
+        setConfigurationHint(refVal_setConfigurationHint);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("configuration_target"))))
+    {
+        utility::string_t refVal_setConfigurationTarget;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("configuration_target"))), refVal_setConfigurationTarget );
+        setConfigurationTarget(refVal_setConfigurationTarget);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("setup_hint"))))
     {
@@ -819,6 +899,27 @@ bool AgentControlActionSpecSchema::dispatchabilityIsSet() const
 void AgentControlActionSpecSchema::unsetDispatchability()
 {
     m_DispatchabilityIsSet = false;
+}
+utility::string_t AgentControlActionSpecSchema::getExecutionChannel() const
+{
+    return m_Execution_channel;
+}
+
+
+void AgentControlActionSpecSchema::setExecutionChannel(const utility::string_t& value)
+{
+    m_Execution_channel = value;
+    m_Execution_channelIsSet = true;
+}
+
+bool AgentControlActionSpecSchema::executionChannelIsSet() const
+{
+    return m_Execution_channelIsSet;
+}
+
+void AgentControlActionSpecSchema::unsetExecution_channel()
+{
+    m_Execution_channelIsSet = false;
 }
 utility::string_t AgentControlActionSpecSchema::getTransport() const
 {
@@ -1123,6 +1224,46 @@ bool AgentControlActionSpecSchema::developerLabelIsSet() const
 void AgentControlActionSpecSchema::unsetDeveloper_label()
 {
     m_Developer_label.reset();
+}
+utility::string_t AgentControlActionSpecSchema::getConfigurationHint() const
+{
+    return m_Configuration_hint.get();
+}
+
+
+void AgentControlActionSpecSchema::setConfigurationHint(const utility::string_t& value)
+{
+    m_Configuration_hint = value;
+}
+
+bool AgentControlActionSpecSchema::configurationHintIsSet() const
+{
+    return m_Configuration_hint.has_value();
+}
+
+void AgentControlActionSpecSchema::unsetConfiguration_hint()
+{
+    m_Configuration_hint.reset();
+}
+utility::string_t AgentControlActionSpecSchema::getConfigurationTarget() const
+{
+    return m_Configuration_target.get();
+}
+
+
+void AgentControlActionSpecSchema::setConfigurationTarget(const utility::string_t& value)
+{
+    m_Configuration_target = value;
+}
+
+bool AgentControlActionSpecSchema::configurationTargetIsSet() const
+{
+    return m_Configuration_target.has_value();
+}
+
+void AgentControlActionSpecSchema::unsetConfiguration_target()
+{
+    m_Configuration_target.reset();
 }
 utility::string_t AgentControlActionSpecSchema::getSetupHint() const
 {

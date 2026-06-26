@@ -22,12 +22,6 @@ JointStateSchema::JointStateSchema()
 {
     m_Name = utility::conversions::to_string_t("");
     m_NameIsSet = false;
-    m_Position = 0.0;
-    m_PositionIsSet = false;
-    m_Velocity = 0.0;
-    m_VelocityIsSet = false;
-    m_Effort = 0.0;
-    m_EffortIsSet = false;
 }
 
 JointStateSchema::~JointStateSchema()
@@ -47,20 +41,20 @@ web::json::value JointStateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("name"))] = ModelBase::toJson(m_Name);
     }
-    if(m_PositionIsSet)
+    if(m_Position.has_value())
     {
         
-        val[utility::conversions::to_string_t(_XPLATSTR("position"))] = ModelBase::toJson(m_Position);
+        val[utility::conversions::to_string_t(_XPLATSTR("position"))] = ModelBase::toJson(m_Position.get());
     }
-    if(m_VelocityIsSet)
+    if(m_Velocity.has_value())
     {
         
-        val[utility::conversions::to_string_t(_XPLATSTR("velocity"))] = ModelBase::toJson(m_Velocity);
+        val[utility::conversions::to_string_t(_XPLATSTR("velocity"))] = ModelBase::toJson(m_Velocity.get());
     }
-    if(m_EffortIsSet)
+    if(m_Effort.has_value())
     {
         
-        val[utility::conversions::to_string_t(_XPLATSTR("effort"))] = ModelBase::toJson(m_Effort);
+        val[utility::conversions::to_string_t(_XPLATSTR("effort"))] = ModelBase::toJson(m_Effort.get());
     }
 
     return val;
@@ -127,17 +121,17 @@ void JointStateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart,
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("name")), m_Name));
     }
-    if(m_PositionIsSet)
+    if(m_Position.has_value())
     {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("position")), m_Position));
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("position")), m_Position.get()));
     }
-    if(m_VelocityIsSet)
+    if(m_Velocity.has_value())
     {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("velocity")), m_Velocity));
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("velocity")), m_Velocity.get()));
     }
-    if(m_EffortIsSet)
+    if(m_Effort.has_value())
     {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("effort")), m_Effort));
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("effort")), m_Effort.get()));
     }
 }
 
@@ -201,63 +195,60 @@ void JointStateSchema::unsetName()
 }
 double JointStateSchema::getPosition() const
 {
-    return m_Position;
+    return m_Position.get();
 }
 
 void JointStateSchema::setPosition(double value)
 {
     m_Position = value;
-    m_PositionIsSet = true;
 }
 
 bool JointStateSchema::positionIsSet() const
 {
-    return m_PositionIsSet;
+    return m_Position.has_value();
 }
 
 void JointStateSchema::unsetPosition()
 {
-    m_PositionIsSet = false;
+    m_Position.reset();
 }
 double JointStateSchema::getVelocity() const
 {
-    return m_Velocity;
+    return m_Velocity.get();
 }
 
 void JointStateSchema::setVelocity(double value)
 {
     m_Velocity = value;
-    m_VelocityIsSet = true;
 }
 
 bool JointStateSchema::velocityIsSet() const
 {
-    return m_VelocityIsSet;
+    return m_Velocity.has_value();
 }
 
 void JointStateSchema::unsetVelocity()
 {
-    m_VelocityIsSet = false;
+    m_Velocity.reset();
 }
 double JointStateSchema::getEffort() const
 {
-    return m_Effort;
+    return m_Effort.get();
 }
 
 void JointStateSchema::setEffort(double value)
 {
     m_Effort = value;
-    m_EffortIsSet = true;
 }
 
 bool JointStateSchema::effortIsSet() const
 {
-    return m_EffortIsSet;
+    return m_Effort.has_value();
 }
 
 void JointStateSchema::unsetEffort()
 {
-    m_EffortIsSet = false;
+    m_Effort.reset();
 }
 
 }

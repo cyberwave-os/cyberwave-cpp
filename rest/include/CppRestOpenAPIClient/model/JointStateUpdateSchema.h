@@ -68,6 +68,11 @@ public:
     void unsetEffort();
     void setEffort(double value);
 
+    bool isAsHomePosition() const;
+    bool asHomePositionIsSet() const;
+    void unsetAs_home_position();
+    void setAsHomePosition(bool value);
+
 
 protected:
     boost::optional<double> m_Position;
@@ -75,6 +80,9 @@ protected:
     boost::optional<double> m_Velocity;
 
     boost::optional<double> m_Effort;
+
+    bool m_As_home_position;
+    bool m_As_home_positionIsSet;
 
 };
 

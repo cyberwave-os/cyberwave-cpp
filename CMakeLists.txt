@@ -71,6 +71,7 @@ set(CYBERWAVE_SDK_HEADERS
     include/cyberwave/manifest.h
     include/cyberwave/navigation.h
     include/cyberwave/motion.h
+    include/cyberwave/locomotion_contracts.h
     include/cyberwave/joints.h
     include/cyberwave/constants.h
     include/cyberwave/utils.h
@@ -180,6 +181,51 @@ if(CYBERWAVE_ENABLE_WEBRTC)
     # shared-library dependency into the installed CMake targets file, which would
     # break downstream consumers that don't have spdlog on their CMake search path.
     target_compile_definitions(cyberwave_sdk PRIVATE SPDLOG_HEADER_ONLY FMT_HEADER_ONLY)
+
+    # Homebrew and some distro spdlog packages are built with SPDLOG_FMT_EXTERNAL,
+    # so spdlog/fmt/fmt.h includes <fmt/format.h> and needs fmt headers on the path.
+    # Use include paths only — target_link_libraries would leak spdlog/fmt imported
+    # targets into install(EXPORT) and break find_package-only downstream consumers.
+    find_package(fmt CONFIG QUIET)
+    find_package(spdlog CONFIG QUIET)
+    if(TARGET spdlog::spdlog_header_only)
+        get_target_property(_spdlog_inc spdlog::spdlog_header_only INTERFACE_INCLUDE_DIRECTORIES)
+        if(_spdlog_inc)
+            target_include_directories(cyberwave_sdk PRIVATE ${_spdlog_inc})
+        endif()
+    elseif(TARGET spdlog::spdlog)
+        get_target_property(_spdlog_inc spdlog::spdlog INTERFACE_INCLUDE_DIRECTORIES)
+        if(_spdlog_inc)
+            target_include_directories(cyberwave_sdk PRIVATE ${_spdlog_inc})
+        endif()
+    else()
+        find_path(SPDLOG_INCLUDE_DIR NAMES spdlog/spdlog.h)
+        if(SPDLOG_INCLUDE_DIR)
+            get_filename_component(SPDLOG_INCLUDE_PARENT "${SPDLOG_INCLUDE_DIR}" DIRECTORY)
+            target_include_directories(cyberwave_sdk PRIVATE "${SPDLOG_INCLUDE_PARENT}")
+        endif()
+    endif()
+    if(TARGET fmt::fmt-header-only)
+        get_target_property(_fmt_inc fmt::fmt-header-only INTERFACE_INCLUDE_DIRECTORIES)
+        if(_fmt_inc)
+            target_include_directories(cyberwave_sdk PRIVATE ${_fmt_inc})
+        endif()
+    elseif(TARGET fmt::fmt)
+        get_target_property(_fmt_inc fmt::fmt INTERFACE_INCLUDE_DIRECTORIES)
+        if(_fmt_inc)
+            target_include_directories(cyberwave_sdk PRIVATE ${_fmt_inc})
+        endif()
+    else()
+        find_path(FMT_INCLUDE_DIR NAMES fmt/format.h)
+        if(FMT_INCLUDE_DIR)
+            get_filename_component(FMT_INCLUDE_PARENT "${FMT_INCLUDE_DIR}" DIRECTORY)
+            target_include_directories(cyberwave_sdk PRIVATE "${FMT_INCLUDE_PARENT}")
+        else()
+            message(WARNING
+                "fmt development headers not found. camera_streaming.cpp requires fmt when "
+                "spdlog is built with SPDLOG_FMT_EXTERNAL (e.g. Homebrew spdlog).")
+        endif()
+    endif()
 endif()
 
 # Install targets and package config so downstream users can find_package(CyberwaveCppSDK CONFIG REQUIRED).
@@ -268,7 +314,7 @@ if(CYBERWAVE_BUILD_TESTS)
         test_config test_exceptions test_client test_alerts test_workspaces
         test_edges test_projects test_environments test_assets test_twins
         test_workflows test_scene test_data test_workers test_manifest
-        test_utils test_twin_subclasses test_compact test_motion
+        test_utils test_twin_subclasses test_compact test_motion test_locomotion_contracts
         test_navigation test_keyboard test_device_pairing test_edge_node
         test_amr_edge_node test_camera_streaming test_depth_streaming
         test_mqtt_config test_twin test_mqtt_interface

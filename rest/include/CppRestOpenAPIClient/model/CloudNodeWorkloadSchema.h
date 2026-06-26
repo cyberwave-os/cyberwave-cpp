@@ -169,6 +169,16 @@ public:
     void unsetCallback_kwargs();
     void setCallbackKwargs(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    utility::string_t getFailureCode() const;
+    bool failureCodeIsSet() const;
+    void unsetFailure_code();
+    void setFailureCode(const utility::string_t& value);
+
+    utility::string_t getFailureMessage() const;
+    bool failureMessageIsSet() const;
+    void unsetFailure_message();
+    void setFailureMessage(const utility::string_t& value);
+
     utility::string_t getAssetUuid() const;
     bool assetUuidIsSet() const;
     void unsetAsset_uuid();
@@ -178,6 +188,11 @@ public:
     bool assetNameIsSet() const;
     void unsetAsset_name();
     void setAssetName(const utility::string_t& value);
+
+    utility::string_t getMeshUrl() const;
+    bool meshUrlIsSet() const;
+    void unsetMesh_url();
+    void setMeshUrl(const utility::string_t& value);
 
 
 protected:
@@ -232,9 +247,15 @@ protected:
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Callback_kwargs;
 
+    boost::optional<utility::string_t> m_Failure_code;
+
+    boost::optional<utility::string_t> m_Failure_message;
+
     boost::optional<utility::string_t> m_Asset_uuid;
 
     boost::optional<utility::string_t> m_Asset_name;
+
+    boost::optional<utility::string_t> m_Mesh_url;
 
 };
 

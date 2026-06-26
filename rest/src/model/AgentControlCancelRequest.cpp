@@ -49,6 +49,11 @@ web::json::value AgentControlCancelRequest::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("target_twin_uuid"))] = ModelBase::toJson(m_Target_twin_uuid);
     }
+    if(m_Execution_channel.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("execution_channel"))] = ModelBase::toJson(m_Execution_channel.get());
+    }
     if(m_Transport.has_value())
     {
         
@@ -92,6 +97,17 @@ bool AgentControlCancelRequest::fromJson(const web::json::value& val)
             utility::string_t refVal_setTargetTwinUuid;
             ok &= ModelBase::fromJson(fieldValue, refVal_setTargetTwinUuid);
             setTargetTwinUuid(refVal_setTargetTwinUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("execution_channel")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExecutionChannel;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExecutionChannel);
+            setExecutionChannel(refVal_setExecutionChannel);
             
         }
     }
@@ -147,6 +163,10 @@ void AgentControlCancelRequest::toMultipart(std::shared_ptr<MultipartFormData> m
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("target_twin_uuid")), m_Target_twin_uuid));
     }
+    if(m_Execution_channel.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("execution_channel")), m_Execution_channel.get()));
+    }
     if(m_Transport.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("transport")), m_Transport.get()));
@@ -181,6 +201,12 @@ bool AgentControlCancelRequest::fromMultiPart(std::shared_ptr<MultipartFormData>
         utility::string_t refVal_setTargetTwinUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("target_twin_uuid"))), refVal_setTargetTwinUuid );
         setTargetTwinUuid(refVal_setTargetTwinUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))))
+    {
+        utility::string_t refVal_setExecutionChannel;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("execution_channel"))), refVal_setExecutionChannel );
+        setExecutionChannel(refVal_setExecutionChannel);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("transport"))))
     {
@@ -278,6 +304,26 @@ bool AgentControlCancelRequest::targetTwinUuidIsSet() const
 void AgentControlCancelRequest::unsetTarget_twin_uuid()
 {
     m_Target_twin_uuidIsSet = false;
+}
+utility::string_t AgentControlCancelRequest::getExecutionChannel() const
+{
+    return m_Execution_channel.get();
+}
+
+
+void AgentControlCancelRequest::setExecutionChannel(const utility::string_t& value)
+{
+    m_Execution_channel = value;
+}
+
+bool AgentControlCancelRequest::executionChannelIsSet() const
+{
+    return m_Execution_channel.has_value();
+}
+
+void AgentControlCancelRequest::unsetExecution_channel()
+{
+    m_Execution_channel.reset();
 }
 utility::string_t AgentControlCancelRequest::getTransport() const
 {

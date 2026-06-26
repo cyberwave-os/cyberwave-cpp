@@ -113,6 +113,11 @@ web::json::value AssetSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("urdf_file"))] = ModelBase::toJson(m_Urdf_file.get());
     }
+    if(m_Zip_file.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("zip_file"))] = ModelBase::toJson(m_Zip_file.get());
+    }
     if(m_Workspace_uuid.has_value())
     {
         
@@ -317,6 +322,17 @@ bool AssetSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("zip_file"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("zip_file")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setZipFile;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setZipFile);
+            setZipFile(refVal_setZipFile);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid")));
@@ -518,6 +534,10 @@ void AssetSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, cons
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("urdf_file")), m_Urdf_file.get()));
     }
+    if(m_Zip_file.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("zip_file")), m_Zip_file.get()));
+    }
     if(m_Workspace_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workspace_uuid")), m_Workspace_uuid.get()));
@@ -652,6 +672,12 @@ bool AssetSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, co
         utility::string_t refVal_setUrdfFile;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("urdf_file"))), refVal_setUrdfFile );
         setUrdfFile(refVal_setUrdfFile);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("zip_file"))))
+    {
+        utility::string_t refVal_setZipFile;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("zip_file"))), refVal_setZipFile );
+        setZipFile(refVal_setZipFile);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("workspace_uuid"))))
     {
@@ -979,6 +1005,26 @@ bool AssetSchema::urdfFileIsSet() const
 void AssetSchema::unsetUrdf_file()
 {
     m_Urdf_file.reset();
+}
+utility::string_t AssetSchema::getZipFile() const
+{
+    return m_Zip_file.get();
+}
+
+
+void AssetSchema::setZipFile(const utility::string_t& value)
+{
+    m_Zip_file = value;
+}
+
+bool AssetSchema::zipFileIsSet() const
+{
+    return m_Zip_file.has_value();
+}
+
+void AssetSchema::unsetZip_file()
+{
+    m_Zip_file.reset();
 }
 utility::string_t AssetSchema::getWorkspaceUuid() const
 {

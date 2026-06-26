@@ -115,6 +115,11 @@ public:
     void unsetCurrent_joint_states();
     void setCurrentJointStates(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getCurrentSensorStates() const;
+    bool currentSensorStatesIsSet() const;
+    void unsetCurrent_sensor_states();
+    void setCurrentSensorStates(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
 
 protected:
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Action;
@@ -137,6 +142,8 @@ protected:
     boost::optional<utility::string_t> m_Simulation_backend;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Current_joint_states;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Current_sensor_states;
 
 };
 

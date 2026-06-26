@@ -6,6 +6,7 @@
 #define CYBERWAVE_EXCEPTIONS_H
 
 #include <exception>
+#include <limits>
 #include <string>
 
 namespace cyberwave
@@ -48,6 +49,40 @@ public:
 
 private:
     int status_code_;
+};
+
+/**
+ * @brief Error raised when an account has insufficient credits (HTTP 402).
+ *
+ * Raised for both balance-exhausted accounts and accounts that have been
+ * manually blocked by staff.  Check @c manual_block() to distinguish the two.
+ */
+class CyberwaveInsufficientCreditsError : public CyberwaveAPIError
+{
+public:
+    /**
+     * @brief Construct a credit-exhausted error.
+     * @param message Human-readable error message.
+     * @param balance  Current credit balance (NaN when unavailable).
+     * @param manual_block True when the block was set by staff, not exhaustion.
+     * @param manual_block_reason Human-readable reason for a staff-set block.
+     */
+    CyberwaveInsufficientCreditsError(std::string message, double balance = std::numeric_limits<double>::quiet_NaN(),
+                                      bool manual_block = false, std::string manual_block_reason = "");
+
+    /** @brief Current credit balance, or NaN when not available. */
+    double balance() const noexcept { return balance_; }
+
+    /** @brief True when the block was imposed by staff rather than by balance. */
+    bool manual_block() const noexcept { return manual_block_; }
+
+    /** @brief Human-readable reason for a staff-set block (may be empty). */
+    const std::string& manual_block_reason() const noexcept { return manual_block_reason_; }
+
+private:
+    double balance_;
+    bool manual_block_;
+    std::string manual_block_reason_;
 };
 
 /**

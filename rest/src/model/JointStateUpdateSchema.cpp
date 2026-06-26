@@ -20,6 +20,8 @@ namespace model {
 
 JointStateUpdateSchema::JointStateUpdateSchema()
 {
+    m_As_home_position = false;
+    m_As_home_positionIsSet = false;
 }
 
 JointStateUpdateSchema::~JointStateUpdateSchema()
@@ -48,6 +50,11 @@ web::json::value JointStateUpdateSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("effort"))] = ModelBase::toJson(m_Effort.get());
+    }
+    if(m_As_home_positionIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("as_home_position"))] = ModelBase::toJson(m_As_home_position);
     }
 
     return val;
@@ -89,6 +96,17 @@ bool JointStateUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("as_home_position"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("as_home_position")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setAsHomePosition;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAsHomePosition);
+            setAsHomePosition(refVal_setAsHomePosition);
+            
+        }
+    }
     return ok;
 }
 
@@ -110,6 +128,10 @@ void JointStateUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData> mult
     if(m_Effort.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("effort")), m_Effort.get()));
+    }
+    if(m_As_home_positionIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("as_home_position")), m_As_home_position));
     }
 }
 
@@ -139,6 +161,12 @@ bool JointStateUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> mu
         double refVal_setEffort;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("effort"))), refVal_setEffort );
         setEffort(refVal_setEffort);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("as_home_position"))))
+    {
+        bool refVal_setAsHomePosition;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("as_home_position"))), refVal_setAsHomePosition );
+        setAsHomePosition(refVal_setAsHomePosition);
     }
     return ok;
 }
@@ -200,6 +228,26 @@ bool JointStateUpdateSchema::effortIsSet() const
 void JointStateUpdateSchema::unsetEffort()
 {
     m_Effort.reset();
+}
+bool JointStateUpdateSchema::isAsHomePosition() const
+{
+    return m_As_home_position;
+}
+
+void JointStateUpdateSchema::setAsHomePosition(bool value)
+{
+    m_As_home_position = value;
+    m_As_home_positionIsSet = true;
+}
+
+bool JointStateUpdateSchema::asHomePositionIsSet() const
+{
+    return m_As_home_positionIsSet;
+}
+
+void JointStateUpdateSchema::unsetAs_home_position()
+{
+    m_As_home_positionIsSet = false;
 }
 
 }

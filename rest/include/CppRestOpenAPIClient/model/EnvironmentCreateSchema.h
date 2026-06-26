@@ -112,6 +112,16 @@ public:
     void unsetIs_template();
     void setIsTemplate(bool value);
 
+    utility::string_t getTwinAssetUuid() const;
+    bool twinAssetUuidIsSet() const;
+    void unsetTwin_asset_uuid();
+    void setTwinAssetUuid(const utility::string_t& value);
+
+    utility::string_t getMlmodelUuid() const;
+    bool mlmodelUuidIsSet() const;
+    void unsetMlmodel_uuid();
+    void setMlmodelUuid(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Name;
@@ -137,6 +147,10 @@ protected:
     boost::optional<std::vector<utility::string_t>> m_Tags;
 
     boost::optional<bool> m_Is_template;
+
+    boost::optional<utility::string_t> m_Twin_asset_uuid;
+
+    boost::optional<utility::string_t> m_Mlmodel_uuid;
 
 };
 

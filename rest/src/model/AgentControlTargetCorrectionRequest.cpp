@@ -85,6 +85,11 @@ web::json::value AgentControlTargetCorrectionRequest::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("current_joint_states"))] = ModelBase::toJson(m_Current_joint_states.get());
     }
+    if(m_Current_sensor_states.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("current_sensor_states"))] = ModelBase::toJson(m_Current_sensor_states.get());
+    }
 
     return val;
 }
@@ -192,6 +197,17 @@ bool AgentControlTargetCorrectionRequest::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("current_sensor_states"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("current_sensor_states")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setCurrentSensorStates;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCurrentSensorStates);
+            setCurrentSensorStates(refVal_setCurrentSensorStates);
+            
+        }
+    }
     return ok;
 }
 
@@ -237,6 +253,10 @@ void AgentControlTargetCorrectionRequest::toMultipart(std::shared_ptr<MultipartF
     if(m_Current_joint_states.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("current_joint_states")), m_Current_joint_states.get()));
+    }
+    if(m_Current_sensor_states.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("current_sensor_states")), m_Current_sensor_states.get()));
     }
 }
 
@@ -302,6 +322,12 @@ bool AgentControlTargetCorrectionRequest::fromMultiPart(std::shared_ptr<Multipar
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setCurrentJointStates;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("current_joint_states"))), refVal_setCurrentJointStates );
         setCurrentJointStates(refVal_setCurrentJointStates);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("current_sensor_states"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setCurrentSensorStates;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("current_sensor_states"))), refVal_setCurrentSensorStates );
+        setCurrentSensorStates(refVal_setCurrentSensorStates);
     }
     return ok;
 }
@@ -522,6 +548,26 @@ bool AgentControlTargetCorrectionRequest::currentJointStatesIsSet() const
 void AgentControlTargetCorrectionRequest::unsetCurrent_joint_states()
 {
     m_Current_joint_states.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> AgentControlTargetCorrectionRequest::getCurrentSensorStates() const
+{
+    return m_Current_sensor_states.get();
+}
+
+
+void AgentControlTargetCorrectionRequest::setCurrentSensorStates(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Current_sensor_states = value;
+}
+
+bool AgentControlTargetCorrectionRequest::currentSensorStatesIsSet() const
+{
+    return m_Current_sensor_states.has_value();
+}
+
+void AgentControlTargetCorrectionRequest::unsetCurrent_sensor_states()
+{
+    m_Current_sensor_states.reset();
 }
 
 }

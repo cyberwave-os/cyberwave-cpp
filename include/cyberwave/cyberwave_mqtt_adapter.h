@@ -79,13 +79,15 @@ public:
     }
 
     void update_joint_state(const std::string& twin_uuid, const std::string& joint_name, double position_rad,
-                            double velocity, double effort, double timestamp = -1.0,
+                            std::optional<double> velocity, std::optional<double> effort, double timestamp = -1.0,
                             const std::string& source_type = "") override
     {
         JointState js;
         js.position = position_rad;
-        js.velocity = velocity;
-        js.effort = effort;
+        if (velocity.has_value())
+            js.velocity = *velocity;
+        if (effort.has_value())
+            js.effort = *effort;
         inner_->update_joint_state(twin_uuid, joint_name, js, timestamp, source_type);
     }
 

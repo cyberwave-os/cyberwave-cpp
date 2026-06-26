@@ -64,6 +64,7 @@ MLModelSchema::MLModelSchema()
     m_Execution_surfacesIsSet = false;
     m_Supports_builtin_vad_filter = false;
     m_Supports_builtin_vad_filterIsSet = false;
+    m_Required_inputsIsSet = false;
 }
 
 MLModelSchema::~MLModelSchema()
@@ -223,6 +224,21 @@ web::json::value MLModelSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("playground_kind"))] = ModelBase::toJson(m_Playground_kind.get());
     }
+    if(m_Playground_base_catalog_key.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("playground_base_catalog_key"))] = ModelBase::toJson(m_Playground_base_catalog_key.get());
+    }
+    if(m_Playground_base_model_slug.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("playground_base_model_slug"))] = ModelBase::toJson(m_Playground_base_model_slug.get());
+    }
+    if(m_Playground_base_model_name.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("playground_base_model_name"))] = ModelBase::toJson(m_Playground_base_model_name.get());
+    }
     if(m_Output_family.has_value())
     {
         
@@ -257,6 +273,16 @@ web::json::value MLModelSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("supports_builtin_vad_filter"))] = ModelBase::toJson(m_Supports_builtin_vad_filter);
+    }
+    if(m_Weights_url.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("weights_url"))] = ModelBase::toJson(m_Weights_url.get());
+    }
+    if(m_Required_inputsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("required_inputs"))] = ModelBase::toJson(m_Required_inputs);
     }
 
     return val;
@@ -584,6 +610,39 @@ bool MLModelSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("playground_base_catalog_key"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("playground_base_catalog_key")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setPlaygroundBaseCatalogKey;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPlaygroundBaseCatalogKey);
+            setPlaygroundBaseCatalogKey(refVal_setPlaygroundBaseCatalogKey);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("playground_base_model_slug"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("playground_base_model_slug")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setPlaygroundBaseModelSlug;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPlaygroundBaseModelSlug);
+            setPlaygroundBaseModelSlug(refVal_setPlaygroundBaseModelSlug);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("playground_base_model_name"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("playground_base_model_name")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setPlaygroundBaseModelName;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPlaygroundBaseModelName);
+            setPlaygroundBaseModelName(refVal_setPlaygroundBaseModelName);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("output_family"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("output_family")));
@@ -658,6 +717,28 @@ bool MLModelSchema::fromJson(const web::json::value& val)
             bool refVal_setSupportsBuiltinVadFilter;
             ok &= ModelBase::fromJson(fieldValue, refVal_setSupportsBuiltinVadFilter);
             setSupportsBuiltinVadFilter(refVal_setSupportsBuiltinVadFilter);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("weights_url"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("weights_url")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setWeightsUrl;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setWeightsUrl);
+            setWeightsUrl(refVal_setWeightsUrl);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("required_inputs"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("required_inputs")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<AnyType>> refVal_setRequiredInputs;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRequiredInputs);
+            setRequiredInputs(refVal_setRequiredInputs);
             
         }
     }
@@ -787,6 +868,18 @@ void MLModelSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, co
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("playground_kind")), m_Playground_kind.get()));
     }
+    if(m_Playground_base_catalog_key.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("playground_base_catalog_key")), m_Playground_base_catalog_key.get()));
+    }
+    if(m_Playground_base_model_slug.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("playground_base_model_slug")), m_Playground_base_model_slug.get()));
+    }
+    if(m_Playground_base_model_name.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("playground_base_model_name")), m_Playground_base_model_name.get()));
+    }
     if(m_Output_family.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("output_family")), m_Output_family.get()));
@@ -814,6 +907,14 @@ void MLModelSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, co
     if(m_Supports_builtin_vad_filterIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("supports_builtin_vad_filter")), m_Supports_builtin_vad_filter));
+    }
+    if(m_Weights_url.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("weights_url")), m_Weights_url.get()));
+    }
+    if(m_Required_inputsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("required_inputs")), m_Required_inputs));
     }
 }
 
@@ -1000,6 +1101,24 @@ bool MLModelSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, 
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("playground_kind"))), refVal_setPlaygroundKind );
         setPlaygroundKind(refVal_setPlaygroundKind);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("playground_base_catalog_key"))))
+    {
+        utility::string_t refVal_setPlaygroundBaseCatalogKey;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("playground_base_catalog_key"))), refVal_setPlaygroundBaseCatalogKey );
+        setPlaygroundBaseCatalogKey(refVal_setPlaygroundBaseCatalogKey);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("playground_base_model_slug"))))
+    {
+        utility::string_t refVal_setPlaygroundBaseModelSlug;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("playground_base_model_slug"))), refVal_setPlaygroundBaseModelSlug );
+        setPlaygroundBaseModelSlug(refVal_setPlaygroundBaseModelSlug);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("playground_base_model_name"))))
+    {
+        utility::string_t refVal_setPlaygroundBaseModelName;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("playground_base_model_name"))), refVal_setPlaygroundBaseModelName );
+        setPlaygroundBaseModelName(refVal_setPlaygroundBaseModelName);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("output_family"))))
     {
         utility::string_t refVal_setOutputFamily;
@@ -1041,6 +1160,18 @@ bool MLModelSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, 
         bool refVal_setSupportsBuiltinVadFilter;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("supports_builtin_vad_filter"))), refVal_setSupportsBuiltinVadFilter );
         setSupportsBuiltinVadFilter(refVal_setSupportsBuiltinVadFilter);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("weights_url"))))
+    {
+        utility::string_t refVal_setWeightsUrl;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("weights_url"))), refVal_setWeightsUrl );
+        setWeightsUrl(refVal_setWeightsUrl);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("required_inputs"))))
+    {
+        std::vector<std::shared_ptr<AnyType>> refVal_setRequiredInputs;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("required_inputs"))), refVal_setRequiredInputs );
+        setRequiredInputs(refVal_setRequiredInputs);
     }
     return ok;
 }
@@ -1639,6 +1770,66 @@ void MLModelSchema::unsetPlayground_kind()
 {
     m_Playground_kind.reset();
 }
+utility::string_t MLModelSchema::getPlaygroundBaseCatalogKey() const
+{
+    return m_Playground_base_catalog_key.get();
+}
+
+
+void MLModelSchema::setPlaygroundBaseCatalogKey(const utility::string_t& value)
+{
+    m_Playground_base_catalog_key = value;
+}
+
+bool MLModelSchema::playgroundBaseCatalogKeyIsSet() const
+{
+    return m_Playground_base_catalog_key.has_value();
+}
+
+void MLModelSchema::unsetPlayground_base_catalog_key()
+{
+    m_Playground_base_catalog_key.reset();
+}
+utility::string_t MLModelSchema::getPlaygroundBaseModelSlug() const
+{
+    return m_Playground_base_model_slug.get();
+}
+
+
+void MLModelSchema::setPlaygroundBaseModelSlug(const utility::string_t& value)
+{
+    m_Playground_base_model_slug = value;
+}
+
+bool MLModelSchema::playgroundBaseModelSlugIsSet() const
+{
+    return m_Playground_base_model_slug.has_value();
+}
+
+void MLModelSchema::unsetPlayground_base_model_slug()
+{
+    m_Playground_base_model_slug.reset();
+}
+utility::string_t MLModelSchema::getPlaygroundBaseModelName() const
+{
+    return m_Playground_base_model_name.get();
+}
+
+
+void MLModelSchema::setPlaygroundBaseModelName(const utility::string_t& value)
+{
+    m_Playground_base_model_name = value;
+}
+
+bool MLModelSchema::playgroundBaseModelNameIsSet() const
+{
+    return m_Playground_base_model_name.has_value();
+}
+
+void MLModelSchema::unsetPlayground_base_model_name()
+{
+    m_Playground_base_model_name.reset();
+}
 utility::string_t MLModelSchema::getOutputFamily() const
 {
     return m_Output_family.get();
@@ -1780,6 +1971,47 @@ bool MLModelSchema::supportsBuiltinVadFilterIsSet() const
 void MLModelSchema::unsetSupports_builtin_vad_filter()
 {
     m_Supports_builtin_vad_filterIsSet = false;
+}
+utility::string_t MLModelSchema::getWeightsUrl() const
+{
+    return m_Weights_url.get();
+}
+
+
+void MLModelSchema::setWeightsUrl(const utility::string_t& value)
+{
+    m_Weights_url = value;
+}
+
+bool MLModelSchema::weightsUrlIsSet() const
+{
+    return m_Weights_url.has_value();
+}
+
+void MLModelSchema::unsetWeights_url()
+{
+    m_Weights_url.reset();
+}
+std::vector<std::shared_ptr<AnyType>> MLModelSchema::getRequiredInputs() const
+{
+    return m_Required_inputs;
+}
+
+
+void MLModelSchema::setRequiredInputs(const std::vector<std::shared_ptr<AnyType>>& value)
+{
+    m_Required_inputs = value;
+    m_Required_inputsIsSet = true;
+}
+
+bool MLModelSchema::requiredInputsIsSet() const
+{
+    return m_Required_inputsIsSet;
+}
+
+void MLModelSchema::unsetRequired_inputs()
+{
+    m_Required_inputsIsSet = false;
 }
 
 }

@@ -13,6 +13,9 @@
 #include <string>
 #include <vector>
 
+#include "cyberwave/assets.h"
+#include "cyberwave/locomotion_contracts.h"
+
 namespace cyberwave
 {
 
@@ -149,9 +152,15 @@ public:
     /** Get joint states as a map from joint name to position. */
     std::map<std::string, double> get_joint_states() const;
 
-    /** Update a single joint state. */
-    void update_joint_state(const std::string& joint_name, double position, double velocity = 0.0,
-                            double effort = 0.0) const;
+    /** Update a single joint state.
+     *
+     * Pass ``std::nullopt`` (the default) for ``velocity`` / ``effort`` when the
+     * channel is not commanded — drivers treat absent channels as "do not
+     * command". An explicitly supplied value, including ``0.0``, is forwarded.
+     */
+    void update_joint_state(const std::string& joint_name, double position,
+                            std::optional<double> velocity = std::nullopt,
+                            std::optional<double> effort = std::nullopt) const;
 
     // --- Calibration (delegate to TwinManager) ---
     /**
@@ -215,6 +224,51 @@ public:
 
     /** Command a right turn over MQTT. */
     void turn_right(double angle_rad = 1.5, const std::string& source_type = "");
+
+    /**
+     * Dispatch a backend-owned locomotion velocity policy.
+     *
+     * The command must use the shared locomotion.velocity_command.v1 contract.
+     * Returns the raw Control Agent dispatch response JSON.
+     */
+    std::string dispatch_velocity(const LocomotionVelocityCommand& command, const std::string& mode = "",
+                                  const std::string& simulation_backend = "",
+                                  const std::string& controller_policy_uuid = "") const;
+
+    /** Dispatch a velocity command through a specific backend PolicyRef. */
+    std::string dispatch_velocity(const LocomotionVelocityCommand& command, const PolicyRefPayload& policy_ref,
+                                  const std::string& mode = "", const std::string& simulation_backend = "") const;
+
+    /** Build and dispatch a backend-owned velocity command through the resolved policy. */
+    std::string set_velocity(double linear_x = 0.0, double linear_y = 0.0, double angular_z = 0.0,
+                             int duration_ms = 500, const std::string& gait = "walk",
+                             const std::string& origin = "teleop", const std::string& mode = "",
+                             const std::string& simulation_backend = "",
+                             const std::string& controller_policy_uuid = "") const;
+
+    /** Drive forward through the backend-resolved velocity policy. */
+    std::string drive_forward(double speed = 0.25, int duration_ms = 1000, const std::string& mode = "",
+                              const std::string& simulation_backend = "",
+                              const std::string& controller_policy_uuid = "") const;
+
+    /** Drive backward through the backend-resolved velocity policy. */
+    std::string drive_backward(double speed = 0.25, int duration_ms = 1000, const std::string& mode = "",
+                               const std::string& simulation_backend = "",
+                               const std::string& controller_policy_uuid = "") const;
+
+    /** Turn left through the backend-resolved velocity policy. */
+    std::string turn_velocity_left(double angular = 0.5, int duration_ms = 1000, const std::string& mode = "",
+                                   const std::string& simulation_backend = "",
+                                   const std::string& controller_policy_uuid = "") const;
+
+    /** Turn right through the backend-resolved velocity policy. */
+    std::string turn_velocity_right(double angular = 0.5, int duration_ms = 1000, const std::string& mode = "",
+                                    const std::string& simulation_backend = "",
+                                    const std::string& controller_policy_uuid = "") const;
+
+    /** Dispatch a canonical zero-velocity stop command through the resolved policy. */
+    std::string stop_velocity(const std::string& mode = "", const std::string& simulation_backend = "",
+                              const std::string& controller_policy_uuid = "") const;
 
     /** Command aerial takeoff over MQTT. */
     void takeoff(double altitude_m = 1.0);

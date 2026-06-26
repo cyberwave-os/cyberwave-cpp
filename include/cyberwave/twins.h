@@ -9,6 +9,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -97,9 +98,14 @@ public:
     /**
      * Update a single joint state.
      * Mirrors Python TwinManager.update_joint_state().
+     *
+     * ``velocity`` / ``effort`` default to ``std::nullopt`` meaning "channel not
+     * commanded" — the corresponding REST field is omitted. An explicit value
+     * (including ``0.0``) is forwarded as a real command.
      */
     void update_joint_state(const std::string& twin_id, const std::string& joint_name, double position,
-                            double velocity = 0.0, double effort = 0.0) const;
+                            std::optional<double> velocity = std::nullopt,
+                            std::optional<double> effort = std::nullopt) const;
 
     /**
      * Get joint calibration for a twin. Returns JSON string of the calibration schema.

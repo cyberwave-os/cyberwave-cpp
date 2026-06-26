@@ -9,13 +9,73 @@
 #include <cpprest/http_client.h>
 #include <cpprest/json.h>
 
+#include <limits>
 #include <map>
 #include <optional>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 namespace cyberwave::detail
 {
+
+/**
+ * @brief Parsed fields from a 402 response body.
+ */
+struct Credits402Info
+{
+    double balance{std::numeric_limits<double>::quiet_NaN()};
+    bool manual_block{false};
+    std::string manual_block_reason;
+};
+
+/**
+ * @brief Parse a 402 response body JSON into credit-exhaustion fields.
+ *
+ * Expects JSON of the form:
+ * @code
+ * {"detail": "credits_exhausted: balance=-0.01", "manual_block": false,
+ *  "manual_block_reason": ""}
+ * @endcode
+ */
+inline Credits402Info parse_402_body(const std::string& body_text)
+{
+    Credits402Info info;
+    try
+    {
+        const auto json = web::json::value::parse(utility::conversions::to_string_t(body_text));
+        if (!json.is_object())
+            return info;
+
+        const auto detail_key = utility::conversions::to_string_t("detail");
+        if (json.has_field(detail_key))
+        {
+            const std::string detail = utility::conversions::to_utf8string(json.at(detail_key).as_string());
+            const auto pos = detail.find("balance=");
+            if (pos != std::string::npos)
+            {
+                try
+                {
+                    info.balance = std::stod(detail.substr(pos + 8));
+                }
+                catch (...)
+                {
+                }
+            }
+        }
+        const auto block_key = utility::conversions::to_string_t("manual_block");
+        if (json.has_field(block_key))
+            info.manual_block = json.at(block_key).as_bool();
+        const auto reason_key = utility::conversions::to_string_t("manual_block_reason");
+        if (json.has_field(reason_key))
+            info.manual_block_reason = utility::conversions::to_utf8string(json.at(reason_key).as_string());
+    }
+    catch (...)
+    {
+    }
+    return info;
+}
 
 struct RawHttpResponse
 {
@@ -94,6 +154,11 @@ inline RawHttpResponse request_raw(const Client& client, const utility::string_t
     {
         const std::string message =
             result.body.empty() ? ("HTTP " + std::to_string(result.status_code)) : result.text();
+        if (result.status_code == 402)
+        {
+            const auto info = parse_402_body(result.text());
+            throw CyberwaveInsufficientCreditsError(message, info.balance, info.manual_block, info.manual_block_reason);
+        }
         throw CyberwaveAPIError(message, static_cast<int>(result.status_code));
     }
 

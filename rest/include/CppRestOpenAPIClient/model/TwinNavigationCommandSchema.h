@@ -68,6 +68,9 @@ public:
         PAUSE,
         RESUME,
         RELATIVE_MOVE,
+        TAKEOFF,
+        HOVER,
+        LAND,
     };
 
     CommandEnum toCommandEnum(const utility::string_t& value) const;

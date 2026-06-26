@@ -25,14 +25,17 @@
 
 #include "CppRestOpenAPIClient/model/AgentTwinControlJointSchema.h"
 #include <cpprest/details/basic_types.h>
+#include "CppRestOpenAPIClient/model/AgentControllerRuntimeRouteRefSchema.h"
 #include <map>
 #include <vector>
+#include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
+class AgentControllerRuntimeRouteRefSchema;
 class AgentTwinControlJointSchema;
 
 
@@ -108,6 +111,11 @@ public:
     void unsetDispatchability();
     void setDispatchability(const utility::string_t& value);
 
+    utility::string_t getExecutionChannel() const;
+    bool executionChannelIsSet() const;
+    void unsetExecution_channel();
+    void setExecutionChannel(const utility::string_t& value);
+
     utility::string_t getTransport() const;
     bool transportIsSet() const;
     void unsetTransport();
@@ -138,6 +146,11 @@ public:
     void unsetController_policy_uuids();
     void setControllerPolicyUuids(const std::vector<utility::string_t>& value);
 
+    std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AgentControllerRuntimeRouteRefSchema>>> getControllerPolicyDefaults() const;
+    bool controllerPolicyDefaultsIsSet() const;
+    void unsetController_policy_defaults();
+    void setControllerPolicyDefaults(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AgentControllerRuntimeRouteRefSchema>>>& value);
+
     utility::string_t getAssetUuid() const;
     bool assetUuidIsSet() const;
     void unsetAsset_uuid();
@@ -157,6 +170,11 @@ public:
     bool sensorIdsIsSet() const;
     void unsetSensor_ids();
     void setSensorIds(const std::vector<utility::string_t>& value);
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getSensorGeometries() const;
+    bool sensorGeometriesIsSet() const;
+    void unsetSensor_geometries();
+    void setSensorGeometries(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
 
     std::vector<std::map<utility::string_t, utility::string_t>> getPoses() const;
     bool posesIsSet() const;
@@ -202,6 +220,9 @@ protected:
     utility::string_t m_Dispatchability;
     bool m_DispatchabilityIsSet;
 
+    utility::string_t m_Execution_channel;
+    bool m_Execution_channelIsSet;
+
     utility::string_t m_Transport;
     bool m_TransportIsSet;
 
@@ -219,6 +240,9 @@ protected:
     std::vector<utility::string_t> m_Controller_policy_uuids;
     bool m_Controller_policy_uuidsIsSet;
 
+    std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AgentControllerRuntimeRouteRefSchema>>> m_Controller_policy_defaults;
+    bool m_Controller_policy_defaultsIsSet;
+
     boost::optional<utility::string_t> m_Asset_uuid;
 
     boost::optional<utility::string_t> m_End_effector_frame;
@@ -228,6 +252,9 @@ protected:
 
     std::vector<utility::string_t> m_Sensor_ids;
     bool m_Sensor_idsIsSet;
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Sensor_geometries;
+    bool m_Sensor_geometriesIsSet;
 
     std::vector<std::map<utility::string_t, utility::string_t>> m_Poses;
     bool m_PosesIsSet;

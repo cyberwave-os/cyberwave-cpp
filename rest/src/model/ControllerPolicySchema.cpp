@@ -117,6 +117,11 @@ web::json::value ControllerPolicySchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("can_write"))] = ModelBase::toJson(m_Can_write);
     }
+    if(m_Device.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("device"))] = ModelBase::toJson(m_Device.get());
+    }
 
     return val;
 }
@@ -267,6 +272,17 @@ bool ControllerPolicySchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("device"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("device")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setDevice;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setDevice);
+            setDevice(refVal_setDevice);
+            
+        }
+    }
     return ok;
 }
 
@@ -328,6 +344,10 @@ void ControllerPolicySchema::toMultipart(std::shared_ptr<MultipartFormData> mult
     if(m_Can_writeIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("can_write")), m_Can_write));
+    }
+    if(m_Device.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("device")), m_Device.get()));
     }
 }
 
@@ -417,6 +437,12 @@ bool ControllerPolicySchema::fromMultiPart(std::shared_ptr<MultipartFormData> mu
         bool refVal_setCanWrite;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("can_write"))), refVal_setCanWrite );
         setCanWrite(refVal_setCanWrite);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("device"))))
+    {
+        utility::string_t refVal_setDevice;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("device"))), refVal_setDevice );
+        setDevice(refVal_setDevice);
     }
     return ok;
 }
@@ -690,6 +716,26 @@ bool ControllerPolicySchema::canWriteIsSet() const
 void ControllerPolicySchema::unsetCan_write()
 {
     m_Can_writeIsSet = false;
+}
+utility::string_t ControllerPolicySchema::getDevice() const
+{
+    return m_Device.get();
+}
+
+
+void ControllerPolicySchema::setDevice(const utility::string_t& value)
+{
+    m_Device = value;
+}
+
+bool ControllerPolicySchema::deviceIsSet() const
+{
+    return m_Device.has_value();
+}
+
+void ControllerPolicySchema::unsetDevice()
+{
+    m_Device.reset();
 }
 
 }

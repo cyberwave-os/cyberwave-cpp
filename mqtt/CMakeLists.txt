@@ -17,6 +17,12 @@ if(NOT TARGET spdlog::spdlog)
   find_package(spdlog REQUIRED)
 endif()
 
+# libmosquitto 2.1+ exposes cJSON in public headers on some builds (Homebrew macOS).
+pkg_check_modules(CJSON QUIET IMPORTED_TARGET libcjson)
+if(NOT CJSON_FOUND)
+  pkg_check_modules(CJSON QUIET IMPORTED_TARGET cjson)
+endif()
+
 ## Build a static mqtt client library from mqtt_client.cpp so examples can
 ## link against a real implementation.
 add_library(cyberwave_mqtt_client STATIC
@@ -43,6 +49,16 @@ target_link_libraries(cyberwave_mqtt_client
         nlohmann_json::nlohmann_json
         spdlog::spdlog
 )
+if(CJSON_FOUND)
+    target_link_libraries(cyberwave_mqtt_client PUBLIC PkgConfig::CJSON)
+else()
+    find_path(CJSON_INCLUDE_DIR NAMES cjson/cJSON.h)
+    if(CJSON_INCLUDE_DIR)
+        target_include_directories(cyberwave_mqtt_client PUBLIC ${CJSON_INCLUDE_DIR})
+    else()
+        message(WARNING "cJSON headers not found — mqtt_client may fail to compile against Mosquitto 2.x")
+    endif()
+endif()
 
 # Installation rules
 install(TARGETS cyberwave_mqtt_client
@@ -73,6 +89,12 @@ if(NOT TARGET PkgConfig::MOSQUITTO)
 endif()
 find_dependency(nlohmann_json REQUIRED)
 find_dependency(spdlog REQUIRED)
+if(NOT TARGET PkgConfig::CJSON)
+  pkg_check_modules(CJSON QUIET IMPORTED_TARGET libcjson)
+  if(NOT CJSON_FOUND)
+    pkg_check_modules(CJSON QUIET IMPORTED_TARGET cjson)
+  endif()
+endif()
 include("${CMAKE_CURRENT_LIST_DIR}/cyberwave_mqtt_client-targets.cmake")
 ]=]
 )

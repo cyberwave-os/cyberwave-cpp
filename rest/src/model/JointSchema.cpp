@@ -77,6 +77,11 @@ web::json::value JointSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("origin"))] = ModelBase::toJson(m_Origin.get());
     }
+    if(m_Mimic.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("mimic"))] = ModelBase::toJson(m_Mimic.get());
+    }
 
     return val;
 }
@@ -161,6 +166,17 @@ bool JointSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("mimic"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("mimic")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMimic;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setMimic);
+            setMimic(refVal_setMimic);
+            
+        }
+    }
     return ok;
 }
 
@@ -198,6 +214,10 @@ void JointSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, cons
     if(m_Origin.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("origin")), m_Origin.get()));
+    }
+    if(m_Mimic.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("mimic")), m_Mimic.get()));
     }
 }
 
@@ -251,6 +271,12 @@ bool JointSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, co
         std::map<utility::string_t, std::vector<double>> refVal_setOrigin;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("origin"))), refVal_setOrigin );
         setOrigin(refVal_setOrigin);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("mimic"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMimic;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("mimic"))), refVal_setMimic );
+        setMimic(refVal_setMimic);
     }
     return ok;
 }
@@ -397,6 +423,26 @@ bool JointSchema::originIsSet() const
 void JointSchema::unsetOrigin()
 {
     m_Origin.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> JointSchema::getMimic() const
+{
+    return m_Mimic.get();
+}
+
+
+void JointSchema::setMimic(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Mimic = value;
+}
+
+bool JointSchema::mimicIsSet() const
+{
+    return m_Mimic.has_value();
+}
+
+void JointSchema::unsetMimic()
+{
+    m_Mimic.reset();
 }
 
 }

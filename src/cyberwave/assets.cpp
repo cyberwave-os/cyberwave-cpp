@@ -73,6 +73,62 @@ list_asset_schema(const std::shared_ptr<void>& schema)
     return std::static_pointer_cast<org::openapitools::client::model::AssetListSchema>(schema);
 }
 
+static web::json::value parse_json_payload(const std::string& raw_json)
+{
+    return web::json::value::parse(from_std(raw_json));
+}
+
+static std::string json_string_field(const web::json::value& object, const std::string& key)
+{
+    if (!object.is_object())
+        return "";
+    const auto utility_key = from_std(key);
+    if (!object.has_field(utility_key))
+        return "";
+    const auto& value = object.at(utility_key);
+    return value.is_string() ? to_std(value.as_string()) : "";
+}
+
+static bool json_bool_field(const web::json::value& object, const std::string& key)
+{
+    if (!object.is_object())
+        return false;
+    const auto utility_key = from_std(key);
+    if (!object.has_field(utility_key))
+        return false;
+    const auto& value = object.at(utility_key);
+    return value.is_boolean() && value.as_bool();
+}
+
+static web::json::value json_object_field(const web::json::value& object, const std::string& key)
+{
+    if (!object.is_object())
+        return web::json::value::object();
+    const auto utility_key = from_std(key);
+    if (!object.has_field(utility_key))
+        return web::json::value::object();
+    const auto& value = object.at(utility_key);
+    return value.is_object() ? value : web::json::value::object();
+}
+
+static PolicyRefPayload policy_ref_from_json(const web::json::value& value)
+{
+    if (!value.is_object())
+        return {};
+    return PolicyRefPayload{json_string_field(value, "kind"), json_string_field(value, "value")};
+}
+
+static ControlRuntimeTargetPayload runtime_target_from_json(const web::json::value& value)
+{
+    if (!value.is_object())
+        return {};
+    return ControlRuntimeTargetPayload{
+        json_bool_field(value, "enabled"),          json_string_field(value, "runtime_kind"),
+        json_string_field(value, "backend"),        json_string_field(value, "adapter"),
+        json_string_field(value, "source_type"),    json_string_field(value, "safety_level"),
+        json_string_field(value, "input_contract"), json_string_field(value, "output_contract")};
+}
+
 static bool is_not_found_error(const CyberwaveAPIError& error)
 {
     if (error.status_code() == 404)
@@ -224,6 +280,89 @@ static Asset upload_glb_via_attachment(org::openapitools::client::api::DefaultAp
 }
 
 } // namespace
+
+AssetControllerSetupView AssetControllerSetupView::from_json(std::string json)
+{
+    return AssetControllerSetupView(std::move(json));
+}
+
+AssetControllerSetupView::AssetControllerSetupView(std::string json) : raw_json_(std::move(json)) {}
+
+std::string AssetControllerSetupView::asset_uuid() const
+{
+    return json_string_field(parse_json_payload(raw_json_), "asset_uuid");
+}
+
+std::string AssetControllerSetupView::primary_controller_key() const
+{
+    const auto root = parse_json_payload(raw_json_);
+    const std::string top_level = json_string_field(root, "primary_controller_key");
+    if (!top_level.empty())
+        return top_level;
+    return json_string_field(json_object_field(root, "recommended_setup"), "primary_controller_key");
+}
+
+PolicyRefPayload AssetControllerSetupView::primary_policy_ref() const
+{
+    const auto recommended = json_object_field(parse_json_payload(raw_json_), "recommended_setup");
+    return policy_ref_from_json(json_object_field(recommended, "primary_policy_ref"));
+}
+
+PolicyRefPayload AssetControllerSetupView::default_policy_ref(const std::string& runtime_kind,
+                                                              const std::string& backend) const
+{
+    const auto root = parse_json_payload(raw_json_);
+    if (root.is_object() && root.has_field(from_std("runtime_policies")))
+    {
+        const auto& policies = root.at(from_std("runtime_policies"));
+        if (policies.is_array())
+        {
+            for (const auto& policy : policies.as_array())
+            {
+                if (json_string_field(policy, "runtime_kind") != runtime_kind ||
+                    json_string_field(policy, "backend") != backend)
+                    continue;
+                const PolicyRefPayload policy_ref = policy_ref_from_json(json_object_field(policy, "policy_ref"));
+                if (!policy_ref.empty())
+                    return policy_ref;
+            }
+        }
+    }
+
+    const auto recommended = json_object_field(root, "recommended_setup");
+    const auto defaults = json_object_field(recommended, "default_policy_refs");
+    const auto runtime_defaults = json_object_field(defaults, runtime_kind);
+    return policy_ref_from_json(json_object_field(runtime_defaults, backend));
+}
+
+ControlRuntimeTargetPayload AssetControllerSetupView::runtime_target(const std::string& runtime_kind,
+                                                                     const std::string& backend) const
+{
+    const auto root = parse_json_payload(raw_json_);
+    if (!root.is_object() || !root.has_field(from_std("runtime_policies")))
+        return {};
+    const auto& policies = root.at(from_std("runtime_policies"));
+    if (!policies.is_array())
+        return {};
+
+    for (const auto& policy : policies.as_array())
+    {
+        if (json_string_field(policy, "runtime_kind") != runtime_kind ||
+            json_string_field(policy, "backend") != backend)
+            continue;
+        return runtime_target_from_json(json_object_field(policy, "runtime_target"));
+    }
+    return {};
+}
+
+std::size_t AssetControllerSetupView::runtime_policy_count() const
+{
+    const auto root = parse_json_payload(raw_json_);
+    if (!root.is_object() || !root.has_field(from_std("runtime_policies")))
+        return 0;
+    const auto& policies = root.at(from_std("runtime_policies"));
+    return policies.is_array() ? policies.as_array().size() : 0;
+}
 
 Asset Asset::from_schema(std::shared_ptr<void> schema_ptr) { return Asset(std::move(schema_ptr), false); }
 
@@ -560,6 +699,18 @@ std::string AssetManager::rebuild_universal_schema(const std::string& asset_id, 
     {
         throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
     }
+}
+
+std::string AssetManager::get_controller_setup(const std::string& asset_id) const
+{
+    const auto response = detail::request_raw(
+        client_.get(), detail::to_utility("/api/v1/assets/" + asset_id + "/controller-setup"), web::http::methods::GET);
+    return response.text();
+}
+
+AssetControllerSetupView AssetManager::get_controller_setup_view(const std::string& asset_id) const
+{
+    return AssetControllerSetupView::from_json(get_controller_setup(asset_id));
 }
 
 } // namespace cyberwave

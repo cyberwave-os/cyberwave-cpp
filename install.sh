@@ -18,6 +18,7 @@ WITHOUT_FFMPEG=0
 WITHOUT_WEBRTC=0
 RUN_TESTS=0
 DEPS_ONLY=0
+REST_ONLY=0
 
 usage() {
     cat <<'EOF'
@@ -41,6 +42,7 @@ Options:
   --without-webrtc                   Disable WebRTC support (skips LibDataChannel fetch)
   --run-tests                        Run ctest after build
   --deps-only                        Install dependencies and exit (for Docker layer caching)
+  --rest-only                        Generate rest/ client sources and exit (skips deps and cmake build)
   -h, --help                         Show this help
 
 Examples:
@@ -141,6 +143,10 @@ parse_args() {
                 DEPS_ONLY=1
                 shift
                 ;;
+            --rest-only)
+                REST_ONLY=1
+                shift
+                ;;
             -h|--help)
                 usage
                 exit 0
@@ -174,6 +180,7 @@ install_deps_debian() {
         libboost-random-dev \
         nlohmann-json3-dev \
         libmosquitto-dev \
+        libcjson-dev \
         libspdlog-dev
 
     if [[ "$WITH_GRPC" -eq 1 ]]; then
@@ -481,6 +488,13 @@ main() {
     log "Build directory: ${BUILD_DIR}"
     log "Build type: ${BUILD_TYPE}"
     log "OpenAPI URL: ${OPENAPI_URL}"
+
+    if [[ "${REST_ONLY}" -eq 1 ]]; then
+        FORCE_GENERATE_REST=1
+        ensure_rest_sources
+        log "REST sources ready (--rest-only). Exiting."
+        return
+    fi
 
     install_deps
 

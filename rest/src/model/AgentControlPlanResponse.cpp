@@ -35,6 +35,7 @@ AgentControlPlanResponse::AgentControlPlanResponse()
     m_Missing_requirementsIsSet = false;
     m_Embodiment_contextIsSet = false;
     m_Control_surfacesIsSet = false;
+    m_Visualization_layersIsSet = false;
 }
 
 AgentControlPlanResponse::~AgentControlPlanResponse()
@@ -117,6 +118,21 @@ web::json::value AgentControlPlanResponse::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("control_surfaces"))] = ModelBase::toJson(m_Control_surfaces);
+    }
+    if(m_Planning_scene.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("planning_scene"))] = ModelBase::toJson(m_Planning_scene.get());
+    }
+    if(m_Visualization_layersIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("visualization_layers"))] = ModelBase::toJson(m_Visualization_layers);
+    }
+    if(m_Dispatch_bundle.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("dispatch_bundle"))] = ModelBase::toJson(m_Dispatch_bundle.get());
     }
 
     return val;
@@ -270,6 +286,39 @@ bool AgentControlPlanResponse::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("planning_scene"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("planning_scene")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setPlanningScene;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPlanningScene);
+            setPlanningScene(refVal_setPlanningScene);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("visualization_layers"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("visualization_layers")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<AgentControlVisualizationLayer>> refVal_setVisualizationLayers;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setVisualizationLayers);
+            setVisualizationLayers(refVal_setVisualizationLayers);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("dispatch_bundle"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("dispatch_bundle")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setDispatchBundle;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setDispatchBundle);
+            setDispatchBundle(refVal_setDispatchBundle);
+            
+        }
+    }
     return ok;
 }
 
@@ -331,6 +380,18 @@ void AgentControlPlanResponse::toMultipart(std::shared_ptr<MultipartFormData> mu
     if(m_Control_surfacesIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("control_surfaces")), m_Control_surfaces));
+    }
+    if(m_Planning_scene.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("planning_scene")), m_Planning_scene.get()));
+    }
+    if(m_Visualization_layersIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("visualization_layers")), m_Visualization_layers));
+    }
+    if(m_Dispatch_bundle.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("dispatch_bundle")), m_Dispatch_bundle.get()));
     }
 }
 
@@ -420,6 +481,24 @@ bool AgentControlPlanResponse::fromMultiPart(std::shared_ptr<MultipartFormData> 
         std::vector<std::shared_ptr<AgentTwinControlSurface>> refVal_setControlSurfaces;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("control_surfaces"))), refVal_setControlSurfaces );
         setControlSurfaces(refVal_setControlSurfaces);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("planning_scene"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setPlanningScene;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("planning_scene"))), refVal_setPlanningScene );
+        setPlanningScene(refVal_setPlanningScene);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("visualization_layers"))))
+    {
+        std::vector<std::shared_ptr<AgentControlVisualizationLayer>> refVal_setVisualizationLayers;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("visualization_layers"))), refVal_setVisualizationLayers );
+        setVisualizationLayers(refVal_setVisualizationLayers);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("dispatch_bundle"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setDispatchBundle;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("dispatch_bundle"))), refVal_setDispatchBundle );
+        setDispatchBundle(refVal_setDispatchBundle);
     }
     return ok;
 }
@@ -767,6 +846,67 @@ bool AgentControlPlanResponse::controlSurfacesIsSet() const
 void AgentControlPlanResponse::unsetControl_surfaces()
 {
     m_Control_surfacesIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> AgentControlPlanResponse::getPlanningScene() const
+{
+    return m_Planning_scene.get();
+}
+
+
+void AgentControlPlanResponse::setPlanningScene(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Planning_scene = value;
+}
+
+bool AgentControlPlanResponse::planningSceneIsSet() const
+{
+    return m_Planning_scene.has_value();
+}
+
+void AgentControlPlanResponse::unsetPlanning_scene()
+{
+    m_Planning_scene.reset();
+}
+std::vector<std::shared_ptr<AgentControlVisualizationLayer>> AgentControlPlanResponse::getVisualizationLayers() const
+{
+    return m_Visualization_layers;
+}
+
+
+void AgentControlPlanResponse::setVisualizationLayers(const std::vector<std::shared_ptr<AgentControlVisualizationLayer>>& value)
+{
+    m_Visualization_layers = value;
+    m_Visualization_layersIsSet = true;
+}
+
+bool AgentControlPlanResponse::visualizationLayersIsSet() const
+{
+    return m_Visualization_layersIsSet;
+}
+
+void AgentControlPlanResponse::unsetVisualization_layers()
+{
+    m_Visualization_layersIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> AgentControlPlanResponse::getDispatchBundle() const
+{
+    return m_Dispatch_bundle.get();
+}
+
+
+void AgentControlPlanResponse::setDispatchBundle(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Dispatch_bundle = value;
+}
+
+bool AgentControlPlanResponse::dispatchBundleIsSet() const
+{
+    return m_Dispatch_bundle.has_value();
+}
+
+void AgentControlPlanResponse::unsetDispatch_bundle()
+{
+    m_Dispatch_bundle.reset();
 }
 
 }

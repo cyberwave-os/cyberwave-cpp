@@ -158,6 +158,16 @@ web::json::value CloudNodeWorkloadSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("callback_kwargs"))] = ModelBase::toJson(m_Callback_kwargs.get());
     }
+    if(m_Failure_code.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("failure_code"))] = ModelBase::toJson(m_Failure_code.get());
+    }
+    if(m_Failure_message.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("failure_message"))] = ModelBase::toJson(m_Failure_message.get());
+    }
     if(m_Asset_uuid.has_value())
     {
         
@@ -167,6 +177,11 @@ web::json::value CloudNodeWorkloadSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("asset_name"))] = ModelBase::toJson(m_Asset_name.get());
+    }
+    if(m_Mesh_url.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("mesh_url"))] = ModelBase::toJson(m_Mesh_url.get());
     }
 
     return val;
@@ -417,6 +432,28 @@ bool CloudNodeWorkloadSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("failure_code"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("failure_code")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setFailureCode;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFailureCode);
+            setFailureCode(refVal_setFailureCode);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("failure_message"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("failure_message")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setFailureMessage;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFailureMessage);
+            setFailureMessage(refVal_setFailureMessage);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("asset_uuid")));
@@ -436,6 +473,17 @@ bool CloudNodeWorkloadSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setAssetName;
             ok &= ModelBase::fromJson(fieldValue, refVal_setAssetName);
             setAssetName(refVal_setAssetName);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("mesh_url"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("mesh_url")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setMeshUrl;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setMeshUrl);
+            setMeshUrl(refVal_setMeshUrl);
             
         }
     }
@@ -537,6 +585,14 @@ void CloudNodeWorkloadSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("callback_kwargs")), m_Callback_kwargs.get()));
     }
+    if(m_Failure_code.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("failure_code")), m_Failure_code.get()));
+    }
+    if(m_Failure_message.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("failure_message")), m_Failure_message.get()));
+    }
     if(m_Asset_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_uuid")), m_Asset_uuid.get()));
@@ -544,6 +600,10 @@ void CloudNodeWorkloadSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     if(m_Asset_name.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_name")), m_Asset_name.get()));
+    }
+    if(m_Mesh_url.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("mesh_url")), m_Mesh_url.get()));
     }
 }
 
@@ -688,6 +748,18 @@ bool CloudNodeWorkloadSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("callback_kwargs"))), refVal_setCallbackKwargs );
         setCallbackKwargs(refVal_setCallbackKwargs);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("failure_code"))))
+    {
+        utility::string_t refVal_setFailureCode;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("failure_code"))), refVal_setFailureCode );
+        setFailureCode(refVal_setFailureCode);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("failure_message"))))
+    {
+        utility::string_t refVal_setFailureMessage;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("failure_message"))), refVal_setFailureMessage );
+        setFailureMessage(refVal_setFailureMessage);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))))
     {
         utility::string_t refVal_setAssetUuid;
@@ -699,6 +771,12 @@ bool CloudNodeWorkloadSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
         utility::string_t refVal_setAssetName;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_name"))), refVal_setAssetName );
         setAssetName(refVal_setAssetName);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("mesh_url"))))
+    {
+        utility::string_t refVal_setMeshUrl;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("mesh_url"))), refVal_setMeshUrl );
+        setMeshUrl(refVal_setMeshUrl);
     }
     return ok;
 }
@@ -1151,6 +1229,46 @@ void CloudNodeWorkloadSchema::unsetCallback_kwargs()
 {
     m_Callback_kwargs.reset();
 }
+utility::string_t CloudNodeWorkloadSchema::getFailureCode() const
+{
+    return m_Failure_code.get();
+}
+
+
+void CloudNodeWorkloadSchema::setFailureCode(const utility::string_t& value)
+{
+    m_Failure_code = value;
+}
+
+bool CloudNodeWorkloadSchema::failureCodeIsSet() const
+{
+    return m_Failure_code.has_value();
+}
+
+void CloudNodeWorkloadSchema::unsetFailure_code()
+{
+    m_Failure_code.reset();
+}
+utility::string_t CloudNodeWorkloadSchema::getFailureMessage() const
+{
+    return m_Failure_message.get();
+}
+
+
+void CloudNodeWorkloadSchema::setFailureMessage(const utility::string_t& value)
+{
+    m_Failure_message = value;
+}
+
+bool CloudNodeWorkloadSchema::failureMessageIsSet() const
+{
+    return m_Failure_message.has_value();
+}
+
+void CloudNodeWorkloadSchema::unsetFailure_message()
+{
+    m_Failure_message.reset();
+}
 utility::string_t CloudNodeWorkloadSchema::getAssetUuid() const
 {
     return m_Asset_uuid.get();
@@ -1190,6 +1308,26 @@ bool CloudNodeWorkloadSchema::assetNameIsSet() const
 void CloudNodeWorkloadSchema::unsetAsset_name()
 {
     m_Asset_name.reset();
+}
+utility::string_t CloudNodeWorkloadSchema::getMeshUrl() const
+{
+    return m_Mesh_url.get();
+}
+
+
+void CloudNodeWorkloadSchema::setMeshUrl(const utility::string_t& value)
+{
+    m_Mesh_url = value;
+}
+
+bool CloudNodeWorkloadSchema::meshUrlIsSet() const
+{
+    return m_Mesh_url.has_value();
+}
+
+void CloudNodeWorkloadSchema::unsetMesh_url()
+{
+    m_Mesh_url.reset();
 }
 
 }

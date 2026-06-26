@@ -21,6 +21,8 @@ namespace model {
 BulkJointStatesUpdateSchema::BulkJointStatesUpdateSchema()
 {
     m_Joint_statesIsSet = false;
+    m_As_home_position = false;
+    m_As_home_positionIsSet = false;
 }
 
 BulkJointStatesUpdateSchema::~BulkJointStatesUpdateSchema()
@@ -40,6 +42,11 @@ web::json::value BulkJointStatesUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("joint_states"))] = ModelBase::toJson(m_Joint_states);
     }
+    if(m_As_home_positionIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("as_home_position"))] = ModelBase::toJson(m_As_home_position);
+    }
 
     return val;
 }
@@ -58,6 +65,17 @@ bool BulkJointStatesUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("as_home_position"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("as_home_position")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setAsHomePosition;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAsHomePosition);
+            setAsHomePosition(refVal_setAsHomePosition);
+            
+        }
+    }
     return ok;
 }
 
@@ -71,6 +89,10 @@ void BulkJointStatesUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData>
     if(m_Joint_statesIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("joint_states")), m_Joint_states));
+    }
+    if(m_As_home_positionIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("as_home_position")), m_As_home_position));
     }
 }
 
@@ -88,6 +110,12 @@ bool BulkJointStatesUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormDat
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setJointStates;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("joint_states"))), refVal_setJointStates );
         setJointStates(refVal_setJointStates);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("as_home_position"))))
+    {
+        bool refVal_setAsHomePosition;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("as_home_position"))), refVal_setAsHomePosition );
+        setAsHomePosition(refVal_setAsHomePosition);
     }
     return ok;
 }
@@ -113,6 +141,26 @@ bool BulkJointStatesUpdateSchema::jointStatesIsSet() const
 void BulkJointStatesUpdateSchema::unsetJoint_states()
 {
     m_Joint_statesIsSet = false;
+}
+bool BulkJointStatesUpdateSchema::isAsHomePosition() const
+{
+    return m_As_home_position;
+}
+
+void BulkJointStatesUpdateSchema::setAsHomePosition(bool value)
+{
+    m_As_home_position = value;
+    m_As_home_positionIsSet = true;
+}
+
+bool BulkJointStatesUpdateSchema::asHomePositionIsSet() const
+{
+    return m_As_home_positionIsSet;
+}
+
+void BulkJointStatesUpdateSchema::unsetAs_home_position()
+{
+    m_As_home_positionIsSet = false;
 }
 
 }

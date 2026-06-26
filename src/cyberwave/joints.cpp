@@ -91,7 +91,9 @@ void JointController::set(const std::string& joint_name, double position, bool d
     if (mqtt && mqtt->is_connected())
     {
         const std::string st = detail::normalize_control_source_type(client, source_type);
-        mqtt->update_joint_state(twin_.uuid(), joint_name, position, 0.0, 0.0, timestamp, st);
+        // Position-only command: do not fabricate velocity/effort. Drivers
+        // treat a missing channel as "do not command this channel".
+        mqtt->update_joint_state(twin_.uuid(), joint_name, position, std::nullopt, std::nullopt, timestamp, st);
         return;
     }
     auto* a = api(client);

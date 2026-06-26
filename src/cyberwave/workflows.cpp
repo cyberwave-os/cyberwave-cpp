@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <chrono>
 #include <set>
+#include <sstream>
 #include <thread>
 
 namespace cyberwave
@@ -41,6 +42,37 @@ utility::string_t from_std(const std::string& s) { return utility::conversions::
 static org::openapitools::client::api::DefaultApi* api(const Client& client)
 {
     return ClientAccess::default_api(&client);
+}
+
+/**
+ * Re-throws an OpenAPI ApiException as the appropriate SDK exception.
+ *
+ * The generated client always delivers HTTP errors as ApiException.  The
+ * catch blocks in this file used to discard the status code (hardcoding 0).
+ * This helper reads the response body, checks for a credit-exhaustion payload,
+ * and throws CyberwaveInsufficientCreditsError when appropriate; otherwise it
+ * falls back to CyberwaveAPIError with the body text as the message.
+ */
+[[noreturn]] static void rethrow_api_exception(const org::openapitools::client::api::ApiException& e)
+{
+    std::string message = to_std(utility::conversions::to_string_t(e.what()));
+    std::string body_text;
+    if (auto content = e.getContent())
+    {
+        std::ostringstream oss;
+        oss << content->rdbuf();
+        body_text = oss.str();
+        if (!body_text.empty())
+            message += ": " + body_text;
+    }
+
+    if (!body_text.empty() && body_text.find("credits_exhausted") != std::string::npos)
+    {
+        const auto info = detail::parse_402_body(body_text);
+        throw CyberwaveInsufficientCreditsError(message, info.balance, info.manual_block, info.manual_block_reason);
+    }
+
+    throw CyberwaveAPIError(message, 0);
 }
 
 static std::shared_ptr<org::openapitools::client::model::WorkflowSchema> workflow_schema(const std::shared_ptr<void>& p)
@@ -368,7 +400,7 @@ std::vector<Workflow> WorkflowManager::list() const
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {
-        throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
+        rethrow_api_exception(e);
     }
 }
 
@@ -386,7 +418,7 @@ Workflow WorkflowManager::get(const std::string& workflow_id) const
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {
-        throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
+        rethrow_api_exception(e);
     }
 }
 
@@ -439,7 +471,7 @@ WorkflowRun WorkflowManager::trigger(const std::string& workflow_id,
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {
-        throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
+        rethrow_api_exception(e);
     }
 }
 
@@ -473,7 +505,7 @@ WorkflowRun WorkflowManager::trigger_with_json(const std::string& workflow_id, c
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {
-        throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
+        rethrow_api_exception(e);
     }
 }
 
@@ -508,7 +540,7 @@ std::vector<WorkflowRun> WorkflowRunManager::list(const std::string& workflow_id
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {
-        throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
+        rethrow_api_exception(e);
     }
 }
 
@@ -526,7 +558,7 @@ WorkflowRun WorkflowRunManager::get(const std::string& run_id) const
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {
-        throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
+        rethrow_api_exception(e);
     }
 }
 
@@ -544,7 +576,7 @@ WorkflowRun WorkflowRunManager::cancel(const std::string& run_id) const
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {
-        throw CyberwaveAPIError(to_std(utility::conversions::to_string_t(e.what())), 0);
+        rethrow_api_exception(e);
     }
 }
 

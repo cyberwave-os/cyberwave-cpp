@@ -64,6 +64,11 @@ web::json::value ControllerPolicyUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("asset_uuids"))] = ModelBase::toJson(m_Asset_uuids.get());
     }
+    if(m_Device.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("device"))] = ModelBase::toJson(m_Device.get());
+    }
 
     return val;
 }
@@ -137,6 +142,17 @@ bool ControllerPolicyUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("device"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("device")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setDevice;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setDevice);
+            setDevice(refVal_setDevice);
+            
+        }
+    }
     return ok;
 }
 
@@ -170,6 +186,10 @@ void ControllerPolicyUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData
     if(m_Asset_uuids.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_uuids")), m_Asset_uuids.get()));
+    }
+    if(m_Device.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("device")), m_Device.get()));
     }
 }
 
@@ -217,6 +237,12 @@ bool ControllerPolicyUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormDa
         std::vector<utility::string_t> refVal_setAssetUuids;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_uuids"))), refVal_setAssetUuids );
         setAssetUuids(refVal_setAssetUuids);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("device"))))
+    {
+        utility::string_t refVal_setDevice;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("device"))), refVal_setDevice );
+        setDevice(refVal_setDevice);
     }
     return ok;
 }
@@ -341,6 +367,26 @@ bool ControllerPolicyUpdateSchema::assetUuidsIsSet() const
 void ControllerPolicyUpdateSchema::unsetAsset_uuids()
 {
     m_Asset_uuids.reset();
+}
+utility::string_t ControllerPolicyUpdateSchema::getDevice() const
+{
+    return m_Device.get();
+}
+
+
+void ControllerPolicyUpdateSchema::setDevice(const utility::string_t& value)
+{
+    m_Device = value;
+}
+
+bool ControllerPolicyUpdateSchema::deviceIsSet() const
+{
+    return m_Device.has_value();
+}
+
+void ControllerPolicyUpdateSchema::unsetDevice()
+{
+    m_Device.reset();
 }
 
 }

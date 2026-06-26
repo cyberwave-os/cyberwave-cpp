@@ -23,7 +23,9 @@
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include <cpprest/details/basic_types.h>
+#include <map>
 #include <vector>
+#include "CppRestOpenAPIClient/AnyType.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSchema.h"
 #include "CppRestOpenAPIClient/model/AgentProposalSchema.h"
 
@@ -77,6 +79,16 @@ public:
     void unsetTool_calls();
     void setToolCalls(const std::vector<utility::string_t>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getCreationValidation() const;
+    bool creationValidationIsSet() const;
+    void unsetCreation_validation();
+    void setCreationValidation(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getWorkflowResult() const;
+    bool workflowResultIsSet() const;
+    void unsetWorkflow_result();
+    void setWorkflowResult(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
     std::shared_ptr<AgentProposalSchema> getProposal() const;
     bool proposalIsSet() const;
     void unsetProposal();
@@ -92,6 +104,11 @@ protected:
 
     std::vector<utility::string_t> m_Tool_calls;
     bool m_Tool_callsIsSet;
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> m_Creation_validation;
+    bool m_Creation_validationIsSet;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Workflow_result;
 
     boost::optional<std::shared_ptr<AgentProposalSchema>> m_Proposal;
 
