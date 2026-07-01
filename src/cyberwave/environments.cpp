@@ -137,7 +137,9 @@ std::vector<Environment> EnvironmentManager::list(const std::string& project_id)
             }
             else
             {
-                page = a->srcAppApiEnvironmentsListAllEnvironments(page_limit, offset).get();
+                // workspace_uuid left empty: the C++ SDK authenticates via API
+                // token, which is already workspace-scoped server-side (CYB-1898).
+                page = a->srcAppApiEnvironmentsListAllEnvironments(boost::none, page_limit, offset).get();
             }
             if (page.empty())
             {
