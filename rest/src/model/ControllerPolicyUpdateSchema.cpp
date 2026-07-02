@@ -64,6 +64,11 @@ web::json::value ControllerPolicyUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("asset_uuids"))] = ModelBase::toJson(m_Asset_uuids.get());
     }
+    if(m_Asset_registry_ids.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("asset_registry_ids"))] = ModelBase::toJson(m_Asset_registry_ids.get());
+    }
     if(m_Device.has_value())
     {
         
@@ -142,6 +147,17 @@ bool ControllerPolicyUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("asset_registry_ids"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("asset_registry_ids")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<utility::string_t> refVal_setAssetRegistryIds;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAssetRegistryIds);
+            setAssetRegistryIds(refVal_setAssetRegistryIds);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("device"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("device")));
@@ -186,6 +202,10 @@ void ControllerPolicyUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData
     if(m_Asset_uuids.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_uuids")), m_Asset_uuids.get()));
+    }
+    if(m_Asset_registry_ids.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_registry_ids")), m_Asset_registry_ids.get()));
     }
     if(m_Device.has_value())
     {
@@ -237,6 +257,12 @@ bool ControllerPolicyUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormDa
         std::vector<utility::string_t> refVal_setAssetUuids;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_uuids"))), refVal_setAssetUuids );
         setAssetUuids(refVal_setAssetUuids);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("asset_registry_ids"))))
+    {
+        std::vector<utility::string_t> refVal_setAssetRegistryIds;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_registry_ids"))), refVal_setAssetRegistryIds );
+        setAssetRegistryIds(refVal_setAssetRegistryIds);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("device"))))
     {
@@ -367,6 +393,26 @@ bool ControllerPolicyUpdateSchema::assetUuidsIsSet() const
 void ControllerPolicyUpdateSchema::unsetAsset_uuids()
 {
     m_Asset_uuids.reset();
+}
+std::vector<utility::string_t> ControllerPolicyUpdateSchema::getAssetRegistryIds() const
+{
+    return m_Asset_registry_ids.get();
+}
+
+
+void ControllerPolicyUpdateSchema::setAssetRegistryIds(const std::vector<utility::string_t>& value)
+{
+    m_Asset_registry_ids = value;
+}
+
+bool ControllerPolicyUpdateSchema::assetRegistryIdsIsSet() const
+{
+    return m_Asset_registry_ids.has_value();
+}
+
+void ControllerPolicyUpdateSchema::unsetAsset_registry_ids()
+{
+    m_Asset_registry_ids.reset();
 }
 utility::string_t ControllerPolicyUpdateSchema::getDevice() const
 {

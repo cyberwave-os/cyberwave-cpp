@@ -10,13 +10,13 @@
  */
 
 /*
- * CatalogSeedResponseSchema.h
+ * SeedAutogenControllersResponseSchema.h
  *
  * 
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_CatalogSeedResponseSchema_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_CatalogSeedResponseSchema_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_SeedAutogenControllersResponseSchema_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_SeedAutogenControllersResponseSchema_H_
 
 #include <boost/optional.hpp>
 
@@ -33,12 +33,12 @@ namespace model {
 class CatalogSeedGroupSchema;
 
 
-class  CatalogSeedResponseSchema
+class  SeedAutogenControllersResponseSchema
     : public ModelBase
 {
 public:
-    CatalogSeedResponseSchema();
-    virtual ~CatalogSeedResponseSchema();
+    SeedAutogenControllersResponseSchema();
+    virtual ~SeedAutogenControllersResponseSchema();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -53,7 +53,7 @@ public:
 
 
     /////////////////////////////////////////////
-    /// CatalogSeedResponseSchema members
+    /// SeedAutogenControllersResponseSchema members
 
 
     utility::string_t getWorkspaceUuid() const;
@@ -66,20 +66,10 @@ public:
     void unsetControllers();
     void setControllers(const std::shared_ptr<CatalogSeedGroupSchema>& value);
 
-    std::shared_ptr<CatalogSeedGroupSchema> getMlmodels() const;
-    bool mlmodelsIsSet() const;
-    void unsetMlmodels();
-    void setMlmodels(const std::shared_ptr<CatalogSeedGroupSchema>& value);
-
-    std::shared_ptr<CatalogSeedGroupSchema> getWorkflowTemplates() const;
-    bool workflowTemplatesIsSet() const;
-    void unsetWorkflow_templates();
-    void setWorkflowTemplates(const std::shared_ptr<CatalogSeedGroupSchema>& value);
-
-    std::shared_ptr<CatalogSeedGroupSchema> getAssetPatches() const;
-    bool assetPatchesIsSet() const;
-    void unsetAsset_patches();
-    void setAssetPatches(const std::shared_ptr<CatalogSeedGroupSchema>& value);
+    int32_t getAutogenCount() const;
+    bool autogenCountIsSet() const;
+    void unsetAutogen_count();
+    void setAutogenCount(int32_t value);
 
 
 protected:
@@ -89,14 +79,8 @@ protected:
     std::shared_ptr<CatalogSeedGroupSchema> m_Controllers;
     bool m_ControllersIsSet;
 
-    std::shared_ptr<CatalogSeedGroupSchema> m_Mlmodels;
-    bool m_MlmodelsIsSet;
-
-    std::shared_ptr<CatalogSeedGroupSchema> m_Workflow_templates;
-    bool m_Workflow_templatesIsSet;
-
-    std::shared_ptr<CatalogSeedGroupSchema> m_Asset_patches;
-    bool m_Asset_patchesIsSet;
+    int32_t m_Autogen_count;
+    bool m_Autogen_countIsSet;
 
 };
 
@@ -106,4 +90,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_CatalogSeedResponseSchema_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_SeedAutogenControllersResponseSchema_H_ */

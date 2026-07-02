@@ -262,6 +262,16 @@ public:
     void unsetExport_warnings();
     void setExportWarnings(const std::vector<std::map<utility::string_t, utility::string_t>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getMqttCommandSchema() const;
+    bool mqttCommandSchemaIsSet() const;
+    void unsetMqtt_command_schema();
+    void setMqttCommandSchema(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    std::vector<utility::string_t> getControllableJointNames() const;
+    bool controllableJointNamesIsSet() const;
+    void unsetControllable_joint_names();
+    void setControllableJointNames(const std::vector<utility::string_t>& value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -375,6 +385,12 @@ protected:
 
     std::vector<std::map<utility::string_t, utility::string_t>> m_Export_warnings;
     bool m_Export_warningsIsSet;
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> m_Mqtt_command_schema;
+    bool m_Mqtt_command_schemaIsSet;
+
+    std::vector<utility::string_t> m_Controllable_joint_names;
+    bool m_Controllable_joint_namesIsSet;
 
 };
 

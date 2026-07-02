@@ -23,6 +23,7 @@ CatalogSeedOptionsResponseSchema::CatalogSeedOptionsResponseSchema()
     m_ControllersIsSet = false;
     m_MlmodelsIsSet = false;
     m_Workflow_templatesIsSet = false;
+    m_Asset_patchesIsSet = false;
 }
 
 CatalogSeedOptionsResponseSchema::~CatalogSeedOptionsResponseSchema()
@@ -51,6 +52,11 @@ web::json::value CatalogSeedOptionsResponseSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("workflow_templates"))] = ModelBase::toJson(m_Workflow_templates);
+    }
+    if(m_Asset_patchesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("asset_patches"))] = ModelBase::toJson(m_Asset_patches);
     }
 
     return val;
@@ -92,6 +98,17 @@ bool CatalogSeedOptionsResponseSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("asset_patches"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("asset_patches")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<CatalogSeedOptionSchema>> refVal_setAssetPatches;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAssetPatches);
+            setAssetPatches(refVal_setAssetPatches);
+            
+        }
+    }
     return ok;
 }
 
@@ -113,6 +130,10 @@ void CatalogSeedOptionsResponseSchema::toMultipart(std::shared_ptr<MultipartForm
     if(m_Workflow_templatesIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workflow_templates")), m_Workflow_templates));
+    }
+    if(m_Asset_patchesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_patches")), m_Asset_patches));
     }
 }
 
@@ -142,6 +163,12 @@ bool CatalogSeedOptionsResponseSchema::fromMultiPart(std::shared_ptr<MultipartFo
         std::vector<std::shared_ptr<CatalogSeedOptionSchema>> refVal_setWorkflowTemplates;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workflow_templates"))), refVal_setWorkflowTemplates );
         setWorkflowTemplates(refVal_setWorkflowTemplates);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("asset_patches"))))
+    {
+        std::vector<std::shared_ptr<CatalogSeedOptionSchema>> refVal_setAssetPatches;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_patches"))), refVal_setAssetPatches );
+        setAssetPatches(refVal_setAssetPatches);
     }
     return ok;
 }
@@ -209,6 +236,27 @@ bool CatalogSeedOptionsResponseSchema::workflowTemplatesIsSet() const
 void CatalogSeedOptionsResponseSchema::unsetWorkflow_templates()
 {
     m_Workflow_templatesIsSet = false;
+}
+std::vector<std::shared_ptr<CatalogSeedOptionSchema>> CatalogSeedOptionsResponseSchema::getAssetPatches() const
+{
+    return m_Asset_patches;
+}
+
+
+void CatalogSeedOptionsResponseSchema::setAssetPatches(const std::vector<std::shared_ptr<CatalogSeedOptionSchema>>& value)
+{
+    m_Asset_patches = value;
+    m_Asset_patchesIsSet = true;
+}
+
+bool CatalogSeedOptionsResponseSchema::assetPatchesIsSet() const
+{
+    return m_Asset_patchesIsSet;
+}
+
+void CatalogSeedOptionsResponseSchema::unsetAsset_patches()
+{
+    m_Asset_patchesIsSet = false;
 }
 
 }

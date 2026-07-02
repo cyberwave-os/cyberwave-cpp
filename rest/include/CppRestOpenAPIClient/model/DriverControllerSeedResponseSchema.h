@@ -10,13 +10,13 @@
  */
 
 /*
- * CatalogSeedResponseSchema.h
+ * DriverControllerSeedResponseSchema.h
  *
  * 
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_CatalogSeedResponseSchema_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_CatalogSeedResponseSchema_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_DriverControllerSeedResponseSchema_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_DriverControllerSeedResponseSchema_H_
 
 #include <boost/optional.hpp>
 
@@ -33,12 +33,12 @@ namespace model {
 class CatalogSeedGroupSchema;
 
 
-class  CatalogSeedResponseSchema
+class  DriverControllerSeedResponseSchema
     : public ModelBase
 {
 public:
-    CatalogSeedResponseSchema();
-    virtual ~CatalogSeedResponseSchema();
+    DriverControllerSeedResponseSchema();
+    virtual ~DriverControllerSeedResponseSchema();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -53,7 +53,7 @@ public:
 
 
     /////////////////////////////////////////////
-    /// CatalogSeedResponseSchema members
+    /// DriverControllerSeedResponseSchema members
 
 
     utility::string_t getWorkspaceUuid() const;
@@ -61,42 +61,26 @@ public:
     void unsetWorkspace_uuid();
     void setWorkspaceUuid(const utility::string_t& value);
 
+    std::shared_ptr<CatalogSeedGroupSchema> getRTemplate() const;
+    bool rTemplateIsSet() const;
+    void unsetr_template();
+    void setRTemplate(const std::shared_ptr<CatalogSeedGroupSchema>& value);
+
     std::shared_ptr<CatalogSeedGroupSchema> getControllers() const;
     bool controllersIsSet() const;
     void unsetControllers();
     void setControllers(const std::shared_ptr<CatalogSeedGroupSchema>& value);
-
-    std::shared_ptr<CatalogSeedGroupSchema> getMlmodels() const;
-    bool mlmodelsIsSet() const;
-    void unsetMlmodels();
-    void setMlmodels(const std::shared_ptr<CatalogSeedGroupSchema>& value);
-
-    std::shared_ptr<CatalogSeedGroupSchema> getWorkflowTemplates() const;
-    bool workflowTemplatesIsSet() const;
-    void unsetWorkflow_templates();
-    void setWorkflowTemplates(const std::shared_ptr<CatalogSeedGroupSchema>& value);
-
-    std::shared_ptr<CatalogSeedGroupSchema> getAssetPatches() const;
-    bool assetPatchesIsSet() const;
-    void unsetAsset_patches();
-    void setAssetPatches(const std::shared_ptr<CatalogSeedGroupSchema>& value);
 
 
 protected:
     utility::string_t m_Workspace_uuid;
     bool m_Workspace_uuidIsSet;
 
+    std::shared_ptr<CatalogSeedGroupSchema> m_r_template;
+    bool m_r_templateIsSet;
+
     std::shared_ptr<CatalogSeedGroupSchema> m_Controllers;
     bool m_ControllersIsSet;
-
-    std::shared_ptr<CatalogSeedGroupSchema> m_Mlmodels;
-    bool m_MlmodelsIsSet;
-
-    std::shared_ptr<CatalogSeedGroupSchema> m_Workflow_templates;
-    bool m_Workflow_templatesIsSet;
-
-    std::shared_ptr<CatalogSeedGroupSchema> m_Asset_patches;
-    bool m_Asset_patchesIsSet;
 
 };
 
@@ -106,4 +90,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_CatalogSeedResponseSchema_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_DriverControllerSeedResponseSchema_H_ */
