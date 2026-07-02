@@ -1910,9 +1910,11 @@ public:
     /// <remarks>
     /// 
     /// </remarks>
+    /// <param name="workspaceUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="limit"> (optional, default to 0)</param>
     /// <param name="offset"> (optional, default to 0)</param>
     pplx::task<std::vector<std::shared_ptr<EnvironmentSchema>>> srcAppApiEnvironmentsListAllEnvironments(
+        boost::optional<utility::string_t> workspaceUuid,
         boost::optional<int32_t> limit,
         boost::optional<int32_t> offset
     ) const;

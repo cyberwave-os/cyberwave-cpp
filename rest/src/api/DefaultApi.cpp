@@ -18624,7 +18624,7 @@ pplx::task<std::shared_ptr<ImportResultSchema>> DefaultApi::srcAppApiEnvironment
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<EnvironmentSchema>>> DefaultApi::srcAppApiEnvironmentsListAllEnvironments(boost::optional<int32_t> limit, boost::optional<int32_t> offset) const
+pplx::task<std::vector<std::shared_ptr<EnvironmentSchema>>> DefaultApi::srcAppApiEnvironmentsListAllEnvironments(boost::optional<utility::string_t> workspaceUuid, boost::optional<int32_t> limit, boost::optional<int32_t> offset) const
 {
 
 
@@ -18665,6 +18665,10 @@ pplx::task<std::vector<std::shared_ptr<EnvironmentSchema>>> DefaultApi::srcAppAp
 
     std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
 
+    if (workspaceUuid)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("workspace_uuid")] = ApiClient::parameterToString(*workspaceUuid);
+    }
     if (limit)
     {
         localVarQueryParams[utility::conversions::to_string_t("limit")] = ApiClient::parameterToString(*limit);
