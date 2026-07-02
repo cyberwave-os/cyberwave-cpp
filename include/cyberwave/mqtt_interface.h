@@ -14,6 +14,7 @@
 #include <optional>
 #include <sstream>
 #include <string>
+#include <vector>
 
 namespace cyberwave
 {
@@ -400,6 +401,26 @@ struct IMqttClient
         subscribe(get_topic_prefix() + "cyberwave/twin/" + twin_uuid + "/webrtc-offer", handler);
         subscribe(get_topic_prefix() + "cyberwave/twin/" + twin_uuid + "/webrtc-answer", handler);
         subscribe(get_topic_prefix() + "cyberwave/twin/" + twin_uuid + "/webrtc-candidate", std::move(handler));
+    }
+
+    /**
+     * Subscribe to WebRTC signaling with RAII unsubscribe when the handle is destroyed.
+     * Prefer this over subscribe_webrtc_messages() for stream lifecycles tied to start()/stop().
+     */
+    virtual std::unique_ptr<MqttSubscriptionHandle> subscribe_webrtc_messages_scoped(const std::string& twin_uuid,
+                                                                                     MqttMessageHandler handler)
+    {
+        struct WebRtcMessageSubscriptions final : MqttSubscriptionHandle
+        {
+            std::vector<std::unique_ptr<MqttSubscriptionHandle>> subscriptions;
+        };
+
+        auto handle = std::make_unique<WebRtcMessageSubscriptions>();
+        const std::string base = get_topic_prefix() + "cyberwave/twin/" + twin_uuid + "/webrtc-";
+        handle->subscriptions.push_back(subscribe_scoped(base + "offer", handler));
+        handle->subscriptions.push_back(subscribe_scoped(base + "answer", handler));
+        handle->subscriptions.push_back(subscribe_scoped(base + "candidate", std::move(handler)));
+        return handle;
     }
 
     /**
