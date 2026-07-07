@@ -75,6 +75,7 @@
 #include "CppRestOpenAPIClient/model/DatasetDownloadProcessingSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetDownloadReadySchema.h"
 #include "CppRestOpenAPIClient/model/DatasetEpisodeManifestSchema.h"
+#include "CppRestOpenAPIClient/model/DatasetExportRequestSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetHubFilesSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetImportCompleteSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetImportInitSchema.h"
@@ -193,7 +194,6 @@
 #include "CppRestOpenAPIClient/model/RLTaskCheckpointSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskCloneSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskCreateSchema.h"
-#include "CppRestOpenAPIClient/model/RLTaskGenerateEnvCfgSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskImportResultSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskInferenceLaunchSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskInferenceRunSchema.h"
@@ -201,7 +201,6 @@
 #include "CppRestOpenAPIClient/model/RLTaskOrchestrationHintsSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskPolicyProvenanceSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskRLConfigSpecSchema.h"
-#include "CppRestOpenAPIClient/model/RLTaskRLConfigValidateResultSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskRegenerateSceneSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskSceneEntitiesReplaceSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskSceneEntityCreateSchema.h"
@@ -1297,6 +1296,18 @@ public:
     pplx::task<std::shared_ptr<DatasetDownloadReadySchema>> srcAppApiDatasetsDownloadDataset(
         utility::string_t uuid,
         utility::string_t format
+    ) const;
+    /// <summary>
+    /// Export Dataset
+    /// </summary>
+    /// <remarks>
+    /// Trigger (or fetch) a role-aware export of the dataset in a given format.  Idempotent: re-POSTing the same body re-enters the config-aware &#x60;&#x60;ensure_processed_dataset&#x60;&#x60; cache. &#x60;&#x60;camera_metadata&#x60;&#x60; is optional.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="datasetExportRequestSchema"></param>
+    pplx::task<std::shared_ptr<DatasetDownloadReadySchema>> srcAppApiDatasetsExportDataset(
+        utility::string_t uuid,
+        std::shared_ptr<DatasetExportRequestSchema> datasetExportRequestSchema
     ) const;
     /// <summary>
     /// Get Dataset
@@ -3287,6 +3298,16 @@ public:
         std::shared_ptr<MLModelUpdateSchema> mLModelUpdateSchema
     ) const;
     /// <summary>
+    /// Cancel Mltraining
+    /// </summary>
+    /// <remarks>
+    /// Stop a pending ML training whose dataset is still converting.  Marks the training as &#x60;&#x60;cancelled&#x60;&#x60; and best-effort cancels the backing cloud-node workload so it stops being dispatched and frees its instance. Cancelling a training that is already &#x60;&#x60;running&#x60;&#x60; is not supported yet.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<MLTrainingSchema>> srcAppApiMltrainingsCancelMltraining(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
     /// Create Mltraining
     /// </summary>
     /// <remarks>
@@ -3790,15 +3811,13 @@ public:
     /// Delete Rl Task Source File
     /// </summary>
     /// <remarks>
-    /// Delete a source file by path.  User-owned files delete freely. Cyberwave-owned generated files are protected by default (deleting one only to have the next regenerate / export recreate it is rarely intended), but &#x60;&#x60;force&#x3D;true&#x60;&#x60; lets the operator remove them deliberately — e.g. to clean up demo-seeded files. Regenerating (Scene / Actions / Observations / Files tabs) will recreate any generated file.
+    /// Delete a single user-owned source file by path.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="path"></param>
-    /// <param name="force"> (optional, default to false)</param>
     pplx::task<void> srcAppApiRlTasksDeleteRlTaskSourceFile(
         utility::string_t uuid,
-        utility::string_t path,
-        boost::optional<bool> force
+        utility::string_t path
     ) const;
     /// <summary>
     /// Export Rl Task Zip
@@ -3811,18 +3830,6 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
-    /// Generate Rl Task Env Cfg
-    /// </summary>
-    /// <remarks>
-    /// Write a runnable starter for the user-owned &#x60;&#x60;env_cfg.py&#x60;&#x60;.  The starter wires the generated &#x60;&#x60;make_scene_cfg&#x60;&#x60; + &#x60;&#x60;make_actions&#x60;&#x60; + &#x60;&#x60;make_observations&#x60;&#x60; into an mjlab &#x60;&#x60;ManagerBasedRlEnvCfg&#x60;&#x60; so the user has a working entrypoint to edit instead of a blank file. Unlike the Cyberwave-owned generated modules, &#x60;&#x60;env_cfg.py&#x60;&#x60; is user-owned — so we refuse to overwrite an existing one unless &#x60;&#x60;overwrite&#x60;&#x60; is set, surfacing a 409 the UI confirms before clobbering hand-written code.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="rLTaskGenerateEnvCfgSchema"></param>
-    pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksExportsGenerateRlTaskEnvCfg(
-        utility::string_t uuid,
-        std::shared_ptr<RLTaskGenerateEnvCfgSchema> rLTaskGenerateEnvCfgSchema
-    ) const;
-    /// <summary>
     /// Regenerate Rl Task Scene Cfg
     /// </summary>
     /// <remarks>
@@ -3833,16 +3840,6 @@ public:
     pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksExportsRegenerateRlTaskSceneCfg(
         utility::string_t uuid,
         std::shared_ptr<RLTaskRegenerateSceneSchema> rLTaskRegenerateSceneSchema
-    ) const;
-    /// <summary>
-    /// Regenerate Rl Task Task Spec
-    /// </summary>
-    /// <remarks>
-    /// Regenerate the spec-derived files (Actions / Observations tabs).  Refreshes &#x60;&#x60;cyberwave_task_spec.py&#x60;&#x60;, &#x60;&#x60;scene_bindings.py&#x60;&#x60;, &#x60;&#x60;actions.py&#x60;&#x60;, &#x60;&#x60;observations.py&#x60;&#x60;, and the &#x60;&#x60;task_export/&#x60;&#x60; adapters — everything that derives from the authored Actions / Observations / RL-config — without rebuilding &#x60;&#x60;scene_cfg.py&#x60;&#x60;. Use &#x60;&#x60;regenerate-scene-cfg&#x60;&#x60; (Scene tab) for the scene, or the Files tab to regenerate everything.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksExportsRegenerateRlTaskTaskSpec(
-        utility::string_t uuid
     ) const;
     /// <summary>
     /// Get Rl Task
@@ -4210,25 +4207,13 @@ public:
     /// Upsert Rl Task Source File
     /// </summary>
     /// <remarks>
-    /// Upsert a single source file for an RL task.  Editing a Cyberwave-owned generated file is allowed (operators sometimes need to tweak one); we preserve its existing owner + &#x60;&#x60;generated_kind&#x60;&#x60; so it stays in place and a later regenerate still restores the canonical version.
+    /// Upsert a single user-owned source file for an RL task.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="rLTaskSourceFileUpsertSchema"></param>
     pplx::task<std::shared_ptr<RLTaskSourceFileSchema>> srcAppApiRlTasksUpsertRlTaskSourceFile(
         utility::string_t uuid,
         std::shared_ptr<RLTaskSourceFileUpsertSchema> rLTaskSourceFileUpsertSchema
-    ) const;
-    /// <summary>
-    /// Validate Rl Task Rl Config
-    /// </summary>
-    /// <remarks>
-    /// Dry-run validate an RL config spec without persisting it.  Runs the same &#x60;&#x60;normalize_rl_config_spec&#x60;&#x60; the save path uses, so a &#x60;&#x60;valid&#x60;&#x60; result guarantees a subsequent save would also pass. A failing spec is a normal &#x60;&#x60;200&#x60;&#x60; result (&#x60;&#x60;{valid: false, error}&#x60;&#x60;) rather than an HTTP error, so the frontend should read &#x60;&#x60;valid&#x60;&#x60; instead of the status.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="rLTaskRLConfigSpecSchema"></param>
-    pplx::task<std::shared_ptr<RLTaskRLConfigValidateResultSchema>> srcAppApiRlTasksValidateRlTaskRlConfig(
-        utility::string_t uuid,
-        std::shared_ptr<RLTaskRLConfigSpecSchema> rLTaskRLConfigSpecSchema
     ) const;
     /// <summary>
     /// Check Entity Slug

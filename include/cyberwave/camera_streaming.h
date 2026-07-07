@@ -101,6 +101,7 @@ public:
 
 private:
     void stream_loop();
+    void publish_edge_health(double now_seconds);
 
     std::shared_ptr<IMqttClient> mqtt_;
     std::string twin_uuid_;
@@ -117,7 +118,6 @@ private:
     std::string webrtc_stun_url_;
     std::vector<std::string> webrtc_turn_servers_;
     std::unique_ptr<WebRTCAdapter> webrtc_adapter_;
-    std::unique_ptr<MqttSubscriptionHandle> webrtc_mqtt_subscription_;
 
     // Optional: JPEG -> Annex-B H264 conversion when WebRTC is enabled.
     std::unique_ptr<JpegToH264EncoderImpl> h264_encoder_;
@@ -134,80 +134,6 @@ private:
     std::uint64_t edge_health_frames_sent_{0};
 
     // Optional logger injected by the caller for consistent log formatting.
-    std::function<void(const std::string&)> log_fn_;
-};
-
-/**
- * @brief Streamer for pre-encoded Annex-B H264 video.
- *
- * Bypasses raw-frame conversion and software H264 encoding for devices that
- * already produce browser-compatible Annex-B access units. WebRTC carries video;
- * MQTT carries signaling and edge_health telemetry (same contract as
- * CameraStreamer).
- *
- * @param fps Max WebRTC send rate for non-key NAL units. SPS/PPS/IDR always
- *            pass. ``fps <= 0`` disables throttling; negative values default to 30.
- *
- * Threading: do not call send_frame() concurrently with stop() or from multiple
- * threads without external synchronization.
- */
-class EncodedH264CameraStreamer
-{
-public:
-    /**
-     * @param mqtt Must outlive the streamer; can be nullptr (start() no-op).
-     * @param twin_uuid Twin to stream to.
-     */
-    EncodedH264CameraStreamer(std::shared_ptr<IMqttClient> mqtt, const std::string& twin_uuid, int fps = 30,
-                              std::string sensor_name = "",
-                              std::string webrtc_stun_url = "stun:stun.l.google.com:19302",
-                              std::vector<std::string> webrtc_turn_servers = {});
-    ~EncodedH264CameraStreamer();
-
-    EncodedH264CameraStreamer(const EncodedH264CameraStreamer&) = delete;
-    EncodedH264CameraStreamer& operator=(const EncodedH264CameraStreamer&) = delete;
-
-    void start();
-    void stop();
-    bool running() const noexcept { return running_.load(); }
-
-    /**
-     * @brief Inject a log callback so WebRTC state messages use the caller's logger.
-     *
-     * Call before start().
-     */
-    void set_log_callback(std::function<void(const std::string&)> fn);
-
-    /**
-     * @brief Enable or disable recording in the WebRTC offer sent to the media service.
-     *
-     * Call before start(). Default is false.
-     */
-    void set_recording(bool recording) { recording_ = recording; }
-
-    /** Push one Annex-B access unit. Returns false when not running, throttled, or send failed. */
-    bool send_frame(const std::vector<std::uint8_t>& annexb_h264, std::uint64_t timestamp_us);
-
-private:
-    std::shared_ptr<IMqttClient> mqtt_;
-    std::string twin_uuid_;
-    int fps_;
-    std::atomic<bool> running_{false};
-
-    std::string sensor_name_{};
-    bool recording_{false};
-    std::string webrtc_stun_url_;
-    std::vector<std::string> webrtc_turn_servers_;
-    std::unique_ptr<WebRTCAdapter> webrtc_adapter_;
-    std::unique_ptr<MqttSubscriptionHandle> webrtc_mqtt_subscription_;
-
-    double edge_health_stream_started_at_seconds_{0.0};
-    double edge_health_last_publish_ts_seconds_{0.0};
-    double edge_health_last_frame_ts_seconds_{0.0};
-    std::uint64_t edge_health_frames_sent_{0};
-
-    std::chrono::steady_clock::time_point last_send_steady_{};
-
     std::function<void(const std::string&)> log_fn_;
 };
 

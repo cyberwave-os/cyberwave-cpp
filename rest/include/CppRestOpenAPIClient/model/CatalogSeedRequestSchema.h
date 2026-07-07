@@ -75,11 +75,6 @@ public:
     void unsetSeed_workflow_templates();
     void setSeedWorkflowTemplates(bool value);
 
-    bool isSeedAssetPatches() const;
-    bool seedAssetPatchesIsSet() const;
-    void unsetSeed_asset_patches();
-    void setSeedAssetPatches(bool value);
-
     std::vector<utility::string_t> getControllerKeys() const;
     bool controllerKeysIsSet() const;
     void unsetController_keys();
@@ -95,11 +90,6 @@ public:
     void unsetWorkflow_template_keys();
     void setWorkflowTemplateKeys(const std::vector<utility::string_t>& value);
 
-    std::vector<utility::string_t> getAssetPatchKeys() const;
-    bool assetPatchKeysIsSet() const;
-    void unsetAsset_patch_keys();
-    void setAssetPatchKeys(const std::vector<utility::string_t>& value);
-
 
 protected:
     boost::optional<utility::string_t> m_Workspace_uuid;
@@ -113,16 +103,11 @@ protected:
     bool m_Seed_workflow_templates;
     bool m_Seed_workflow_templatesIsSet;
 
-    bool m_Seed_asset_patches;
-    bool m_Seed_asset_patchesIsSet;
-
     boost::optional<std::vector<utility::string_t>> m_Controller_keys;
 
     boost::optional<std::vector<utility::string_t>> m_Mlmodel_keys;
 
     boost::optional<std::vector<utility::string_t>> m_Workflow_template_keys;
-
-    boost::optional<std::vector<utility::string_t>> m_Asset_patch_keys;
 
 };
 

@@ -10,33 +10,36 @@
  */
 
 /*
- * SeedAutogenControllersRequestSchema.h
+ * DatasetExportRequestSchema.h
  *
  * 
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_SeedAutogenControllersRequestSchema_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_SeedAutogenControllersRequestSchema_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_DatasetExportRequestSchema_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_DatasetExportRequestSchema_H_
 
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/CameraMetadataItemSchema.h"
 #include <cpprest/details/basic_types.h>
+#include <vector>
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
+class CameraMetadataItemSchema;
 
 
-class  SeedAutogenControllersRequestSchema
+class  DatasetExportRequestSchema
     : public ModelBase
 {
 public:
-    SeedAutogenControllersRequestSchema();
-    virtual ~SeedAutogenControllersRequestSchema();
+    DatasetExportRequestSchema();
+    virtual ~DatasetExportRequestSchema();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -51,17 +54,25 @@ public:
 
 
     /////////////////////////////////////////////
-    /// SeedAutogenControllersRequestSchema members
+    /// DatasetExportRequestSchema members
 
 
-    utility::string_t getWorkspaceUuid() const;
-    bool workspaceUuidIsSet() const;
-    void unsetWorkspace_uuid();
-    void setWorkspaceUuid(const utility::string_t& value);
+    utility::string_t getFormat() const;
+    bool formatIsSet() const;
+    void unsetFormat();
+    void setFormat(const utility::string_t& value);
+
+    std::vector<std::shared_ptr<CameraMetadataItemSchema>> getCameraMetadata() const;
+    bool cameraMetadataIsSet() const;
+    void unsetCamera_metadata();
+    void setCameraMetadata(const std::vector<std::shared_ptr<CameraMetadataItemSchema>>& value);
 
 
 protected:
-    boost::optional<utility::string_t> m_Workspace_uuid;
+    utility::string_t m_Format;
+    bool m_FormatIsSet;
+
+    boost::optional<std::vector<std::shared_ptr<CameraMetadataItemSchema>>> m_Camera_metadata;
 
 };
 
@@ -71,4 +82,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_SeedAutogenControllersRequestSchema_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_DatasetExportRequestSchema_H_ */

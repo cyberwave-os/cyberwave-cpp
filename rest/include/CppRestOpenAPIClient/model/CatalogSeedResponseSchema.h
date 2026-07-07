@@ -76,11 +76,6 @@ public:
     void unsetWorkflow_templates();
     void setWorkflowTemplates(const std::shared_ptr<CatalogSeedGroupSchema>& value);
 
-    std::shared_ptr<CatalogSeedGroupSchema> getAssetPatches() const;
-    bool assetPatchesIsSet() const;
-    void unsetAsset_patches();
-    void setAssetPatches(const std::shared_ptr<CatalogSeedGroupSchema>& value);
-
 
 protected:
     utility::string_t m_Workspace_uuid;
@@ -94,9 +89,6 @@ protected:
 
     std::shared_ptr<CatalogSeedGroupSchema> m_Workflow_templates;
     bool m_Workflow_templatesIsSet;
-
-    std::shared_ptr<CatalogSeedGroupSchema> m_Asset_patches;
-    bool m_Asset_patchesIsSet;
 
 };
 
