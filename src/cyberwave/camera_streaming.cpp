@@ -103,74 +103,10 @@ constexpr double edge_health_stale_timeout_seconds = 60.0;
 } // namespace
 
 // ============================================================================
-// WebRTC producer (libdatachannel) used by camera streamers
+// WebRTC producer (libdatachannel) used by CameraStreamer
 // ============================================================================
 
 using Json = nlohmann::json;
-
-namespace
-{
-
-struct CameraStreamEdgeHealthState
-{
-    double stream_started_at_seconds{0.0};
-    double last_frame_ts_seconds{0.0};
-    std::uint64_t frames_sent{0};
-    std::string sensor_name;
-};
-
-void publish_camera_stream_edge_health(IMqttClient& mqtt, const std::string& twin_uuid, const double now_seconds,
-                                       const CameraStreamEdgeHealthState& state)
-{
-    if (!mqtt.is_connected() || twin_uuid.empty() || state.stream_started_at_seconds <= 0.0)
-    {
-        return;
-    }
-
-    const double uptime_seconds = std::max(0.0, now_seconds - state.stream_started_at_seconds);
-    const double fps = (uptime_seconds > 0.0) ? (static_cast<double>(state.frames_sent) / uptime_seconds) : 0.0;
-    const double time_since_last_frame =
-        (state.last_frame_ts_seconds > 0.0) ? (now_seconds - state.last_frame_ts_seconds) : 0.0;
-    const bool is_stale =
-        state.last_frame_ts_seconds <= 0.0 || time_since_last_frame > edge_health_stale_timeout_seconds;
-    const bool connected = !is_stale;
-    const std::string camera_id = state.sensor_name.empty() ? "stream" : state.sensor_name;
-    const double rounded_uptime = std::round(uptime_seconds * 10.0) / 10.0;
-    const double rounded_fps = std::round(fps * 100.0) / 100.0;
-
-    Json message = {{"type", "edge_health"},
-                    {"timestamp", now_seconds},
-                    {"edge_id", twin_uuid},
-                    {"twin_uuid", twin_uuid},
-                    {"uptime_seconds", rounded_uptime},
-                    {"stream_count", 1},
-                    {"healthy_streams", connected ? 1 : 0},
-                    {"camera_config", nullptr},
-                    {"streams",
-                     {{"stream",
-                       {{"camera_id", camera_id},
-                        {"connection_state", connected ? "connected" : "disconnected"},
-                        {"ice_connection_state", connected ? "connected" : "new"},
-                        {"frames_sent", state.frames_sent},
-                        {"last_frame_ts", state.last_frame_ts_seconds},
-                        {"fps", rounded_fps},
-                        {"uptime_seconds", rounded_uptime},
-                        {"restart_count", 0},
-                        {"is_stale", is_stale},
-                        {"is_healthy", !is_stale}}}}}};
-
-    const std::string topic = mqtt.get_topic_prefix() + "cyberwave/twin/" + twin_uuid + "/edge_health";
-    try
-    {
-        mqtt.publish(topic, message.dump());
-    }
-    catch (...)
-    {
-        // Best-effort health telemetry.
-    }
-}
-
-} // namespace
 
 class WebRTCAdapter
 {
@@ -411,33 +347,6 @@ bool has_annexb_idr(const std::vector<std::uint8_t>& bytes)
             {
                 return true;
             }
-        }
-    }
-    return false;
-}
-
-bool annexb_contains_parameter_set_or_idr(const std::vector<std::uint8_t>& bytes)
-{
-    if (bytes.size() < 4)
-    {
-        return false;
-    }
-    for (std::size_t i = 0; i + 3 < bytes.size(); ++i)
-    {
-        const std::size_t start_code_size = annexb_start_code_size_at(bytes, i);
-        if (start_code_size == 0)
-        {
-            continue;
-        }
-        const std::size_t nalu_start = i + start_code_size;
-        if (nalu_start >= bytes.size())
-        {
-            break;
-        }
-        const std::uint8_t nal_type = bytes[nalu_start] & 0x1F;
-        if (nal_type == 5 || nal_type == 7 || nal_type == 8)
-        {
-            return true;
         }
     }
     return false;
@@ -1185,38 +1094,36 @@ void CameraStreamer::start()
     {
         try
         {
-            webrtc_mqtt_subscription_ =
-                mqtt_->subscribe_webrtc_messages_scoped(twin_uuid_,
-                                                        [this](const std::string& json_payload)
-                                                        {
-                                                            if (!webrtc_adapter_)
-                                                            {
-                                                                return;
-                                                            }
-                                                            try
-                                                            {
-                                                                Json msg = Json::parse(json_payload);
-                                                                if (msg.contains("type") && msg["type"].is_string())
-                                                                {
-                                                                    const std::string type =
-                                                                        msg["type"].get<std::string>();
-                                                                    if (type == "answer")
-                                                                    {
-                                                                        webrtc_adapter_->handle_answer(msg);
-                                                                        return;
-                                                                    }
-                                                                    if (type == "candidate")
-                                                                    {
-                                                                        webrtc_adapter_->handle_candidate(msg);
-                                                                        return;
-                                                                    }
-                                                                }
-                                                            }
-                                                            catch (...)
-                                                            {
-                                                                // ignore malformed payloads
-                                                            }
-                                                        });
+            mqtt_->subscribe_webrtc_messages(twin_uuid_,
+                                             [this](const std::string& json_payload)
+                                             {
+                                                 if (!webrtc_adapter_)
+                                                 {
+                                                     return;
+                                                 }
+                                                 try
+                                                 {
+                                                     Json msg = Json::parse(json_payload);
+                                                     if (msg.contains("type") && msg["type"].is_string())
+                                                     {
+                                                         const std::string type = msg["type"].get<std::string>();
+                                                         if (type == "answer")
+                                                         {
+                                                             webrtc_adapter_->handle_answer(msg);
+                                                             return;
+                                                         }
+                                                         if (type == "candidate")
+                                                         {
+                                                             webrtc_adapter_->handle_candidate(msg);
+                                                             return;
+                                                         }
+                                                     }
+                                                 }
+                                                 catch (...)
+                                                 {
+                                                     // ignore malformed payloads
+                                                 }
+                                             });
 
             webrtc_adapter_ = create_webrtc_adapter();
             if (!webrtc_adapter_)
@@ -1243,7 +1150,6 @@ void CameraStreamer::start()
         {
             // If libdatachannel isn't available at runtime or SDP negotiation fails,
             // keep MQTT /video publishing working.
-            webrtc_mqtt_subscription_.reset();
             enable_webrtc_ = false;
             webrtc_adapter_.reset();
         }
@@ -1281,7 +1187,6 @@ void CameraStreamer::stop()
         }
         webrtc_adapter_.reset();
     }
-    webrtc_mqtt_subscription_.reset();
 
     h264_encoder_.reset();
     frame_counter_ = 0;
@@ -1367,14 +1272,11 @@ void CameraStreamer::stream_loop()
         }
 
         const double now = timestamp_now();
-        if (mqtt_ && edge_health_stream_started_at_seconds_ > 0.0 &&
+        if (edge_health_stream_started_at_seconds_ > 0.0 &&
             (edge_health_last_publish_ts_seconds_ <= 0.0 ||
              (now - edge_health_last_publish_ts_seconds_) >= edge_health_publish_interval_seconds))
         {
-            publish_camera_stream_edge_health(*mqtt_, twin_uuid_, now,
-                                              {edge_health_stream_started_at_seconds_,
-                                               edge_health_last_frame_ts_seconds_, edge_health_frames_sent_,
-                                               sensor_name_});
+            publish_edge_health(now);
             edge_health_last_publish_ts_seconds_ = now;
         }
 
@@ -1387,164 +1289,54 @@ void CameraStreamer::stream_loop()
     running_ = false;
 }
 
-// --- EncodedH264CameraStreamer ---
-EncodedH264CameraStreamer::EncodedH264CameraStreamer(std::shared_ptr<IMqttClient> mqtt, const std::string& twin_uuid,
-                                                     int fps, std::string sensor_name, std::string webrtc_stun_url,
-                                                     std::vector<std::string> webrtc_turn_servers)
-    : mqtt_(std::move(mqtt)), twin_uuid_(twin_uuid), fps_(fps >= 0 ? fps : 30), sensor_name_(std::move(sensor_name)),
-      webrtc_stun_url_(std::move(webrtc_stun_url)), webrtc_turn_servers_(std::move(webrtc_turn_servers))
+void CameraStreamer::publish_edge_health(const double now_seconds)
 {
-}
-
-EncodedH264CameraStreamer::~EncodedH264CameraStreamer() { stop(); }
-
-void EncodedH264CameraStreamer::set_log_callback(std::function<void(const std::string&)> fn)
-{
-    log_fn_ = std::move(fn);
-}
-
-void EncodedH264CameraStreamer::start()
-{
-    if (running_.exchange(true))
-        return;
-    if (!mqtt_)
+    if (!mqtt_ || !mqtt_->is_connected() || twin_uuid_.empty() || edge_health_stream_started_at_seconds_ <= 0.0)
     {
-        running_ = false;
         return;
     }
 
+    const double uptime_seconds = std::max(0.0, now_seconds - edge_health_stream_started_at_seconds_);
+    const double fps = (uptime_seconds > 0.0) ? (static_cast<double>(edge_health_frames_sent_) / uptime_seconds) : 0.0;
+    const double time_since_last_frame =
+        (edge_health_last_frame_ts_seconds_ > 0.0) ? (now_seconds - edge_health_last_frame_ts_seconds_) : 0.0;
+    const bool is_stale =
+        edge_health_last_frame_ts_seconds_ <= 0.0 || time_since_last_frame > edge_health_stale_timeout_seconds;
+    const bool connected = !is_stale;
+    const std::string camera_id = sensor_name_.empty() ? "stream" : sensor_name_;
+    const double rounded_uptime = std::round(uptime_seconds * 10.0) / 10.0;
+    const double rounded_fps = std::round(fps * 100.0) / 100.0;
+
+    Json message = {{"type", "edge_health"},
+                    {"timestamp", now_seconds},
+                    {"edge_id", twin_uuid_},
+                    {"twin_uuid", twin_uuid_},
+                    {"uptime_seconds", rounded_uptime},
+                    {"stream_count", 1},
+                    {"healthy_streams", connected ? 1 : 0},
+                    {"camera_config", nullptr},
+                    {"streams",
+                     {{"stream",
+                       {{"camera_id", camera_id},
+                        {"connection_state", connected ? "connected" : "disconnected"},
+                        {"ice_connection_state", connected ? "connected" : "new"},
+                        {"frames_sent", edge_health_frames_sent_},
+                        {"last_frame_ts", edge_health_last_frame_ts_seconds_},
+                        {"fps", rounded_fps},
+                        {"uptime_seconds", rounded_uptime},
+                        {"restart_count", 0},
+                        {"is_stale", is_stale},
+                        {"is_healthy", !is_stale}}}}}};
+
+    const std::string topic = mqtt_->get_topic_prefix() + "cyberwave/twin/" + twin_uuid_ + "/edge_health";
     try
     {
-        webrtc_mqtt_subscription_ =
-            mqtt_->subscribe_webrtc_messages_scoped(twin_uuid_,
-                                                    [this](const std::string& json_payload)
-                                                    {
-                                                        if (!webrtc_adapter_)
-                                                        {
-                                                            return;
-                                                        }
-                                                        try
-                                                        {
-                                                            Json msg = Json::parse(json_payload);
-                                                            if (msg.contains("type") && msg["type"].is_string())
-                                                            {
-                                                                const std::string type = msg["type"].get<std::string>();
-                                                                if (type == "answer")
-                                                                {
-                                                                    webrtc_adapter_->handle_answer(msg);
-                                                                    return;
-                                                                }
-                                                                if (type == "candidate")
-                                                                {
-                                                                    webrtc_adapter_->handle_candidate(msg);
-                                                                    return;
-                                                                }
-                                                            }
-                                                        }
-                                                        catch (...)
-                                                        {
-                                                        }
-                                                    });
-
-        webrtc_adapter_ = create_webrtc_adapter();
-        if (!webrtc_adapter_)
-        {
-            throw std::runtime_error("WebRTC adapter unavailable (rtc.hpp not available)");
-        }
-
-        WebRTCAdapter::Config cfg;
-        cfg.sensor = sensor_name_;
-        cfg.stun_url = webrtc_stun_url_;
-        cfg.turn_servers = webrtc_turn_servers_;
-        cfg.recording = recording_;
-        cfg.log_fn = log_fn_;
-        webrtc_adapter_->start(cfg,
-                               [this](const Json& payload)
-                               {
-                                   if (mqtt_)
-                                   {
-                                       mqtt_->publish_webrtc_message(twin_uuid_, payload.dump());
-                                   }
-                               });
-
-        edge_health_stream_started_at_seconds_ = timestamp_now();
-        edge_health_last_publish_ts_seconds_ = 0.0;
-        edge_health_last_frame_ts_seconds_ = 0.0;
-        edge_health_frames_sent_ = 0;
-        last_send_steady_ = {};
+        mqtt_->publish(topic, message.dump());
     }
     catch (...)
     {
-        webrtc_mqtt_subscription_.reset();
-        webrtc_adapter_.reset();
-        running_ = false;
+        // Best-effort health telemetry.
     }
-}
-
-void EncodedH264CameraStreamer::stop()
-{
-    running_ = false;
-    if (webrtc_adapter_)
-    {
-        try
-        {
-            webrtc_adapter_->stop();
-        }
-        catch (...)
-        {
-        }
-        webrtc_adapter_.reset();
-    }
-    webrtc_mqtt_subscription_.reset();
-    edge_health_stream_started_at_seconds_ = 0.0;
-    edge_health_last_publish_ts_seconds_ = 0.0;
-    edge_health_last_frame_ts_seconds_ = 0.0;
-    edge_health_frames_sent_ = 0;
-    last_send_steady_ = {};
-}
-
-bool EncodedH264CameraStreamer::send_frame(const std::vector<std::uint8_t>& annexb_h264, std::uint64_t timestamp_us)
-{
-    if (!running_ || !webrtc_adapter_ || annexb_h264.empty())
-    {
-        return false;
-    }
-
-    const bool rate_limited_frame = fps_ > 0 && !annexb_contains_parameter_set_or_idr(annexb_h264);
-    if (rate_limited_frame)
-    {
-        const auto now_steady = std::chrono::steady_clock::now();
-        const auto min_interval = std::chrono::duration<double>(1.0 / static_cast<double>(fps_));
-        if (last_send_steady_.time_since_epoch().count() != 0 && (now_steady - last_send_steady_) < min_interval)
-        {
-            return false;
-        }
-    }
-
-    const bool sent = webrtc_adapter_->send_frame(annexb_h264, timestamp_us);
-    if (sent && rate_limited_frame)
-    {
-        last_send_steady_ = std::chrono::steady_clock::now();
-    }
-
-    const double now = timestamp_now();
-    if (sent)
-    {
-        edge_health_frames_sent_ += 1;
-        edge_health_last_frame_ts_seconds_ = now;
-    }
-
-    if (mqtt_ && edge_health_stream_started_at_seconds_ > 0.0 &&
-        (edge_health_last_publish_ts_seconds_ <= 0.0 ||
-         (now - edge_health_last_publish_ts_seconds_) >= edge_health_publish_interval_seconds))
-    {
-        publish_camera_stream_edge_health(*mqtt_, twin_uuid_, now,
-                                          {edge_health_stream_started_at_seconds_, edge_health_last_frame_ts_seconds_,
-                                           edge_health_frames_sent_, sensor_name_});
-        edge_health_last_publish_ts_seconds_ = now;
-    }
-
-    return sent;
 }
 
 // --- VirtualDepthSource ---

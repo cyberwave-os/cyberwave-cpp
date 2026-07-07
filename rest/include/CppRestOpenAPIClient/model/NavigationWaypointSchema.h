@@ -84,11 +84,6 @@ public:
     void unsetYaw();
     void setYaw(double value);
 
-    double getDurationSeconds() const;
-    bool durationSecondsIsSet() const;
-    void unsetDuration_seconds();
-    void setDurationSeconds(double value);
-
     std::vector<std::shared_ptr<NavigationWaypointActionSchema>> getActions() const;
     bool actionsIsSet() const;
     void unsetActions();
@@ -109,8 +104,6 @@ protected:
     boost::optional<std::shared_ptr<NavigationRotationSchema>> m_Rotation;
 
     boost::optional<double> m_Yaw;
-
-    boost::optional<double> m_Duration_seconds;
 
     boost::optional<std::vector<std::shared_ptr<NavigationWaypointActionSchema>>> m_Actions;
 
