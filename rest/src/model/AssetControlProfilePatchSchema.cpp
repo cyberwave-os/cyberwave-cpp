@@ -113,7 +113,7 @@ bool AssetControlProfilePatchSchema::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("default_runtime_routes")));
         if(!fieldValue.is_null())
         {
-            std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>> refVal_setDefaultRuntimeRoutes;
+            std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>> refVal_setDefaultRuntimeRoutes;
             ok &= ModelBase::fromJson(fieldValue, refVal_setDefaultRuntimeRoutes);
             setDefaultRuntimeRoutes(refVal_setDefaultRuntimeRoutes);
             
@@ -124,7 +124,7 @@ bool AssetControlProfilePatchSchema::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("default_runtime_option_ids")));
         if(!fieldValue.is_null())
         {
-            std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>> refVal_setDefaultRuntimeOptionIds;
+            std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> refVal_setDefaultRuntimeOptionIds;
             ok &= ModelBase::fromJson(fieldValue, refVal_setDefaultRuntimeOptionIds);
             setDefaultRuntimeOptionIds(refVal_setDefaultRuntimeOptionIds);
             
@@ -157,7 +157,7 @@ bool AssetControlProfilePatchSchema::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("runtime_defaults")));
         if(!fieldValue.is_null())
         {
-            std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>> refVal_setRuntimeDefaults;
+            std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>> refVal_setRuntimeDefaults;
             ok &= ModelBase::fromJson(fieldValue, refVal_setRuntimeDefaults);
             setRuntimeDefaults(refVal_setRuntimeDefaults);
             
@@ -168,7 +168,7 @@ bool AssetControlProfilePatchSchema::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("runtime_default_option_ids")));
         if(!fieldValue.is_null())
         {
-            std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>> refVal_setRuntimeDefaultOptionIds;
+            std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> refVal_setRuntimeDefaultOptionIds;
             ok &= ModelBase::fromJson(fieldValue, refVal_setRuntimeDefaultOptionIds);
             setRuntimeDefaultOptionIds(refVal_setRuntimeDefaultOptionIds);
             
@@ -256,13 +256,13 @@ bool AssetControlProfilePatchSchema::fromMultiPart(std::shared_ptr<MultipartForm
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("default_runtime_routes"))))
     {
-        std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>> refVal_setDefaultRuntimeRoutes;
+        std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>> refVal_setDefaultRuntimeRoutes;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("default_runtime_routes"))), refVal_setDefaultRuntimeRoutes );
         setDefaultRuntimeRoutes(refVal_setDefaultRuntimeRoutes);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("default_runtime_option_ids"))))
     {
-        std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>> refVal_setDefaultRuntimeOptionIds;
+        std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> refVal_setDefaultRuntimeOptionIds;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("default_runtime_option_ids"))), refVal_setDefaultRuntimeOptionIds );
         setDefaultRuntimeOptionIds(refVal_setDefaultRuntimeOptionIds);
     }
@@ -280,13 +280,13 @@ bool AssetControlProfilePatchSchema::fromMultiPart(std::shared_ptr<MultipartForm
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("runtime_defaults"))))
     {
-        std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>> refVal_setRuntimeDefaults;
+        std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>> refVal_setRuntimeDefaults;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("runtime_defaults"))), refVal_setRuntimeDefaults );
         setRuntimeDefaults(refVal_setRuntimeDefaults);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("runtime_default_option_ids"))))
     {
-        std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>> refVal_setRuntimeDefaultOptionIds;
+        std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> refVal_setRuntimeDefaultOptionIds;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("runtime_default_option_ids"))), refVal_setRuntimeDefaultOptionIds );
         setRuntimeDefaultOptionIds(refVal_setRuntimeDefaultOptionIds);
     }
@@ -340,13 +340,13 @@ void AssetControlProfilePatchSchema::unsetManual_option_id()
 {
     m_Manual_option_id.reset();
 }
-std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>> AssetControlProfilePatchSchema::getDefaultRuntimeRoutes() const
+std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>> AssetControlProfilePatchSchema::getDefaultRuntimeRoutes() const
 {
     return m_Default_runtime_routes.get();
 }
 
 
-void AssetControlProfilePatchSchema::setDefaultRuntimeRoutes(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>>& value)
+void AssetControlProfilePatchSchema::setDefaultRuntimeRoutes(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>>& value)
 {
     m_Default_runtime_routes = value;
 }
@@ -360,13 +360,13 @@ void AssetControlProfilePatchSchema::unsetDefault_runtime_routes()
 {
     m_Default_runtime_routes.reset();
 }
-std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>> AssetControlProfilePatchSchema::getDefaultRuntimeOptionIds() const
+std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> AssetControlProfilePatchSchema::getDefaultRuntimeOptionIds() const
 {
     return m_Default_runtime_option_ids.get();
 }
 
 
-void AssetControlProfilePatchSchema::setDefaultRuntimeOptionIds(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>>& value)
+void AssetControlProfilePatchSchema::setDefaultRuntimeOptionIds(const std::map<utility::string_t, std::map<utility::string_t, utility::string_t>>& value)
 {
     m_Default_runtime_option_ids = value;
 }
@@ -420,13 +420,13 @@ void AssetControlProfilePatchSchema::unsetOperator_option_id()
 {
     m_Operator_option_id.reset();
 }
-std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>> AssetControlProfilePatchSchema::getRuntimeDefaults() const
+std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>> AssetControlProfilePatchSchema::getRuntimeDefaults() const
 {
     return m_Runtime_defaults.get();
 }
 
 
-void AssetControlProfilePatchSchema::setRuntimeDefaults(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>>& value)
+void AssetControlProfilePatchSchema::setRuntimeDefaults(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>>& value)
 {
     m_Runtime_defaults = value;
 }
@@ -440,13 +440,13 @@ void AssetControlProfilePatchSchema::unsetRuntime_defaults()
 {
     m_Runtime_defaults.reset();
 }
-std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>> AssetControlProfilePatchSchema::getRuntimeDefaultOptionIds() const
+std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> AssetControlProfilePatchSchema::getRuntimeDefaultOptionIds() const
 {
     return m_Runtime_default_option_ids.get();
 }
 
 
-void AssetControlProfilePatchSchema::setRuntimeDefaultOptionIds(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>>& value)
+void AssetControlProfilePatchSchema::setRuntimeDefaultOptionIds(const std::map<utility::string_t, std::map<utility::string_t, utility::string_t>>& value)
 {
     m_Runtime_default_option_ids = value;
 }

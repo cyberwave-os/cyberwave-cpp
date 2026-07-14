@@ -8270,7 +8270,7 @@ pplx::task<std::shared_ptr<InitiateLargeUploadResponse>> DefaultApi::srcAppApiAt
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<AttachmentSchema>>> DefaultApi::srcAppApiAttachmentsListAttachments() const
+pplx::task<std::vector<std::shared_ptr<AttachmentSchema>>> DefaultApi::srcAppApiAttachmentsListAttachments(boost::optional<utility::string_t> assetUuid, boost::optional<utility::string_t> twinUuid, boost::optional<utility::string_t> workspaceUuid) const
 {
 
 
@@ -8311,6 +8311,18 @@ pplx::task<std::vector<std::shared_ptr<AttachmentSchema>>> DefaultApi::srcAppApi
 
     std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
 
+    if (assetUuid)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("asset_uuid")] = ApiClient::parameterToString(*assetUuid);
+    }
+    if (twinUuid)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("twin_uuid")] = ApiClient::parameterToString(*twinUuid);
+    }
+    if (workspaceUuid)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("workspace_uuid")] = ApiClient::parameterToString(*workspaceUuid);
+    }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
     utility::string_t localVarRequestHttpContentType;
@@ -54889,7 +54901,7 @@ pplx::task<std::shared_ptr<InitiateLargeUploadResponse>> DefaultApi::srcAppApiUr
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<URDFProjectSchema>>> DefaultApi::srcAppApiUrdfListUrdfProjects() const
+pplx::task<std::vector<std::shared_ptr<URDFProjectSchema>>> DefaultApi::srcAppApiUrdfListUrdfProjects(boost::optional<utility::string_t> assetUuid) const
 {
 
 
@@ -54930,6 +54942,10 @@ pplx::task<std::vector<std::shared_ptr<URDFProjectSchema>>> DefaultApi::srcAppAp
 
     std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
 
+    if (assetUuid)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("asset_uuid")] = ApiClient::parameterToString(*assetUuid);
+    }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
     utility::string_t localVarRequestHttpContentType;

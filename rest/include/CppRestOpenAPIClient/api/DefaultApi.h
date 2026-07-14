@@ -1039,9 +1039,15 @@ public:
     /// List Attachments
     /// </summary>
     /// <remarks>
-    /// 
+    /// List attachments visible to the caller.  Optional &#x60;&#x60;asset_uuid&#x60;&#x60; / &#x60;&#x60;twin_uuid&#x60;&#x60; / &#x60;&#x60;workspace_uuid&#x60;&#x60; query params narrow the result to a single parent. Filters are ANDed; malformed UUIDs return HTTP 422. Callers that sync or reconcile a single asset should pass &#x60;&#x60;asset_uuid&#x60;&#x60; instead of listing everything and filtering client-side.
     /// </remarks>
+    /// <param name="assetUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="twinUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="workspaceUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::vector<std::shared_ptr<AttachmentSchema>>> srcAppApiAttachmentsListAttachments(
+        boost::optional<utility::string_t> assetUuid,
+        boost::optional<utility::string_t> twinUuid,
+        boost::optional<utility::string_t> workspaceUuid
     ) const;
     /// <summary>
     /// Update Attachment
@@ -4923,9 +4929,11 @@ public:
     /// List Urdf Projects
     /// </summary>
     /// <remarks>
-    /// 
+    /// List URDF projects visible to the caller.  Optional &#x60;&#x60;asset_uuid&#x60;&#x60; narrows the result to a single asset&#39;s project; a malformed UUID returns HTTP 422. The filter only ever narrows the workspace-scoped visibility set below — it never widens it.
     /// </remarks>
+    /// <param name="assetUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::vector<std::shared_ptr<URDFProjectSchema>>> srcAppApiUrdfListUrdfProjects(
+        boost::optional<utility::string_t> assetUuid
     ) const;
     /// <summary>
     /// Update Twin Joint State

@@ -22,11 +22,9 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
-#include "CppRestOpenAPIClient/model/AssetControlProfilePatchSchema_default_runtime_option_ids_value_value.h"
 #include "CppRestOpenAPIClient/model/ControllerRefSchema.h"
 #include <cpprest/details/basic_types.h>
 #include <map>
-#include "CppRestOpenAPIClient/model/AssetControlProfilePatchSchema_default_runtime_routes_value_value.h"
 #include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
@@ -35,7 +33,6 @@ namespace client {
 namespace model {
 
 class ControllerRefSchema;
-class AssetControlProfilePatchSchema_default_runtime_routes_value_value;
 
 
 class  AssetControlProfilePatchSchema
@@ -71,15 +68,15 @@ public:
     void unsetManual_option_id();
     void setManualOptionId(const utility::string_t& value);
 
-    std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>> getDefaultRuntimeRoutes() const;
+    std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>> getDefaultRuntimeRoutes() const;
     bool defaultRuntimeRoutesIsSet() const;
     void unsetDefault_runtime_routes();
-    void setDefaultRuntimeRoutes(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>>& value);
+    void setDefaultRuntimeRoutes(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>>& value);
 
-    std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>> getDefaultRuntimeOptionIds() const;
+    std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> getDefaultRuntimeOptionIds() const;
     bool defaultRuntimeOptionIdsIsSet() const;
     void unsetDefault_runtime_option_ids();
-    void setDefaultRuntimeOptionIds(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>>& value);
+    void setDefaultRuntimeOptionIds(const std::map<utility::string_t, std::map<utility::string_t, utility::string_t>>& value);
 
     std::shared_ptr<ControllerRefSchema> getOperatorControllerRef() const;
     bool operatorControllerRefIsSet() const;
@@ -91,15 +88,15 @@ public:
     void unsetOperator_option_id();
     void setOperatorOptionId(const utility::string_t& value);
 
-    std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>> getRuntimeDefaults() const;
+    std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>> getRuntimeDefaults() const;
     bool runtimeDefaultsIsSet() const;
     void unsetRuntime_defaults();
-    void setRuntimeDefaults(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>>& value);
+    void setRuntimeDefaults(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>>& value);
 
-    std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>> getRuntimeDefaultOptionIds() const;
+    std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> getRuntimeDefaultOptionIds() const;
     bool runtimeDefaultOptionIdsIsSet() const;
     void unsetRuntime_default_option_ids();
-    void setRuntimeDefaultOptionIds(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>>& value);
+    void setRuntimeDefaultOptionIds(const std::map<utility::string_t, std::map<utility::string_t, utility::string_t>>& value);
 
     std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AnyType>>> getControllerSettings() const;
     bool controllerSettingsIsSet() const;
@@ -112,17 +109,17 @@ protected:
 
     boost::optional<utility::string_t> m_Manual_option_id;
 
-    boost::optional<std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>>> m_Default_runtime_routes;
+    boost::optional<std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>>> m_Default_runtime_routes;
 
-    boost::optional<std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>>> m_Default_runtime_option_ids;
+    boost::optional<std::map<utility::string_t, std::map<utility::string_t, utility::string_t>>> m_Default_runtime_option_ids;
 
     boost::optional<std::shared_ptr<ControllerRefSchema>> m_Operator_controller_ref;
 
     boost::optional<utility::string_t> m_Operator_option_id;
 
-    boost::optional<std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_routes_value_value>>>> m_Runtime_defaults;
+    boost::optional<std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<ControllerRefSchema>>>> m_Runtime_defaults;
 
-    boost::optional<std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AssetControlProfilePatchSchema_default_runtime_option_ids_value_value>>>> m_Runtime_default_option_ids;
+    boost::optional<std::map<utility::string_t, std::map<utility::string_t, utility::string_t>>> m_Runtime_default_option_ids;
 
     boost::optional<std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AnyType>>>> m_Controller_settings;
 
