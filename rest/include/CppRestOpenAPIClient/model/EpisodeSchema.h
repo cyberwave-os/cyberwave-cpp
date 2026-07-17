@@ -107,11 +107,6 @@ public:
     void unsetUpdated_by();
     void setUpdatedBy(const utility::string_t& value);
 
-    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getAudio() const;
-    bool audioIsSet() const;
-    void unsetAudio();
-    void setAudio(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
-
 
 protected:
     utility::string_t m_Uuid;
@@ -141,9 +136,6 @@ protected:
     boost::optional<utility::string_t> m_Created_by;
 
     boost::optional<utility::string_t> m_Updated_by;
-
-    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Audio;
-    bool m_AudioIsSet;
 
 };
 

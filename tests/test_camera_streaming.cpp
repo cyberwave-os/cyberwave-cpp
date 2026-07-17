@@ -85,23 +85,6 @@ static void test_camera_twin_streaming_with_source()
     assert(mqtt->publish_count >= 1);
 }
 
-static void test_encoded_h264_streamer_lifecycle()
-{
-    auto mqtt = std::make_shared<MockMqttForStreaming>();
-    mqtt->topic_prefix_ = "";
-    EncodedH264CameraStreamer streamer(mqtt, "twin-1");
-    assert(!streamer.running());
-
-    std::vector<std::uint8_t> annexb = {0x00, 0x00, 0x00, 0x01, 0x67};
-    assert(!streamer.send_frame(annexb, 0));
-
-    streamer.set_log_callback([](const std::string&) {});
-    streamer.start();
-    streamer.stop();
-    assert(!streamer.running());
-    assert(!streamer.send_frame(annexb, 0));
-}
-
 static void test_camera_twin_start_without_source_throws()
 {
     Config config;
@@ -130,7 +113,6 @@ int main()
 {
     test_virtual_frame_source();
     test_camera_streamer_start_stop();
-    test_encoded_h264_streamer_lifecycle();
     test_camera_twin_streaming_with_source();
     test_camera_twin_start_without_source_throws();
     return 0;

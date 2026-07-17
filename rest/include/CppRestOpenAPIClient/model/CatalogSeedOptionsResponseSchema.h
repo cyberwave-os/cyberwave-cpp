@@ -71,16 +71,6 @@ public:
     void unsetWorkflow_templates();
     void setWorkflowTemplates(const std::vector<std::shared_ptr<CatalogSeedOptionSchema>>& value);
 
-    std::vector<std::shared_ptr<CatalogSeedOptionSchema>> getAssetPatches() const;
-    bool assetPatchesIsSet() const;
-    void unsetAsset_patches();
-    void setAssetPatches(const std::vector<std::shared_ptr<CatalogSeedOptionSchema>>& value);
-
-    std::vector<std::shared_ptr<CatalogSeedOptionSchema>> getSimplifiedMeshes() const;
-    bool simplifiedMeshesIsSet() const;
-    void unsetSimplified_meshes();
-    void setSimplifiedMeshes(const std::vector<std::shared_ptr<CatalogSeedOptionSchema>>& value);
-
 
 protected:
     std::vector<std::shared_ptr<CatalogSeedOptionSchema>> m_Controllers;
@@ -91,12 +81,6 @@ protected:
 
     std::vector<std::shared_ptr<CatalogSeedOptionSchema>> m_Workflow_templates;
     bool m_Workflow_templatesIsSet;
-
-    std::vector<std::shared_ptr<CatalogSeedOptionSchema>> m_Asset_patches;
-    bool m_Asset_patchesIsSet;
-
-    std::vector<std::shared_ptr<CatalogSeedOptionSchema>> m_Simplified_meshes;
-    bool m_Simplified_meshesIsSet;
 
 };
 

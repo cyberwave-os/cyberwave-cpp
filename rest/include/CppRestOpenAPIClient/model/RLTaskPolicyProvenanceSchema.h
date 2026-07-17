@@ -90,16 +90,6 @@ public:
     void unsetSource_code_available();
     void setSourceCodeAvailable(bool value);
 
-    bool isInferenceCommandSetupEnabled() const;
-    bool inferenceCommandSetupEnabledIsSet() const;
-    void unsetInference_command_setup_enabled();
-    void setInferenceCommandSetupEnabled(bool value);
-
-    std::map<utility::string_t, std::shared_ptr<AnyType>> getInferenceCommandSpec() const;
-    bool inferenceCommandSpecIsSet() const;
-    void unsetInference_command_spec();
-    void setInferenceCommandSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
-
     std::vector<utility::string_t> getWarnings() const;
     bool warningsIsSet() const;
     void unsetWarnings();
@@ -121,11 +111,6 @@ protected:
 
     bool m_Source_code_available;
     bool m_Source_code_availableIsSet;
-
-    bool m_Inference_command_setup_enabled;
-    bool m_Inference_command_setup_enabledIsSet;
-
-    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Inference_command_spec;
 
     std::vector<utility::string_t> m_Warnings;
     bool m_WarningsIsSet;

@@ -12,7 +12,7 @@
 /*
  * RLTaskSourceFileSchema.h
  *
- * A single source file in an RL task tree (user- or Cyberwave-generated).
+ * A single source file in an RL task tree (user- or Cyberwave-owned).
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_RLTaskSourceFileSchema_H_
@@ -33,7 +33,7 @@ namespace model {
 
 
 /// <summary>
-/// A single source file in an RL task tree (user- or Cyberwave-generated).
+/// A single source file in an RL task tree (user- or Cyberwave-owned).
 /// </summary>
 class  RLTaskSourceFileSchema
     : public ModelBase

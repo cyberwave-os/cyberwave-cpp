@@ -42,7 +42,6 @@
 #include "CppRestOpenAPIClient/model/AssetSchemaVariantUpsertSchema.h"
 #include "CppRestOpenAPIClient/model/AssetUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/AttachmentCreateSchema.h"
-#include "CppRestOpenAPIClient/model/AttachmentDownloadUrlSchema.h"
 #include "CppRestOpenAPIClient/model/AttachmentSchema.h"
 #include "CppRestOpenAPIClient/model/AutoTopupConfigSchema.h"
 #include "CppRestOpenAPIClient/model/AutoTopupUpdateSchema.h"
@@ -58,8 +57,6 @@
 #include "CppRestOpenAPIClient/model/ControllerPolicyCreateSchema.h"
 #include "CppRestOpenAPIClient/model/ControllerPolicyExecuteResponseSchema.h"
 #include "CppRestOpenAPIClient/model/ControllerPolicyExecuteSchema.h"
-#include "CppRestOpenAPIClient/model/ControllerPolicyInferenceCommandResponseSchema.h"
-#include "CppRestOpenAPIClient/model/ControllerPolicyInferenceCommandSchema.h"
 #include "CppRestOpenAPIClient/model/ControllerPolicySchema.h"
 #include "CppRestOpenAPIClient/model/ControllerPolicyStopEnvironmentSchema.h"
 #include "CppRestOpenAPIClient/model/ControllerPolicyStopResponseSchema.h"
@@ -99,7 +96,6 @@
 #include "CppRestOpenAPIClient/model/EdgeRegisterSchema.h"
 #include "CppRestOpenAPIClient/model/EdgeSchema.h"
 #include "CppRestOpenAPIClient/model/EndSessionResponseSchema.h"
-#include "CppRestOpenAPIClient/model/EnsureControllerPolicyResponseSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentCloneSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentNavigationSettingsPatchSchema.h"
@@ -123,11 +119,6 @@
 #include "CppRestOpenAPIClient/model/FinalizeTopupRequestSchema.h"
 #include "CppRestOpenAPIClient/model/FinalizeTopupResponseSchema.h"
 #include "CppRestOpenAPIClient/model/GeneratePromoCodeRequestSchema.h"
-#include "CppRestOpenAPIClient/model/HardwareOrderAdminSchema.h"
-#include "CppRestOpenAPIClient/model/HardwareOrderCreateSchema.h"
-#include "CppRestOpenAPIClient/model/HardwareOrderLineItemUpdateSchema.h"
-#include "CppRestOpenAPIClient/model/HardwareOrderSchema.h"
-#include "CppRestOpenAPIClient/model/HardwareOrderStatusUpdateSchema.h"
 #include "CppRestOpenAPIClient/HttpContent.h"
 #include "CppRestOpenAPIClient/model/Image_Bytes.h"
 #include "CppRestOpenAPIClient/model/ImportResultSchema.h"
@@ -203,7 +194,6 @@
 #include "CppRestOpenAPIClient/model/RLTaskCheckpointSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskCloneSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskCreateSchema.h"
-#include "CppRestOpenAPIClient/model/RLTaskGenerateEnvCfgSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskImportResultSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskInferenceLaunchSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskInferenceRunSchema.h"
@@ -211,7 +201,6 @@
 #include "CppRestOpenAPIClient/model/RLTaskOrchestrationHintsSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskPolicyProvenanceSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskRLConfigSpecSchema.h"
-#include "CppRestOpenAPIClient/model/RLTaskRLConfigValidateResultSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskRegenerateSceneSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskSceneEntitiesReplaceSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskSceneEntityCreateSchema.h"
@@ -309,8 +298,6 @@
 #include "CppRestOpenAPIClient/model/WorkflowTemplateSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowTriggerSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowUpdateSchema.h"
-#include "CppRestOpenAPIClient/model/WorkflowWorkerSourceSchema.h"
-#include "CppRestOpenAPIClient/model/WorkflowWorkerSourceUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowsConfigSchema.h"
 #include "CppRestOpenAPIClient/model/WorkspaceCreateSchema.h"
 #include "CppRestOpenAPIClient/model/WorkspaceResponseSchema.h"
@@ -1020,20 +1007,10 @@ public:
     /// Download Attachment
     /// </summary>
     /// <remarks>
-    /// Download attachment file content.  Issues a 302 to the public CDN URL. Suitable for non-browser clients (SDK, CLI, &#x60;&#x60;curl&#x60;&#x60;) that follow redirects without CORS. Browser XHR/&#x60;&#x60;fetch&#x60;&#x60; callers should use &#x60;&#x60;/download-url&#x60;&#x60; instead — a cross-origin redirect taints their &#x60;&#x60;Origin&#x60;&#x60; to &#x60;&#x60;null&#x60;&#x60; and fails GCS CORS.
+    /// Download attachment file content.
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<void> srcAppApiAttachmentsDownloadAttachment(
-        utility::string_t uuid
-    ) const;
-    /// <summary>
-    /// Download Attachment Url
-    /// </summary>
-    /// <remarks>
-    /// Return the CDN URL for fetching the attachment directly.  Browser callers fetch this endpoint (their real &#x60;&#x60;Origin&#x60;&#x60; is preserved), then fetch/download the returned URL directly — avoiding the cross-origin redirect that &#x60;&#x60;/download&#x60;&#x60; performs, which would null the &#x60;&#x60;Origin&#x60;&#x60; and be blocked by CORS.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    pplx::task<std::shared_ptr<AttachmentDownloadUrlSchema>> srcAppApiAttachmentsDownloadAttachmentUrl(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -1171,18 +1148,6 @@ public:
     pplx::task<std::vector<std::shared_ptr<ControllerPolicySchema>>> srcAppApiControllerPoliciesListControllerPolicies(
         boost::optional<utility::string_t> assetUuid,
         boost::optional<utility::string_t> workspaceUuid
-    ) const;
-    /// <summary>
-    /// Send Inference Command
-    /// </summary>
-    /// <remarks>
-    /// Send a validated inference command to a running RL-task controller.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="controllerPolicyInferenceCommandSchema"></param>
-    pplx::task<std::shared_ptr<ControllerPolicyInferenceCommandResponseSchema>> srcAppApiControllerPoliciesSendInferenceCommand(
-        utility::string_t uuid,
-        std::shared_ptr<ControllerPolicyInferenceCommandSchema> controllerPolicyInferenceCommandSchema
     ) const;
     /// <summary>
     /// Stop Controller Policy
@@ -1330,7 +1295,7 @@ public:
     /// Download Dataset
     /// </summary>
     /// <remarks>
-    /// Request a download URL for a dataset in a specific format.  This endpoint is **idempotent**: calling it multiple times will not spawn duplicate conversion tasks.  Supported &#x60;&#x60;format&#x60;&#x60; values (&#x60;&#x60;DatasetType&#x60;&#x60; values) ---------------------------------------------------- - &#x60;&#x60;parquet&#x60;&#x60;   — Cyberwave joined-parquet zip (native datasets only).                   Deprecated alias: &#x60;&#x60;plain&#x60;&#x60;. - &#x60;&#x60;lerobot3&#x60;&#x60;  — LeRobot v3 (Forge writer).                   Deprecated alias: &#x60;&#x60;lerobot&#x60;&#x60;. - &#x60;&#x60;lerobot21&#x60;&#x60; — LeRobot v2.1 (Forge writer). - &#x60;&#x60;rlds&#x60;&#x60;      — RLDS / TF-Record (Open-X-Embodiment style, Forge writer). - &#x60;&#x60;openvla&#x60;&#x60;   — Cyberwave OpenVLA TFDS bundle (Cyberwave-generated writer). - &#x60;&#x60;robodm&#x60;&#x60;    — Berkeley .vla format (Forge writer).  Planned / not yet implemented (returns 422): &#x60;&#x60;mcap&#x60;&#x60;, &#x60;&#x60;gr00t&#x60;&#x60;, &#x60;&#x60;hdf5&#x60;&#x60;, &#x60;&#x60;zarr&#x60;&#x60;, &#x60;&#x60;rosbag&#x60;&#x60;  Returns ------- HTTP 200 (&#x60;&#x60;DatasetDownloadReadySchema&#x60;&#x60;)     The artifact is ready; &#x60;&#x60;signed_url&#x60;&#x60; is valid for 24 h. HTTP 202 (&#x60;&#x60;DatasetDownloadProcessingSchema&#x60;&#x60;)     A conversion task was queued or is already running.     Poll &#x60;&#x60;poll_url&#x60;&#x60; (this endpoint) again until you get a 200. HTTP 422     The format is not supported (either invalid or TODO).
+    /// Request a download URL for a dataset in a specific format.  This endpoint is **idempotent**: calling it multiple times will not spawn duplicate conversion tasks.  Supported &#x60;&#x60;format&#x60;&#x60; values (&#x60;&#x60;DatasetType&#x60;&#x60; values) ---------------------------------------------------- - &#x60;&#x60;parquet&#x60;&#x60;   — Cyberwave joined-parquet zip (native datasets only).                   Deprecated alias: &#x60;&#x60;plain&#x60;&#x60;. - &#x60;&#x60;lerobot3&#x60;&#x60;  — LeRobot v3 (Forge writer).                   Deprecated alias: &#x60;&#x60;lerobot&#x60;&#x60;. - &#x60;&#x60;lerobot21&#x60;&#x60; — LeRobot v2.1 (Forge writer). - &#x60;&#x60;rlds&#x60;&#x60;      — RLDS / TF-Record (Open-X-Embodiment style, Forge writer). - &#x60;&#x60;openvla&#x60;&#x60;   — Cyberwave OpenVLA TFDS bundle (Cyberwave-owned writer). - &#x60;&#x60;robodm&#x60;&#x60;    — Berkeley .vla format (Forge writer).  Planned / not yet implemented (returns 422): &#x60;&#x60;mcap&#x60;&#x60;, &#x60;&#x60;gr00t&#x60;&#x60;, &#x60;&#x60;hdf5&#x60;&#x60;, &#x60;&#x60;zarr&#x60;&#x60;, &#x60;&#x60;rosbag&#x60;&#x60;  Returns ------- HTTP 200 (&#x60;&#x60;DatasetDownloadReadySchema&#x60;&#x60;)     The artifact is ready; &#x60;&#x60;signed_url&#x60;&#x60; is valid for 24 h. HTTP 202 (&#x60;&#x60;DatasetDownloadProcessingSchema&#x60;&#x60;)     A conversion task was queued or is already running.     Poll &#x60;&#x60;poll_url&#x60;&#x60; (this endpoint) again until you get a 200. HTTP 422     The format is not supported (either invalid or TODO).
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="format"></param>
@@ -1806,13 +1771,11 @@ public:
     /// Get Environment Urdf Scene Zip Direct
     /// </summary>
     /// <remarks>
-    /// Get URDF scene ZIP for an environment (direct download).  Returns a ZIP file containing: - scene.urdf: The complete URDF scene - assets/: Directory with all required mesh files  Composes schema from all twins and exports to URDF format.  &#x60;&#x60;exclude_twin_uuids&#x60;&#x60; (optional, comma-separated) drops the named twins from the export. The Gazebo HIL path passes the arm twin&#39;s UUID here so the ZIP contains only the environment props (the arm is spawned separately from its kortex description).
+    /// Get URDF scene ZIP for an environment (direct download).  Returns a ZIP file containing: - scene.urdf: The complete URDF scene - assets/: Directory with all required mesh files  Composes schema from all twins and exports to URDF format.
     /// </remarks>
     /// <param name="uuid"></param>
-    /// <param name="excludeTwinUuids"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<void> srcAppApiEnvironmentsExportsGetEnvironmentUrdfSceneZipDirect(
-        utility::string_t uuid,
-        boost::optional<utility::string_t> excludeTwinUuids
+        utility::string_t uuid
     ) const;
     /// <summary>
     /// Get Mjlab Scene Package Zip
@@ -2192,15 +2155,13 @@ public:
     /// Get Recording Data
     /// </summary>
     /// <remarks>
-    /// Return signed URLs and minimal metadata for replay (no sampled frames).  Camera: MP4 signed URL (legacy MKV chunks may require a narrow parquet read). Robot: parquet signed URL for client-side windowed reads. Pointcloud: flatbuffer chunk signed URLs when &#x60;&#x60;return_flatbuffers&#x60;&#x60; (default); otherwise parquet descriptors (generating/updating/ready) and a prewarm of the parquet build for each linked stream.
+    /// Return signed URLs and minimal metadata for replay (no sampled frames).  Camera: MP4 signed URL (legacy MKV chunks may require a narrow parquet read). Robot: parquet signed URL for client-side windowed reads. Pointcloud: flatbuffer chunk signed URLs (unchanged linking).
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="recordingUuid"></param>
-    /// <param name="returnFlatbuffers"> (optional, default to false)</param>
     pplx::task<std::shared_ptr<RecordingSourcesEnvelopeSchema>> srcAppApiEnvironmentsRecordingsGetRecordingData(
         utility::string_t uuid,
-        utility::string_t recordingUuid,
-        boost::optional<bool> returnFlatbuffers
+        utility::string_t recordingUuid
     ) const;
     /// <summary>
     /// Get Recording Debug Artifacts
@@ -2387,22 +2348,6 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSimulationGetEnvironmentSimulations(
         utility::string_t uuid
-    ) const;
-    /// <summary>
-    /// Get Online Controller Session Logs
-    /// </summary>
-    /// <remarks>
-    /// Return recent logs for an online controller session.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="sessionUuid"></param>
-    /// <param name="logType"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="limit"> (optional, default to 0)</param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSimulationGetOnlineControllerSessionLogs(
-        utility::string_t uuid,
-        utility::string_t sessionUuid,
-        boost::optional<utility::string_t> logType,
-        boost::optional<int32_t> limit
     ) const;
     /// <summary>
     /// List Online Controller Sessions
@@ -3288,7 +3233,7 @@ public:
     /// List Mlmodels
     /// </summary>
     /// <remarks>
-    /// List all ML models for the authenticated user&#39;s workspace.  Query params:     deployment: Filter by deployment type (cloud, edge, hybrid)     edge_compatible: If true, return only edge or hybrid models     model_external_id: Filter by exact model_external_id (e.g. \&quot;yolov8n.pt\&quot;)     supported_level: Filter by supported_level (driver, cloud, backend, not_supported_yet)     is_trainable: Filter by is_trainable     catalog_seed_id: Filter by metadata.catalog_seed_id         (the &#x60;&#x60;catalog_key&#x60;&#x60; stamped by the seed_models command). Used by         the seeder to dedup catalog entries idempotently.
+    /// List all ML models for the authenticated user&#39;s workspace.  Query params:     deployment: Filter by deployment type (cloud, edge, hybrid)     edge_compatible: If true, return only edge or hybrid models     model_external_id: Filter by exact model_external_id (e.g. \&quot;yolov8n.pt\&quot;)     supported_level: Filter by supported_level (driver, cloud, backend, not_supported_yet)     is_trainable: Filter by is_trainable     catalog_seed_id: Filter by metadata.catalog_seed_id         (the &#x60;&#x60;catalog_key&#x60;&#x60; stamped by the seed_models command). Used by         the seeder to dedup catalog entries idempotently.     offset/limit: Optional pagination. When &#x60;&#x60;limit&#x60;&#x60; is omitted the full         result set is returned (backward compatible).
     /// </remarks>
     /// <param name="deployment"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="edgeCompatible"> (optional, default to false)</param>
@@ -3296,23 +3241,31 @@ public:
     /// <param name="supportedLevel"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="isTrainable"> (optional, default to false)</param>
     /// <param name="catalogSeedId"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="offset"> (optional, default to 0)</param>
     pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> srcAppApiMlmodelsListMlmodels(
         boost::optional<utility::string_t> deployment,
         boost::optional<bool> edgeCompatible,
         boost::optional<utility::string_t> modelExternalId,
         boost::optional<utility::string_t> supportedLevel,
         boost::optional<bool> isTrainable,
-        boost::optional<utility::string_t> catalogSeedId
+        boost::optional<utility::string_t> catalogSeedId,
+        boost::optional<int32_t> limit,
+        boost::optional<int32_t> offset
     ) const;
     /// <summary>
     /// List Public Mlmodels
     /// </summary>
     /// <remarks>
-    /// List all public ML models. No authentication required.
+    /// List all public ML models. No authentication required.  Supports optional &#x60;&#x60;offset&#x60;&#x60;/&#x60;&#x60;limit&#x60;&#x60; pagination. When &#x60;&#x60;limit&#x60;&#x60; is omitted the full result set is returned (backward compatible).
     /// </remarks>
     /// <param name="deployment"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="offset"> (optional, default to 0)</param>
     pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> srcAppApiMlmodelsListPublicMlmodels(
-        boost::optional<utility::string_t> deployment
+        boost::optional<utility::string_t> deployment,
+        boost::optional<int32_t> limit,
+        boost::optional<int32_t> offset
     ) const;
     /// <summary>
     /// List Structured Actions
@@ -3473,76 +3426,6 @@ public:
     pplx::task<std::shared_ptr<TwinNavigationCaptureUploadResponseSchema>> srcAppApiNavigationUploadNavigationCapture(
         utility::string_t uuid,
         std::shared_ptr<HttpContent> image
-    ) const;
-    /// <summary>
-    /// Create Hardware Order
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="workspaceUuid"></param>
-    /// <param name="hardwareOrderCreateSchema"></param>
-    pplx::task<std::shared_ptr<HardwareOrderSchema>> srcAppApiOrdersCreateHardwareOrder(
-        utility::string_t workspaceUuid,
-        std::shared_ptr<HardwareOrderCreateSchema> hardwareOrderCreateSchema
-    ) const;
-    /// <summary>
-    /// Get Hardware Order
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="workspaceUuid"></param>
-    /// <param name="orderUuid"></param>
-    pplx::task<std::shared_ptr<HardwareOrderSchema>> srcAppApiOrdersGetHardwareOrder(
-        utility::string_t workspaceUuid,
-        utility::string_t orderUuid
-    ) const;
-    /// <summary>
-    /// List All Hardware Orders
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="status"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    pplx::task<std::vector<std::shared_ptr<HardwareOrderAdminSchema>>> srcAppApiOrdersListAllHardwareOrders(
-        boost::optional<utility::string_t> status
-    ) const;
-    /// <summary>
-    /// List Hardware Orders
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="workspaceUuid"></param>
-    pplx::task<std::vector<std::shared_ptr<HardwareOrderSchema>>> srcAppApiOrdersListHardwareOrders(
-        utility::string_t workspaceUuid
-    ) const;
-    /// <summary>
-    /// Update Hardware Order Line Item
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="orderUuid"></param>
-    /// <param name="lineItemUuid"></param>
-    /// <param name="hardwareOrderLineItemUpdateSchema"></param>
-    pplx::task<std::shared_ptr<HardwareOrderAdminSchema>> srcAppApiOrdersUpdateHardwareOrderLineItem(
-        utility::string_t orderUuid,
-        utility::string_t lineItemUuid,
-        std::shared_ptr<HardwareOrderLineItemUpdateSchema> hardwareOrderLineItemUpdateSchema
-    ) const;
-    /// <summary>
-    /// Update Hardware Order Status
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="orderUuid"></param>
-    /// <param name="hardwareOrderStatusUpdateSchema"></param>
-    pplx::task<std::shared_ptr<HardwareOrderAdminSchema>> srcAppApiOrdersUpdateHardwareOrderStatus(
-        utility::string_t orderUuid,
-        std::shared_ptr<HardwareOrderStatusUpdateSchema> hardwareOrderStatusUpdateSchema
     ) const;
     /// <summary>
     /// Charge Saved Card
@@ -3942,15 +3825,13 @@ public:
     /// Delete Rl Task Source File
     /// </summary>
     /// <remarks>
-    /// Delete a source file by path.  User-written files delete freely. Cyberwave-generated files are protected by default (deleting one only to have the next regenerate / export recreate it is rarely intended), but &#x60;&#x60;force&#x3D;true&#x60;&#x60; lets the operator remove them deliberately — e.g. to clean up demo-seeded files. Regenerating (Scene / Actions / Observations / Files tabs) will recreate any generated file.
+    /// Delete a single user-owned source file by path.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="path"></param>
-    /// <param name="force"> (optional, default to false)</param>
     pplx::task<void> srcAppApiRlTasksDeleteRlTaskSourceFile(
         utility::string_t uuid,
-        utility::string_t path,
-        boost::optional<bool> force
+        utility::string_t path
     ) const;
     /// <summary>
     /// Export Rl Task Zip
@@ -3963,38 +3844,16 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
-    /// Generate Rl Task Env Cfg
-    /// </summary>
-    /// <remarks>
-    /// Write a runnable starter for the user-written &#x60;&#x60;env_cfg.py&#x60;&#x60;.  The starter wires the generated &#x60;&#x60;make_scene_cfg&#x60;&#x60; + &#x60;&#x60;make_actions&#x60;&#x60; + &#x60;&#x60;make_observations&#x60;&#x60; into an mjlab &#x60;&#x60;ManagerBasedRlEnvCfg&#x60;&#x60; so the user has a working entrypoint to edit instead of a blank file. Unlike the Cyberwave-generated modules, &#x60;&#x60;env_cfg.py&#x60;&#x60; is user-written — so we refuse to overwrite an existing one unless &#x60;&#x60;overwrite&#x60;&#x60; is set, surfacing a 409 the UI confirms before clobbering hand-written code.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="rLTaskGenerateEnvCfgSchema"></param>
-    pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksExportsGenerateRlTaskEnvCfg(
-        utility::string_t uuid,
-        std::shared_ptr<RLTaskGenerateEnvCfgSchema> rLTaskGenerateEnvCfgSchema
-    ) const;
-    /// <summary>
     /// Regenerate Rl Task Scene Cfg
     /// </summary>
     /// <remarks>
-    /// Regenerate the Cyberwave-generated SceneCfg source file at &#x60;&#x60;scene_cfg_path&#x60;&#x60;.  The user controls *where* the file is written (any safe relative path inside the task tree); we never enforce a particular import statement in the surrounding user code.
+    /// Regenerate the Cyberwave-owned SceneCfg source file at &#x60;&#x60;scene_cfg_path&#x60;&#x60;.  The user controls *where* the file is written (any safe relative path inside the task tree); we never enforce a particular import statement in the surrounding user code.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="rLTaskRegenerateSceneSchema"></param>
     pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksExportsRegenerateRlTaskSceneCfg(
         utility::string_t uuid,
         std::shared_ptr<RLTaskRegenerateSceneSchema> rLTaskRegenerateSceneSchema
-    ) const;
-    /// <summary>
-    /// Regenerate Rl Task Task Spec
-    /// </summary>
-    /// <remarks>
-    /// Regenerate the spec-derived files (Actions / Observations tabs).  Refreshes &#x60;&#x60;cyberwave_task_spec.py&#x60;&#x60;, &#x60;&#x60;scene_bindings.py&#x60;&#x60;, &#x60;&#x60;actions.py&#x60;&#x60;, &#x60;&#x60;observations.py&#x60;&#x60;, and the &#x60;&#x60;task_export/&#x60;&#x60; adapters — everything that derives from the authored Actions / Observations / RL-config — without rebuilding &#x60;&#x60;scene_cfg.py&#x60;&#x60;. Use &#x60;&#x60;regenerate-scene-cfg&#x60;&#x60; (Scene tab) for the scene, or the Files tab to regenerate everything.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    pplx::task<std::shared_ptr<RLTaskSchema>> srcAppApiRlTasksExportsRegenerateRlTaskTaskSpec(
-        utility::string_t uuid
     ) const;
     /// <summary>
     /// Get Rl Task
@@ -4322,7 +4181,7 @@ public:
     /// Update Rl Task From Zip
     /// </summary>
     /// <remarks>
-    /// Replace/update the user-written source files of an RL task from a ZIP.
+    /// Replace/update the user-owned source files of an RL task from a ZIP.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="zipFile"></param>
@@ -4362,25 +4221,13 @@ public:
     /// Upsert Rl Task Source File
     /// </summary>
     /// <remarks>
-    /// Upsert a single source file for an RL task.  Editing a Cyberwave-generated file is allowed (operators sometimes need to tweak one); we preserve its existing owner + &#x60;&#x60;generated_kind&#x60;&#x60; so it stays in place and a later regenerate still restores the canonical version.
+    /// Upsert a single user-owned source file for an RL task.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="rLTaskSourceFileUpsertSchema"></param>
     pplx::task<std::shared_ptr<RLTaskSourceFileSchema>> srcAppApiRlTasksUpsertRlTaskSourceFile(
         utility::string_t uuid,
         std::shared_ptr<RLTaskSourceFileUpsertSchema> rLTaskSourceFileUpsertSchema
-    ) const;
-    /// <summary>
-    /// Validate Rl Task Rl Config
-    /// </summary>
-    /// <remarks>
-    /// Dry-run validate an RL config spec without persisting it.  Runs the same &#x60;&#x60;normalize_rl_config_spec&#x60;&#x60; the save path uses, so a &#x60;&#x60;valid&#x60;&#x60; result guarantees a subsequent save would also pass. A failing spec is a normal &#x60;&#x60;200&#x60;&#x60; result (&#x60;&#x60;{valid: false, error}&#x60;&#x60;) rather than an HTTP error, so the frontend should read &#x60;&#x60;valid&#x60;&#x60; instead of the status.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="rLTaskRLConfigSpecSchema"></param>
-    pplx::task<std::shared_ptr<RLTaskRLConfigValidateResultSchema>> srcAppApiRlTasksValidateRlTaskRlConfig(
-        utility::string_t uuid,
-        std::shared_ptr<RLTaskRLConfigSpecSchema> rLTaskRLConfigSpecSchema
     ) const;
     /// <summary>
     /// Check Entity Slug
@@ -4595,16 +4442,6 @@ public:
         boost::optional<utility::string_t> robotType
     ) const;
     /// <summary>
-    /// Ensure Twin Controller Policy
-    /// </summary>
-    /// <remarks>
-    /// Ensure a twin has a teleop controller policy attached (setup-time).  Called by the Send Pose inspector on twin selection: auto-attaches a default when none is set, else raises an operator Alert + 409 so the UI can warn.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    pplx::task<std::shared_ptr<EnsureControllerPolicyResponseSchema>> srcAppApiTwinsEnsureTwinControllerPolicy(
-        utility::string_t uuid
-    ) const;
-    /// <summary>
     /// Execute Twin Action
     /// </summary>
     /// <remarks>
@@ -4698,7 +4535,7 @@ public:
     /// Get Twin Latest Frame
     /// </summary>
     /// <remarks>
-    /// Get the latest frame from a twin&#39;s camera stream. Serves the frame directly from Redis without saving to permanent storage.  For multi-camera twins, the media service stores frames with key frame:{twin_uuid}_{sensor_id}:rgb:latest. Pass ?sensor_id&#x3D;wrist_camera to get a specific camera.  Query params: - mock: if true, return a deterministic mock JPEG payload. - frame_bucket: &#x60;&#x60;\&quot;policy_depth\&quot;&#x60;&#x60; to fetch the policy-resolution depth   frame rendered by cyberwave-sim at the trained observation resolution   (e.g. 32x32). Parity-critical: returns 404 when no policy-depth frame is   available rather than falling back to a regular RGB frame.
+    /// Get the latest frame from a twin&#39;s camera stream. Serves the frame directly from Redis without saving to permanent storage.  For multi-camera twins, the media service stores frames with key frame:{twin_uuid}_{sensor_id}:rgb:latest. Pass ?sensor_id&#x3D;wrist_camera to get a specific camera.  Query params: - mock: if true, return a deterministic mock JPEG payload. - frame_bucket: &#x60;&#x60;\&quot;policy_depth\&quot;&#x60;&#x60; to fetch the policy-resolution depth   frame rendered by cyberwave-sim at the trained observation resolution   (e.g. 32x32). Falls back to the regular frame when unavailable.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="mock"> (optional, default to false)</param>
@@ -5425,16 +5262,6 @@ public:
         utility::string_t nodeUuid
     ) const;
     /// <summary>
-    /// Get Workflow Worker Source
-    /// </summary>
-    /// <remarks>
-    /// Return the materialised worker source plus override provenance.  &#x60;&#x60;materialized_source&#x60;&#x60; is what ships to the edge (override if saved, else autogenerated). &#x60;&#x60;autogenerated_source&#x60;&#x60; is always the current compiler output so the UI can diff and offer \&quot;restore\&quot;. &#x60;&#x60;is_stale&#x60;&#x60; warns that the graph changed since the override was saved.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    pplx::task<std::shared_ptr<WorkflowWorkerSourceSchema>> srcAppApiWorkflowsGetWorkflowWorkerSource(
-        utility::string_t uuid
-    ) const;
-    /// <summary>
     /// Get Workflows Config
     /// </summary>
     /// <remarks>
@@ -5507,28 +5334,6 @@ public:
         boost::optional<utility::string_t> environmentUuid,
         boost::optional<utility::string_t> runOnEdge,
         boost::optional<utility::string_t> slug
-    ) const;
-    /// <summary>
-    /// Restore Workflow Worker Source
-    /// </summary>
-    /// <remarks>
-    /// Restore the autogenerated worker source by clearing the override.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    pplx::task<std::shared_ptr<WorkflowWorkerSourceSchema>> srcAppApiWorkflowsRestoreWorkflowWorkerSource(
-        utility::string_t uuid
-    ) const;
-    /// <summary>
-    /// Save Workflow Worker Source
-    /// </summary>
-    /// <remarks>
-    /// Save (or replace) the user&#39;s worker-source override.  The override is validated as parseable Python (never executed here) and stored verbatim. We snapshot a hash of the *current* autogenerated source so later graph edits can be detected as drift (&#x60;&#x60;is_stale&#x60;&#x60;). Custom worker source only ever runs on the user&#39;s own edge runtime.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="workflowWorkerSourceUpdateSchema"></param>
-    pplx::task<std::shared_ptr<WorkflowWorkerSourceSchema>> srcAppApiWorkflowsSaveWorkflowWorkerSource(
-        utility::string_t uuid,
-        std::shared_ptr<WorkflowWorkerSourceUpdateSchema> workflowWorkerSourceUpdateSchema
     ) const;
     /// <summary>
     /// Sync Workflow To Edge
@@ -5890,7 +5695,7 @@ public:
     /// Leave Team
     /// </summary>
     /// <remarks>
-    /// Leave a team, or (for workspace admins) remove another member.
+    /// Leave a team
     /// </remarks>
     /// <param name="teamUuid"></param>
     /// <param name="uuid"></param>

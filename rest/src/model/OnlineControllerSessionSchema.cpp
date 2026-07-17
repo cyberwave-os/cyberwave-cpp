@@ -82,11 +82,6 @@ web::json::value OnlineControllerSessionSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("workload_uuid"))] = ModelBase::toJson(m_Workload_uuid.get());
     }
-    if(m_Instance_uuid.has_value())
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("instance_uuid"))] = ModelBase::toJson(m_Instance_uuid.get());
-    }
     if(m_PhaseIsSet)
     {
         
@@ -190,17 +185,6 @@ bool OnlineControllerSessionSchema::fromJson(const web::json::value& val)
             
         }
     }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("instance_uuid"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("instance_uuid")));
-        if(!fieldValue.is_null())
-        {
-            utility::string_t refVal_setInstanceUuid;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setInstanceUuid);
-            setInstanceUuid(refVal_setInstanceUuid);
-            
-        }
-    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("phase"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("phase")));
@@ -301,10 +285,6 @@ void OnlineControllerSessionSchema::toMultipart(std::shared_ptr<MultipartFormDat
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workload_uuid")), m_Workload_uuid.get()));
     }
-    if(m_Instance_uuid.has_value())
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("instance_uuid")), m_Instance_uuid.get()));
-    }
     if(m_PhaseIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("phase")), m_Phase));
@@ -375,12 +355,6 @@ bool OnlineControllerSessionSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         utility::string_t refVal_setWorkloadUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workload_uuid"))), refVal_setWorkloadUuid );
         setWorkloadUuid(refVal_setWorkloadUuid);
-    }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("instance_uuid"))))
-    {
-        utility::string_t refVal_setInstanceUuid;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("instance_uuid"))), refVal_setInstanceUuid );
-        setInstanceUuid(refVal_setInstanceUuid);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("phase"))))
     {
@@ -546,26 +520,6 @@ bool OnlineControllerSessionSchema::workloadUuidIsSet() const
 void OnlineControllerSessionSchema::unsetWorkload_uuid()
 {
     m_Workload_uuid.reset();
-}
-utility::string_t OnlineControllerSessionSchema::getInstanceUuid() const
-{
-    return m_Instance_uuid.get();
-}
-
-
-void OnlineControllerSessionSchema::setInstanceUuid(const utility::string_t& value)
-{
-    m_Instance_uuid = value;
-}
-
-bool OnlineControllerSessionSchema::instanceUuidIsSet() const
-{
-    return m_Instance_uuid.has_value();
-}
-
-void OnlineControllerSessionSchema::unsetInstance_uuid()
-{
-    m_Instance_uuid.reset();
 }
 utility::string_t OnlineControllerSessionSchema::getPhase() const
 {

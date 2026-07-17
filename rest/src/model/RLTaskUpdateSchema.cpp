@@ -128,26 +128,6 @@ web::json::value RLTaskUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("rl_config_spec"))] = ModelBase::toJson(m_Rl_config_spec.get());
     }
-    if(m_Training_command_spec.has_value())
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("training_command_spec"))] = ModelBase::toJson(m_Training_command_spec.get());
-    }
-    if(m_Inference_command_spec.has_value())
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))] = ModelBase::toJson(m_Inference_command_spec.get());
-    }
-    if(m_Training_command_setup_enabled.has_value())
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled"))] = ModelBase::toJson(m_Training_command_setup_enabled.get());
-    }
-    if(m_Inference_command_setup_enabled.has_value())
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))] = ModelBase::toJson(m_Inference_command_setup_enabled.get());
-    }
 
     return val;
 }
@@ -355,50 +335,6 @@ bool RLTaskUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("training_command_spec"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("training_command_spec")));
-        if(!fieldValue.is_null())
-        {
-            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setTrainingCommandSpec;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setTrainingCommandSpec);
-            setTrainingCommandSpec(refVal_setTrainingCommandSpec);
-            
-        }
-    }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec")));
-        if(!fieldValue.is_null())
-        {
-            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setInferenceCommandSpec;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setInferenceCommandSpec);
-            setInferenceCommandSpec(refVal_setInferenceCommandSpec);
-            
-        }
-    }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled")));
-        if(!fieldValue.is_null())
-        {
-            bool refVal_setTrainingCommandSetupEnabled;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setTrainingCommandSetupEnabled);
-            setTrainingCommandSetupEnabled(refVal_setTrainingCommandSetupEnabled);
-            
-        }
-    }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled")));
-        if(!fieldValue.is_null())
-        {
-            bool refVal_setInferenceCommandSetupEnabled;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setInferenceCommandSetupEnabled);
-            setInferenceCommandSetupEnabled(refVal_setInferenceCommandSetupEnabled);
-            
-        }
-    }
     return ok;
 }
 
@@ -480,22 +416,6 @@ void RLTaskUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipar
     if(m_Rl_config_spec.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("rl_config_spec")), m_Rl_config_spec.get()));
-    }
-    if(m_Training_command_spec.has_value())
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("training_command_spec")), m_Training_command_spec.get()));
-    }
-    if(m_Inference_command_spec.has_value())
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("inference_command_spec")), m_Inference_command_spec.get()));
-    }
-    if(m_Training_command_setup_enabled.has_value())
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled")), m_Training_command_setup_enabled.get()));
-    }
-    if(m_Inference_command_setup_enabled.has_value())
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled")), m_Inference_command_setup_enabled.get()));
     }
 }
 
@@ -615,30 +535,6 @@ bool RLTaskUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setRlConfigSpec;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("rl_config_spec"))), refVal_setRlConfigSpec );
         setRlConfigSpec(refVal_setRlConfigSpec);
-    }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("training_command_spec"))))
-    {
-        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setTrainingCommandSpec;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("training_command_spec"))), refVal_setTrainingCommandSpec );
-        setTrainingCommandSpec(refVal_setTrainingCommandSpec);
-    }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))))
-    {
-        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setInferenceCommandSpec;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))), refVal_setInferenceCommandSpec );
-        setInferenceCommandSpec(refVal_setInferenceCommandSpec);
-    }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled"))))
-    {
-        bool refVal_setTrainingCommandSetupEnabled;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled"))), refVal_setTrainingCommandSetupEnabled );
-        setTrainingCommandSetupEnabled(refVal_setTrainingCommandSetupEnabled);
-    }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))))
-    {
-        bool refVal_setInferenceCommandSetupEnabled;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))), refVal_setInferenceCommandSetupEnabled );
-        setInferenceCommandSetupEnabled(refVal_setInferenceCommandSetupEnabled);
     }
     return ok;
 }
@@ -1056,84 +952,6 @@ bool RLTaskUpdateSchema::rlConfigSpecIsSet() const
 void RLTaskUpdateSchema::unsetRl_config_spec()
 {
     m_Rl_config_spec.reset();
-}
-std::map<utility::string_t, std::shared_ptr<AnyType>> RLTaskUpdateSchema::getTrainingCommandSpec() const
-{
-    return m_Training_command_spec.get();
-}
-
-
-void RLTaskUpdateSchema::setTrainingCommandSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
-{
-    m_Training_command_spec = value;
-}
-
-bool RLTaskUpdateSchema::trainingCommandSpecIsSet() const
-{
-    return m_Training_command_spec.has_value();
-}
-
-void RLTaskUpdateSchema::unsetTraining_command_spec()
-{
-    m_Training_command_spec.reset();
-}
-std::map<utility::string_t, std::shared_ptr<AnyType>> RLTaskUpdateSchema::getInferenceCommandSpec() const
-{
-    return m_Inference_command_spec.get();
-}
-
-
-void RLTaskUpdateSchema::setInferenceCommandSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
-{
-    m_Inference_command_spec = value;
-}
-
-bool RLTaskUpdateSchema::inferenceCommandSpecIsSet() const
-{
-    return m_Inference_command_spec.has_value();
-}
-
-void RLTaskUpdateSchema::unsetInference_command_spec()
-{
-    m_Inference_command_spec.reset();
-}
-bool RLTaskUpdateSchema::isTrainingCommandSetupEnabled() const
-{
-    return m_Training_command_setup_enabled.get();
-}
-
-void RLTaskUpdateSchema::setTrainingCommandSetupEnabled(bool value)
-{
-    m_Training_command_setup_enabled = value;
-}
-
-bool RLTaskUpdateSchema::trainingCommandSetupEnabledIsSet() const
-{
-    return m_Training_command_setup_enabled.has_value();
-}
-
-void RLTaskUpdateSchema::unsetTraining_command_setup_enabled()
-{
-    m_Training_command_setup_enabled.reset();
-}
-bool RLTaskUpdateSchema::isInferenceCommandSetupEnabled() const
-{
-    return m_Inference_command_setup_enabled.get();
-}
-
-void RLTaskUpdateSchema::setInferenceCommandSetupEnabled(bool value)
-{
-    m_Inference_command_setup_enabled = value;
-}
-
-bool RLTaskUpdateSchema::inferenceCommandSetupEnabledIsSet() const
-{
-    return m_Inference_command_setup_enabled.has_value();
-}
-
-void RLTaskUpdateSchema::unsetInference_command_setup_enabled()
-{
-    m_Inference_command_setup_enabled.reset();
 }
 
 }

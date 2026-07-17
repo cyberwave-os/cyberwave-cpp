@@ -97,11 +97,6 @@ public:
     void unsetAsset_uuids();
     void setAssetUuids(const std::vector<utility::string_t>& value);
 
-    std::vector<utility::string_t> getAssetRegistryIds() const;
-    bool assetRegistryIdsIsSet() const;
-    void unsetAsset_registry_ids();
-    void setAssetRegistryIds(const std::vector<utility::string_t>& value);
-
     utility::string_t getDevice() const;
     bool deviceIsSet() const;
     void unsetDevice();
@@ -129,9 +124,6 @@ protected:
 
     std::vector<utility::string_t> m_Asset_uuids;
     bool m_Asset_uuidsIsSet;
-
-    std::vector<utility::string_t> m_Asset_registry_ids;
-    bool m_Asset_registry_idsIsSet;
 
     boost::optional<utility::string_t> m_Device;
 

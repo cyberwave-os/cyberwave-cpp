@@ -62,11 +62,6 @@ public:
         LIVE,
         SIMULATION,
     };
-    enum class TransportEnum
-    {
-        ZENOH,
-        MQTT,
-    };
     enum class Runtime_kindEnum
     {
         PHYSICAL,
@@ -93,10 +88,6 @@ public:
 
     ModeEnum toModeEnum(const utility::string_t& value) const;
     const utility::string_t fromModeEnum(const ModeEnum value) const;
-
-
-    TransportEnum toTransportEnum(const utility::string_t& value) const;
-    const utility::string_t fromTransportEnum(const TransportEnum value) const;
 
 
     Runtime_kindEnum toRuntime_kindEnum(const utility::string_t& value) const;
@@ -129,16 +120,6 @@ public:
     bool modeIsSet() const;
     void unsetMode();
     void setMode(const ModeEnum value);
-
-    TransportEnum getTransport() const;
-    bool transportIsSet() const;
-    void unsetTransport();
-    void setTransport(const TransportEnum value);
-
-    bool isConfirmLive() const;
-    bool confirmLiveIsSet() const;
-    void unsetConfirm_live();
-    void setConfirmLive(bool value);
 
     Runtime_kindEnum getRuntimeKind() const;
     bool runtimeKindIsSet() const;
@@ -230,16 +211,6 @@ public:
     void unsetServer_mode();
     void setServerMode(bool value);
 
-    std::map<utility::string_t, std::shared_ptr<AnyType>> getInferenceCommand() const;
-    bool inferenceCommandIsSet() const;
-    void unsetInference_command();
-    void setInferenceCommand(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
-
-    std::map<utility::string_t, std::shared_ptr<AnyType>> getRuntimeParams() const;
-    bool runtimeParamsIsSet() const;
-    void unsetRuntime_params();
-    void setRuntimeParams(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
-
 
 protected:
     utility::string_t m_Twin_uuid;
@@ -249,11 +220,6 @@ protected:
     bool m_ExecutionIsSet;
 
     boost::optional<ModeEnum> m_Mode;
-
-    boost::optional<TransportEnum> m_Transport;
-
-    bool m_Confirm_live;
-    bool m_Confirm_liveIsSet;
 
     boost::optional<Runtime_kindEnum> m_Runtime_kind;
 
@@ -292,10 +258,6 @@ protected:
 
     bool m_Server_mode;
     bool m_Server_modeIsSet;
-
-    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Inference_command;
-
-    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Runtime_params;
 
 };
 

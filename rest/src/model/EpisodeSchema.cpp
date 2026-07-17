@@ -34,7 +34,6 @@ EpisodeSchema::EpisodeSchema()
     m_Created_atIsSet = false;
     m_Updated_at = utility::datetime();
     m_Updated_atIsSet = false;
-    m_AudioIsSet = false;
 }
 
 EpisodeSchema::~EpisodeSchema()
@@ -98,11 +97,6 @@ web::json::value EpisodeSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("updated_by"))] = ModelBase::toJson(m_Updated_by.get());
-    }
-    if(m_AudioIsSet)
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("audio"))] = ModelBase::toJson(m_Audio);
     }
 
     return val;
@@ -221,17 +215,6 @@ bool EpisodeSchema::fromJson(const web::json::value& val)
             
         }
     }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("audio"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("audio")));
-        if(!fieldValue.is_null())
-        {
-            std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setAudio;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setAudio);
-            setAudio(refVal_setAudio);
-            
-        }
-    }
     return ok;
 }
 
@@ -281,10 +264,6 @@ void EpisodeSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, co
     if(m_Updated_by.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("updated_by")), m_Updated_by.get()));
-    }
-    if(m_AudioIsSet)
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("audio")), m_Audio));
     }
 }
 
@@ -356,12 +335,6 @@ bool EpisodeSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, 
         utility::string_t refVal_setUpdatedBy;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("updated_by"))), refVal_setUpdatedBy );
         setUpdatedBy(refVal_setUpdatedBy);
-    }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("audio"))))
-    {
-        std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setAudio;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("audio"))), refVal_setAudio );
-        setAudio(refVal_setAudio);
     }
     return ok;
 }
@@ -572,27 +545,6 @@ bool EpisodeSchema::updatedByIsSet() const
 void EpisodeSchema::unsetUpdated_by()
 {
     m_Updated_by.reset();
-}
-std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> EpisodeSchema::getAudio() const
-{
-    return m_Audio;
-}
-
-
-void EpisodeSchema::setAudio(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value)
-{
-    m_Audio = value;
-    m_AudioIsSet = true;
-}
-
-bool EpisodeSchema::audioIsSet() const
-{
-    return m_AudioIsSet;
-}
-
-void EpisodeSchema::unsetAudio()
-{
-    m_AudioIsSet = false;
 }
 
 }
