@@ -10,18 +10,19 @@
  */
 
 /*
- * AssetControlProfilePatchSchema_default_runtime_option_ids_value_value.h
+ * WorkflowWorkerSourceUpdateSchema.h
  *
- * 
+ * Payload for &#x60;&#x60;PUT /workflows/{uuid}/worker-source&#x60;&#x60; (save override).
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_AssetControlProfilePatchSchema_default_runtime_option_ids_value_value_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_AssetControlProfilePatchSchema_default_runtime_option_ids_value_value_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_WorkflowWorkerSourceUpdateSchema_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_WorkflowWorkerSourceUpdateSchema_H_
 
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include <cpprest/details/basic_types.h>
 
 namespace org {
 namespace openapitools {
@@ -30,12 +31,15 @@ namespace model {
 
 
 
-class  AssetControlProfilePatchSchema_default_runtime_option_ids_value_value
+/// <summary>
+/// Payload for &#x60;&#x60;PUT /workflows/{uuid}/worker-source&#x60;&#x60; (save override).
+/// </summary>
+class  WorkflowWorkerSourceUpdateSchema
     : public ModelBase
 {
 public:
-    AssetControlProfilePatchSchema_default_runtime_option_ids_value_value();
-    virtual ~AssetControlProfilePatchSchema_default_runtime_option_ids_value_value();
+    WorkflowWorkerSourceUpdateSchema();
+    virtual ~WorkflowWorkerSourceUpdateSchema();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -50,11 +54,19 @@ public:
 
 
     /////////////////////////////////////////////
-    /// AssetControlProfilePatchSchema_default_runtime_option_ids_value_value members
+    /// WorkflowWorkerSourceUpdateSchema members
 
+
+    utility::string_t getSource() const;
+    bool sourceIsSet() const;
+    void unsetSource();
+    void setSource(const utility::string_t& value);
 
 
 protected:
+    utility::string_t m_Source;
+    bool m_SourceIsSet;
+
 };
 
 
@@ -63,4 +75,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_AssetControlProfilePatchSchema_default_runtime_option_ids_value_value_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_WorkflowWorkerSourceUpdateSchema_H_ */

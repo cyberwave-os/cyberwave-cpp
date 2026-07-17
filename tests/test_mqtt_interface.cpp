@@ -208,6 +208,11 @@ static void test_webrtc_and_command_topics()
     assert(m.subscribes[2].topic == "test/cyberwave/twin/twin-1/webrtc-candidate");
     assert(m.publishes[1].topic == "test/cyberwave/twin/twin-1/command");
     assert(m.subscribes[3].topic == "test/cyberwave/twin/twin-1/command");
+
+    auto scoped = m.subscribe_webrtc_messages_scoped("twin-2", [](const std::string&) {});
+    assert(m.subscribes.size() == 6);
+    assert(m.subscribes[3].topic == "test/cyberwave/twin/twin-2/webrtc-offer");
+    scoped.reset();
 }
 
 /** Ping / pong topics */

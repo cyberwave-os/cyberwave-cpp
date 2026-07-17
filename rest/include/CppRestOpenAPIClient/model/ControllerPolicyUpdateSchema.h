@@ -87,6 +87,11 @@ public:
     void unsetAsset_uuids();
     void setAssetUuids(const std::vector<utility::string_t>& value);
 
+    std::vector<utility::string_t> getAssetRegistryIds() const;
+    bool assetRegistryIdsIsSet() const;
+    void unsetAsset_registry_ids();
+    void setAssetRegistryIds(const std::vector<utility::string_t>& value);
+
     utility::string_t getDevice() const;
     bool deviceIsSet() const;
     void unsetDevice();
@@ -105,6 +110,8 @@ protected:
     boost::optional<utility::string_t> m_Visibility;
 
     boost::optional<std::vector<utility::string_t>> m_Asset_uuids;
+
+    boost::optional<std::vector<utility::string_t>> m_Asset_registry_ids;
 
     boost::optional<utility::string_t> m_Device;
 

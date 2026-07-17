@@ -198,6 +198,26 @@ public:
     void unsetRl_config_spec();
     void setRlConfigSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getTrainingCommandSpec() const;
+    bool trainingCommandSpecIsSet() const;
+    void unsetTraining_command_spec();
+    void setTrainingCommandSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getInferenceCommandSpec() const;
+    bool inferenceCommandSpecIsSet() const;
+    void unsetInference_command_spec();
+    void setInferenceCommandSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    bool isTrainingCommandSetupEnabled() const;
+    bool trainingCommandSetupEnabledIsSet() const;
+    void unsetTraining_command_setup_enabled();
+    void setTrainingCommandSetupEnabled(bool value);
+
+    bool isInferenceCommandSetupEnabled() const;
+    bool inferenceCommandSetupEnabledIsSet() const;
+    void unsetInference_command_setup_enabled();
+    void setInferenceCommandSetupEnabled(bool value);
+
     bool isHasSceneCfg() const;
     bool hasSceneCfgIsSet() const;
     void unsetHas_scene_cfg();
@@ -319,6 +339,18 @@ protected:
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Rl_config_spec;
     bool m_Rl_config_specIsSet;
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> m_Training_command_spec;
+    bool m_Training_command_specIsSet;
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> m_Inference_command_spec;
+    bool m_Inference_command_specIsSet;
+
+    bool m_Training_command_setup_enabled;
+    bool m_Training_command_setup_enabledIsSet;
+
+    bool m_Inference_command_setup_enabled;
+    bool m_Inference_command_setup_enabledIsSet;
 
     bool m_Has_scene_cfg;
     bool m_Has_scene_cfgIsSet;

@@ -50,6 +50,11 @@ web::json::value DatasetCreateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("metadata"))] = ModelBase::toJson(m_Metadata.get());
     }
+    if(m_Include_audio.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("include_audio"))] = ModelBase::toJson(m_Include_audio.get());
+    }
 
     return val;
 }
@@ -90,6 +95,17 @@ bool DatasetCreateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("include_audio"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("include_audio")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setIncludeAudio;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setIncludeAudio);
+            setIncludeAudio(refVal_setIncludeAudio);
+            
+        }
+    }
     return ok;
 }
 
@@ -111,6 +127,10 @@ void DatasetCreateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipa
     if(m_Metadata.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata.get()));
+    }
+    if(m_Include_audio.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("include_audio")), m_Include_audio.get()));
     }
 }
 
@@ -140,6 +160,12 @@ bool DatasetCreateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multi
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))), refVal_setMetadata );
         setMetadata(refVal_setMetadata);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("include_audio"))))
+    {
+        bool refVal_setIncludeAudio;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("include_audio"))), refVal_setIncludeAudio );
+        setIncludeAudio(refVal_setIncludeAudio);
     }
     return ok;
 }
@@ -205,6 +231,25 @@ bool DatasetCreateSchema::metadataIsSet() const
 void DatasetCreateSchema::unsetMetadata()
 {
     m_Metadata.reset();
+}
+bool DatasetCreateSchema::isIncludeAudio() const
+{
+    return m_Include_audio.get();
+}
+
+void DatasetCreateSchema::setIncludeAudio(bool value)
+{
+    m_Include_audio = value;
+}
+
+bool DatasetCreateSchema::includeAudioIsSet() const
+{
+    return m_Include_audio.has_value();
+}
+
+void DatasetCreateSchema::unsetInclude_audio()
+{
+    m_Include_audio.reset();
 }
 
 }

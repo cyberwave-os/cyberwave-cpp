@@ -98,8 +98,8 @@ sudo cmake --install build
 | `OpenSSL` | Yes | TLS |
 | `libmosquitto` + `nlohmann_json` + `spdlog` | For MQTT | Real-time pub/sub |
 | `OpenCV` | Optional | `camera_stream_opencv` example (`./install.sh --with-opencv`) |
-| `libdatachannel` | Optional | WebRTC camera streaming |
-| FFmpeg (`libavcodec`, `libavutil`, `libswscale`) | Optional | H264 encoding in CameraStreamer |
+| `libdatachannel` | Optional | WebRTC in CameraStreamer and EncodedH264CameraStreamer |
+| FFmpeg (`libavcodec`, `libavutil`, `libswscale`) | Optional | H264 encoding in CameraStreamer (not required for EncodedH264CameraStreamer passthrough) |
 
 ## Using the SDK in Your Project
 

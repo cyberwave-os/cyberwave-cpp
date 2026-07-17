@@ -168,6 +168,26 @@ public:
     void unsetRl_config_spec();
     void setRlConfigSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getTrainingCommandSpec() const;
+    bool trainingCommandSpecIsSet() const;
+    void unsetTraining_command_spec();
+    void setTrainingCommandSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getInferenceCommandSpec() const;
+    bool inferenceCommandSpecIsSet() const;
+    void unsetInference_command_spec();
+    void setInferenceCommandSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    bool isTrainingCommandSetupEnabled() const;
+    bool trainingCommandSetupEnabledIsSet() const;
+    void unsetTraining_command_setup_enabled();
+    void setTrainingCommandSetupEnabled(bool value);
+
+    bool isInferenceCommandSetupEnabled() const;
+    bool inferenceCommandSetupEnabledIsSet() const;
+    void unsetInference_command_setup_enabled();
+    void setInferenceCommandSetupEnabled(bool value);
+
 
 protected:
     boost::optional<utility::string_t> m_Name;
@@ -205,6 +225,14 @@ protected:
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Observation_spec;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Rl_config_spec;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Training_command_spec;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Inference_command_spec;
+
+    boost::optional<bool> m_Training_command_setup_enabled;
+
+    boost::optional<bool> m_Inference_command_setup_enabled;
 
 };
 

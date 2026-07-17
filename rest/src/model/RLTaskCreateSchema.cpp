@@ -139,6 +139,26 @@ web::json::value RLTaskCreateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("rl_config_spec"))] = ModelBase::toJson(m_Rl_config_spec.get());
     }
+    if(m_Training_command_spec.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("training_command_spec"))] = ModelBase::toJson(m_Training_command_spec.get());
+    }
+    if(m_Inference_command_spec.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))] = ModelBase::toJson(m_Inference_command_spec.get());
+    }
+    if(m_Training_command_setup_enabled.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled"))] = ModelBase::toJson(m_Training_command_setup_enabled.get());
+    }
+    if(m_Inference_command_setup_enabled.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))] = ModelBase::toJson(m_Inference_command_setup_enabled.get());
+    }
     if(m_Initial_source_files.has_value())
     {
         
@@ -362,6 +382,50 @@ bool RLTaskCreateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("training_command_spec"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("training_command_spec")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setTrainingCommandSpec;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTrainingCommandSpec);
+            setTrainingCommandSpec(refVal_setTrainingCommandSpec);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setInferenceCommandSpec;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setInferenceCommandSpec);
+            setInferenceCommandSpec(refVal_setInferenceCommandSpec);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setTrainingCommandSetupEnabled;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTrainingCommandSetupEnabled);
+            setTrainingCommandSetupEnabled(refVal_setTrainingCommandSetupEnabled);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setInferenceCommandSetupEnabled;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setInferenceCommandSetupEnabled);
+            setInferenceCommandSetupEnabled(refVal_setInferenceCommandSetupEnabled);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("initial_source_files"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("initial_source_files")));
@@ -458,6 +522,22 @@ void RLTaskCreateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipar
     if(m_Rl_config_spec.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("rl_config_spec")), m_Rl_config_spec.get()));
+    }
+    if(m_Training_command_spec.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("training_command_spec")), m_Training_command_spec.get()));
+    }
+    if(m_Inference_command_spec.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("inference_command_spec")), m_Inference_command_spec.get()));
+    }
+    if(m_Training_command_setup_enabled.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled")), m_Training_command_setup_enabled.get()));
+    }
+    if(m_Inference_command_setup_enabled.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled")), m_Inference_command_setup_enabled.get()));
     }
     if(m_Initial_source_files.has_value())
     {
@@ -587,6 +667,30 @@ bool RLTaskCreateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setRlConfigSpec;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("rl_config_spec"))), refVal_setRlConfigSpec );
         setRlConfigSpec(refVal_setRlConfigSpec);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("training_command_spec"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setTrainingCommandSpec;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("training_command_spec"))), refVal_setTrainingCommandSpec );
+        setTrainingCommandSpec(refVal_setTrainingCommandSpec);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setInferenceCommandSpec;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))), refVal_setInferenceCommandSpec );
+        setInferenceCommandSpec(refVal_setInferenceCommandSpec);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled"))))
+    {
+        bool refVal_setTrainingCommandSetupEnabled;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("training_command_setup_enabled"))), refVal_setTrainingCommandSetupEnabled );
+        setTrainingCommandSetupEnabled(refVal_setTrainingCommandSetupEnabled);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))))
+    {
+        bool refVal_setInferenceCommandSetupEnabled;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))), refVal_setInferenceCommandSetupEnabled );
+        setInferenceCommandSetupEnabled(refVal_setInferenceCommandSetupEnabled);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("initial_source_files"))))
     {
@@ -1034,6 +1138,84 @@ bool RLTaskCreateSchema::rlConfigSpecIsSet() const
 void RLTaskCreateSchema::unsetRl_config_spec()
 {
     m_Rl_config_spec.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> RLTaskCreateSchema::getTrainingCommandSpec() const
+{
+    return m_Training_command_spec.get();
+}
+
+
+void RLTaskCreateSchema::setTrainingCommandSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Training_command_spec = value;
+}
+
+bool RLTaskCreateSchema::trainingCommandSpecIsSet() const
+{
+    return m_Training_command_spec.has_value();
+}
+
+void RLTaskCreateSchema::unsetTraining_command_spec()
+{
+    m_Training_command_spec.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> RLTaskCreateSchema::getInferenceCommandSpec() const
+{
+    return m_Inference_command_spec.get();
+}
+
+
+void RLTaskCreateSchema::setInferenceCommandSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Inference_command_spec = value;
+}
+
+bool RLTaskCreateSchema::inferenceCommandSpecIsSet() const
+{
+    return m_Inference_command_spec.has_value();
+}
+
+void RLTaskCreateSchema::unsetInference_command_spec()
+{
+    m_Inference_command_spec.reset();
+}
+bool RLTaskCreateSchema::isTrainingCommandSetupEnabled() const
+{
+    return m_Training_command_setup_enabled.get();
+}
+
+void RLTaskCreateSchema::setTrainingCommandSetupEnabled(bool value)
+{
+    m_Training_command_setup_enabled = value;
+}
+
+bool RLTaskCreateSchema::trainingCommandSetupEnabledIsSet() const
+{
+    return m_Training_command_setup_enabled.has_value();
+}
+
+void RLTaskCreateSchema::unsetTraining_command_setup_enabled()
+{
+    m_Training_command_setup_enabled.reset();
+}
+bool RLTaskCreateSchema::isInferenceCommandSetupEnabled() const
+{
+    return m_Inference_command_setup_enabled.get();
+}
+
+void RLTaskCreateSchema::setInferenceCommandSetupEnabled(bool value)
+{
+    m_Inference_command_setup_enabled = value;
+}
+
+bool RLTaskCreateSchema::inferenceCommandSetupEnabledIsSet() const
+{
+    return m_Inference_command_setup_enabled.has_value();
+}
+
+void RLTaskCreateSchema::unsetInference_command_setup_enabled()
+{
+    m_Inference_command_setup_enabled.reset();
 }
 std::vector<std::shared_ptr<RLTaskInitialSourceFileSchema>> RLTaskCreateSchema::getInitialSourceFiles() const
 {

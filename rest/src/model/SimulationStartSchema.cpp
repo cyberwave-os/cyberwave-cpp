@@ -73,6 +73,11 @@ web::json::value SimulationStartSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("auto_run_controllers"))] = ModelBase::toJson(m_Auto_run_controllers);
     }
+    if(m_Stream_profile.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("stream_profile"))] = ModelBase::toJson(m_Stream_profile.get());
+    }
 
     return val;
 }
@@ -158,6 +163,17 @@ bool SimulationStartSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("stream_profile"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("stream_profile")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<SimulationStreamProfileSchema>> refVal_setStreamProfile;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setStreamProfile);
+            setStreamProfile(refVal_setStreamProfile);
+            
+        }
+    }
     return ok;
 }
 
@@ -195,6 +211,10 @@ void SimulationStartSchema::toMultipart(std::shared_ptr<MultipartFormData> multi
     if(m_Auto_run_controllersIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("auto_run_controllers")), m_Auto_run_controllers));
+    }
+    if(m_Stream_profile.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("stream_profile")), m_Stream_profile.get()));
     }
 }
 
@@ -248,6 +268,12 @@ bool SimulationStartSchema::fromMultiPart(std::shared_ptr<MultipartFormData> mul
         bool refVal_setAutoRunControllers;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("auto_run_controllers"))), refVal_setAutoRunControllers );
         setAutoRunControllers(refVal_setAutoRunControllers);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("stream_profile"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<SimulationStreamProfileSchema>> refVal_setStreamProfile;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("stream_profile"))), refVal_setStreamProfile );
+        setStreamProfile(refVal_setStreamProfile);
     }
     return ok;
 }
@@ -423,6 +449,26 @@ bool SimulationStartSchema::autoRunControllersIsSet() const
 void SimulationStartSchema::unsetAuto_run_controllers()
 {
     m_Auto_run_controllersIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<SimulationStreamProfileSchema>> SimulationStartSchema::getStreamProfile() const
+{
+    return m_Stream_profile.get();
+}
+
+
+void SimulationStartSchema::setStreamProfile(const std::map<utility::string_t, std::shared_ptr<SimulationStreamProfileSchema>>& value)
+{
+    m_Stream_profile = value;
+}
+
+bool SimulationStartSchema::streamProfileIsSet() const
+{
+    return m_Stream_profile.has_value();
+}
+
+void SimulationStartSchema::unsetStream_profile()
+{
+    m_Stream_profile.reset();
 }
 
 }
