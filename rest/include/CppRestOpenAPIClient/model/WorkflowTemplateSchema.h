@@ -159,6 +159,11 @@ public:
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    bool isHasWorkerSourceOverride() const;
+    bool hasWorkerSourceOverrideIsSet() const;
+    void unsetHas_worker_source_override();
+    void setHasWorkerSourceOverride(bool value);
+
     std::vector<std::shared_ptr<WorkflowNodeSchema>> getNodes() const;
     bool nodesIsSet() const;
     void unsetNodes();
@@ -227,6 +232,9 @@ protected:
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Metadata;
     bool m_MetadataIsSet;
+
+    bool m_Has_worker_source_override;
+    bool m_Has_worker_source_overrideIsSet;
 
     boost::optional<std::vector<std::shared_ptr<WorkflowNodeSchema>>> m_Nodes;
 

@@ -69,6 +69,11 @@ web::json::value RLTaskSceneEntityCreateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("twin_name"))] = ModelBase::toJson(m_Twin_name.get());
     }
+    if(m_Environment_object_external_id.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("environment_object_external_id"))] = ModelBase::toJson(m_Environment_object_external_id.get());
+    }
     if(m_Initial_state.has_value())
     {
         
@@ -175,6 +180,17 @@ bool RLTaskSceneEntityCreateSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setTwinName;
             ok &= ModelBase::fromJson(fieldValue, refVal_setTwinName);
             setTwinName(refVal_setTwinName);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("environment_object_external_id"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("environment_object_external_id")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setEnvironmentObjectExternalId;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setEnvironmentObjectExternalId);
+            setEnvironmentObjectExternalId(refVal_setEnvironmentObjectExternalId);
             
         }
     }
@@ -307,6 +323,10 @@ void RLTaskSceneEntityCreateSchema::toMultipart(std::shared_ptr<MultipartFormDat
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("twin_name")), m_Twin_name.get()));
     }
+    if(m_Environment_object_external_id.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("environment_object_external_id")), m_Environment_object_external_id.get()));
+    }
     if(m_Initial_state.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("initial_state")), m_Initial_state.get()));
@@ -383,6 +403,12 @@ bool RLTaskSceneEntityCreateSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         utility::string_t refVal_setTwinName;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("twin_name"))), refVal_setTwinName );
         setTwinName(refVal_setTwinName);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("environment_object_external_id"))))
+    {
+        utility::string_t refVal_setEnvironmentObjectExternalId;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("environment_object_external_id"))), refVal_setEnvironmentObjectExternalId );
+        setEnvironmentObjectExternalId(refVal_setEnvironmentObjectExternalId);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("initial_state"))))
     {
@@ -598,6 +624,26 @@ bool RLTaskSceneEntityCreateSchema::twinNameIsSet() const
 void RLTaskSceneEntityCreateSchema::unsetTwin_name()
 {
     m_Twin_name.reset();
+}
+utility::string_t RLTaskSceneEntityCreateSchema::getEnvironmentObjectExternalId() const
+{
+    return m_Environment_object_external_id.get();
+}
+
+
+void RLTaskSceneEntityCreateSchema::setEnvironmentObjectExternalId(const utility::string_t& value)
+{
+    m_Environment_object_external_id = value;
+}
+
+bool RLTaskSceneEntityCreateSchema::environmentObjectExternalIdIsSet() const
+{
+    return m_Environment_object_external_id.has_value();
+}
+
+void RLTaskSceneEntityCreateSchema::unsetEnvironment_object_external_id()
+{
+    m_Environment_object_external_id.reset();
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> RLTaskSceneEntityCreateSchema::getInitialState() const
 {

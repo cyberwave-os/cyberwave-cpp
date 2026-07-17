@@ -84,6 +84,11 @@ public:
     void unsetWorkload_uuid();
     void setWorkloadUuid(const utility::string_t& value);
 
+    utility::string_t getInstanceUuid() const;
+    bool instanceUuidIsSet() const;
+    void unsetInstance_uuid();
+    void setInstanceUuid(const utility::string_t& value);
+
     utility::string_t getPhase() const;
     bool phaseIsSet() const;
     void unsetPhase();
@@ -132,6 +137,8 @@ protected:
     bool m_Controller_policy_uuidIsSet;
 
     boost::optional<utility::string_t> m_Workload_uuid;
+
+    boost::optional<utility::string_t> m_Instance_uuid;
 
     utility::string_t m_Phase;
     bool m_PhaseIsSet;

@@ -72,6 +72,11 @@ public:
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    bool isIncludeAudio() const;
+    bool includeAudioIsSet() const;
+    void unsetInclude_audio();
+    void setIncludeAudio(bool value);
+
 
 protected:
     std::vector<utility::string_t> m_Episodes;
@@ -80,6 +85,8 @@ protected:
     boost::optional<utility::string_t> m_Name;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
+
+    boost::optional<bool> m_Include_audio;
 
 };
 

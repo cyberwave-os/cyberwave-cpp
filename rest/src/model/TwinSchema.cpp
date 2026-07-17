@@ -75,6 +75,8 @@ TwinSchema::TwinSchema()
     m_Fixed_baseIsSet = false;
     m_Supported_simulation_backendsIsSet = false;
     m_Export_warningsIsSet = false;
+    m_Mqtt_command_schemaIsSet = false;
+    m_Controllable_joint_namesIsSet = false;
 }
 
 TwinSchema::~TwinSchema()
@@ -293,6 +295,16 @@ web::json::value TwinSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("export_warnings"))] = ModelBase::toJson(m_Export_warnings);
+    }
+    if(m_Mqtt_command_schemaIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("mqtt_command_schema"))] = ModelBase::toJson(m_Mqtt_command_schema);
+    }
+    if(m_Controllable_joint_namesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("controllable_joint_names"))] = ModelBase::toJson(m_Controllable_joint_names);
     }
 
     return val;
@@ -752,6 +764,28 @@ bool TwinSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("mqtt_command_schema"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("mqtt_command_schema")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMqttCommandSchema;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setMqttCommandSchema);
+            setMqttCommandSchema(refVal_setMqttCommandSchema);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("controllable_joint_names"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("controllable_joint_names")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<utility::string_t> refVal_setControllableJointNames;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setControllableJointNames);
+            setControllableJointNames(refVal_setControllableJointNames);
+            
+        }
+    }
     return ok;
 }
 
@@ -925,6 +959,14 @@ void TwinSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const
     if(m_Export_warningsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("export_warnings")), m_Export_warnings));
+    }
+    if(m_Mqtt_command_schemaIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("mqtt_command_schema")), m_Mqtt_command_schema));
+    }
+    if(m_Controllable_joint_namesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controllable_joint_names")), m_Controllable_joint_names));
     }
 }
 
@@ -1182,6 +1224,18 @@ bool TwinSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
         std::vector<std::map<utility::string_t, utility::string_t>> refVal_setExportWarnings;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("export_warnings"))), refVal_setExportWarnings );
         setExportWarnings(refVal_setExportWarnings);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("mqtt_command_schema"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMqttCommandSchema;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("mqtt_command_schema"))), refVal_setMqttCommandSchema );
+        setMqttCommandSchema(refVal_setMqttCommandSchema);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("controllable_joint_names"))))
+    {
+        std::vector<utility::string_t> refVal_setControllableJointNames;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("controllable_joint_names"))), refVal_setControllableJointNames );
+        setControllableJointNames(refVal_setControllableJointNames);
     }
     return ok;
 }
@@ -2018,6 +2072,48 @@ bool TwinSchema::exportWarningsIsSet() const
 void TwinSchema::unsetExport_warnings()
 {
     m_Export_warningsIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> TwinSchema::getMqttCommandSchema() const
+{
+    return m_Mqtt_command_schema;
+}
+
+
+void TwinSchema::setMqttCommandSchema(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Mqtt_command_schema = value;
+    m_Mqtt_command_schemaIsSet = true;
+}
+
+bool TwinSchema::mqttCommandSchemaIsSet() const
+{
+    return m_Mqtt_command_schemaIsSet;
+}
+
+void TwinSchema::unsetMqtt_command_schema()
+{
+    m_Mqtt_command_schemaIsSet = false;
+}
+std::vector<utility::string_t> TwinSchema::getControllableJointNames() const
+{
+    return m_Controllable_joint_names;
+}
+
+
+void TwinSchema::setControllableJointNames(const std::vector<utility::string_t>& value)
+{
+    m_Controllable_joint_names = value;
+    m_Controllable_joint_namesIsSet = true;
+}
+
+bool TwinSchema::controllableJointNamesIsSet() const
+{
+    return m_Controllable_joint_namesIsSet;
+}
+
+void TwinSchema::unsetControllable_joint_names()
+{
+    m_Controllable_joint_namesIsSet = false;
 }
 
 }

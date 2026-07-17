@@ -24,6 +24,8 @@ ControllerPolicyExecuteSchema::ControllerPolicyExecuteSchema()
     m_Twin_uuidIsSet = false;
     m_Execution = utility::conversions::to_string_t("");
     m_ExecutionIsSet = false;
+    m_Confirm_live = false;
+    m_Confirm_liveIsSet = false;
     m_PayloadIsSet = false;
     m_Server_mode = false;
     m_Server_modeIsSet = false;
@@ -57,6 +59,18 @@ web::json::value ControllerPolicyExecuteSchema::toJson() const
         utility::string_t refVal = fromModeEnum(m_Mode.get());
         val[utility::conversions::to_string_t(_XPLATSTR("mode"))] = ModelBase::toJson(refVal);
         
+    }
+    if(m_Transport.has_value())
+    {
+        
+        utility::string_t refVal = fromTransportEnum(m_Transport.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("transport"))] = ModelBase::toJson(refVal);
+        
+    }
+    if(m_Confirm_liveIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("confirm_live"))] = ModelBase::toJson(m_Confirm_live);
     }
     if(m_Runtime_kind.has_value())
     {
@@ -156,6 +170,16 @@ web::json::value ControllerPolicyExecuteSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("server_mode"))] = ModelBase::toJson(m_Server_mode);
     }
+    if(m_Inference_command.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("inference_command"))] = ModelBase::toJson(m_Inference_command.get());
+    }
+    if(m_Runtime_params.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("runtime_params"))] = ModelBase::toJson(m_Runtime_params.get());
+    }
 
     return val;
 }
@@ -194,6 +218,29 @@ bool ControllerPolicyExecuteSchema::fromJson(const web::json::value& val)
             ok &= ModelBase::fromJson(fieldValue, refVal_setMode);
             
             setMode(toModeEnum(refVal_setMode));
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("transport"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("transport")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setTransport;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTransport);
+            
+            setTransport(toTransportEnum(refVal_setTransport));
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("confirm_live"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("confirm_live")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setConfirmLive;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setConfirmLive);
+            setConfirmLive(refVal_setConfirmLive);
             
         }
     }
@@ -399,6 +446,28 @@ bool ControllerPolicyExecuteSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("inference_command"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("inference_command")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setInferenceCommand;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setInferenceCommand);
+            setInferenceCommand(refVal_setInferenceCommand);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("runtime_params"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("runtime_params")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setRuntimeParams;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRuntimeParams);
+            setRuntimeParams(refVal_setRuntimeParams);
+            
+        }
+    }
     return ok;
 }
 
@@ -420,6 +489,14 @@ void ControllerPolicyExecuteSchema::toMultipart(std::shared_ptr<MultipartFormDat
     if(m_Mode.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("mode")), fromModeEnum(m_Mode.get())));
+    }
+    if(m_Transport.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("transport")), fromTransportEnum(m_Transport.get())));
+    }
+    if(m_Confirm_liveIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("confirm_live")), m_Confirm_live));
     }
     if(m_Runtime_kind.has_value())
     {
@@ -493,6 +570,14 @@ void ControllerPolicyExecuteSchema::toMultipart(std::shared_ptr<MultipartFormDat
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("server_mode")), m_Server_mode));
     }
+    if(m_Inference_command.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("inference_command")), m_Inference_command.get()));
+    }
+    if(m_Runtime_params.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("runtime_params")), m_Runtime_params.get()));
+    }
 }
 
 bool ControllerPolicyExecuteSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix)
@@ -521,6 +606,18 @@ bool ControllerPolicyExecuteSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         utility::string_t refVal_setMode;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("mode"))), refVal_setMode );
         setMode(toModeEnum(refVal_setMode));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("transport"))))
+    {
+        utility::string_t refVal_setTransport;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("transport"))), refVal_setTransport );
+        setTransport(toTransportEnum(refVal_setTransport));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("confirm_live"))))
+    {
+        bool refVal_setConfirmLive;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("confirm_live"))), refVal_setConfirmLive );
+        setConfirmLive(refVal_setConfirmLive);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("runtime_kind"))))
     {
@@ -630,6 +727,18 @@ bool ControllerPolicyExecuteSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("server_mode"))), refVal_setServerMode );
         setServerMode(refVal_setServerMode);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("inference_command"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setInferenceCommand;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("inference_command"))), refVal_setInferenceCommand );
+        setInferenceCommand(refVal_setInferenceCommand);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("runtime_params"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setRuntimeParams;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("runtime_params"))), refVal_setRuntimeParams );
+        setRuntimeParams(refVal_setRuntimeParams);
+    }
     return ok;
 }
 
@@ -656,6 +765,33 @@ const utility::string_t ControllerPolicyExecuteSchema::fromModeEnum(const ModeEn
         case ModeEnum::LIVE: return utility::conversions::to_string_t("live");
         
         case ModeEnum::SIMULATION: return utility::conversions::to_string_t("simulation");
+        
+    }
+}
+
+ControllerPolicyExecuteSchema::TransportEnum ControllerPolicyExecuteSchema::toTransportEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("zenoh")) {
+        return TransportEnum::ZENOH;
+    }
+    
+    if (value == utility::conversions::to_string_t("mqtt")) {
+        return TransportEnum::MQTT;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to TransportEnum");
+}
+
+
+const utility::string_t ControllerPolicyExecuteSchema::fromTransportEnum(const TransportEnum value) const
+{
+    switch(value)
+    {
+        
+        case TransportEnum::ZENOH: return utility::conversions::to_string_t("zenoh");
+        
+        case TransportEnum::MQTT: return utility::conversions::to_string_t("mqtt");
         
     }
 }
@@ -848,6 +984,46 @@ bool ControllerPolicyExecuteSchema::modeIsSet() const
 void ControllerPolicyExecuteSchema::unsetMode()
 {
     m_Mode.reset();
+}
+ControllerPolicyExecuteSchema::TransportEnum ControllerPolicyExecuteSchema::getTransport() const
+{
+    return m_Transport.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setTransport(const TransportEnum value)
+{
+    m_Transport = value;
+}
+
+bool ControllerPolicyExecuteSchema::transportIsSet() const
+{
+    return m_Transport.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetTransport()
+{
+    m_Transport.reset();
+}
+bool ControllerPolicyExecuteSchema::isConfirmLive() const
+{
+    return m_Confirm_live;
+}
+
+void ControllerPolicyExecuteSchema::setConfirmLive(bool value)
+{
+    m_Confirm_live = value;
+    m_Confirm_liveIsSet = true;
+}
+
+bool ControllerPolicyExecuteSchema::confirmLiveIsSet() const
+{
+    return m_Confirm_liveIsSet;
+}
+
+void ControllerPolicyExecuteSchema::unsetConfirm_live()
+{
+    m_Confirm_liveIsSet = false;
 }
 ControllerPolicyExecuteSchema::Runtime_kindEnum ControllerPolicyExecuteSchema::getRuntimeKind() const
 {
@@ -1201,6 +1377,46 @@ bool ControllerPolicyExecuteSchema::serverModeIsSet() const
 void ControllerPolicyExecuteSchema::unsetServer_mode()
 {
     m_Server_modeIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> ControllerPolicyExecuteSchema::getInferenceCommand() const
+{
+    return m_Inference_command.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setInferenceCommand(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Inference_command = value;
+}
+
+bool ControllerPolicyExecuteSchema::inferenceCommandIsSet() const
+{
+    return m_Inference_command.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetInference_command()
+{
+    m_Inference_command.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> ControllerPolicyExecuteSchema::getRuntimeParams() const
+{
+    return m_Runtime_params.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setRuntimeParams(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Runtime_params = value;
+}
+
+bool ControllerPolicyExecuteSchema::runtimeParamsIsSet() const
+{
+    return m_Runtime_params.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetRuntime_params()
+{
+    m_Runtime_params.reset();
 }
 
 }

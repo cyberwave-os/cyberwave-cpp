@@ -26,6 +26,10 @@ CatalogSeedRequestSchema::CatalogSeedRequestSchema()
     m_Seed_mlmodelsIsSet = false;
     m_Seed_workflow_templates = false;
     m_Seed_workflow_templatesIsSet = false;
+    m_Seed_asset_patches = false;
+    m_Seed_asset_patchesIsSet = false;
+    m_Seed_simplified_meshes = false;
+    m_Seed_simplified_meshesIsSet = false;
 }
 
 CatalogSeedRequestSchema::~CatalogSeedRequestSchema()
@@ -60,6 +64,16 @@ web::json::value CatalogSeedRequestSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("seed_workflow_templates"))] = ModelBase::toJson(m_Seed_workflow_templates);
     }
+    if(m_Seed_asset_patchesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("seed_asset_patches"))] = ModelBase::toJson(m_Seed_asset_patches);
+    }
+    if(m_Seed_simplified_meshesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("seed_simplified_meshes"))] = ModelBase::toJson(m_Seed_simplified_meshes);
+    }
     if(m_Controller_keys.has_value())
     {
         
@@ -74,6 +88,16 @@ web::json::value CatalogSeedRequestSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("workflow_template_keys"))] = ModelBase::toJson(m_Workflow_template_keys.get());
+    }
+    if(m_Asset_patch_keys.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("asset_patch_keys"))] = ModelBase::toJson(m_Asset_patch_keys.get());
+    }
+    if(m_Simplified_mesh_keys.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("simplified_mesh_keys"))] = ModelBase::toJson(m_Simplified_mesh_keys.get());
     }
 
     return val;
@@ -126,6 +150,28 @@ bool CatalogSeedRequestSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("seed_asset_patches"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("seed_asset_patches")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setSeedAssetPatches;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSeedAssetPatches);
+            setSeedAssetPatches(refVal_setSeedAssetPatches);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("seed_simplified_meshes"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("seed_simplified_meshes")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setSeedSimplifiedMeshes;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSeedSimplifiedMeshes);
+            setSeedSimplifiedMeshes(refVal_setSeedSimplifiedMeshes);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("controller_keys"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("controller_keys")));
@@ -159,6 +205,28 @@ bool CatalogSeedRequestSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("asset_patch_keys"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("asset_patch_keys")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<utility::string_t> refVal_setAssetPatchKeys;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAssetPatchKeys);
+            setAssetPatchKeys(refVal_setAssetPatchKeys);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("simplified_mesh_keys"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("simplified_mesh_keys")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<utility::string_t> refVal_setSimplifiedMeshKeys;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSimplifiedMeshKeys);
+            setSimplifiedMeshKeys(refVal_setSimplifiedMeshKeys);
+            
+        }
+    }
     return ok;
 }
 
@@ -185,6 +253,14 @@ void CatalogSeedRequestSchema::toMultipart(std::shared_ptr<MultipartFormData> mu
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("seed_workflow_templates")), m_Seed_workflow_templates));
     }
+    if(m_Seed_asset_patchesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("seed_asset_patches")), m_Seed_asset_patches));
+    }
+    if(m_Seed_simplified_meshesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("seed_simplified_meshes")), m_Seed_simplified_meshes));
+    }
     if(m_Controller_keys.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controller_keys")), m_Controller_keys.get()));
@@ -196,6 +272,14 @@ void CatalogSeedRequestSchema::toMultipart(std::shared_ptr<MultipartFormData> mu
     if(m_Workflow_template_keys.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workflow_template_keys")), m_Workflow_template_keys.get()));
+    }
+    if(m_Asset_patch_keys.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_patch_keys")), m_Asset_patch_keys.get()));
+    }
+    if(m_Simplified_mesh_keys.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("simplified_mesh_keys")), m_Simplified_mesh_keys.get()));
     }
 }
 
@@ -232,6 +316,18 @@ bool CatalogSeedRequestSchema::fromMultiPart(std::shared_ptr<MultipartFormData> 
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("seed_workflow_templates"))), refVal_setSeedWorkflowTemplates );
         setSeedWorkflowTemplates(refVal_setSeedWorkflowTemplates);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("seed_asset_patches"))))
+    {
+        bool refVal_setSeedAssetPatches;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("seed_asset_patches"))), refVal_setSeedAssetPatches );
+        setSeedAssetPatches(refVal_setSeedAssetPatches);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("seed_simplified_meshes"))))
+    {
+        bool refVal_setSeedSimplifiedMeshes;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("seed_simplified_meshes"))), refVal_setSeedSimplifiedMeshes );
+        setSeedSimplifiedMeshes(refVal_setSeedSimplifiedMeshes);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("controller_keys"))))
     {
         std::vector<utility::string_t> refVal_setControllerKeys;
@@ -249,6 +345,18 @@ bool CatalogSeedRequestSchema::fromMultiPart(std::shared_ptr<MultipartFormData> 
         std::vector<utility::string_t> refVal_setWorkflowTemplateKeys;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workflow_template_keys"))), refVal_setWorkflowTemplateKeys );
         setWorkflowTemplateKeys(refVal_setWorkflowTemplateKeys);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("asset_patch_keys"))))
+    {
+        std::vector<utility::string_t> refVal_setAssetPatchKeys;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_patch_keys"))), refVal_setAssetPatchKeys );
+        setAssetPatchKeys(refVal_setAssetPatchKeys);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("simplified_mesh_keys"))))
+    {
+        std::vector<utility::string_t> refVal_setSimplifiedMeshKeys;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("simplified_mesh_keys"))), refVal_setSimplifiedMeshKeys );
+        setSimplifiedMeshKeys(refVal_setSimplifiedMeshKeys);
     }
     return ok;
 }
@@ -334,6 +442,46 @@ void CatalogSeedRequestSchema::unsetSeed_workflow_templates()
 {
     m_Seed_workflow_templatesIsSet = false;
 }
+bool CatalogSeedRequestSchema::isSeedAssetPatches() const
+{
+    return m_Seed_asset_patches;
+}
+
+void CatalogSeedRequestSchema::setSeedAssetPatches(bool value)
+{
+    m_Seed_asset_patches = value;
+    m_Seed_asset_patchesIsSet = true;
+}
+
+bool CatalogSeedRequestSchema::seedAssetPatchesIsSet() const
+{
+    return m_Seed_asset_patchesIsSet;
+}
+
+void CatalogSeedRequestSchema::unsetSeed_asset_patches()
+{
+    m_Seed_asset_patchesIsSet = false;
+}
+bool CatalogSeedRequestSchema::isSeedSimplifiedMeshes() const
+{
+    return m_Seed_simplified_meshes;
+}
+
+void CatalogSeedRequestSchema::setSeedSimplifiedMeshes(bool value)
+{
+    m_Seed_simplified_meshes = value;
+    m_Seed_simplified_meshesIsSet = true;
+}
+
+bool CatalogSeedRequestSchema::seedSimplifiedMeshesIsSet() const
+{
+    return m_Seed_simplified_meshesIsSet;
+}
+
+void CatalogSeedRequestSchema::unsetSeed_simplified_meshes()
+{
+    m_Seed_simplified_meshesIsSet = false;
+}
 std::vector<utility::string_t> CatalogSeedRequestSchema::getControllerKeys() const
 {
     return m_Controller_keys.get();
@@ -393,6 +541,46 @@ bool CatalogSeedRequestSchema::workflowTemplateKeysIsSet() const
 void CatalogSeedRequestSchema::unsetWorkflow_template_keys()
 {
     m_Workflow_template_keys.reset();
+}
+std::vector<utility::string_t> CatalogSeedRequestSchema::getAssetPatchKeys() const
+{
+    return m_Asset_patch_keys.get();
+}
+
+
+void CatalogSeedRequestSchema::setAssetPatchKeys(const std::vector<utility::string_t>& value)
+{
+    m_Asset_patch_keys = value;
+}
+
+bool CatalogSeedRequestSchema::assetPatchKeysIsSet() const
+{
+    return m_Asset_patch_keys.has_value();
+}
+
+void CatalogSeedRequestSchema::unsetAsset_patch_keys()
+{
+    m_Asset_patch_keys.reset();
+}
+std::vector<utility::string_t> CatalogSeedRequestSchema::getSimplifiedMeshKeys() const
+{
+    return m_Simplified_mesh_keys.get();
+}
+
+
+void CatalogSeedRequestSchema::setSimplifiedMeshKeys(const std::vector<utility::string_t>& value)
+{
+    m_Simplified_mesh_keys = value;
+}
+
+bool CatalogSeedRequestSchema::simplifiedMeshKeysIsSet() const
+{
+    return m_Simplified_mesh_keys.has_value();
+}
+
+void CatalogSeedRequestSchema::unsetSimplified_mesh_keys()
+{
+    m_Simplified_mesh_keys.reset();
 }
 
 }

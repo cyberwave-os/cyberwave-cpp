@@ -177,6 +177,13 @@ public:
         inner_->subscribe_pointcloud_stream(twin_uuid, wrap(handler));
     }
 
+    std::unique_ptr<MqttSubscriptionHandle> subscribe_webrtc_messages_scoped(const std::string& twin_uuid,
+                                                                             MqttMessageHandler handler) override
+    {
+        inner_->publish_telemetry_start(twin_uuid);
+        return IMqttClient::subscribe_webrtc_messages_scoped(twin_uuid, std::move(handler));
+    }
+
     void subscribe_environment(const std::string& env_uuid, MqttMessageHandler handler) override
     {
         inner_->subscribe_environment(env_uuid, wrap(handler));

@@ -12,7 +12,7 @@
 /*
  * RLTaskSourceFileUpsertSchema.h
  *
- * Upsert payload for a single user-owned source file.
+ * Upsert payload for a single user-written source file.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_RLTaskSourceFileUpsertSchema_H_
@@ -32,7 +32,7 @@ namespace model {
 
 
 /// <summary>
-/// Upsert payload for a single user-owned source file.
+/// Upsert payload for a single user-written source file.
 /// </summary>
 class  RLTaskSourceFileUpsertSchema
     : public ModelBase

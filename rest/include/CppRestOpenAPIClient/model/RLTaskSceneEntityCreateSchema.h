@@ -104,6 +104,11 @@ public:
     void unsetTwin_name();
     void setTwinName(const utility::string_t& value);
 
+    utility::string_t getEnvironmentObjectExternalId() const;
+    bool environmentObjectExternalIdIsSet() const;
+    void unsetEnvironment_object_external_id();
+    void setEnvironmentObjectExternalId(const utility::string_t& value);
+
     std::map<utility::string_t, std::shared_ptr<AnyType>> getInitialState() const;
     bool initialStateIsSet() const;
     void unsetInitial_state();
@@ -163,6 +168,8 @@ protected:
     boost::optional<utility::string_t> m_Twin_uuid;
 
     boost::optional<utility::string_t> m_Twin_name;
+
+    boost::optional<utility::string_t> m_Environment_object_external_id;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Initial_state;
 

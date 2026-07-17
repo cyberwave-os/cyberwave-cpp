@@ -26,6 +26,8 @@ RLTaskPolicyProvenanceSchema::RLTaskPolicyProvenanceSchema()
     m_Source_statusIsSet = false;
     m_Source_code_available = false;
     m_Source_code_availableIsSet = false;
+    m_Inference_command_setup_enabled = false;
+    m_Inference_command_setup_enabledIsSet = false;
     m_WarningsIsSet = false;
 }
 
@@ -70,6 +72,16 @@ web::json::value RLTaskPolicyProvenanceSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("source_code_available"))] = ModelBase::toJson(m_Source_code_available);
+    }
+    if(m_Inference_command_setup_enabledIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))] = ModelBase::toJson(m_Inference_command_setup_enabled);
+    }
+    if(m_Inference_command_spec.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))] = ModelBase::toJson(m_Inference_command_spec.get());
     }
     if(m_WarningsIsSet)
     {
@@ -149,6 +161,28 @@ bool RLTaskPolicyProvenanceSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setInferenceCommandSetupEnabled;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setInferenceCommandSetupEnabled);
+            setInferenceCommandSetupEnabled(refVal_setInferenceCommandSetupEnabled);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setInferenceCommandSpec;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setInferenceCommandSpec);
+            setInferenceCommandSpec(refVal_setInferenceCommandSpec);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("warnings"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("warnings")));
@@ -193,6 +227,14 @@ void RLTaskPolicyProvenanceSchema::toMultipart(std::shared_ptr<MultipartFormData
     if(m_Source_code_availableIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("source_code_available")), m_Source_code_available));
+    }
+    if(m_Inference_command_setup_enabledIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled")), m_Inference_command_setup_enabled));
+    }
+    if(m_Inference_command_spec.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("inference_command_spec")), m_Inference_command_spec.get()));
     }
     if(m_WarningsIsSet)
     {
@@ -244,6 +286,18 @@ bool RLTaskPolicyProvenanceSchema::fromMultiPart(std::shared_ptr<MultipartFormDa
         bool refVal_setSourceCodeAvailable;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("source_code_available"))), refVal_setSourceCodeAvailable );
         setSourceCodeAvailable(refVal_setSourceCodeAvailable);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))))
+    {
+        bool refVal_setInferenceCommandSetupEnabled;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_setup_enabled"))), refVal_setInferenceCommandSetupEnabled );
+        setInferenceCommandSetupEnabled(refVal_setInferenceCommandSetupEnabled);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setInferenceCommandSpec;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("inference_command_spec"))), refVal_setInferenceCommandSpec );
+        setInferenceCommandSpec(refVal_setInferenceCommandSpec);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("warnings"))))
     {
@@ -376,6 +430,46 @@ bool RLTaskPolicyProvenanceSchema::sourceCodeAvailableIsSet() const
 void RLTaskPolicyProvenanceSchema::unsetSource_code_available()
 {
     m_Source_code_availableIsSet = false;
+}
+bool RLTaskPolicyProvenanceSchema::isInferenceCommandSetupEnabled() const
+{
+    return m_Inference_command_setup_enabled;
+}
+
+void RLTaskPolicyProvenanceSchema::setInferenceCommandSetupEnabled(bool value)
+{
+    m_Inference_command_setup_enabled = value;
+    m_Inference_command_setup_enabledIsSet = true;
+}
+
+bool RLTaskPolicyProvenanceSchema::inferenceCommandSetupEnabledIsSet() const
+{
+    return m_Inference_command_setup_enabledIsSet;
+}
+
+void RLTaskPolicyProvenanceSchema::unsetInference_command_setup_enabled()
+{
+    m_Inference_command_setup_enabledIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> RLTaskPolicyProvenanceSchema::getInferenceCommandSpec() const
+{
+    return m_Inference_command_spec.get();
+}
+
+
+void RLTaskPolicyProvenanceSchema::setInferenceCommandSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Inference_command_spec = value;
+}
+
+bool RLTaskPolicyProvenanceSchema::inferenceCommandSpecIsSet() const
+{
+    return m_Inference_command_spec.has_value();
+}
+
+void RLTaskPolicyProvenanceSchema::unsetInference_command_spec()
+{
+    m_Inference_command_spec.reset();
 }
 std::vector<utility::string_t> RLTaskPolicyProvenanceSchema::getWarnings() const
 {

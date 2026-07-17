@@ -25,6 +25,8 @@ CatalogSeedResponseSchema::CatalogSeedResponseSchema()
     m_ControllersIsSet = false;
     m_MlmodelsIsSet = false;
     m_Workflow_templatesIsSet = false;
+    m_Asset_patchesIsSet = false;
+    m_Simplified_meshesIsSet = false;
 }
 
 CatalogSeedResponseSchema::~CatalogSeedResponseSchema()
@@ -58,6 +60,16 @@ web::json::value CatalogSeedResponseSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("workflow_templates"))] = ModelBase::toJson(m_Workflow_templates);
+    }
+    if(m_Asset_patchesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("asset_patches"))] = ModelBase::toJson(m_Asset_patches);
+    }
+    if(m_Simplified_meshesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("simplified_meshes"))] = ModelBase::toJson(m_Simplified_meshes);
     }
 
     return val;
@@ -110,6 +122,28 @@ bool CatalogSeedResponseSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("asset_patches"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("asset_patches")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<CatalogSeedGroupSchema> refVal_setAssetPatches;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAssetPatches);
+            setAssetPatches(refVal_setAssetPatches);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("simplified_meshes"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("simplified_meshes")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<CatalogSeedGroupSchema> refVal_setSimplifiedMeshes;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSimplifiedMeshes);
+            setSimplifiedMeshes(refVal_setSimplifiedMeshes);
+            
+        }
+    }
     return ok;
 }
 
@@ -135,6 +169,14 @@ void CatalogSeedResponseSchema::toMultipart(std::shared_ptr<MultipartFormData> m
     if(m_Workflow_templatesIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workflow_templates")), m_Workflow_templates));
+    }
+    if(m_Asset_patchesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_patches")), m_Asset_patches));
+    }
+    if(m_Simplified_meshesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("simplified_meshes")), m_Simplified_meshes));
     }
 }
 
@@ -170,6 +212,18 @@ bool CatalogSeedResponseSchema::fromMultiPart(std::shared_ptr<MultipartFormData>
         std::shared_ptr<CatalogSeedGroupSchema> refVal_setWorkflowTemplates;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workflow_templates"))), refVal_setWorkflowTemplates );
         setWorkflowTemplates(refVal_setWorkflowTemplates);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("asset_patches"))))
+    {
+        std::shared_ptr<CatalogSeedGroupSchema> refVal_setAssetPatches;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_patches"))), refVal_setAssetPatches );
+        setAssetPatches(refVal_setAssetPatches);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("simplified_meshes"))))
+    {
+        std::shared_ptr<CatalogSeedGroupSchema> refVal_setSimplifiedMeshes;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("simplified_meshes"))), refVal_setSimplifiedMeshes );
+        setSimplifiedMeshes(refVal_setSimplifiedMeshes);
     }
     return ok;
 }
@@ -258,6 +312,48 @@ bool CatalogSeedResponseSchema::workflowTemplatesIsSet() const
 void CatalogSeedResponseSchema::unsetWorkflow_templates()
 {
     m_Workflow_templatesIsSet = false;
+}
+std::shared_ptr<CatalogSeedGroupSchema> CatalogSeedResponseSchema::getAssetPatches() const
+{
+    return m_Asset_patches;
+}
+
+
+void CatalogSeedResponseSchema::setAssetPatches(const std::shared_ptr<CatalogSeedGroupSchema>& value)
+{
+    m_Asset_patches = value;
+    m_Asset_patchesIsSet = true;
+}
+
+bool CatalogSeedResponseSchema::assetPatchesIsSet() const
+{
+    return m_Asset_patchesIsSet;
+}
+
+void CatalogSeedResponseSchema::unsetAsset_patches()
+{
+    m_Asset_patchesIsSet = false;
+}
+std::shared_ptr<CatalogSeedGroupSchema> CatalogSeedResponseSchema::getSimplifiedMeshes() const
+{
+    return m_Simplified_meshes;
+}
+
+
+void CatalogSeedResponseSchema::setSimplifiedMeshes(const std::shared_ptr<CatalogSeedGroupSchema>& value)
+{
+    m_Simplified_meshes = value;
+    m_Simplified_meshesIsSet = true;
+}
+
+bool CatalogSeedResponseSchema::simplifiedMeshesIsSet() const
+{
+    return m_Simplified_meshesIsSet;
+}
+
+void CatalogSeedResponseSchema::unsetSimplified_meshes()
+{
+    m_Simplified_meshesIsSet = false;
 }
 
 }
