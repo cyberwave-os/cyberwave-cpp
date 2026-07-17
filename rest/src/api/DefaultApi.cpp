@@ -8270,7 +8270,7 @@ pplx::task<std::shared_ptr<InitiateLargeUploadResponse>> DefaultApi::srcAppApiAt
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<AttachmentSchema>>> DefaultApi::srcAppApiAttachmentsListAttachments() const
+pplx::task<std::vector<std::shared_ptr<AttachmentSchema>>> DefaultApi::srcAppApiAttachmentsListAttachments(boost::optional<utility::string_t> assetUuid, boost::optional<utility::string_t> twinUuid, boost::optional<utility::string_t> workspaceUuid) const
 {
 
 
@@ -8311,6 +8311,18 @@ pplx::task<std::vector<std::shared_ptr<AttachmentSchema>>> DefaultApi::srcAppApi
 
     std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
 
+    if (assetUuid)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("asset_uuid")] = ApiClient::parameterToString(*assetUuid);
+    }
+    if (twinUuid)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("twin_uuid")] = ApiClient::parameterToString(*twinUuid);
+    }
+    if (workspaceUuid)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("workspace_uuid")] = ApiClient::parameterToString(*workspaceUuid);
+    }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
     utility::string_t localVarRequestHttpContentType;
@@ -34200,7 +34212,7 @@ pplx::task<std::vector<std::shared_ptr<MLModelExecutionSummarySchema>>> DefaultA
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlmodelsListMlmodels(boost::optional<utility::string_t> deployment, boost::optional<bool> edgeCompatible, boost::optional<utility::string_t> modelExternalId, boost::optional<utility::string_t> supportedLevel, boost::optional<bool> isTrainable, boost::optional<utility::string_t> catalogSeedId) const
+pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlmodelsListMlmodels(boost::optional<utility::string_t> deployment, boost::optional<bool> edgeCompatible, boost::optional<utility::string_t> modelExternalId, boost::optional<utility::string_t> supportedLevel, boost::optional<bool> isTrainable, boost::optional<utility::string_t> catalogSeedId, boost::optional<int32_t> limit, boost::optional<int32_t> offset) const
 {
 
 
@@ -34264,6 +34276,14 @@ pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlm
     if (catalogSeedId)
     {
         localVarQueryParams[utility::conversions::to_string_t("catalog_seed_id")] = ApiClient::parameterToString(*catalogSeedId);
+    }
+    if (limit)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("limit")] = ApiClient::parameterToString(*limit);
+    }
+    if (offset)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("offset")] = ApiClient::parameterToString(*offset);
     }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
@@ -34358,7 +34378,7 @@ pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlm
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlmodelsListPublicMlmodels(boost::optional<utility::string_t> deployment) const
+pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlmodelsListPublicMlmodels(boost::optional<utility::string_t> deployment, boost::optional<int32_t> limit, boost::optional<int32_t> offset) const
 {
 
 
@@ -34402,6 +34422,14 @@ pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlm
     if (deployment)
     {
         localVarQueryParams[utility::conversions::to_string_t("deployment")] = ApiClient::parameterToString(*deployment);
+    }
+    if (limit)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("limit")] = ApiClient::parameterToString(*limit);
+    }
+    if (offset)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("offset")] = ApiClient::parameterToString(*offset);
     }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
@@ -54889,7 +54917,7 @@ pplx::task<std::shared_ptr<InitiateLargeUploadResponse>> DefaultApi::srcAppApiUr
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<URDFProjectSchema>>> DefaultApi::srcAppApiUrdfListUrdfProjects() const
+pplx::task<std::vector<std::shared_ptr<URDFProjectSchema>>> DefaultApi::srcAppApiUrdfListUrdfProjects(boost::optional<utility::string_t> assetUuid) const
 {
 
 
@@ -54930,6 +54958,10 @@ pplx::task<std::vector<std::shared_ptr<URDFProjectSchema>>> DefaultApi::srcAppAp
 
     std::unordered_set<utility::string_t> localVarConsumeHttpContentTypes;
 
+    if (assetUuid)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("asset_uuid")] = ApiClient::parameterToString(*assetUuid);
+    }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
     utility::string_t localVarRequestHttpContentType;
