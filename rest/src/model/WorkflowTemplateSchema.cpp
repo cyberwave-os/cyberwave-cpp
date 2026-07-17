@@ -46,8 +46,6 @@ WorkflowTemplateSchema::WorkflowTemplateSchema()
     m_Updated_at = utility::datetime();
     m_Updated_atIsSet = false;
     m_MetadataIsSet = false;
-    m_Has_worker_source_override = false;
-    m_Has_worker_source_overrideIsSet = false;
     m_Node_count = 0;
     m_Node_countIsSet = false;
 }
@@ -158,11 +156,6 @@ web::json::value WorkflowTemplateSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("metadata"))] = ModelBase::toJson(m_Metadata);
-    }
-    if(m_Has_worker_source_overrideIsSet)
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("has_worker_source_override"))] = ModelBase::toJson(m_Has_worker_source_override);
     }
     if(m_Nodes.has_value())
     {
@@ -395,17 +388,6 @@ bool WorkflowTemplateSchema::fromJson(const web::json::value& val)
             
         }
     }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("has_worker_source_override"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("has_worker_source_override")));
-        if(!fieldValue.is_null())
-        {
-            bool refVal_setHasWorkerSourceOverride;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setHasWorkerSourceOverride);
-            setHasWorkerSourceOverride(refVal_setHasWorkerSourceOverride);
-            
-        }
-    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("nodes"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("nodes")));
@@ -524,10 +506,6 @@ void WorkflowTemplateSchema::toMultipart(std::shared_ptr<MultipartFormData> mult
     if(m_MetadataIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata));
-    }
-    if(m_Has_worker_source_overrideIsSet)
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("has_worker_source_override")), m_Has_worker_source_override));
     }
     if(m_Nodes.has_value())
     {
@@ -665,12 +643,6 @@ bool WorkflowTemplateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> mu
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))), refVal_setMetadata );
         setMetadata(refVal_setMetadata);
-    }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("has_worker_source_override"))))
-    {
-        bool refVal_setHasWorkerSourceOverride;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("has_worker_source_override"))), refVal_setHasWorkerSourceOverride );
-        setHasWorkerSourceOverride(refVal_setHasWorkerSourceOverride);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("nodes"))))
     {
@@ -1084,26 +1056,6 @@ bool WorkflowTemplateSchema::metadataIsSet() const
 void WorkflowTemplateSchema::unsetMetadata()
 {
     m_MetadataIsSet = false;
-}
-bool WorkflowTemplateSchema::isHasWorkerSourceOverride() const
-{
-    return m_Has_worker_source_override;
-}
-
-void WorkflowTemplateSchema::setHasWorkerSourceOverride(bool value)
-{
-    m_Has_worker_source_override = value;
-    m_Has_worker_source_overrideIsSet = true;
-}
-
-bool WorkflowTemplateSchema::hasWorkerSourceOverrideIsSet() const
-{
-    return m_Has_worker_source_overrideIsSet;
-}
-
-void WorkflowTemplateSchema::unsetHas_worker_source_override()
-{
-    m_Has_worker_source_overrideIsSet = false;
 }
 std::vector<std::shared_ptr<WorkflowNodeSchema>> WorkflowTemplateSchema::getNodes() const
 {

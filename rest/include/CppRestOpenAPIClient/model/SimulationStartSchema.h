@@ -26,9 +26,7 @@
 #include "CppRestOpenAPIClient/model/OnlineControllerSpecSchema.h"
 #include "CppRestOpenAPIClient/model/SimulationRuntimeOptionsSchema.h"
 #include "CppRestOpenAPIClient/model/SimulationTimingOptionsSchema.h"
-#include "CppRestOpenAPIClient/model/SimulationStreamProfileSchema.h"
 #include <cpprest/details/basic_types.h>
-#include <map>
 #include <vector>
 
 namespace org {
@@ -39,7 +37,6 @@ namespace model {
 class SimulationRuntimeOptionsSchema;
 class SimulationTimingOptionsSchema;
 class OnlineControllerSpecSchema;
-class SimulationStreamProfileSchema;
 
 
 /// <summary>
@@ -113,11 +110,6 @@ public:
     void unsetAuto_run_controllers();
     void setAutoRunControllers(bool value);
 
-    std::map<utility::string_t, std::shared_ptr<SimulationStreamProfileSchema>> getStreamProfile() const;
-    bool streamProfileIsSet() const;
-    void unsetStream_profile();
-    void setStreamProfile(const std::map<utility::string_t, std::shared_ptr<SimulationStreamProfileSchema>>& value);
-
 
 protected:
     boost::optional<double> m_Duration;
@@ -134,8 +126,6 @@ protected:
 
     bool m_Auto_run_controllers;
     bool m_Auto_run_controllersIsSet;
-
-    boost::optional<std::map<utility::string_t, std::shared_ptr<SimulationStreamProfileSchema>>> m_Stream_profile;
 
 };
 

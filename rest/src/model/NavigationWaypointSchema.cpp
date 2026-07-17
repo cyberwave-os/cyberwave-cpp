@@ -55,11 +55,6 @@ web::json::value NavigationWaypointSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("yaw"))] = ModelBase::toJson(m_Yaw.get());
     }
-    if(m_Duration_seconds.has_value())
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("duration_seconds"))] = ModelBase::toJson(m_Duration_seconds.get());
-    }
     if(m_Actions.has_value())
     {
         
@@ -121,17 +116,6 @@ bool NavigationWaypointSchema::fromJson(const web::json::value& val)
             
         }
     }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("duration_seconds"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("duration_seconds")));
-        if(!fieldValue.is_null())
-        {
-            double refVal_setDurationSeconds;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setDurationSeconds);
-            setDurationSeconds(refVal_setDurationSeconds);
-            
-        }
-    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("actions"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("actions")));
@@ -180,10 +164,6 @@ void NavigationWaypointSchema::toMultipart(std::shared_ptr<MultipartFormData> mu
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("yaw")), m_Yaw.get()));
     }
-    if(m_Duration_seconds.has_value())
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("duration_seconds")), m_Duration_seconds.get()));
-    }
     if(m_Actions.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("actions")), m_Actions.get()));
@@ -226,12 +206,6 @@ bool NavigationWaypointSchema::fromMultiPart(std::shared_ptr<MultipartFormData> 
         double refVal_setYaw;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("yaw"))), refVal_setYaw );
         setYaw(refVal_setYaw);
-    }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("duration_seconds"))))
-    {
-        double refVal_setDurationSeconds;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("duration_seconds"))), refVal_setDurationSeconds );
-        setDurationSeconds(refVal_setDurationSeconds);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("actions"))))
     {
@@ -327,25 +301,6 @@ bool NavigationWaypointSchema::yawIsSet() const
 void NavigationWaypointSchema::unsetYaw()
 {
     m_Yaw.reset();
-}
-double NavigationWaypointSchema::getDurationSeconds() const
-{
-    return m_Duration_seconds.get();
-}
-
-void NavigationWaypointSchema::setDurationSeconds(double value)
-{
-    m_Duration_seconds = value;
-}
-
-bool NavigationWaypointSchema::durationSecondsIsSet() const
-{
-    return m_Duration_seconds.has_value();
-}
-
-void NavigationWaypointSchema::unsetDuration_seconds()
-{
-    m_Duration_seconds.reset();
 }
 std::vector<std::shared_ptr<NavigationWaypointActionSchema>> NavigationWaypointSchema::getActions() const
 {
