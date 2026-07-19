@@ -34650,7 +34650,7 @@ pplx::task<std::vector<std::shared_ptr<MLModelExecutionSummarySchema>>> DefaultA
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlmodelsListMlmodels(boost::optional<utility::string_t> deployment, boost::optional<bool> edgeCompatible, boost::optional<utility::string_t> modelExternalId, boost::optional<utility::string_t> supportedLevel, boost::optional<bool> isTrainable, boost::optional<utility::string_t> catalogSeedId) const
+pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlmodelsListMlmodels(boost::optional<utility::string_t> deployment, boost::optional<bool> edgeCompatible, boost::optional<utility::string_t> modelExternalId, boost::optional<utility::string_t> supportedLevel, boost::optional<bool> isTrainable, boost::optional<utility::string_t> catalogSeedId, boost::optional<int32_t> limit, boost::optional<int32_t> offset) const
 {
 
 
@@ -34714,6 +34714,14 @@ pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlm
     if (catalogSeedId)
     {
         localVarQueryParams[utility::conversions::to_string_t("catalog_seed_id")] = ApiClient::parameterToString(*catalogSeedId);
+    }
+    if (limit)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("limit")] = ApiClient::parameterToString(*limit);
+    }
+    if (offset)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("offset")] = ApiClient::parameterToString(*offset);
     }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
@@ -34808,7 +34816,7 @@ pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlm
         return localVarResult;
     });
 }
-pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlmodelsListPublicMlmodels(boost::optional<utility::string_t> deployment) const
+pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlmodelsListPublicMlmodels(boost::optional<utility::string_t> deployment, boost::optional<int32_t> limit, boost::optional<int32_t> offset) const
 {
 
 
@@ -34852,6 +34860,14 @@ pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> DefaultApi::srcAppApiMlm
     if (deployment)
     {
         localVarQueryParams[utility::conversions::to_string_t("deployment")] = ApiClient::parameterToString(*deployment);
+    }
+    if (limit)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("limit")] = ApiClient::parameterToString(*limit);
+    }
+    if (offset)
+    {
+        localVarQueryParams[utility::conversions::to_string_t("offset")] = ApiClient::parameterToString(*offset);
     }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
