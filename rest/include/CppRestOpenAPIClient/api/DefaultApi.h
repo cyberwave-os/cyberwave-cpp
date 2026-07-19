@@ -3288,7 +3288,7 @@ public:
     /// List Mlmodels
     /// </summary>
     /// <remarks>
-    /// List all ML models for the authenticated user&#39;s workspace.  Query params:     deployment: Filter by deployment type (cloud, edge, hybrid)     edge_compatible: If true, return only edge or hybrid models     model_external_id: Filter by exact model_external_id (e.g. \&quot;yolov8n.pt\&quot;)     supported_level: Filter by supported_level (driver, cloud, backend, not_supported_yet)     is_trainable: Filter by is_trainable     catalog_seed_id: Filter by metadata.catalog_seed_id         (the &#x60;&#x60;catalog_key&#x60;&#x60; stamped by the seed_models command). Used by         the seeder to dedup catalog entries idempotently.
+    /// List all ML models for the authenticated user&#39;s workspace.  Query params:     deployment: Filter by deployment type (cloud, edge, hybrid)     edge_compatible: If true, return only edge or hybrid models     model_external_id: Filter by exact model_external_id (e.g. \&quot;yolov8n.pt\&quot;)     supported_level: Filter by supported_level (driver, cloud, backend, not_supported_yet)     is_trainable: Filter by is_trainable     catalog_seed_id: Filter by metadata.catalog_seed_id         (the &#x60;&#x60;catalog_key&#x60;&#x60; stamped by the seed_models command). Used by         the seeder to dedup catalog entries idempotently.     offset/limit: Optional pagination. When &#x60;&#x60;limit&#x60;&#x60; is omitted the full         result set is returned (backward compatible).
     /// </remarks>
     /// <param name="deployment"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="edgeCompatible"> (optional, default to false)</param>
@@ -3296,23 +3296,31 @@ public:
     /// <param name="supportedLevel"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="isTrainable"> (optional, default to false)</param>
     /// <param name="catalogSeedId"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="offset"> (optional, default to 0)</param>
     pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> srcAppApiMlmodelsListMlmodels(
         boost::optional<utility::string_t> deployment,
         boost::optional<bool> edgeCompatible,
         boost::optional<utility::string_t> modelExternalId,
         boost::optional<utility::string_t> supportedLevel,
         boost::optional<bool> isTrainable,
-        boost::optional<utility::string_t> catalogSeedId
+        boost::optional<utility::string_t> catalogSeedId,
+        boost::optional<int32_t> limit,
+        boost::optional<int32_t> offset
     ) const;
     /// <summary>
     /// List Public Mlmodels
     /// </summary>
     /// <remarks>
-    /// List all public ML models. No authentication required.
+    /// List all public ML models. No authentication required.  Supports optional &#x60;&#x60;offset&#x60;&#x60;/&#x60;&#x60;limit&#x60;&#x60; pagination. When &#x60;&#x60;limit&#x60;&#x60; is omitted the full result set is returned (backward compatible).
     /// </remarks>
     /// <param name="deployment"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="offset"> (optional, default to 0)</param>
     pplx::task<std::vector<std::shared_ptr<MLModelSchema>>> srcAppApiMlmodelsListPublicMlmodels(
-        boost::optional<utility::string_t> deployment
+        boost::optional<utility::string_t> deployment,
+        boost::optional<int32_t> limit,
+        boost::optional<int32_t> offset
     ) const;
     /// <summary>
     /// List Structured Actions
