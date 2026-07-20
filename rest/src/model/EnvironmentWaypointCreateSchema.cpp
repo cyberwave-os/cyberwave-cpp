@@ -66,6 +66,11 @@ web::json::value EnvironmentWaypointCreateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("metadata"))] = ModelBase::toJson(m_Metadata.get());
     }
+    if(m_Frame.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("frame"))] = ModelBase::toJson(m_Frame.get());
+    }
 
     return val;
 }
@@ -139,6 +144,17 @@ bool EnvironmentWaypointCreateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("frame"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("frame")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<EnvironmentWaypointFrameSchema> refVal_setFrame;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFrame);
+            setFrame(refVal_setFrame);
+            
+        }
+    }
     return ok;
 }
 
@@ -172,6 +188,10 @@ void EnvironmentWaypointCreateSchema::toMultipart(std::shared_ptr<MultipartFormD
     if(m_Metadata.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata.get()));
+    }
+    if(m_Frame.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("frame")), m_Frame.get()));
     }
 }
 
@@ -219,6 +239,12 @@ bool EnvironmentWaypointCreateSchema::fromMultiPart(std::shared_ptr<MultipartFor
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))), refVal_setMetadata );
         setMetadata(refVal_setMetadata);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("frame"))))
+    {
+        std::shared_ptr<EnvironmentWaypointFrameSchema> refVal_setFrame;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("frame"))), refVal_setFrame );
+        setFrame(refVal_setFrame);
     }
     return ok;
 }
@@ -345,6 +371,26 @@ bool EnvironmentWaypointCreateSchema::metadataIsSet() const
 void EnvironmentWaypointCreateSchema::unsetMetadata()
 {
     m_Metadata.reset();
+}
+std::shared_ptr<EnvironmentWaypointFrameSchema> EnvironmentWaypointCreateSchema::getFrame() const
+{
+    return m_Frame.get();
+}
+
+
+void EnvironmentWaypointCreateSchema::setFrame(const std::shared_ptr<EnvironmentWaypointFrameSchema>& value)
+{
+    m_Frame = value;
+}
+
+bool EnvironmentWaypointCreateSchema::frameIsSet() const
+{
+    return m_Frame.has_value();
+}
+
+void EnvironmentWaypointCreateSchema::unsetFrame()
+{
+    m_Frame.reset();
 }
 
 }
