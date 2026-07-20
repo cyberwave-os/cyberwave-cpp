@@ -142,6 +142,11 @@ public:
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    bool isSkipNavAnchorTransform() const;
+    bool skipNavAnchorTransformIsSet() const;
+    void unsetSkip_nav_anchor_transform();
+    void setSkipNavAnchorTransform(bool value);
+
 
 protected:
     CommandEnum m_Command;
@@ -170,6 +175,9 @@ protected:
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Constraints;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
+
+    bool m_Skip_nav_anchor_transform;
+    bool m_Skip_nav_anchor_transformIsSet;
 
 };
 

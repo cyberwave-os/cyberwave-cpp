@@ -22,6 +22,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/EnvironmentWaypointFrameSchema.h"
 #include "CppRestOpenAPIClient/model/QuaternionSchema.h"
 #include <cpprest/details/basic_types.h>
 #include "CppRestOpenAPIClient/model/Vector3Schema.h"
@@ -35,6 +36,7 @@ namespace model {
 
 class Vector3Schema;
 class QuaternionSchema;
+class EnvironmentWaypointFrameSchema;
 
 
 class  EnvironmentWaypointCreateSchema
@@ -90,6 +92,11 @@ public:
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::shared_ptr<EnvironmentWaypointFrameSchema> getFrame() const;
+    bool frameIsSet() const;
+    void unsetFrame();
+    void setFrame(const std::shared_ptr<EnvironmentWaypointFrameSchema>& value);
+
 
 protected:
     boost::optional<utility::string_t> m_Id;
@@ -105,6 +112,8 @@ protected:
     bool m_RotationIsSet;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
+
+    boost::optional<std::shared_ptr<EnvironmentWaypointFrameSchema>> m_Frame;
 
 };
 
