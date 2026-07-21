@@ -21,6 +21,8 @@ namespace model {
 TwinNavigationCommandSchema::TwinNavigationCommandSchema()
 {
     m_CommandIsSet = false;
+    m_Skip_nav_anchor_transform = false;
+    m_Skip_nav_anchor_transformIsSet = false;
 }
 
 TwinNavigationCommandSchema::~TwinNavigationCommandSchema()
@@ -101,6 +103,11 @@ web::json::value TwinNavigationCommandSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("metadata"))] = ModelBase::toJson(m_Metadata.get());
+    }
+    if(m_Skip_nav_anchor_transformIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("skip_nav_anchor_transform"))] = ModelBase::toJson(m_Skip_nav_anchor_transform);
     }
 
     return val;
@@ -253,6 +260,17 @@ bool TwinNavigationCommandSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("skip_nav_anchor_transform"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("skip_nav_anchor_transform")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setSkipNavAnchorTransform;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSkipNavAnchorTransform);
+            setSkipNavAnchorTransform(refVal_setSkipNavAnchorTransform);
+            
+        }
+    }
     return ok;
 }
 
@@ -314,6 +332,10 @@ void TwinNavigationCommandSchema::toMultipart(std::shared_ptr<MultipartFormData>
     if(m_Metadata.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata.get()));
+    }
+    if(m_Skip_nav_anchor_transformIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("skip_nav_anchor_transform")), m_Skip_nav_anchor_transform));
     }
 }
 
@@ -403,6 +425,12 @@ bool TwinNavigationCommandSchema::fromMultiPart(std::shared_ptr<MultipartFormDat
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))), refVal_setMetadata );
         setMetadata(refVal_setMetadata);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("skip_nav_anchor_transform"))))
+    {
+        bool refVal_setSkipNavAnchorTransform;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("skip_nav_anchor_transform"))), refVal_setSkipNavAnchorTransform );
+        setSkipNavAnchorTransform(refVal_setSkipNavAnchorTransform);
     }
     return ok;
 }
@@ -734,6 +762,26 @@ bool TwinNavigationCommandSchema::metadataIsSet() const
 void TwinNavigationCommandSchema::unsetMetadata()
 {
     m_Metadata.reset();
+}
+bool TwinNavigationCommandSchema::isSkipNavAnchorTransform() const
+{
+    return m_Skip_nav_anchor_transform;
+}
+
+void TwinNavigationCommandSchema::setSkipNavAnchorTransform(bool value)
+{
+    m_Skip_nav_anchor_transform = value;
+    m_Skip_nav_anchor_transformIsSet = true;
+}
+
+bool TwinNavigationCommandSchema::skipNavAnchorTransformIsSet() const
+{
+    return m_Skip_nav_anchor_transformIsSet;
+}
+
+void TwinNavigationCommandSchema::unsetSkip_nav_anchor_transform()
+{
+    m_Skip_nav_anchor_transformIsSet = false;
 }
 
 }
