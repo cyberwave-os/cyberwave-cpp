@@ -10,19 +10,18 @@
  */
 
 /*
- * CloudNodeInstanceRegisterRequest.h
+ * Near.h
  *
  * 
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_CloudNodeInstanceRegisterRequest_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_CloudNodeInstanceRegisterRequest_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_Near_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_Near_H_
 
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
-#include <cpprest/details/basic_types.h>
 
 namespace org {
 namespace openapitools {
@@ -31,12 +30,12 @@ namespace model {
 
 
 
-class  CloudNodeInstanceRegisterRequest
+class  Near
     : public ModelBase
 {
 public:
-    CloudNodeInstanceRegisterRequest();
-    virtual ~CloudNodeInstanceRegisterRequest();
+    Near();
+    virtual ~Near();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -51,26 +50,11 @@ public:
 
 
     /////////////////////////////////////////////
-    /// CloudNodeInstanceRegisterRequest members
+    /// Near members
 
-
-    utility::string_t getProfileSlug() const;
-    bool profileSlugIsSet() const;
-    void unsetProfile_slug();
-    void setProfileSlug(const utility::string_t& value);
-
-    utility::string_t getEnvironmentUuid() const;
-    bool environmentUuidIsSet() const;
-    void unsetEnvironment_uuid();
-    void setEnvironmentUuid(const utility::string_t& value);
 
 
 protected:
-    utility::string_t m_Profile_slug;
-    bool m_Profile_slugIsSet;
-
-    boost::optional<utility::string_t> m_Environment_uuid;
-
 };
 
 
@@ -79,4 +63,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_CloudNodeInstanceRegisterRequest_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_Near_H_ */

@@ -134,6 +134,7 @@
 #include "CppRestOpenAPIClient/model/ImportResultSchema.h"
 #include "CppRestOpenAPIClient/model/InitiateLargeUploadResponse.h"
 #include "CppRestOpenAPIClient/model/InitiateLargeUploadSchema.h"
+#include "CppRestOpenAPIClient/model/InvitationResponseSchema.h"
 #include "CppRestOpenAPIClient/model/JointSchema.h"
 #include "CppRestOpenAPIClient/model/JointStateSchema.h"
 #include "CppRestOpenAPIClient/model/JointStateUpdateSchema.h"
@@ -233,6 +234,7 @@
 #include "CppRestOpenAPIClient/model/RecordingSourcesEnvelopeSchema.h"
 #include "CppRestOpenAPIClient/model/RedeemCouponRequestSchema.h"
 #include "CppRestOpenAPIClient/model/RedeemCouponResponseSchema.h"
+#include "CppRestOpenAPIClient/model/RedeemLinkSchema.h"
 #include "CppRestOpenAPIClient/model/ReloadCapabilitiesBulkSchema.h"
 #include "CppRestOpenAPIClient/model/RemoveMemberResponse.h"
 #include "CppRestOpenAPIClient/model/ReplayTimelineEventsResponseSchema.h"
@@ -900,6 +902,18 @@ public:
         std::shared_ptr<AssetGLBFromAttachmentSchema> assetGLBFromAttachmentSchema
     ) const;
     /// <summary>
+    /// Set Splat From Attachment
+    /// </summary>
+    /// <remarks>
+    /// Set an asset&#39;s Gaussian splat file from an existing attachment. Used by the large-upload path, where the splat is first uploaded as an attachment.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="assetGLBFromAttachmentSchema"></param>
+    pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsSetSplatFromAttachment(
+        utility::string_t uuid,
+        std::shared_ptr<AssetGLBFromAttachmentSchema> assetGLBFromAttachmentSchema
+    ) const;
+    /// <summary>
     /// Sync Simulation Backends
     /// </summary>
     /// <remarks>
@@ -944,6 +958,18 @@ public:
     /// <param name="uuid"></param>
     /// <param name="file"></param>
     pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsUploadGlb(
+        utility::string_t uuid,
+        std::shared_ptr<HttpContent> file
+    ) const;
+    /// <summary>
+    /// Upload Splat
+    /// </summary>
+    /// <remarks>
+    /// Upload a Gaussian splatting file (.ply/.splat/.spz/.ksplat) as the asset&#39;s primary visualization. Larger files use the attachment large-upload flow followed by &#x60;&#x60;/splat-from-attachment&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="file"></param>
+    pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsUploadSplat(
         utility::string_t uuid,
         std::shared_ptr<HttpContent> file
     ) const;
@@ -2317,11 +2343,23 @@ public:
     /// Invite User To Environment
     /// </summary>
     /// <remarks>
-    /// Invite a non-existent user to an environment
+    /// Invite a user (existing-but-out-of-org, or brand new) to an environment.
     /// </remarks>
     /// <param name="uuid"></param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingInviteUserToEnvironment(
+    pplx::task<std::shared_ptr<InvitationResponseSchema>> srcAppApiEnvironmentsSharingInviteUserToEnvironment(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Redeem Environment Link
+    /// </summary>
+    /// <remarks>
+    /// Redeem a share link: grant the current user the link&#39;s role on the env.  Requires authentication (global Ninja auth). \&quot;Anyone with the link\&quot; model (like Colab): any signed-in user holding a valid token may redeem it, regardless of their organization. Redemption creates an object-scoped ACL grant on this environment only (cascading to its twins/telemetry/streams via &#x60;&#x60;Twin.highest_role_for&#x60;&#x60;) — the recipient is NOT added to the env&#39;s org/workspace. Feature-level access is still gated by the granted role. Returns 401 (unauthenticated) or 404 (bad/expired/revoked/mismatched token).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="redeemLinkSchema"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingRedeemEnvironmentLink(
+        utility::string_t uuid,
+        std::shared_ptr<RedeemLinkSchema> redeemLinkSchema
     ) const;
     /// <summary>
     /// Remove User From Environment
@@ -2349,7 +2387,7 @@ public:
     /// Share Environment With User
     /// </summary>
     /// <remarks>
-    /// Share environment with a user by email
+    /// Share environment with a user by email.
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingShareEnvironmentWithUser(
@@ -3852,7 +3890,7 @@ public:
     /// Invite a non-existent user to a project.
     /// </remarks>
     /// <param name="uuid"></param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiProjectsInviteUserToProject(
+    pplx::task<std::shared_ptr<InvitationResponseSchema>> srcAppApiProjectsInviteUserToProject(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -5267,7 +5305,7 @@ public:
     /// Create Workflow Connection
     /// </summary>
     /// <remarks>
-    /// Create a new connection between nodes.
+    /// Create a new connection between nodes.  The editor can retry this request (double click, optimistic retry, slow network), so treat duplicate create payloads as idempotent and return the existing edge instead of surfacing a DB unique-constraint 500.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="workflowConnectionCreateSchema"></param>

@@ -23,6 +23,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/NavigationWaypointActionSchema.h"
 #include "CppRestOpenAPIClient/model/Relative_Translation.h"
 #include <cpprest/details/basic_types.h>
 #include "CppRestOpenAPIClient/model/NavigationWaypointSchema.h"
@@ -36,6 +37,7 @@ namespace client {
 namespace model {
 
 class NavigationWaypointSchema;
+class NavigationWaypointActionSchema;
 
 
 class  TwinNavigationCommandSchema
@@ -102,6 +104,11 @@ public:
     void unsetWaypoints();
     void setWaypoints(const std::vector<std::shared_ptr<NavigationWaypointSchema>>& value);
 
+    std::vector<std::shared_ptr<NavigationWaypointActionSchema>> getActions() const;
+    bool actionsIsSet() const;
+    void unsetActions();
+    void setActions(const std::vector<std::shared_ptr<NavigationWaypointActionSchema>>& value);
+
     std::shared_ptr<Relative_Translation> getRelativeTranslation() const;
     bool relativeTranslationIsSet() const;
     void unsetRelative_translation();
@@ -159,6 +166,8 @@ protected:
     boost::optional<double> m_Yaw;
 
     boost::optional<std::vector<std::shared_ptr<NavigationWaypointSchema>>> m_Waypoints;
+
+    boost::optional<std::vector<std::shared_ptr<NavigationWaypointActionSchema>>> m_Actions;
 
     boost::optional<std::shared_ptr<Relative_Translation>> m_Relative_translation;
 

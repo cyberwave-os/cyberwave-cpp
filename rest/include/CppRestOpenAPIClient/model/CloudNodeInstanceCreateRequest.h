@@ -82,6 +82,11 @@ public:
     void unsetVisibility();
     void setVisibility(const std::shared_ptr<Visibility>& value);
 
+    utility::string_t getEnvironmentUuid() const;
+    bool environmentUuidIsSet() const;
+    void unsetEnvironment_uuid();
+    void setEnvironmentUuid(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Profile_slug;
@@ -95,6 +100,8 @@ protected:
 
     std::shared_ptr<Visibility> m_Visibility;
     bool m_VisibilityIsSet;
+
+    boost::optional<utility::string_t> m_Environment_uuid;
 
 };
 

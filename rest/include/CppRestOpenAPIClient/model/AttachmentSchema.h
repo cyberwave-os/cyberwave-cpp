@@ -106,6 +106,16 @@ public:
     void unsetFile_url();
     void setFileUrl(const utility::string_t& value);
 
+    utility::string_t getSha256() const;
+    bool sha256IsSet() const;
+    void unsetSha256();
+    void setSha256(const utility::string_t& value);
+
+    int32_t getSizeBytes() const;
+    bool sizeBytesIsSet() const;
+    void unsetSize_bytes();
+    void setSizeBytes(int32_t value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -130,6 +140,10 @@ protected:
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
 
     boost::optional<utility::string_t> m_File_url;
+
+    boost::optional<utility::string_t> m_Sha256;
+
+    boost::optional<int32_t> m_Size_bytes;
 
 };
 

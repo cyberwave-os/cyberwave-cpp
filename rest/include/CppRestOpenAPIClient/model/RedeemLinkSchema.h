@@ -10,13 +10,13 @@
  */
 
 /*
- * CloudNodeInstanceRegisterRequest.h
+ * RedeemLinkSchema.h
  *
  * 
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_CloudNodeInstanceRegisterRequest_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_CloudNodeInstanceRegisterRequest_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_RedeemLinkSchema_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_RedeemLinkSchema_H_
 
 #include <boost/optional.hpp>
 
@@ -31,12 +31,12 @@ namespace model {
 
 
 
-class  CloudNodeInstanceRegisterRequest
+class  RedeemLinkSchema
     : public ModelBase
 {
 public:
-    CloudNodeInstanceRegisterRequest();
-    virtual ~CloudNodeInstanceRegisterRequest();
+    RedeemLinkSchema();
+    virtual ~RedeemLinkSchema();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -51,25 +51,18 @@ public:
 
 
     /////////////////////////////////////////////
-    /// CloudNodeInstanceRegisterRequest members
+    /// RedeemLinkSchema members
 
 
-    utility::string_t getProfileSlug() const;
-    bool profileSlugIsSet() const;
-    void unsetProfile_slug();
-    void setProfileSlug(const utility::string_t& value);
-
-    utility::string_t getEnvironmentUuid() const;
-    bool environmentUuidIsSet() const;
-    void unsetEnvironment_uuid();
-    void setEnvironmentUuid(const utility::string_t& value);
+    utility::string_t getToken() const;
+    bool tokenIsSet() const;
+    void unsetToken();
+    void setToken(const utility::string_t& value);
 
 
 protected:
-    utility::string_t m_Profile_slug;
-    bool m_Profile_slugIsSet;
-
-    boost::optional<utility::string_t> m_Environment_uuid;
+    utility::string_t m_Token;
+    bool m_TokenIsSet;
 
 };
 
@@ -79,4 +72,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_CloudNodeInstanceRegisterRequest_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_RedeemLinkSchema_H_ */
