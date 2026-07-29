@@ -136,6 +136,11 @@ web::json::value TwinSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("glb_file"))] = ModelBase::toJson(m_Glb_file.get());
     }
+    if(m_Splat_file.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("splat_file"))] = ModelBase::toJson(m_Splat_file.get());
+    }
     if(m_Urdf_file.has_value())
     {
         
@@ -409,6 +414,17 @@ bool TwinSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setGlbFile;
             ok &= ModelBase::fromJson(fieldValue, refVal_setGlbFile);
             setGlbFile(refVal_setGlbFile);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("splat_file"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("splat_file")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setSplatFile;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSplatFile);
+            setSplatFile(refVal_setSplatFile);
             
         }
     }
@@ -832,6 +848,10 @@ void TwinSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("glb_file")), m_Glb_file.get()));
     }
+    if(m_Splat_file.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("splat_file")), m_Splat_file.get()));
+    }
     if(m_Urdf_file.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("urdf_file")), m_Urdf_file.get()));
@@ -1032,6 +1052,12 @@ bool TwinSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
         utility::string_t refVal_setGlbFile;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("glb_file"))), refVal_setGlbFile );
         setGlbFile(refVal_setGlbFile);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("splat_file"))))
+    {
+        utility::string_t refVal_setSplatFile;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("splat_file"))), refVal_setSplatFile );
+        setSplatFile(refVal_setSplatFile);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("urdf_file"))))
     {
@@ -1427,6 +1453,26 @@ bool TwinSchema::glbFileIsSet() const
 void TwinSchema::unsetGlb_file()
 {
     m_Glb_file.reset();
+}
+utility::string_t TwinSchema::getSplatFile() const
+{
+    return m_Splat_file.get();
+}
+
+
+void TwinSchema::setSplatFile(const utility::string_t& value)
+{
+    m_Splat_file = value;
+}
+
+bool TwinSchema::splatFileIsSet() const
+{
+    return m_Splat_file.has_value();
+}
+
+void TwinSchema::unsetSplat_file()
+{
+    m_Splat_file.reset();
 }
 utility::string_t TwinSchema::getUrdfFile() const
 {
