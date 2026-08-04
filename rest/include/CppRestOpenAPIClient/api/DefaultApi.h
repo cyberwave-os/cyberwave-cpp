@@ -25,7 +25,10 @@
 #include "CppRestOpenAPIClient/model/AIMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/AddMemberByEmailRequest.h"
 #include "CppRestOpenAPIClient/model/AddMemberByEmailResponse.h"
+#include "CppRestOpenAPIClient/model/AdminCameraRecordingsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/AdminLabOverviewSchema.h"
+#include "CppRestOpenAPIClient/model/AdminRecordingEnvironmentSchema.h"
+#include "CppRestOpenAPIClient/model/AdminTwinSessionsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/AlertSchema.h"
 #include "CppRestOpenAPIClient/AnyType.h"
 #include "CppRestOpenAPIClient/model/AssetControlProfilePatchSchema.h"
@@ -134,6 +137,7 @@
 #include "CppRestOpenAPIClient/model/ImportResultSchema.h"
 #include "CppRestOpenAPIClient/model/InitiateLargeUploadResponse.h"
 #include "CppRestOpenAPIClient/model/InitiateLargeUploadSchema.h"
+#include "CppRestOpenAPIClient/model/InvitationResponseSchema.h"
 #include "CppRestOpenAPIClient/model/JointSchema.h"
 #include "CppRestOpenAPIClient/model/JointStateSchema.h"
 #include "CppRestOpenAPIClient/model/JointStateUpdateSchema.h"
@@ -152,6 +156,8 @@
 #include "CppRestOpenAPIClient/model/MLModelArtifactUploadInitResponseSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelArtifactUploadInitSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelCreateSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelCredentialSetSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelCredentialStatusSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelEdgeRuntimeListSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelEvaluateSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelExecutionDetailSchema.h"
@@ -160,6 +166,8 @@
 #include "CppRestOpenAPIClient/model/MLModelRunResultSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelRunSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelTestCallResultSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelTestCallSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/MLTrainingCreateSchema.h"
 #include "CppRestOpenAPIClient/model/MLTrainingDeploySchema.h"
@@ -230,9 +238,11 @@
 #include "CppRestOpenAPIClient/model/RecordingDetailSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingGenerationResponseSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingListResponse.h"
+#include "CppRestOpenAPIClient/model/RecordingPreflightSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingSourcesEnvelopeSchema.h"
 #include "CppRestOpenAPIClient/model/RedeemCouponRequestSchema.h"
 #include "CppRestOpenAPIClient/model/RedeemCouponResponseSchema.h"
+#include "CppRestOpenAPIClient/model/RedeemLinkSchema.h"
 #include "CppRestOpenAPIClient/model/ReloadCapabilitiesBulkSchema.h"
 #include "CppRestOpenAPIClient/model/RemoveMemberResponse.h"
 #include "CppRestOpenAPIClient/model/ReplayTimelineEventsResponseSchema.h"
@@ -262,6 +272,10 @@
 #include "CppRestOpenAPIClient/model/TopupIntentResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TrajectoryFromActionRequestSchema.h"
 #include "CppRestOpenAPIClient/model/TransactionInvoiceSchema.h"
+#include "CppRestOpenAPIClient/model/TriggerCameraFinalizationRequestSchema.h"
+#include "CppRestOpenAPIClient/model/TriggerCameraFinalizationResponseSchema.h"
+#include "CppRestOpenAPIClient/model/TriggerRecordingRequestSchema.h"
+#include "CppRestOpenAPIClient/model/TriggerRecordingResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionRequestSchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionStatusSchema.h"
@@ -430,6 +444,88 @@ public:
         utility::string_t uuid,
         utility::string_t optionId,
         std::shared_ptr<AssetControlProfileSettingsPatchSchema> assetControlProfileSettingsPatchSchema
+    ) const;
+    /// <summary>
+    /// List Twin Camera Recordings
+    /// </summary>
+    /// <remarks>
+    /// Group stored camera segments by &#x60;&#x60;recording_id&#x60;&#x60; and report finalization.  Deliberately grouped the same way &#x60;&#x60;_find_stale_progressive_recording_candidates&#x60;&#x60; groups them — per recording, not per chunk, audio parts excluded — so what an operator sees here matches what the reconcile beat would act on.  Time filtering is *discovery only*: the window picks which recordings had segment activity in it, and every fact about a chosen recording is then computed from all of its segments. A recording that straddles the boundary would otherwise report a truncated &#x60;&#x60;last_segment_at&#x60;&#x60;, which is the value staleness and the live-stream deferral check both key on — a window ending an hour ago could make a recording that is still writing segments look stale and safe to finalize. Two queries, each bounded: the first by the window, the second by the handful of ids the first returned.  &#x60;&#x60;status&#x60;&#x60; is the actionable summary; &#x60;&#x60;finalizable&#x60;&#x60; is what the UI enables a button on. A recording is finalizable when it is not already finalized, no live stream is advancing on it, and it is either stale or has been given up on.
+    /// </remarks>
+    /// <param name="twinUuid"></param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="scope"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="startTimestampUs"> (optional, default to 0)</param>
+    /// <param name="endTimestampUs"> (optional, default to 0)</param>
+    pplx::task<std::shared_ptr<AdminCameraRecordingsResponseSchema>> srcAppApiAdminTaskTriggerListTwinCameraRecordings(
+        utility::string_t twinUuid,
+        boost::optional<int32_t> limit,
+        boost::optional<utility::string_t> scope,
+        boost::optional<int32_t> startTimestampUs,
+        boost::optional<int32_t> endTimestampUs
+    ) const;
+    /// <summary>
+    /// List Twin Recording Sessions
+    /// </summary>
+    /// <remarks>
+    /// List a twin&#39;s recording sessions plus the events a range can be built from.  Always time-filtered: an omitted window means the last &#x60;&#x60;DEFAULT_HISTORY_WINDOW_S&#x60;&#x60; (one day), never the twin&#39;s whole history. The resolved bounds come back as &#x60;&#x60;window_start_us&#x60;&#x60; / &#x60;&#x60;window_end_us&#x60;&#x60; so the UI shows what was actually queried rather than what was asked for.  Two queries, each with one job:  1. The selected twin&#39;s &#x60;&#x60;TWIN_RECORDING_*&#x60;&#x60; rows, which are what sessions    are paired and classified from. 2. The range-point rows (&#x60;&#x60;RANGE_POINT_EVENT_TYPES&#x60;&#x60;), scoped to the twin or    to its whole environment per &#x60;&#x60;scope&#x60;&#x60;.  They are kept separate so that environment scope — where other twins&#39; rows could otherwise crowd out the selected twin&#39;s within a shared row cap — never degrades the session list.  &#x60;&#x60;scope&#x3D;\&quot;environment\&quot;&#x60;&#x60; exists because a camera twin has no &#x60;&#x60;TWIN_RECORDING_START&#x60;&#x60;/&#x60;&#x60;STOP&#x60;&#x60; of its own: its window is usually defined by the robot twin it was recording alongside, so an operator needs that twin&#39;s events as bounds.
+    /// </remarks>
+    /// <param name="twinUuid"></param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="scope"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="startTimestampUs"> (optional, default to 0)</param>
+    /// <param name="endTimestampUs"> (optional, default to 0)</param>
+    pplx::task<std::shared_ptr<AdminTwinSessionsResponseSchema>> srcAppApiAdminTaskTriggerListTwinRecordingSessions(
+        utility::string_t twinUuid,
+        boost::optional<int32_t> limit,
+        boost::optional<utility::string_t> scope,
+        boost::optional<int32_t> startTimestampUs,
+        boost::optional<int32_t> endTimestampUs
+    ) const;
+    /// <summary>
+    /// Preflight Recording Generation
+    /// </summary>
+    /// <remarks>
+    /// Report what a trigger would do, so the UI never promises work it cannot do.
+    /// </remarks>
+    /// <param name="twinUuid"></param>
+    /// <param name="startTimestampUs"></param>
+    /// <param name="endTimestampUs"></param>
+    /// <param name="regenerateCameras"> (optional, default to false)</param>
+    pplx::task<std::shared_ptr<RecordingPreflightSchema>> srcAppApiAdminTaskTriggerPreflightRecordingGeneration(
+        utility::string_t twinUuid,
+        int32_t startTimestampUs,
+        int32_t endTimestampUs,
+        boost::optional<bool> regenerateCameras
+    ) const;
+    /// <summary>
+    /// Resolve Recording Environment
+    /// </summary>
+    /// <remarks>
+    /// Resolve an environment by slug or UUID and list its recordable twins.
+    /// </remarks>
+    /// <param name="ref"></param>
+    pplx::task<std::shared_ptr<AdminRecordingEnvironmentSchema>> srcAppApiAdminTaskTriggerResolveRecordingEnvironment(
+        utility::string_t ref
+    ) const;
+    /// <summary>
+    /// Trigger Camera Finalization
+    /// </summary>
+    /// <remarks>
+    /// Fire &#x60;&#x60;finalize_progressive_camera_recording_task&#x60;&#x60; for one recording.  The same dispatch the reconcile beat makes (&#x60;&#x60;_reconcile_one_progressive_recording&#x60;&#x60;), including passing the *last segment&#39;s* timestamp rather than \&quot;now\&quot; — the synthesized &#x60;&#x60;camera_stored&#x60;&#x60; row is stamped with it.  Refuses rather than dispatching when the recording has no stored segments (a typo would otherwise burn one of the recording&#39;s finite reconcile attempts via the &#x60;&#x60;no_segments&#x60;&#x60; path), when it is already finalized, and when health plus lifecycle telemetry say a live stream is still advancing on it — finalizing a live recording truncates it and orphans every later segment.
+    /// </remarks>
+    /// <param name="triggerCameraFinalizationRequestSchema"></param>
+    pplx::task<std::shared_ptr<TriggerCameraFinalizationResponseSchema>> srcAppApiAdminTaskTriggerTriggerCameraFinalization(
+        std::shared_ptr<TriggerCameraFinalizationRequestSchema> triggerCameraFinalizationRequestSchema
+    ) const;
+    /// <summary>
+    /// Trigger Recording Generation
+    /// </summary>
+    /// <remarks>
+    /// Re-fire &#x60;&#x60;generate_twin_recording_task&#x60;&#x60; for an explicit twin + window.  Idempotent within &#x60;&#x60;MANUAL_RECORDING_TRIGGER_LOCK_TTL_S&#x60;&#x60;: the same twin plus an identical window enqueues exactly once, and the second call returns &#x60;&#x60;status&#x3D;\&quot;duplicate\&quot;&#x60;&#x60; with HTTP 200 (the work the caller asked for is in flight — that is not an error).
+    /// </remarks>
+    /// <param name="triggerRecordingRequestSchema"></param>
+    pplx::task<std::shared_ptr<TriggerRecordingResponseSchema>> srcAppApiAdminTaskTriggerTriggerRecordingGeneration(
+        std::shared_ptr<TriggerRecordingRequestSchema> triggerRecordingRequestSchema
     ) const;
     /// <summary>
     /// Acknowledge Alert
@@ -900,6 +996,18 @@ public:
         std::shared_ptr<AssetGLBFromAttachmentSchema> assetGLBFromAttachmentSchema
     ) const;
     /// <summary>
+    /// Set Splat From Attachment
+    /// </summary>
+    /// <remarks>
+    /// Set an asset&#39;s Gaussian splat file from an existing attachment. Used by the large-upload path, where the splat is first uploaded as an attachment.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="assetGLBFromAttachmentSchema"></param>
+    pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsSetSplatFromAttachment(
+        utility::string_t uuid,
+        std::shared_ptr<AssetGLBFromAttachmentSchema> assetGLBFromAttachmentSchema
+    ) const;
+    /// <summary>
     /// Sync Simulation Backends
     /// </summary>
     /// <remarks>
@@ -944,6 +1052,18 @@ public:
     /// <param name="uuid"></param>
     /// <param name="file"></param>
     pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsUploadGlb(
+        utility::string_t uuid,
+        std::shared_ptr<HttpContent> file
+    ) const;
+    /// <summary>
+    /// Upload Splat
+    /// </summary>
+    /// <remarks>
+    /// Upload a Gaussian splatting file (.ply/.splat/.spz/.ksplat) as the asset&#39;s primary visualization. Larger files use the attachment large-upload flow followed by &#x60;&#x60;/splat-from-attachment&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="file"></param>
+    pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsUploadSplat(
         utility::string_t uuid,
         std::shared_ptr<HttpContent> file
     ) const;
@@ -2317,11 +2437,23 @@ public:
     /// Invite User To Environment
     /// </summary>
     /// <remarks>
-    /// Invite a non-existent user to an environment
+    /// Invite a user (existing-but-out-of-org, or brand new) to an environment.
     /// </remarks>
     /// <param name="uuid"></param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingInviteUserToEnvironment(
+    pplx::task<std::shared_ptr<InvitationResponseSchema>> srcAppApiEnvironmentsSharingInviteUserToEnvironment(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Redeem Environment Link
+    /// </summary>
+    /// <remarks>
+    /// Redeem a share link: grant the current user the link&#39;s role on the env.  Requires authentication (global Ninja auth). \&quot;Anyone with the link\&quot; model (like Colab): any signed-in user holding a valid token may redeem it, regardless of their organization. Redemption creates an object-scoped ACL grant on this environment only (cascading to its twins/telemetry/streams via &#x60;&#x60;Twin.highest_role_for&#x60;&#x60;) — the recipient is NOT added to the env&#39;s org/workspace. Feature-level access is still gated by the granted role. Returns 401 (unauthenticated) or 404 (bad/expired/revoked/mismatched token).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="redeemLinkSchema"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingRedeemEnvironmentLink(
+        utility::string_t uuid,
+        std::shared_ptr<RedeemLinkSchema> redeemLinkSchema
     ) const;
     /// <summary>
     /// Remove User From Environment
@@ -2349,7 +2481,7 @@ public:
     /// Share Environment With User
     /// </summary>
     /// <remarks>
-    /// Share environment with a user by email
+    /// Share environment with a user by email.
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingShareEnvironmentWithUser(
@@ -3189,7 +3321,7 @@ public:
     /// Create Mlmodel
     /// </summary>
     /// <remarks>
-    /// Create a new ML model (staff administrators only).
+    /// Create a new ML model.  Staff/admins can create any model (any provider, any visibility). Other authenticated users may create feature-flagged &#x60;&#x60;custom-api&#x60;&#x60; / &#x60;&#x60;custom-hosted&#x60;&#x60; models scoped to private/workspace visibility and cloud deployment — see &#x60;&#x60;docs/CUSTOM_MLMODELS_SPEC.md&#x60;&#x60;.
     /// </remarks>
     /// <param name="mLModelCreateSchema"></param>
     pplx::task<std::shared_ptr<MLModelSchema>> srcAppApiMlmodelsCreateMlmodel(
@@ -3203,6 +3335,16 @@ public:
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<void> srcAppApiMlmodelsDeleteMlmodel(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Delete Mlmodel Credential
+    /// </summary>
+    /// <remarks>
+    /// Delete a model&#39;s stored auth material, if any.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<MLModelCredentialStatusSchema>> srcAppApiMlmodelsDeleteMlmodelCredential(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -3368,6 +3510,30 @@ public:
     pplx::task<std::shared_ptr<MLModelRunResultSchema>> srcAppApiMlmodelsRunMlmodelPlayground(
         utility::string_t uuid,
         std::shared_ptr<MLModelRunSchema> mLModelRunSchema
+    ) const;
+    /// <summary>
+    /// Set Mlmodel Credential
+    /// </summary>
+    /// <remarks>
+    /// Store (encrypted) auth material for a &#x60;&#x60;custom-api&#x60;&#x60; model.  Write-only: the secret is never returned by this or any other endpoint. Callers can only tell a credential exists via &#x60;&#x60;MLModelSchema.has_credential&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="mLModelCredentialSetSchema"></param>
+    pplx::task<std::shared_ptr<MLModelCredentialStatusSchema>> srcAppApiMlmodelsSetMlmodelCredential(
+        utility::string_t uuid,
+        std::shared_ptr<MLModelCredentialSetSchema> mLModelCredentialSetSchema
+    ) const;
+    /// <summary>
+    /// Test Call Mlmodel
+    /// </summary>
+    /// <remarks>
+    /// Run one real invocation against a &#x60;&#x60;custom-api&#x60;&#x60; model&#39;s endpoint.  Lets the owner validate endpoint/auth/payload_template configuration before wiring the model into a workflow. This performs a *real* inference, so it is credit-gated and metered exactly like &#x60;&#x60;POST /{uuid}/run&#x60;&#x60; — under its own &#x60;&#x60;mlmodel_test_call&#x60;&#x60; caller so configuration traffic stays separable in usage dashboards.  Requires &#x60;&#x60;metadata.endpoint_url&#x60;&#x60;: without it the custom-API handler would silently divert to &#x60;&#x60;metadata.fallback_provider&#x60;&#x60; on the platform&#39;s own provider credentials, which tests nothing the caller asked about.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="mLModelTestCallSchema"></param>
+    pplx::task<std::shared_ptr<MLModelTestCallResultSchema>> srcAppApiMlmodelsTestCallMlmodel(
+        utility::string_t uuid,
+        std::shared_ptr<MLModelTestCallSchema> mLModelTestCallSchema
     ) const;
     /// <summary>
     /// Update Mlmodel
@@ -3852,7 +4018,7 @@ public:
     /// Invite a non-existent user to a project.
     /// </remarks>
     /// <param name="uuid"></param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiProjectsInviteUserToProject(
+    pplx::task<std::shared_ptr<InvitationResponseSchema>> srcAppApiProjectsInviteUserToProject(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -5215,7 +5381,7 @@ public:
     /// Activate Workflow
     /// </summary>
     /// <remarks>
-    /// Activate a workflow.
+    /// Activate a workflow.  Decoupled from compilation: it only flips &#x60;&#x60;is_active&#x60;&#x60; after the activation validators pass (:func:&#x60;_validate_workflow_for_activation&#x60;). Compile failures surface later at the edge-sync/run site, not by blocking this state change — a workflow can target several twins/edges and one that can&#39;t compile shouldn&#39;t veto the rest. Missing mandatory inputs DO block activation. See &#x60;&#x60;docs/workflow-error-surfacing.md&#x60;&#x60;.
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::shared_ptr<WorkflowSchema>> srcAppApiWorkflowsActivateWorkflow(
@@ -5267,7 +5433,7 @@ public:
     /// Create Workflow Connection
     /// </summary>
     /// <remarks>
-    /// Create a new connection between nodes.
+    /// Create a new connection between nodes.  The editor can retry this request (double click, optimistic retry, slow network), so treat duplicate create payloads as idempotent and return the existing edge instead of surfacing a DB unique-constraint 500.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="workflowConnectionCreateSchema"></param>
