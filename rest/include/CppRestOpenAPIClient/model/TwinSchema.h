@@ -102,6 +102,11 @@ public:
     void unsetGlb_file();
     void setGlbFile(const utility::string_t& value);
 
+    utility::string_t getSplatFile() const;
+    bool splatFileIsSet() const;
+    void unsetSplat_file();
+    void setSplatFile(const utility::string_t& value);
+
     utility::string_t getUrdfFile() const;
     bool urdfFileIsSet() const;
     void unsetUrdf_file();
@@ -298,6 +303,8 @@ protected:
     bool m_Updated_atIsSet;
 
     boost::optional<utility::string_t> m_Glb_file;
+
+    boost::optional<utility::string_t> m_Splat_file;
 
     boost::optional<utility::string_t> m_Urdf_file;
 

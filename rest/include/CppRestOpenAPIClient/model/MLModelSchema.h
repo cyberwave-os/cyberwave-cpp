@@ -22,6 +22,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/IOSchemaSchema.h"
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include <vector>
@@ -32,6 +33,7 @@ namespace openapitools {
 namespace client {
 namespace model {
 
+class IOSchemaSchema;
 
 
 /// <summary>
@@ -265,6 +267,16 @@ public:
     void unsetRequired_inputs();
     void setRequiredInputs(const std::vector<std::shared_ptr<AnyType>>& value);
 
+    bool isHasCredential() const;
+    bool hasCredentialIsSet() const;
+    void unsetHas_credential();
+    void setHasCredential(bool value);
+
+    std::shared_ptr<IOSchemaSchema> getIoSchema() const;
+    bool ioSchemaIsSet() const;
+    void unsetIo_schema();
+    void setIoSchema(const std::shared_ptr<IOSchemaSchema>& value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -373,6 +385,11 @@ protected:
 
     std::vector<std::shared_ptr<AnyType>> m_Required_inputs;
     bool m_Required_inputsIsSet;
+
+    bool m_Has_credential;
+    bool m_Has_credentialIsSet;
+
+    boost::optional<std::shared_ptr<IOSchemaSchema>> m_Io_schema;
 
 };
 

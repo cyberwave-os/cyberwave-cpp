@@ -44,6 +44,36 @@ web::json::value CloudNodeWorkloadUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("instance_uuid"))] = ModelBase::toJson(m_Instance_uuid.get());
     }
+    if(m_Error.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("error"))] = ModelBase::toJson(m_Error.get());
+    }
+    if(m_Failure_detail.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("failure_detail"))] = ModelBase::toJson(m_Failure_detail.get());
+    }
+    if(m_Stderr.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("stderr"))] = ModelBase::toJson(m_Stderr.get());
+    }
+    if(m_Exit_code.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("exit_code"))] = ModelBase::toJson(m_Exit_code.get());
+    }
+    if(m_Rejection_reason.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("rejection_reason"))] = ModelBase::toJson(m_Rejection_reason.get());
+    }
+    if(m_Rejecting_instance_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("rejecting_instance_uuid"))] = ModelBase::toJson(m_Rejecting_instance_uuid.get());
+    }
 
     return val;
 }
@@ -73,6 +103,72 @@ bool CloudNodeWorkloadUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("error"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("error")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setError;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setError);
+            setError(refVal_setError);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("failure_detail"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("failure_detail")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setFailureDetail;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFailureDetail);
+            setFailureDetail(refVal_setFailureDetail);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("stderr"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("stderr")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setStderr;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setStderr);
+            setStderr(refVal_setStderr);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("exit_code"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("exit_code")));
+        if(!fieldValue.is_null())
+        {
+            int32_t refVal_setExitCode;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExitCode);
+            setExitCode(refVal_setExitCode);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("rejection_reason"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("rejection_reason")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setRejectionReason;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRejectionReason);
+            setRejectionReason(refVal_setRejectionReason);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("rejecting_instance_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("rejecting_instance_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setRejectingInstanceUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRejectingInstanceUuid);
+            setRejectingInstanceUuid(refVal_setRejectingInstanceUuid);
+            
+        }
+    }
     return ok;
 }
 
@@ -90,6 +186,30 @@ void CloudNodeWorkloadUpdateSchema::toMultipart(std::shared_ptr<MultipartFormDat
     if(m_Instance_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("instance_uuid")), m_Instance_uuid.get()));
+    }
+    if(m_Error.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("error")), m_Error.get()));
+    }
+    if(m_Failure_detail.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("failure_detail")), m_Failure_detail.get()));
+    }
+    if(m_Stderr.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("stderr")), m_Stderr.get()));
+    }
+    if(m_Exit_code.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("exit_code")), m_Exit_code.get()));
+    }
+    if(m_Rejection_reason.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("rejection_reason")), m_Rejection_reason.get()));
+    }
+    if(m_Rejecting_instance_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("rejecting_instance_uuid")), m_Rejecting_instance_uuid.get()));
     }
 }
 
@@ -113,6 +233,42 @@ bool CloudNodeWorkloadUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         utility::string_t refVal_setInstanceUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("instance_uuid"))), refVal_setInstanceUuid );
         setInstanceUuid(refVal_setInstanceUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("error"))))
+    {
+        utility::string_t refVal_setError;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("error"))), refVal_setError );
+        setError(refVal_setError);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("failure_detail"))))
+    {
+        utility::string_t refVal_setFailureDetail;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("failure_detail"))), refVal_setFailureDetail );
+        setFailureDetail(refVal_setFailureDetail);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("stderr"))))
+    {
+        utility::string_t refVal_setStderr;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("stderr"))), refVal_setStderr );
+        setStderr(refVal_setStderr);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("exit_code"))))
+    {
+        int32_t refVal_setExitCode;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("exit_code"))), refVal_setExitCode );
+        setExitCode(refVal_setExitCode);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("rejection_reason"))))
+    {
+        utility::string_t refVal_setRejectionReason;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("rejection_reason"))), refVal_setRejectionReason );
+        setRejectionReason(refVal_setRejectionReason);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("rejecting_instance_uuid"))))
+    {
+        utility::string_t refVal_setRejectingInstanceUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("rejecting_instance_uuid"))), refVal_setRejectingInstanceUuid );
+        setRejectingInstanceUuid(refVal_setRejectingInstanceUuid);
     }
     return ok;
 }
@@ -157,6 +313,125 @@ bool CloudNodeWorkloadUpdateSchema::instanceUuidIsSet() const
 void CloudNodeWorkloadUpdateSchema::unsetInstance_uuid()
 {
     m_Instance_uuid.reset();
+}
+utility::string_t CloudNodeWorkloadUpdateSchema::getError() const
+{
+    return m_Error.get();
+}
+
+
+void CloudNodeWorkloadUpdateSchema::setError(const utility::string_t& value)
+{
+    m_Error = value;
+}
+
+bool CloudNodeWorkloadUpdateSchema::errorIsSet() const
+{
+    return m_Error.has_value();
+}
+
+void CloudNodeWorkloadUpdateSchema::unsetError()
+{
+    m_Error.reset();
+}
+utility::string_t CloudNodeWorkloadUpdateSchema::getFailureDetail() const
+{
+    return m_Failure_detail.get();
+}
+
+
+void CloudNodeWorkloadUpdateSchema::setFailureDetail(const utility::string_t& value)
+{
+    m_Failure_detail = value;
+}
+
+bool CloudNodeWorkloadUpdateSchema::failureDetailIsSet() const
+{
+    return m_Failure_detail.has_value();
+}
+
+void CloudNodeWorkloadUpdateSchema::unsetFailure_detail()
+{
+    m_Failure_detail.reset();
+}
+utility::string_t CloudNodeWorkloadUpdateSchema::getStderr() const
+{
+    return m_Stderr.get();
+}
+
+
+void CloudNodeWorkloadUpdateSchema::setStderr(const utility::string_t& value)
+{
+    m_Stderr = value;
+}
+
+bool CloudNodeWorkloadUpdateSchema::stderrIsSet() const
+{
+    return m_Stderr.has_value();
+}
+
+void CloudNodeWorkloadUpdateSchema::unsetStderr()
+{
+    m_Stderr.reset();
+}
+int32_t CloudNodeWorkloadUpdateSchema::getExitCode() const
+{
+    return m_Exit_code.get();
+}
+
+void CloudNodeWorkloadUpdateSchema::setExitCode(int32_t value)
+{
+    m_Exit_code = value;
+}
+
+bool CloudNodeWorkloadUpdateSchema::exitCodeIsSet() const
+{
+    return m_Exit_code.has_value();
+}
+
+void CloudNodeWorkloadUpdateSchema::unsetExit_code()
+{
+    m_Exit_code.reset();
+}
+utility::string_t CloudNodeWorkloadUpdateSchema::getRejectionReason() const
+{
+    return m_Rejection_reason.get();
+}
+
+
+void CloudNodeWorkloadUpdateSchema::setRejectionReason(const utility::string_t& value)
+{
+    m_Rejection_reason = value;
+}
+
+bool CloudNodeWorkloadUpdateSchema::rejectionReasonIsSet() const
+{
+    return m_Rejection_reason.has_value();
+}
+
+void CloudNodeWorkloadUpdateSchema::unsetRejection_reason()
+{
+    m_Rejection_reason.reset();
+}
+utility::string_t CloudNodeWorkloadUpdateSchema::getRejectingInstanceUuid() const
+{
+    return m_Rejecting_instance_uuid.get();
+}
+
+
+void CloudNodeWorkloadUpdateSchema::setRejectingInstanceUuid(const utility::string_t& value)
+{
+    m_Rejecting_instance_uuid = value;
+}
+
+bool CloudNodeWorkloadUpdateSchema::rejectingInstanceUuidIsSet() const
+{
+    return m_Rejecting_instance_uuid.has_value();
+}
+
+void CloudNodeWorkloadUpdateSchema::unsetRejecting_instance_uuid()
+{
+    m_Rejecting_instance_uuid.reset();
 }
 
 }

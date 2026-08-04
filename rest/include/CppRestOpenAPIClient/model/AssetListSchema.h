@@ -127,6 +127,11 @@ public:
     void unsetGlb_file();
     void setGlbFile(const utility::string_t& value);
 
+    utility::string_t getSplatFile() const;
+    bool splatFileIsSet() const;
+    void unsetSplat_file();
+    void setSplatFile(const utility::string_t& value);
+
     bool isHasUniversalSchema() const;
     bool hasUniversalSchemaIsSet() const;
     void unsetHas_universal_schema();
@@ -196,6 +201,8 @@ protected:
     boost::optional<utility::string_t> m_Urdf_file;
 
     boost::optional<utility::string_t> m_Glb_file;
+
+    boost::optional<utility::string_t> m_Splat_file;
 
     bool m_Has_universal_schema;
     bool m_Has_universal_schemaIsSet;
