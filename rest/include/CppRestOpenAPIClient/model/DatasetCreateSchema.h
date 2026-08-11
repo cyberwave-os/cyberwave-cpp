@@ -77,6 +77,11 @@ public:
     void unsetInclude_audio();
     void setIncludeAudio(bool value);
 
+    bool isAllowPendingRecordings() const;
+    bool allowPendingRecordingsIsSet() const;
+    void unsetAllow_pending_recordings();
+    void setAllowPendingRecordings(bool value);
+
 
 protected:
     std::vector<utility::string_t> m_Episodes;
@@ -87,6 +92,8 @@ protected:
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
 
     boost::optional<bool> m_Include_audio;
+
+    boost::optional<bool> m_Allow_pending_recordings;
 
 };
 
