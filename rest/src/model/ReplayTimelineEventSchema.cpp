@@ -22,8 +22,6 @@ ReplayTimelineEventSchema::ReplayTimelineEventSchema()
 {
     m_Uuid = utility::conversions::to_string_t("");
     m_UuidIsSet = false;
-    m_Recording_uuid = utility::conversions::to_string_t("");
-    m_Recording_uuidIsSet = false;
     m_Timestamp_us = 0;
     m_Timestamp_usIsSet = false;
     m_Kind = utility::conversions::to_string_t("");
@@ -36,6 +34,9 @@ ReplayTimelineEventSchema::ReplayTimelineEventSchema()
     m_DescriptionIsSet = false;
     m_Context = utility::conversions::to_string_t("");
     m_ContextIsSet = false;
+    m_AssociationIsSet = false;
+    m_Matching_rule = utility::conversions::to_string_t("");
+    m_Matching_ruleIsSet = false;
     m_MetadataIsSet = false;
 }
 
@@ -55,11 +56,6 @@ web::json::value ReplayTimelineEventSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("uuid"))] = ModelBase::toJson(m_Uuid);
-    }
-    if(m_Recording_uuidIsSet)
-    {
-        
-        val[utility::conversions::to_string_t(_XPLATSTR("recording_uuid"))] = ModelBase::toJson(m_Recording_uuid);
     }
     if(m_Timestamp_usIsSet)
     {
@@ -106,6 +102,18 @@ web::json::value ReplayTimelineEventSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("context"))] = ModelBase::toJson(m_Context);
     }
+    if(m_AssociationIsSet)
+    {
+        
+        utility::string_t refVal = fromAssociationEnum(m_Association);
+        val[utility::conversions::to_string_t(_XPLATSTR("association"))] = ModelBase::toJson(refVal);
+        
+    }
+    if(m_Matching_ruleIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("matching_rule"))] = ModelBase::toJson(m_Matching_rule);
+    }
     if(m_MetadataIsSet)
     {
         
@@ -126,17 +134,6 @@ bool ReplayTimelineEventSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setUuid;
             ok &= ModelBase::fromJson(fieldValue, refVal_setUuid);
             setUuid(refVal_setUuid);
-            
-        }
-    }
-    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("recording_uuid"))))
-    {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("recording_uuid")));
-        if(!fieldValue.is_null())
-        {
-            utility::string_t refVal_setRecordingUuid;
-            ok &= ModelBase::fromJson(fieldValue, refVal_setRecordingUuid);
-            setRecordingUuid(refVal_setRecordingUuid);
             
         }
     }
@@ -239,6 +236,29 @@ bool ReplayTimelineEventSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("association"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("association")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setAssociation;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAssociation);
+            
+            setAssociation(toAssociationEnum(refVal_setAssociation));
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("matching_rule"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("matching_rule")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setMatchingRule;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setMatchingRule);
+            setMatchingRule(refVal_setMatchingRule);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("metadata"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("metadata")));
@@ -263,10 +283,6 @@ void ReplayTimelineEventSchema::toMultipart(std::shared_ptr<MultipartFormData> m
     if(m_UuidIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("uuid")), m_Uuid));
-    }
-    if(m_Recording_uuidIsSet)
-    {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("recording_uuid")), m_Recording_uuid));
     }
     if(m_Timestamp_usIsSet)
     {
@@ -304,6 +320,14 @@ void ReplayTimelineEventSchema::toMultipart(std::shared_ptr<MultipartFormData> m
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("context")), m_Context));
     }
+    if(m_AssociationIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("association")), fromAssociationEnum(m_Association)));
+    }
+    if(m_Matching_ruleIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("matching_rule")), m_Matching_rule));
+    }
     if(m_MetadataIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata));
@@ -324,12 +348,6 @@ bool ReplayTimelineEventSchema::fromMultiPart(std::shared_ptr<MultipartFormData>
         utility::string_t refVal_setUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("uuid"))), refVal_setUuid );
         setUuid(refVal_setUuid);
-    }
-    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("recording_uuid"))))
-    {
-        utility::string_t refVal_setRecordingUuid;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("recording_uuid"))), refVal_setRecordingUuid );
-        setRecordingUuid(refVal_setRecordingUuid);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("timestamp_us"))))
     {
@@ -385,6 +403,18 @@ bool ReplayTimelineEventSchema::fromMultiPart(std::shared_ptr<MultipartFormData>
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("context"))), refVal_setContext );
         setContext(refVal_setContext);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("association"))))
+    {
+        utility::string_t refVal_setAssociation;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("association"))), refVal_setAssociation );
+        setAssociation(toAssociationEnum(refVal_setAssociation));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("matching_rule"))))
+    {
+        utility::string_t refVal_setMatchingRule;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("matching_rule"))), refVal_setMatchingRule );
+        setMatchingRule(refVal_setMatchingRule);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))))
     {
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
@@ -392,6 +422,27 @@ bool ReplayTimelineEventSchema::fromMultiPart(std::shared_ptr<MultipartFormData>
         setMetadata(refVal_setMetadata);
     }
     return ok;
+}
+
+ReplayTimelineEventSchema::AssociationEnum ReplayTimelineEventSchema::toAssociationEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("window_annotation")) {
+        return AssociationEnum::WINDOW_ANNOTATION;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to AssociationEnum");
+}
+
+
+const utility::string_t ReplayTimelineEventSchema::fromAssociationEnum(const AssociationEnum value) const
+{
+    switch(value)
+    {
+        
+        case AssociationEnum::WINDOW_ANNOTATION: return utility::conversions::to_string_t("window_annotation");
+        
+    }
 }
 
 
@@ -415,27 +466,6 @@ bool ReplayTimelineEventSchema::uuidIsSet() const
 void ReplayTimelineEventSchema::unsetUuid()
 {
     m_UuidIsSet = false;
-}
-utility::string_t ReplayTimelineEventSchema::getRecordingUuid() const
-{
-    return m_Recording_uuid;
-}
-
-
-void ReplayTimelineEventSchema::setRecordingUuid(const utility::string_t& value)
-{
-    m_Recording_uuid = value;
-    m_Recording_uuidIsSet = true;
-}
-
-bool ReplayTimelineEventSchema::recordingUuidIsSet() const
-{
-    return m_Recording_uuidIsSet;
-}
-
-void ReplayTimelineEventSchema::unsetRecording_uuid()
-{
-    m_Recording_uuidIsSet = false;
 }
 int32_t ReplayTimelineEventSchema::getTimestampUs() const
 {
@@ -621,6 +651,48 @@ bool ReplayTimelineEventSchema::contextIsSet() const
 void ReplayTimelineEventSchema::unsetContext()
 {
     m_ContextIsSet = false;
+}
+ReplayTimelineEventSchema::AssociationEnum ReplayTimelineEventSchema::getAssociation() const
+{
+    return m_Association;
+}
+
+
+void ReplayTimelineEventSchema::setAssociation(const AssociationEnum value)
+{
+    m_Association = value;
+    m_AssociationIsSet = true;
+}
+
+bool ReplayTimelineEventSchema::associationIsSet() const
+{
+    return m_AssociationIsSet;
+}
+
+void ReplayTimelineEventSchema::unsetAssociation()
+{
+    m_AssociationIsSet = false;
+}
+utility::string_t ReplayTimelineEventSchema::getMatchingRule() const
+{
+    return m_Matching_rule;
+}
+
+
+void ReplayTimelineEventSchema::setMatchingRule(const utility::string_t& value)
+{
+    m_Matching_rule = value;
+    m_Matching_ruleIsSet = true;
+}
+
+bool ReplayTimelineEventSchema::matchingRuleIsSet() const
+{
+    return m_Matching_ruleIsSet;
+}
+
+void ReplayTimelineEventSchema::unsetMatching_rule()
+{
+    m_Matching_ruleIsSet = false;
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> ReplayTimelineEventSchema::getMetadata() const
 {

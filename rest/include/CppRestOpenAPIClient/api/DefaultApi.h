@@ -25,7 +25,10 @@
 #include "CppRestOpenAPIClient/model/AIMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/AddMemberByEmailRequest.h"
 #include "CppRestOpenAPIClient/model/AddMemberByEmailResponse.h"
+#include "CppRestOpenAPIClient/model/AdminCameraRecordingsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/AdminLabOverviewSchema.h"
+#include "CppRestOpenAPIClient/model/AdminRecordingEnvironmentSchema.h"
+#include "CppRestOpenAPIClient/model/AdminTwinSessionsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/AlertSchema.h"
 #include "CppRestOpenAPIClient/AnyType.h"
 #include "CppRestOpenAPIClient/model/AssetControlProfilePatchSchema.h"
@@ -134,6 +137,7 @@
 #include "CppRestOpenAPIClient/model/ImportResultSchema.h"
 #include "CppRestOpenAPIClient/model/InitiateLargeUploadResponse.h"
 #include "CppRestOpenAPIClient/model/InitiateLargeUploadSchema.h"
+#include "CppRestOpenAPIClient/model/InvitationResponseSchema.h"
 #include "CppRestOpenAPIClient/model/JointSchema.h"
 #include "CppRestOpenAPIClient/model/JointStateSchema.h"
 #include "CppRestOpenAPIClient/model/JointStateUpdateSchema.h"
@@ -152,6 +156,8 @@
 #include "CppRestOpenAPIClient/model/MLModelArtifactUploadInitResponseSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelArtifactUploadInitSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelCreateSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelCredentialSetSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelCredentialStatusSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelEdgeRuntimeListSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelEvaluateSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelExecutionDetailSchema.h"
@@ -160,6 +166,8 @@
 #include "CppRestOpenAPIClient/model/MLModelRunResultSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelRunSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelTestCallResultSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelTestCallSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/MLTrainingCreateSchema.h"
 #include "CppRestOpenAPIClient/model/MLTrainingDeploySchema.h"
@@ -227,15 +235,19 @@
 #include "CppRestOpenAPIClient/model/RLTaskTaskSpecUpsertSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskTaskSpecValidateResponseSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskUpdateSchema.h"
+#include "CppRestOpenAPIClient/model/RecordingAvailabilityResponse.h"
 #include "CppRestOpenAPIClient/model/RecordingDetailSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingGenerationResponseSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingListResponse.h"
+#include "CppRestOpenAPIClient/model/RecordingMaterializingSchema.h"
+#include "CppRestOpenAPIClient/model/RecordingPreflightSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingSourcesEnvelopeSchema.h"
 #include "CppRestOpenAPIClient/model/RedeemCouponRequestSchema.h"
 #include "CppRestOpenAPIClient/model/RedeemCouponResponseSchema.h"
+#include "CppRestOpenAPIClient/model/RedeemLinkSchema.h"
 #include "CppRestOpenAPIClient/model/ReloadCapabilitiesBulkSchema.h"
 #include "CppRestOpenAPIClient/model/RemoveMemberResponse.h"
-#include "CppRestOpenAPIClient/model/ReplayTimelineEventsResponseSchema.h"
+#include "CppRestOpenAPIClient/model/ReplayTimelineWindowEventsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/ResourceMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/Response.h"
 #include "CppRestOpenAPIClient/model/RobotDescriptionSchema.h"
@@ -262,6 +274,10 @@
 #include "CppRestOpenAPIClient/model/TopupIntentResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TrajectoryFromActionRequestSchema.h"
 #include "CppRestOpenAPIClient/model/TransactionInvoiceSchema.h"
+#include "CppRestOpenAPIClient/model/TriggerCameraFinalizationRequestSchema.h"
+#include "CppRestOpenAPIClient/model/TriggerCameraFinalizationResponseSchema.h"
+#include "CppRestOpenAPIClient/model/TriggerRecordingRequestSchema.h"
+#include "CppRestOpenAPIClient/model/TriggerRecordingResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionRequestSchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionStatusSchema.h"
@@ -430,6 +446,88 @@ public:
         utility::string_t uuid,
         utility::string_t optionId,
         std::shared_ptr<AssetControlProfileSettingsPatchSchema> assetControlProfileSettingsPatchSchema
+    ) const;
+    /// <summary>
+    /// List Twin Camera Recordings
+    /// </summary>
+    /// <remarks>
+    /// Group stored camera segments by &#x60;&#x60;recording_id&#x60;&#x60; and report finalization.  Deliberately grouped the same way &#x60;&#x60;_find_stale_progressive_recording_candidates&#x60;&#x60; groups them — per recording, not per chunk, audio parts excluded — so what an operator sees here matches what the reconcile beat would act on.  Time filtering is *discovery only*: the window picks which recordings had segment activity in it, and every fact about a chosen recording is then computed from all of its segments. A recording that straddles the boundary would otherwise report a truncated &#x60;&#x60;last_segment_at&#x60;&#x60;, which is the value staleness and the live-stream deferral check both key on — a window ending an hour ago could make a recording that is still writing segments look stale and safe to finalize. Two queries, each bounded: the first by the window, the second by the handful of ids the first returned.  &#x60;&#x60;status&#x60;&#x60; is the actionable summary; &#x60;&#x60;finalizable&#x60;&#x60; is what the UI enables a button on. A recording is finalizable when it is not already finalized, no live stream is advancing on it, and it is either stale or has been given up on.
+    /// </remarks>
+    /// <param name="twinUuid"></param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="scope"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="startTimestampUs"> (optional, default to 0)</param>
+    /// <param name="endTimestampUs"> (optional, default to 0)</param>
+    pplx::task<std::shared_ptr<AdminCameraRecordingsResponseSchema>> srcAppApiAdminTaskTriggerListTwinCameraRecordings(
+        utility::string_t twinUuid,
+        boost::optional<int32_t> limit,
+        boost::optional<utility::string_t> scope,
+        boost::optional<int32_t> startTimestampUs,
+        boost::optional<int32_t> endTimestampUs
+    ) const;
+    /// <summary>
+    /// List Twin Recording Sessions
+    /// </summary>
+    /// <remarks>
+    /// List a twin&#39;s recording sessions plus the events a range can be built from.  Always time-filtered: an omitted window means the last &#x60;&#x60;DEFAULT_HISTORY_WINDOW_S&#x60;&#x60; (one day), never the twin&#39;s whole history. The resolved bounds come back as &#x60;&#x60;window_start_us&#x60;&#x60; / &#x60;&#x60;window_end_us&#x60;&#x60; so the UI shows what was actually queried rather than what was asked for.  Two queries, each with one job:  1. The selected twin&#39;s &#x60;&#x60;TWIN_RECORDING_*&#x60;&#x60; rows, which are what sessions    are paired and classified from. 2. The range-point rows (&#x60;&#x60;RANGE_POINT_EVENT_TYPES&#x60;&#x60;), scoped to the twin or    to its whole environment per &#x60;&#x60;scope&#x60;&#x60;.  They are kept separate so that environment scope — where other twins&#39; rows could otherwise crowd out the selected twin&#39;s within a shared row cap — never degrades the session list.  &#x60;&#x60;scope&#x3D;\&quot;environment\&quot;&#x60;&#x60; exists because a camera twin has no &#x60;&#x60;TWIN_RECORDING_START&#x60;&#x60;/&#x60;&#x60;STOP&#x60;&#x60; of its own: its window is usually defined by the robot twin it was recording alongside, so an operator needs that twin&#39;s events as bounds.
+    /// </remarks>
+    /// <param name="twinUuid"></param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="scope"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="startTimestampUs"> (optional, default to 0)</param>
+    /// <param name="endTimestampUs"> (optional, default to 0)</param>
+    pplx::task<std::shared_ptr<AdminTwinSessionsResponseSchema>> srcAppApiAdminTaskTriggerListTwinRecordingSessions(
+        utility::string_t twinUuid,
+        boost::optional<int32_t> limit,
+        boost::optional<utility::string_t> scope,
+        boost::optional<int32_t> startTimestampUs,
+        boost::optional<int32_t> endTimestampUs
+    ) const;
+    /// <summary>
+    /// Preflight Recording Generation
+    /// </summary>
+    /// <remarks>
+    /// Report what a trigger would do, so the UI never promises work it cannot do.
+    /// </remarks>
+    /// <param name="twinUuid"></param>
+    /// <param name="startTimestampUs"></param>
+    /// <param name="endTimestampUs"></param>
+    /// <param name="regenerateCameras"> (optional, default to false)</param>
+    pplx::task<std::shared_ptr<RecordingPreflightSchema>> srcAppApiAdminTaskTriggerPreflightRecordingGeneration(
+        utility::string_t twinUuid,
+        int32_t startTimestampUs,
+        int32_t endTimestampUs,
+        boost::optional<bool> regenerateCameras
+    ) const;
+    /// <summary>
+    /// Resolve Recording Environment
+    /// </summary>
+    /// <remarks>
+    /// Resolve an environment by slug or UUID and list its recordable twins.
+    /// </remarks>
+    /// <param name="ref"></param>
+    pplx::task<std::shared_ptr<AdminRecordingEnvironmentSchema>> srcAppApiAdminTaskTriggerResolveRecordingEnvironment(
+        utility::string_t ref
+    ) const;
+    /// <summary>
+    /// Trigger Camera Finalization
+    /// </summary>
+    /// <remarks>
+    /// Fire &#x60;&#x60;finalize_progressive_camera_recording_task&#x60;&#x60; for one recording.  The same dispatch the reconcile beat makes (&#x60;&#x60;_reconcile_one_progressive_recording&#x60;&#x60;), including passing the *last segment&#39;s* timestamp rather than \&quot;now\&quot; — the synthesized &#x60;&#x60;camera_stored&#x60;&#x60; row is stamped with it.  Refuses rather than dispatching when the recording has no stored segments (a typo would otherwise burn one of the recording&#39;s finite reconcile attempts via the &#x60;&#x60;no_segments&#x60;&#x60; path), when it is already finalized, and when health plus lifecycle telemetry say a live stream is still advancing on it — finalizing a live recording truncates it and orphans every later segment.
+    /// </remarks>
+    /// <param name="triggerCameraFinalizationRequestSchema"></param>
+    pplx::task<std::shared_ptr<TriggerCameraFinalizationResponseSchema>> srcAppApiAdminTaskTriggerTriggerCameraFinalization(
+        std::shared_ptr<TriggerCameraFinalizationRequestSchema> triggerCameraFinalizationRequestSchema
+    ) const;
+    /// <summary>
+    /// Trigger Recording Generation
+    /// </summary>
+    /// <remarks>
+    /// Re-fire &#x60;&#x60;generate_twin_recording_task&#x60;&#x60; for an explicit twin + window.  Idempotent within &#x60;&#x60;MANUAL_RECORDING_TRIGGER_LOCK_TTL_S&#x60;&#x60;: the same twin plus an identical window enqueues exactly once, and the second call returns &#x60;&#x60;status&#x3D;\&quot;duplicate\&quot;&#x60;&#x60; with HTTP 200 (the work the caller asked for is in flight — that is not an error).
+    /// </remarks>
+    /// <param name="triggerRecordingRequestSchema"></param>
+    pplx::task<std::shared_ptr<TriggerRecordingResponseSchema>> srcAppApiAdminTaskTriggerTriggerRecordingGeneration(
+        std::shared_ptr<TriggerRecordingRequestSchema> triggerRecordingRequestSchema
     ) const;
     /// <summary>
     /// Acknowledge Alert
@@ -900,6 +998,18 @@ public:
         std::shared_ptr<AssetGLBFromAttachmentSchema> assetGLBFromAttachmentSchema
     ) const;
     /// <summary>
+    /// Set Splat From Attachment
+    /// </summary>
+    /// <remarks>
+    /// Set an asset&#39;s Gaussian splat file from an existing attachment. Used by the large-upload path, where the splat is first uploaded as an attachment.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="assetGLBFromAttachmentSchema"></param>
+    pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsSetSplatFromAttachment(
+        utility::string_t uuid,
+        std::shared_ptr<AssetGLBFromAttachmentSchema> assetGLBFromAttachmentSchema
+    ) const;
+    /// <summary>
     /// Sync Simulation Backends
     /// </summary>
     /// <remarks>
@@ -944,6 +1054,18 @@ public:
     /// <param name="uuid"></param>
     /// <param name="file"></param>
     pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsUploadGlb(
+        utility::string_t uuid,
+        std::shared_ptr<HttpContent> file
+    ) const;
+    /// <summary>
+    /// Upload Splat
+    /// </summary>
+    /// <remarks>
+    /// Upload a Gaussian splatting file (.ply/.splat/.spz/.ksplat) as the asset&#39;s primary visualization. Larger files use the attachment large-upload flow followed by &#x60;&#x60;/splat-from-attachment&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="file"></param>
+    pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsUploadSplat(
         utility::string_t uuid,
         std::shared_ptr<HttpContent> file
     ) const;
@@ -1165,13 +1287,17 @@ public:
     /// List Controller Policies
     /// </summary>
     /// <remarks>
-    /// List all controller policies visible to the authenticated user, optionally filtered by asset and workspace.
+    /// List all controller policies visible to the authenticated user, optionally filtered by asset and workspace.  Supports optional &#x60;&#x60;offset&#x60;&#x60;/&#x60;&#x60;limit&#x60;&#x60; pagination. When &#x60;&#x60;limit&#x60;&#x60; is omitted the full result set is returned (backward compatible).
     /// </remarks>
     /// <param name="assetUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="workspaceUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="offset"> (optional, default to 0)</param>
     pplx::task<std::vector<std::shared_ptr<ControllerPolicySchema>>> srcAppApiControllerPoliciesListControllerPolicies(
         boost::optional<utility::string_t> assetUuid,
-        boost::optional<utility::string_t> workspaceUuid
+        boost::optional<utility::string_t> workspaceUuid,
+        boost::optional<int32_t> limit,
+        boost::optional<int32_t> offset
     ) const;
     /// <summary>
     /// Send Inference Command
@@ -1311,7 +1437,7 @@ public:
     /// Create Dataset
     /// </summary>
     /// <remarks>
-    /// Create a new dataset and start async episode parquet generation.
+    /// Create the dataset row and dispatch async episode parquet generation.  Synchronous work is flat in episode count: request-shape validation, the pending-recordings gate, and the row insert. Telemetry-dependent checks and generation run in &#x60;&#x60;dispatch_dataset_generation_task&#x60;&#x60;; their failures surface via &#x60;&#x60;processing_status&#x60;&#x60; / &#x60;&#x60;failed_details&#x60;&#x60;.
     /// </remarks>
     /// <param name="datasetCreateSchema"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiDatasetsCreateDataset(
@@ -1331,13 +1457,15 @@ public:
     /// Download Dataset
     /// </summary>
     /// <remarks>
-    /// Request a download URL for a dataset in a specific format.  This endpoint is **idempotent**: calling it multiple times will not spawn duplicate conversion tasks.  Supported &#x60;&#x60;format&#x60;&#x60; values (&#x60;&#x60;DatasetType&#x60;&#x60; values) ---------------------------------------------------- - &#x60;&#x60;parquet&#x60;&#x60;   — Cyberwave joined-parquet zip (native datasets only).                   Deprecated alias: &#x60;&#x60;plain&#x60;&#x60;. - &#x60;&#x60;lerobot3&#x60;&#x60;  — LeRobot v3 (Forge writer).                   Deprecated alias: &#x60;&#x60;lerobot&#x60;&#x60;. - &#x60;&#x60;lerobot21&#x60;&#x60; — LeRobot v2.1 (Forge writer). - &#x60;&#x60;rlds&#x60;&#x60;      — RLDS / TF-Record (Open-X-Embodiment style, Forge writer). - &#x60;&#x60;openvla&#x60;&#x60;   — Cyberwave OpenVLA TFDS bundle (Cyberwave-generated writer). - &#x60;&#x60;robodm&#x60;&#x60;    — Berkeley .vla format (Forge writer).  Planned / not yet implemented (returns 422): &#x60;&#x60;mcap&#x60;&#x60;, &#x60;&#x60;gr00t&#x60;&#x60;, &#x60;&#x60;hdf5&#x60;&#x60;, &#x60;&#x60;zarr&#x60;&#x60;, &#x60;&#x60;rosbag&#x60;&#x60;  Returns ------- HTTP 200 (&#x60;&#x60;DatasetDownloadReadySchema&#x60;&#x60;)     The artifact is ready; &#x60;&#x60;signed_url&#x60;&#x60; is valid for 24 h. HTTP 202 (&#x60;&#x60;DatasetDownloadProcessingSchema&#x60;&#x60;)     A conversion task was queued or is already running.     Poll &#x60;&#x60;poll_url&#x60;&#x60; (this endpoint) again until you get a 200. HTTP 422     The format is not supported (either invalid or TODO).
+    /// Request a download URL for a dataset in a specific format.  This endpoint is **idempotent**: calling it multiple times will not spawn duplicate conversion tasks.  Because it is both the initiate and the poll endpoint, a *failed* conversion reports itself as 409 &#x60;&#x60;conversion_failed&#x60;&#x60; rather than being replaced with a fresh attempt — otherwise a client polling every few seconds spawns a new conversion task on every tick and never learns that it failed. Pass &#x60;&#x60;retry&#x3D;true&#x60;&#x60; to explicitly start a new attempt.  Supported &#x60;&#x60;format&#x60;&#x60; values (&#x60;&#x60;DatasetType&#x60;&#x60; values) ---------------------------------------------------- - &#x60;&#x60;parquet&#x60;&#x60;   — Cyberwave joined-parquet zip (native datasets only).                   Deprecated alias: &#x60;&#x60;plain&#x60;&#x60;. - &#x60;&#x60;lerobot3&#x60;&#x60;  — LeRobot v3 (Forge writer).                   Deprecated alias: &#x60;&#x60;lerobot&#x60;&#x60;. - &#x60;&#x60;lerobot21&#x60;&#x60; — LeRobot v2.1 (Forge writer). - &#x60;&#x60;rlds&#x60;&#x60;      — RLDS / TF-Record (Open-X-Embodiment style, Forge writer). - &#x60;&#x60;openvla&#x60;&#x60;   — Cyberwave OpenVLA TFDS bundle (Cyberwave-generated writer). - &#x60;&#x60;robodm&#x60;&#x60;    — Berkeley .vla format (Forge writer).  Planned / not yet implemented (returns 422): &#x60;&#x60;mcap&#x60;&#x60;, &#x60;&#x60;gr00t&#x60;&#x60;, &#x60;&#x60;hdf5&#x60;&#x60;, &#x60;&#x60;zarr&#x60;&#x60;, &#x60;&#x60;rosbag&#x60;&#x60;  Returns ------- HTTP 200 (&#x60;&#x60;DatasetDownloadReadySchema&#x60;&#x60;)     The artifact is ready; &#x60;&#x60;signed_url&#x60;&#x60; is valid for 24 h. HTTP 202 (&#x60;&#x60;DatasetDownloadProcessingSchema&#x60;&#x60;)     A conversion task was queued or is already running.     Poll &#x60;&#x60;poll_url&#x60;&#x60; (this endpoint) again until you get a 200. HTTP 409     The dataset cannot be converted (&#x60;&#x60;dataset_not_convertible&#x60;&#x60;), or the     last attempt for this format failed (&#x60;&#x60;conversion_failed&#x60;&#x60;). HTTP 422     The format is not supported (either invalid or TODO).
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="format"></param>
+    /// <param name="retry"> (optional, default to false)</param>
     pplx::task<std::shared_ptr<DatasetDownloadReadySchema>> srcAppApiDatasetsDownloadDataset(
         utility::string_t uuid,
-        utility::string_t format
+        utility::string_t format,
+        boost::optional<bool> retry
     ) const;
     /// <summary>
     /// Export Dataset
@@ -1462,8 +1590,10 @@ public:
     /// Re-run parquet generation for every episode in the dataset. Admin only.  Clears each episode&#39;s cached parquet metadata, invalidates the dataset&#39;s joined parquet (if any), and dispatches one &#x60;&#x60;generate_episode_parquet_task&#x60;&#x60; per episode. Datasets rejoin lazily via &#x60;&#x60;join_dataset_parquets&#x60;&#x60; once all episodes complete.
     /// </remarks>
     /// <param name="uuid"></param>
+    /// <param name="allowPendingRecordings"> (optional, default to false)</param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiDatasetsRecomputeDataset(
-        utility::string_t uuid
+        utility::string_t uuid,
+        boost::optional<bool> allowPendingRecordings
     ) const;
     /// <summary>
     /// Remove Episode From Dataset
@@ -1481,7 +1611,7 @@ public:
     /// Update Dataset
     /// </summary>
     /// <remarks>
-    /// Update a dataset.
+    /// Update a dataset.  Synchronous validation is flat in episode count, same as &#x60;&#x60;create_dataset&#x60;&#x60;. Recording-count homogeneity and generation for newly attached episodes run in &#x60;&#x60;dispatch_dataset_generation_task&#x60;&#x60;; failures surface via &#x60;&#x60;processing_status&#x60;&#x60; / &#x60;&#x60;failed_details&#x60;&#x60;.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="datasetUpdateSchema"></param>
@@ -2169,15 +2299,59 @@ public:
     /// Get Environment Recordings
     /// </summary>
     /// <remarks>
-    /// Get all available recordings for an environment (no pagination). Returns lean recording metadata (heavy internal fields omitted). Full playback data is loaded via GET .../recordings/{recording_uuid}/data.  Query params: - start_timestamp: Inclusive calendar day start (yyyy-mm-dd), optional - end_timestamp: Inclusive calendar day end (yyyy-mm-dd), optional   When both are set, only recordings whose time window overlaps   [start_timestamp 00:00 UTC, end_timestamp+1day 00:00 UTC) are returned.
+    /// List a stable, filterable recording catalog.  Omitting &#x60;&#x60;limit&#x60;&#x60; retains the legacy all-items behavior. Supplying it enables signed, cursor-based pages ordered by &#x60;&#x60;(effective_start_us, uuid)&#x60;&#x60; descending. Repeated twin/context/source filters are ORed within a kind and ANDed across kinds.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
     /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="startDate"> (optional, default to utility::datetime())</param>
+    /// <param name="endDate"> (optional, default to utility::datetime())</param>
+    /// <param name="includeUnready"> (optional, default to false)</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="cursor"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="twinUuid"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
+    /// <param name="context"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
+    /// <param name="sourceType"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
     pplx::task<std::shared_ptr<RecordingListResponse>> srcAppApiEnvironmentsRecordingsGetEnvironmentRecordings(
         utility::string_t uuid,
         boost::optional<utility::datetime> startTimestamp,
-        boost::optional<utility::datetime> endTimestamp
+        boost::optional<utility::datetime> endTimestamp,
+        boost::optional<utility::datetime> startDate,
+        boost::optional<utility::datetime> endDate,
+        boost::optional<bool> includeUnready,
+        boost::optional<int32_t> limit,
+        boost::optional<utility::string_t> cursor,
+        boost::optional<std::vector<utility::string_t>> twinUuid,
+        boost::optional<std::vector<utility::string_t>> context,
+        boost::optional<std::vector<utility::string_t>> sourceType
+    ) const;
+    /// <summary>
+    /// Get Environment Recordings Availability
+    /// </summary>
+    /// <remarks>
+    /// Return UTC/default-timezone recording date availability without media IO.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="startDate"> (optional, default to utility::datetime())</param>
+    /// <param name="endDate"> (optional, default to utility::datetime())</param>
+    /// <param name="includeUnready"> (optional, default to false)</param>
+    /// <param name="twinUuid"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
+    /// <param name="context"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
+    /// <param name="sourceType"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
+    /// <param name="timezone"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::shared_ptr<RecordingAvailabilityResponse>> srcAppApiEnvironmentsRecordingsGetEnvironmentRecordingsAvailability(
+        utility::string_t uuid,
+        boost::optional<utility::datetime> startTimestamp,
+        boost::optional<utility::datetime> endTimestamp,
+        boost::optional<utility::datetime> startDate,
+        boost::optional<utility::datetime> endDate,
+        boost::optional<bool> includeUnready,
+        boost::optional<std::vector<utility::string_t>> twinUuid,
+        boost::optional<std::vector<utility::string_t>> context,
+        boost::optional<std::vector<utility::string_t>> sourceType,
+        boost::optional<utility::string_t> timezone
     ) const;
     /// <summary>
     /// Get Environment Sessions
@@ -2188,6 +2362,30 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsRecordingsGetEnvironmentSessions(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Environment Timeline Events
+    /// </summary>
+    /// <remarks>
+    /// Return one keyset page of window annotations for a set of time ranges.  This resolves no recording. The caller already holds every window it wants annotated (catalog descriptors carry their own start/end), so requiring a recording here only bought a lookup against the largest table we have — once per recording, to re-derive timestamps the caller passed in anyway.  &#x60;&#x60;windows&#x60;&#x60; is &#x60;&#x60;start_us:end_us&#x60;&#x60; pairs, comma separated. Overlapping and touching ranges are merged, so selecting forty back-to-back recordings costs one or two range predicates rather than forty. Ordering is ascending by &#x60;&#x60;(timestamp_us, kind, uuid)&#x60;&#x60; and paging is keyset: unlike a newest-first &#x60;&#x60;LIMIT&#x60;&#x60;, the oldest windows in a sparse multi-day selection cannot be starved of annotations by a denser recent one.  Events come back with no recording association. Mapping an annotation to the recordings whose window contains it — and applying any per-recording context policy — belongs to the caller, which is the only side that knows each window&#39;s recording identity and context.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="windows"></param>
+    /// <param name="twinUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="includeAlerts"> (optional, default to false)</param>
+    /// <param name="includeTelemetry"> (optional, default to false)</param>
+    /// <param name="telemetryEventTypes"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="cursor"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::shared_ptr<ReplayTimelineWindowEventsResponseSchema>> srcAppApiEnvironmentsRecordingsGetEnvironmentTimelineEvents(
+        utility::string_t uuid,
+        utility::string_t windows,
+        boost::optional<utility::string_t> twinUuid,
+        boost::optional<bool> includeAlerts,
+        boost::optional<bool> includeTelemetry,
+        boost::optional<utility::string_t> telemetryEventTypes,
+        boost::optional<int32_t> limit,
+        boost::optional<utility::string_t> cursor
     ) const;
     /// <summary>
     /// Get Recording Data
@@ -2214,28 +2412,6 @@ public:
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsRecordingsGetRecordingDebugArtifacts(
         utility::string_t uuid,
         utility::string_t recordingUuid
-    ) const;
-    /// <summary>
-    /// Get Recording Timeline Events
-    /// </summary>
-    /// <remarks>
-    /// Return replay timeline markers for alerts and telemetry within a recording window.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="recordingUuid"></param>
-    /// <param name="twinUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="includeAlerts"> (optional, default to false)</param>
-    /// <param name="includeTelemetry"> (optional, default to false)</param>
-    /// <param name="telemetryEventTypes"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="limitPerKind"> (optional, default to 0)</param>
-    pplx::task<std::shared_ptr<ReplayTimelineEventsResponseSchema>> srcAppApiEnvironmentsRecordingsGetRecordingTimelineEvents(
-        utility::string_t uuid,
-        utility::string_t recordingUuid,
-        boost::optional<utility::string_t> twinUuid,
-        boost::optional<bool> includeAlerts,
-        boost::optional<bool> includeTelemetry,
-        boost::optional<utility::string_t> telemetryEventTypes,
-        boost::optional<int32_t> limitPerKind
     ) const;
     /// <summary>
     /// Process All Environment Sessions
@@ -2317,11 +2493,23 @@ public:
     /// Invite User To Environment
     /// </summary>
     /// <remarks>
-    /// Invite a non-existent user to an environment
+    /// Invite a user (existing-but-out-of-org, or brand new) to an environment.
     /// </remarks>
     /// <param name="uuid"></param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingInviteUserToEnvironment(
+    pplx::task<std::shared_ptr<InvitationResponseSchema>> srcAppApiEnvironmentsSharingInviteUserToEnvironment(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Redeem Environment Link
+    /// </summary>
+    /// <remarks>
+    /// Redeem a share link: grant the current user the link&#39;s role on the env.  Requires authentication (global Ninja auth). \&quot;Anyone with the link\&quot; model (like Colab): any signed-in user holding a valid token may redeem it, regardless of their organization. Redemption creates an object-scoped ACL grant on this environment only (cascading to its twins/telemetry/streams via &#x60;&#x60;Twin.highest_role_for&#x60;&#x60;) — the recipient is NOT added to the env&#39;s org/workspace. Feature-level access is still gated by the granted role. Returns 401 (unauthenticated) or 404 (bad/expired/revoked/mismatched token).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="redeemLinkSchema"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingRedeemEnvironmentLink(
+        utility::string_t uuid,
+        std::shared_ptr<RedeemLinkSchema> redeemLinkSchema
     ) const;
     /// <summary>
     /// Remove User From Environment
@@ -2349,7 +2537,7 @@ public:
     /// Share Environment With User
     /// </summary>
     /// <remarks>
-    /// Share environment with a user by email
+    /// Share environment with a user by email.
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingShareEnvironmentWithUser(
@@ -2638,8 +2826,10 @@ public:
     /// Re-run episode parquet generation from source recordings. Admin only.  Clears the cached parquet metadata and dispatches &#x60;&#x60;generate_episode_parquet_task&#x60;&#x60; as a Celery job. Any datasets that contain this episode will have their readiness state refreshed via &#x60;&#x60;_update_dataset_with_episode&#x60;&#x60; when the task completes.
     /// </remarks>
     /// <param name="uuid"></param>
+    /// <param name="allowPendingRecordings"> (optional, default to false)</param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEpisodeRecomputeEpisodeParquet(
-        utility::string_t uuid
+        utility::string_t uuid,
+        boost::optional<bool> allowPendingRecordings
     ) const;
     /// <summary>
     /// Update Episode
@@ -3189,7 +3379,7 @@ public:
     /// Create Mlmodel
     /// </summary>
     /// <remarks>
-    /// Create a new ML model (staff administrators only).
+    /// Create a new ML model.  Staff/admins can create any model (any provider, any visibility). Other authenticated users may create feature-flagged &#x60;&#x60;custom-api&#x60;&#x60; / &#x60;&#x60;custom-hosted&#x60;&#x60; models scoped to private/workspace visibility and cloud deployment — see &#x60;&#x60;docs/CUSTOM_MLMODELS_SPEC.md&#x60;&#x60;.
     /// </remarks>
     /// <param name="mLModelCreateSchema"></param>
     pplx::task<std::shared_ptr<MLModelSchema>> srcAppApiMlmodelsCreateMlmodel(
@@ -3203,6 +3393,16 @@ public:
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<void> srcAppApiMlmodelsDeleteMlmodel(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Delete Mlmodel Credential
+    /// </summary>
+    /// <remarks>
+    /// Delete a model&#39;s stored auth material, if any.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<MLModelCredentialStatusSchema>> srcAppApiMlmodelsDeleteMlmodelCredential(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -3368,6 +3568,30 @@ public:
     pplx::task<std::shared_ptr<MLModelRunResultSchema>> srcAppApiMlmodelsRunMlmodelPlayground(
         utility::string_t uuid,
         std::shared_ptr<MLModelRunSchema> mLModelRunSchema
+    ) const;
+    /// <summary>
+    /// Set Mlmodel Credential
+    /// </summary>
+    /// <remarks>
+    /// Store (encrypted) auth material for a &#x60;&#x60;custom-api&#x60;&#x60; model.  Write-only: the secret is never returned by this or any other endpoint. Callers can only tell a credential exists via &#x60;&#x60;MLModelSchema.has_credential&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="mLModelCredentialSetSchema"></param>
+    pplx::task<std::shared_ptr<MLModelCredentialStatusSchema>> srcAppApiMlmodelsSetMlmodelCredential(
+        utility::string_t uuid,
+        std::shared_ptr<MLModelCredentialSetSchema> mLModelCredentialSetSchema
+    ) const;
+    /// <summary>
+    /// Test Call Mlmodel
+    /// </summary>
+    /// <remarks>
+    /// Run one real invocation against a &#x60;&#x60;custom-api&#x60;&#x60; model&#39;s endpoint.  Lets the owner validate endpoint/auth/payload_template configuration before wiring the model into a workflow. This performs a *real* inference, so it is credit-gated and metered exactly like &#x60;&#x60;POST /{uuid}/run&#x60;&#x60; — under its own &#x60;&#x60;mlmodel_test_call&#x60;&#x60; caller so configuration traffic stays separable in usage dashboards.  Requires &#x60;&#x60;metadata.endpoint_url&#x60;&#x60;: without it the custom-API handler would silently divert to &#x60;&#x60;metadata.fallback_provider&#x60;&#x60; on the platform&#39;s own provider credentials, which tests nothing the caller asked about.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="mLModelTestCallSchema"></param>
+    pplx::task<std::shared_ptr<MLModelTestCallResultSchema>> srcAppApiMlmodelsTestCallMlmodel(
+        utility::string_t uuid,
+        std::shared_ptr<MLModelTestCallSchema> mLModelTestCallSchema
     ) const;
     /// <summary>
     /// Update Mlmodel
@@ -3852,7 +4076,7 @@ public:
     /// Invite a non-existent user to a project.
     /// </remarks>
     /// <param name="uuid"></param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiProjectsInviteUserToProject(
+    pplx::task<std::shared_ptr<InvitationResponseSchema>> srcAppApiProjectsInviteUserToProject(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -5215,7 +5439,7 @@ public:
     /// Activate Workflow
     /// </summary>
     /// <remarks>
-    /// Activate a workflow.
+    /// Activate a workflow.  Decoupled from compilation: it only flips &#x60;&#x60;is_active&#x60;&#x60; after the activation validators pass (:func:&#x60;_validate_workflow_for_activation&#x60;). Compile failures surface later at the edge-sync/run site, not by blocking this state change — a workflow can target several twins/edges and one that can&#39;t compile shouldn&#39;t veto the rest. Missing mandatory inputs DO block activation. See &#x60;&#x60;docs/workflow-error-surfacing.md&#x60;&#x60;.
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::shared_ptr<WorkflowSchema>> srcAppApiWorkflowsActivateWorkflow(
@@ -5267,7 +5491,7 @@ public:
     /// Create Workflow Connection
     /// </summary>
     /// <remarks>
-    /// Create a new connection between nodes.
+    /// Create a new connection between nodes.  The editor can retry this request (double click, optimistic retry, slow network), so treat duplicate create payloads as idempotent and return the existing edge instead of surfacing a DB unique-constraint 500.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="workflowConnectionCreateSchema"></param>

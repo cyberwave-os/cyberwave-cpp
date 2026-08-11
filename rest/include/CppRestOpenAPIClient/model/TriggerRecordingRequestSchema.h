@@ -10,36 +10,33 @@
  */
 
 /*
- * ReplayTimelineEventsResponseSchema.h
+ * TriggerRecordingRequestSchema.h
  *
  * 
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_ReplayTimelineEventsResponseSchema_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_ReplayTimelineEventsResponseSchema_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_TriggerRecordingRequestSchema_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_TriggerRecordingRequestSchema_H_
 
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include <cpprest/details/basic_types.h>
-#include <vector>
-#include "CppRestOpenAPIClient/model/ReplayTimelineEventSchema.h"
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
-class ReplayTimelineEventSchema;
 
 
-class  ReplayTimelineEventsResponseSchema
+class  TriggerRecordingRequestSchema
     : public ModelBase
 {
 public:
-    ReplayTimelineEventsResponseSchema();
-    virtual ~ReplayTimelineEventsResponseSchema();
+    TriggerRecordingRequestSchema();
+    virtual ~TriggerRecordingRequestSchema();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -54,13 +51,13 @@ public:
 
 
     /////////////////////////////////////////////
-    /// ReplayTimelineEventsResponseSchema members
+    /// TriggerRecordingRequestSchema members
 
 
-    utility::string_t getRecordingUuid() const;
-    bool recordingUuidIsSet() const;
-    void unsetRecording_uuid();
-    void setRecordingUuid(const utility::string_t& value);
+    utility::string_t getTwinUuid() const;
+    bool twinUuidIsSet() const;
+    void unsetTwin_uuid();
+    void setTwinUuid(const utility::string_t& value);
 
     int32_t getStartTimestampUs() const;
     bool startTimestampUsIsSet() const;
@@ -72,20 +69,15 @@ public:
     void unsetEnd_timestamp_us();
     void setEndTimestampUs(int32_t value);
 
-    utility::string_t getSelectedTwinUuid() const;
-    bool selectedTwinUuidIsSet() const;
-    void unsetSelected_twin_uuid();
-    void setSelectedTwinUuid(const utility::string_t& value);
-
-    std::vector<std::shared_ptr<ReplayTimelineEventSchema>> getEvents() const;
-    bool eventsIsSet() const;
-    void unsetEvents();
-    void setEvents(const std::vector<std::shared_ptr<ReplayTimelineEventSchema>>& value);
+    bool isRegenerateCameras() const;
+    bool regenerateCamerasIsSet() const;
+    void unsetRegenerate_cameras();
+    void setRegenerateCameras(bool value);
 
 
 protected:
-    utility::string_t m_Recording_uuid;
-    bool m_Recording_uuidIsSet;
+    utility::string_t m_Twin_uuid;
+    bool m_Twin_uuidIsSet;
 
     int32_t m_Start_timestamp_us;
     bool m_Start_timestamp_usIsSet;
@@ -93,10 +85,8 @@ protected:
     int32_t m_End_timestamp_us;
     bool m_End_timestamp_usIsSet;
 
-    boost::optional<utility::string_t> m_Selected_twin_uuid;
-
-    std::vector<std::shared_ptr<ReplayTimelineEventSchema>> m_Events;
-    bool m_EventsIsSet;
+    bool m_Regenerate_cameras;
+    bool m_Regenerate_camerasIsSet;
 
 };
 
@@ -106,4 +96,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_ReplayTimelineEventsResponseSchema_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_TriggerRecordingRequestSchema_H_ */

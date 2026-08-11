@@ -62,6 +62,11 @@ web::json::value CloudNodeInstanceCreateRequest::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("visibility"))] = ModelBase::toJson(m_Visibility);
     }
+    if(m_Environment_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))] = ModelBase::toJson(m_Environment_uuid.get());
+    }
 
     return val;
 }
@@ -124,6 +129,17 @@ bool CloudNodeInstanceCreateRequest::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("environment_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setEnvironmentUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setEnvironmentUuid);
+            setEnvironmentUuid(refVal_setEnvironmentUuid);
+            
+        }
+    }
     return ok;
 }
 
@@ -153,6 +169,10 @@ void CloudNodeInstanceCreateRequest::toMultipart(std::shared_ptr<MultipartFormDa
     if(m_VisibilityIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("visibility")), m_Visibility));
+    }
+    if(m_Environment_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("environment_uuid")), m_Environment_uuid.get()));
     }
 }
 
@@ -194,6 +214,12 @@ bool CloudNodeInstanceCreateRequest::fromMultiPart(std::shared_ptr<MultipartForm
         std::shared_ptr<Visibility> refVal_setVisibility;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("visibility"))), refVal_setVisibility );
         setVisibility(refVal_setVisibility);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))))
+    {
+        utility::string_t refVal_setEnvironmentUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))), refVal_setEnvironmentUuid );
+        setEnvironmentUuid(refVal_setEnvironmentUuid);
     }
     return ok;
 }
@@ -300,6 +326,26 @@ bool CloudNodeInstanceCreateRequest::visibilityIsSet() const
 void CloudNodeInstanceCreateRequest::unsetVisibility()
 {
     m_VisibilityIsSet = false;
+}
+utility::string_t CloudNodeInstanceCreateRequest::getEnvironmentUuid() const
+{
+    return m_Environment_uuid.get();
+}
+
+
+void CloudNodeInstanceCreateRequest::setEnvironmentUuid(const utility::string_t& value)
+{
+    m_Environment_uuid = value;
+}
+
+bool CloudNodeInstanceCreateRequest::environmentUuidIsSet() const
+{
+    return m_Environment_uuid.has_value();
+}
+
+void CloudNodeInstanceCreateRequest::unsetEnvironment_uuid()
+{
+    m_Environment_uuid.reset();
 }
 
 }

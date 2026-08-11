@@ -139,6 +139,26 @@ public:
     void unsetFailed_episode_uuids();
     void setFailedEpisodeUuids(const std::vector<utility::string_t>& value);
 
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getFailedDetails() const;
+    bool failedDetailsIsSet() const;
+    void unsetFailed_details();
+    void setFailedDetails(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
+
+    int32_t getSkippedEpisodes() const;
+    bool skippedEpisodesIsSet() const;
+    void unsetSkipped_episodes();
+    void setSkippedEpisodes(int32_t value);
+
+    std::vector<utility::string_t> getSkippedEpisodeUuids() const;
+    bool skippedEpisodeUuidsIsSet() const;
+    void unsetSkipped_episode_uuids();
+    void setSkippedEpisodeUuids(const std::vector<utility::string_t>& value);
+
+    std::vector<utility::string_t> getWaitingOnRecordingsEpisodeUuids() const;
+    bool waitingOnRecordingsEpisodeUuidsIsSet() const;
+    void unsetWaiting_on_recordings_episode_uuids();
+    void setWaitingOnRecordingsEpisodeUuids(const std::vector<utility::string_t>& value);
+
     std::vector<utility::string_t> getCameras() const;
     bool camerasIsSet() const;
     void unsetCameras();
@@ -229,6 +249,18 @@ protected:
 
     std::vector<utility::string_t> m_Failed_episode_uuids;
     bool m_Failed_episode_uuidsIsSet;
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Failed_details;
+    bool m_Failed_detailsIsSet;
+
+    int32_t m_Skipped_episodes;
+    bool m_Skipped_episodesIsSet;
+
+    std::vector<utility::string_t> m_Skipped_episode_uuids;
+    bool m_Skipped_episode_uuidsIsSet;
+
+    std::vector<utility::string_t> m_Waiting_on_recordings_episode_uuids;
+    bool m_Waiting_on_recordings_episode_uuidsIsSet;
 
     boost::optional<std::vector<utility::string_t>> m_Cameras;
 

@@ -59,10 +59,17 @@ public:
     void unsetProfile_slug();
     void setProfileSlug(const utility::string_t& value);
 
+    utility::string_t getEnvironmentUuid() const;
+    bool environmentUuidIsSet() const;
+    void unsetEnvironment_uuid();
+    void setEnvironmentUuid(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Profile_slug;
     bool m_Profile_slugIsSet;
+
+    boost::optional<utility::string_t> m_Environment_uuid;
 
 };
 
