@@ -21,6 +21,11 @@ namespace model {
 RecordingListResponse::RecordingListResponse()
 {
     m_ItemsIsSet = false;
+    m_Has_more = false;
+    m_Has_moreIsSet = false;
+    m_Page_size = 0;
+    m_Page_sizeIsSet = false;
+    m_FacetsIsSet = false;
 }
 
 RecordingListResponse::~RecordingListResponse()
@@ -40,6 +45,26 @@ web::json::value RecordingListResponse::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("items"))] = ModelBase::toJson(m_Items);
     }
+    if(m_Next_cursor.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("next_cursor"))] = ModelBase::toJson(m_Next_cursor.get());
+    }
+    if(m_Has_moreIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("has_more"))] = ModelBase::toJson(m_Has_more);
+    }
+    if(m_Page_sizeIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("page_size"))] = ModelBase::toJson(m_Page_size);
+    }
+    if(m_FacetsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("facets"))] = ModelBase::toJson(m_Facets);
+    }
 
     return val;
 }
@@ -58,6 +83,50 @@ bool RecordingListResponse::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("next_cursor"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("next_cursor")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setNextCursor;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setNextCursor);
+            setNextCursor(refVal_setNextCursor);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("has_more"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("has_more")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setHasMore;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setHasMore);
+            setHasMore(refVal_setHasMore);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("page_size"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("page_size")));
+        if(!fieldValue.is_null())
+        {
+            int32_t refVal_setPageSize;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPageSize);
+            setPageSize(refVal_setPageSize);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("facets"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("facets")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::map<utility::string_t, int32_t>> refVal_setFacets;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFacets);
+            setFacets(refVal_setFacets);
+            
+        }
+    }
     return ok;
 }
 
@@ -71,6 +140,22 @@ void RecordingListResponse::toMultipart(std::shared_ptr<MultipartFormData> multi
     if(m_ItemsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("items")), m_Items));
+    }
+    if(m_Next_cursor.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("next_cursor")), m_Next_cursor.get()));
+    }
+    if(m_Has_moreIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("has_more")), m_Has_more));
+    }
+    if(m_Page_sizeIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("page_size")), m_Page_size));
+    }
+    if(m_FacetsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("facets")), m_Facets));
     }
 }
 
@@ -88,6 +173,30 @@ bool RecordingListResponse::fromMultiPart(std::shared_ptr<MultipartFormData> mul
         std::vector<std::shared_ptr<RecordingListItem>> refVal_setItems;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("items"))), refVal_setItems );
         setItems(refVal_setItems);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("next_cursor"))))
+    {
+        utility::string_t refVal_setNextCursor;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("next_cursor"))), refVal_setNextCursor );
+        setNextCursor(refVal_setNextCursor);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("has_more"))))
+    {
+        bool refVal_setHasMore;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("has_more"))), refVal_setHasMore );
+        setHasMore(refVal_setHasMore);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("page_size"))))
+    {
+        int32_t refVal_setPageSize;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("page_size"))), refVal_setPageSize );
+        setPageSize(refVal_setPageSize);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("facets"))))
+    {
+        std::map<utility::string_t, std::map<utility::string_t, int32_t>> refVal_setFacets;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("facets"))), refVal_setFacets );
+        setFacets(refVal_setFacets);
     }
     return ok;
 }
@@ -113,6 +222,87 @@ bool RecordingListResponse::itemsIsSet() const
 void RecordingListResponse::unsetItems()
 {
     m_ItemsIsSet = false;
+}
+utility::string_t RecordingListResponse::getNextCursor() const
+{
+    return m_Next_cursor.get();
+}
+
+
+void RecordingListResponse::setNextCursor(const utility::string_t& value)
+{
+    m_Next_cursor = value;
+}
+
+bool RecordingListResponse::nextCursorIsSet() const
+{
+    return m_Next_cursor.has_value();
+}
+
+void RecordingListResponse::unsetNext_cursor()
+{
+    m_Next_cursor.reset();
+}
+bool RecordingListResponse::isHasMore() const
+{
+    return m_Has_more;
+}
+
+void RecordingListResponse::setHasMore(bool value)
+{
+    m_Has_more = value;
+    m_Has_moreIsSet = true;
+}
+
+bool RecordingListResponse::hasMoreIsSet() const
+{
+    return m_Has_moreIsSet;
+}
+
+void RecordingListResponse::unsetHas_more()
+{
+    m_Has_moreIsSet = false;
+}
+int32_t RecordingListResponse::getPageSize() const
+{
+    return m_Page_size;
+}
+
+void RecordingListResponse::setPageSize(int32_t value)
+{
+    m_Page_size = value;
+    m_Page_sizeIsSet = true;
+}
+
+bool RecordingListResponse::pageSizeIsSet() const
+{
+    return m_Page_sizeIsSet;
+}
+
+void RecordingListResponse::unsetPage_size()
+{
+    m_Page_sizeIsSet = false;
+}
+std::map<utility::string_t, std::map<utility::string_t, int32_t>> RecordingListResponse::getFacets() const
+{
+    return m_Facets;
+}
+
+
+void RecordingListResponse::setFacets(const std::map<utility::string_t, std::map<utility::string_t, int32_t>>& value)
+{
+    m_Facets = value;
+    m_FacetsIsSet = true;
+}
+
+bool RecordingListResponse::facetsIsSet() const
+{
+    return m_FacetsIsSet;
+}
+
+void RecordingListResponse::unsetFacets()
+{
+    m_FacetsIsSet = false;
 }
 
 }

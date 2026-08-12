@@ -26,6 +26,8 @@ EnvironmentProceduralPrimitiveCreateSchema::EnvironmentProceduralPrimitiveCreate
     m_VisibleIsSet = false;
     m_Locked = false;
     m_LockedIsSet = false;
+    m_Auto_place = false;
+    m_Auto_placeIsSet = false;
 }
 
 EnvironmentProceduralPrimitiveCreateSchema::~EnvironmentProceduralPrimitiveCreateSchema()
@@ -104,6 +106,16 @@ web::json::value EnvironmentProceduralPrimitiveCreateSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("locked"))] = ModelBase::toJson(m_Locked);
+    }
+    if(m_Auto_placeIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("auto_place"))] = ModelBase::toJson(m_Auto_place);
+    }
+    if(m_Near.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("near"))] = ModelBase::toJson(m_Near.get());
     }
 
     return val;
@@ -255,6 +267,28 @@ bool EnvironmentProceduralPrimitiveCreateSchema::fromJson(const web::json::value
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("auto_place"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("auto_place")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setAutoPlace;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAutoPlace);
+            setAutoPlace(refVal_setAutoPlace);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("near"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("near")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<Near> refVal_setNear;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setNear);
+            setNear(refVal_setNear);
+            
+        }
+    }
     return ok;
 }
 
@@ -316,6 +350,14 @@ void EnvironmentProceduralPrimitiveCreateSchema::toMultipart(std::shared_ptr<Mul
     if(m_LockedIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("locked")), m_Locked));
+    }
+    if(m_Auto_placeIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("auto_place")), m_Auto_place));
+    }
+    if(m_Near.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("near")), m_Near.get()));
     }
 }
 
@@ -405,6 +447,18 @@ bool EnvironmentProceduralPrimitiveCreateSchema::fromMultiPart(std::shared_ptr<M
         bool refVal_setLocked;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("locked"))), refVal_setLocked );
         setLocked(refVal_setLocked);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("auto_place"))))
+    {
+        bool refVal_setAutoPlace;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("auto_place"))), refVal_setAutoPlace );
+        setAutoPlace(refVal_setAutoPlace);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("near"))))
+    {
+        std::shared_ptr<Near> refVal_setNear;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("near"))), refVal_setNear );
+        setNear(refVal_setNear);
     }
     return ok;
 }
@@ -670,6 +724,46 @@ bool EnvironmentProceduralPrimitiveCreateSchema::lockedIsSet() const
 void EnvironmentProceduralPrimitiveCreateSchema::unsetLocked()
 {
     m_LockedIsSet = false;
+}
+bool EnvironmentProceduralPrimitiveCreateSchema::isAutoPlace() const
+{
+    return m_Auto_place;
+}
+
+void EnvironmentProceduralPrimitiveCreateSchema::setAutoPlace(bool value)
+{
+    m_Auto_place = value;
+    m_Auto_placeIsSet = true;
+}
+
+bool EnvironmentProceduralPrimitiveCreateSchema::autoPlaceIsSet() const
+{
+    return m_Auto_placeIsSet;
+}
+
+void EnvironmentProceduralPrimitiveCreateSchema::unsetAuto_place()
+{
+    m_Auto_placeIsSet = false;
+}
+std::shared_ptr<Near> EnvironmentProceduralPrimitiveCreateSchema::getNear() const
+{
+    return m_Near.get();
+}
+
+
+void EnvironmentProceduralPrimitiveCreateSchema::setNear(const std::shared_ptr<Near>& value)
+{
+    m_Near = value;
+}
+
+bool EnvironmentProceduralPrimitiveCreateSchema::nearIsSet() const
+{
+    return m_Near.has_value();
+}
+
+void EnvironmentProceduralPrimitiveCreateSchema::unsetNear()
+{
+    m_Near.reset();
 }
 
 }

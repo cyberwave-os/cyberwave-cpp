@@ -72,6 +72,11 @@ public:
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    bool isAllowPendingRecordings() const;
+    bool allowPendingRecordingsIsSet() const;
+    void unsetAllow_pending_recordings();
+    void setAllowPendingRecordings(bool value);
+
 
 protected:
     boost::optional<std::vector<utility::string_t>> m_Episodes;
@@ -79,6 +84,8 @@ protected:
     boost::optional<utility::string_t> m_Name;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
+
+    boost::optional<bool> m_Allow_pending_recordings;
 
 };
 

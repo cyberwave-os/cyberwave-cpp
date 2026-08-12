@@ -59,6 +59,11 @@ web::json::value RecordingListItem::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("metadata"))] = ModelBase::toJson(m_Metadata);
     }
+    if(m_Playback_readiness.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("playback_readiness"))] = ModelBase::toJson(m_Playback_readiness.get());
+    }
 
     return val;
 }
@@ -110,6 +115,17 @@ bool RecordingListItem::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("playback_readiness"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("playback_readiness")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setPlaybackReadiness;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPlaybackReadiness);
+            setPlaybackReadiness(refVal_setPlaybackReadiness);
+            
+        }
+    }
     return ok;
 }
 
@@ -135,6 +151,10 @@ void RecordingListItem::toMultipart(std::shared_ptr<MultipartFormData> multipart
     if(m_MetadataIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata));
+    }
+    if(m_Playback_readiness.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("playback_readiness")), m_Playback_readiness.get()));
     }
 }
 
@@ -170,6 +190,12 @@ bool RecordingListItem::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))), refVal_setMetadata );
         setMetadata(refVal_setMetadata);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("playback_readiness"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setPlaybackReadiness;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("playback_readiness"))), refVal_setPlaybackReadiness );
+        setPlaybackReadiness(refVal_setPlaybackReadiness);
     }
     return ok;
 }
@@ -257,6 +283,26 @@ bool RecordingListItem::metadataIsSet() const
 void RecordingListItem::unsetMetadata()
 {
     m_MetadataIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> RecordingListItem::getPlaybackReadiness() const
+{
+    return m_Playback_readiness.get();
+}
+
+
+void RecordingListItem::setPlaybackReadiness(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Playback_readiness = value;
+}
+
+bool RecordingListItem::playbackReadinessIsSet() const
+{
+    return m_Playback_readiness.has_value();
+}
+
+void RecordingListItem::unsetPlayback_readiness()
+{
+    m_Playback_readiness.reset();
 }
 
 }

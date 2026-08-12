@@ -41,6 +41,11 @@ web::json::value CloudNodeInstanceRegisterRequest::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("profile_slug"))] = ModelBase::toJson(m_Profile_slug);
     }
+    if(m_Environment_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))] = ModelBase::toJson(m_Environment_uuid.get());
+    }
 
     return val;
 }
@@ -59,6 +64,17 @@ bool CloudNodeInstanceRegisterRequest::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("environment_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setEnvironmentUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setEnvironmentUuid);
+            setEnvironmentUuid(refVal_setEnvironmentUuid);
+            
+        }
+    }
     return ok;
 }
 
@@ -72,6 +88,10 @@ void CloudNodeInstanceRegisterRequest::toMultipart(std::shared_ptr<MultipartForm
     if(m_Profile_slugIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("profile_slug")), m_Profile_slug));
+    }
+    if(m_Environment_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("environment_uuid")), m_Environment_uuid.get()));
     }
 }
 
@@ -89,6 +109,12 @@ bool CloudNodeInstanceRegisterRequest::fromMultiPart(std::shared_ptr<MultipartFo
         utility::string_t refVal_setProfileSlug;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("profile_slug"))), refVal_setProfileSlug );
         setProfileSlug(refVal_setProfileSlug);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))))
+    {
+        utility::string_t refVal_setEnvironmentUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))), refVal_setEnvironmentUuid );
+        setEnvironmentUuid(refVal_setEnvironmentUuid);
     }
     return ok;
 }
@@ -114,6 +140,26 @@ bool CloudNodeInstanceRegisterRequest::profileSlugIsSet() const
 void CloudNodeInstanceRegisterRequest::unsetProfile_slug()
 {
     m_Profile_slugIsSet = false;
+}
+utility::string_t CloudNodeInstanceRegisterRequest::getEnvironmentUuid() const
+{
+    return m_Environment_uuid.get();
+}
+
+
+void CloudNodeInstanceRegisterRequest::setEnvironmentUuid(const utility::string_t& value)
+{
+    m_Environment_uuid = value;
+}
+
+bool CloudNodeInstanceRegisterRequest::environmentUuidIsSet() const
+{
+    return m_Environment_uuid.has_value();
+}
+
+void CloudNodeInstanceRegisterRequest::unsetEnvironment_uuid()
+{
+    m_Environment_uuid.reset();
 }
 
 }
