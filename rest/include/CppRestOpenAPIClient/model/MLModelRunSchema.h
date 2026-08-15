@@ -167,6 +167,11 @@ public:
     void unsetImage_source();
     void setImageSource(const utility::string_t& value);
 
+    utility::string_t getRecordingUuid() const;
+    bool recordingUuidIsSet() const;
+    void unsetRecording_uuid();
+    void setRecordingUuid(const utility::string_t& value);
+
 
 protected:
     boost::optional<utility::string_t> m_Prompt;
@@ -206,6 +211,8 @@ protected:
     boost::optional<std::shared_ptr<RobotContextSchema>> m_Robot_context;
 
     boost::optional<utility::string_t> m_Image_source;
+
+    boost::optional<utility::string_t> m_Recording_uuid;
 
 };
 

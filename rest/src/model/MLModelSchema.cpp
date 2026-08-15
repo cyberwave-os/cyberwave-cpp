@@ -65,6 +65,8 @@ MLModelSchema::MLModelSchema()
     m_Supports_builtin_vad_filter = false;
     m_Supports_builtin_vad_filterIsSet = false;
     m_Required_inputsIsSet = false;
+    m_Has_credential = false;
+    m_Has_credentialIsSet = false;
 }
 
 MLModelSchema::~MLModelSchema()
@@ -283,6 +285,16 @@ web::json::value MLModelSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("required_inputs"))] = ModelBase::toJson(m_Required_inputs);
+    }
+    if(m_Has_credentialIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("has_credential"))] = ModelBase::toJson(m_Has_credential);
+    }
+    if(m_Io_schema.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("io_schema"))] = ModelBase::toJson(m_Io_schema.get());
     }
 
     return val;
@@ -742,6 +754,28 @@ bool MLModelSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("has_credential"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("has_credential")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setHasCredential;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setHasCredential);
+            setHasCredential(refVal_setHasCredential);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("io_schema"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("io_schema")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<IOSchemaSchema> refVal_setIoSchema;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setIoSchema);
+            setIoSchema(refVal_setIoSchema);
+            
+        }
+    }
     return ok;
 }
 
@@ -915,6 +949,14 @@ void MLModelSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, co
     if(m_Required_inputsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("required_inputs")), m_Required_inputs));
+    }
+    if(m_Has_credentialIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("has_credential")), m_Has_credential));
+    }
+    if(m_Io_schema.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("io_schema")), m_Io_schema.get()));
     }
 }
 
@@ -1172,6 +1214,18 @@ bool MLModelSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, 
         std::vector<std::shared_ptr<AnyType>> refVal_setRequiredInputs;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("required_inputs"))), refVal_setRequiredInputs );
         setRequiredInputs(refVal_setRequiredInputs);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("has_credential"))))
+    {
+        bool refVal_setHasCredential;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("has_credential"))), refVal_setHasCredential );
+        setHasCredential(refVal_setHasCredential);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("io_schema"))))
+    {
+        std::shared_ptr<IOSchemaSchema> refVal_setIoSchema;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("io_schema"))), refVal_setIoSchema );
+        setIoSchema(refVal_setIoSchema);
     }
     return ok;
 }
@@ -2012,6 +2066,46 @@ bool MLModelSchema::requiredInputsIsSet() const
 void MLModelSchema::unsetRequired_inputs()
 {
     m_Required_inputsIsSet = false;
+}
+bool MLModelSchema::isHasCredential() const
+{
+    return m_Has_credential;
+}
+
+void MLModelSchema::setHasCredential(bool value)
+{
+    m_Has_credential = value;
+    m_Has_credentialIsSet = true;
+}
+
+bool MLModelSchema::hasCredentialIsSet() const
+{
+    return m_Has_credentialIsSet;
+}
+
+void MLModelSchema::unsetHas_credential()
+{
+    m_Has_credentialIsSet = false;
+}
+std::shared_ptr<IOSchemaSchema> MLModelSchema::getIoSchema() const
+{
+    return m_Io_schema.get();
+}
+
+
+void MLModelSchema::setIoSchema(const std::shared_ptr<IOSchemaSchema>& value)
+{
+    m_Io_schema = value;
+}
+
+bool MLModelSchema::ioSchemaIsSet() const
+{
+    return m_Io_schema.has_value();
+}
+
+void MLModelSchema::unsetIo_schema()
+{
+    m_Io_schema.reset();
 }
 
 }

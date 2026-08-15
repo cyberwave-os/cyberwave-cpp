@@ -64,6 +64,11 @@ web::json::value TwinNavigationCommandSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("waypoints"))] = ModelBase::toJson(m_Waypoints.get());
     }
+    if(m_Actions.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("actions"))] = ModelBase::toJson(m_Actions.get());
+    }
     if(m_Relative_translation.has_value())
     {
         
@@ -169,6 +174,17 @@ bool TwinNavigationCommandSchema::fromJson(const web::json::value& val)
             std::vector<std::shared_ptr<NavigationWaypointSchema>> refVal_setWaypoints;
             ok &= ModelBase::fromJson(fieldValue, refVal_setWaypoints);
             setWaypoints(refVal_setWaypoints);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("actions"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("actions")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<NavigationWaypointActionSchema>> refVal_setActions;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setActions);
+            setActions(refVal_setActions);
             
         }
     }
@@ -301,6 +317,10 @@ void TwinNavigationCommandSchema::toMultipart(std::shared_ptr<MultipartFormData>
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("waypoints")), m_Waypoints.get()));
     }
+    if(m_Actions.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("actions")), m_Actions.get()));
+    }
     if(m_Relative_translation.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("relative_translation")), m_Relative_translation.get()));
@@ -377,6 +397,12 @@ bool TwinNavigationCommandSchema::fromMultiPart(std::shared_ptr<MultipartFormDat
         std::vector<std::shared_ptr<NavigationWaypointSchema>> refVal_setWaypoints;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("waypoints"))), refVal_setWaypoints );
         setWaypoints(refVal_setWaypoints);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("actions"))))
+    {
+        std::vector<std::shared_ptr<NavigationWaypointActionSchema>> refVal_setActions;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("actions"))), refVal_setActions );
+        setActions(refVal_setActions);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("relative_translation"))))
     {
@@ -602,6 +628,26 @@ bool TwinNavigationCommandSchema::waypointsIsSet() const
 void TwinNavigationCommandSchema::unsetWaypoints()
 {
     m_Waypoints.reset();
+}
+std::vector<std::shared_ptr<NavigationWaypointActionSchema>> TwinNavigationCommandSchema::getActions() const
+{
+    return m_Actions.get();
+}
+
+
+void TwinNavigationCommandSchema::setActions(const std::vector<std::shared_ptr<NavigationWaypointActionSchema>>& value)
+{
+    m_Actions = value;
+}
+
+bool TwinNavigationCommandSchema::actionsIsSet() const
+{
+    return m_Actions.has_value();
+}
+
+void TwinNavigationCommandSchema::unsetActions()
+{
+    m_Actions.reset();
 }
 std::shared_ptr<Relative_Translation> TwinNavigationCommandSchema::getRelativeTranslation() const
 {

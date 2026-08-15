@@ -25,7 +25,6 @@
 #include "CppRestOpenAPIClient/model/AIMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/AddMemberByEmailRequest.h"
 #include "CppRestOpenAPIClient/model/AddMemberByEmailResponse.h"
-#include "CppRestOpenAPIClient/model/AdminLabOverviewSchema.h"
 #include "CppRestOpenAPIClient/model/AlertSchema.h"
 #include "CppRestOpenAPIClient/AnyType.h"
 #include "CppRestOpenAPIClient/model/AssetControlProfilePatchSchema.h"
@@ -70,11 +69,9 @@
 #include "CppRestOpenAPIClient/model/CreateMissionSchema.h"
 #include "CppRestOpenAPIClient/model/CreateTaskSchema.h"
 #include "CppRestOpenAPIClient/model/CreditLedgerEntrySchema.h"
-#include "CppRestOpenAPIClient/model/CreditRateCardSchema.h"
 #include "CppRestOpenAPIClient/model/CreditTopUpRequestSchema.h"
 #include "CppRestOpenAPIClient/model/CreditTopUpResponseSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetCreateSchema.h"
-#include "CppRestOpenAPIClient/model/DatasetDebugInfoSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetDownloadProcessingSchema.h"
 #include "CppRestOpenAPIClient/model/DatasetDownloadReadySchema.h"
 #include "CppRestOpenAPIClient/model/DatasetEpisodeManifestSchema.h"
@@ -123,17 +120,14 @@
 #include "CppRestOpenAPIClient/model/ExecuteTaskSchema.h"
 #include "CppRestOpenAPIClient/model/FinalizeTopupRequestSchema.h"
 #include "CppRestOpenAPIClient/model/FinalizeTopupResponseSchema.h"
-#include "CppRestOpenAPIClient/model/GeneratePromoCodeRequestSchema.h"
-#include "CppRestOpenAPIClient/model/HardwareOrderAdminSchema.h"
 #include "CppRestOpenAPIClient/model/HardwareOrderCreateSchema.h"
-#include "CppRestOpenAPIClient/model/HardwareOrderLineItemUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/HardwareOrderSchema.h"
-#include "CppRestOpenAPIClient/model/HardwareOrderStatusUpdateSchema.h"
 #include "CppRestOpenAPIClient/HttpContent.h"
 #include "CppRestOpenAPIClient/model/Image_Bytes.h"
 #include "CppRestOpenAPIClient/model/ImportResultSchema.h"
 #include "CppRestOpenAPIClient/model/InitiateLargeUploadResponse.h"
 #include "CppRestOpenAPIClient/model/InitiateLargeUploadSchema.h"
+#include "CppRestOpenAPIClient/model/InvitationResponseSchema.h"
 #include "CppRestOpenAPIClient/model/JointSchema.h"
 #include "CppRestOpenAPIClient/model/JointStateSchema.h"
 #include "CppRestOpenAPIClient/model/JointStateUpdateSchema.h"
@@ -152,6 +146,8 @@
 #include "CppRestOpenAPIClient/model/MLModelArtifactUploadInitResponseSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelArtifactUploadInitSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelCreateSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelCredentialSetSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelCredentialStatusSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelEdgeRuntimeListSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelEvaluateSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelExecutionDetailSchema.h"
@@ -160,6 +156,8 @@
 #include "CppRestOpenAPIClient/model/MLModelRunResultSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelRunSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelTestCallResultSchema.h"
+#include "CppRestOpenAPIClient/model/MLModelTestCallSchema.h"
 #include "CppRestOpenAPIClient/model/MLModelUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/MLTrainingCreateSchema.h"
 #include "CppRestOpenAPIClient/model/MLTrainingDeploySchema.h"
@@ -179,8 +177,6 @@
 #include "CppRestOpenAPIClient/model/OrgMembersResponse.h"
 #include "CppRestOpenAPIClient/model/OrganizationCreateSchema.h"
 #include "CppRestOpenAPIClient/model/OrganizationCreditAccountSchema.h"
-#include "CppRestOpenAPIClient/model/OrganizationCreditBlockRequestSchema.h"
-#include "CppRestOpenAPIClient/model/OrganizationCreditBlockResponseSchema.h"
 #include "CppRestOpenAPIClient/model/OrganizationSchema.h"
 #include "CppRestOpenAPIClient/model/OrganizationUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/OrganizationWorkspaceSchema.h"
@@ -195,7 +191,6 @@
 #include "CppRestOpenAPIClient/model/ProjectCreateSchema.h"
 #include "CppRestOpenAPIClient/model/ProjectSchema.h"
 #include "CppRestOpenAPIClient/model/ProjectShareResponseSchema.h"
-#include "CppRestOpenAPIClient/model/PromoCodeSchema.h"
 #include "CppRestOpenAPIClient/model/PublicPricingSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskActionSpecSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskCheckpointCreateSchema.h"
@@ -227,15 +222,18 @@
 #include "CppRestOpenAPIClient/model/RLTaskTaskSpecUpsertSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskTaskSpecValidateResponseSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskUpdateSchema.h"
+#include "CppRestOpenAPIClient/model/RecordingAvailabilityResponse.h"
 #include "CppRestOpenAPIClient/model/RecordingDetailSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingGenerationResponseSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingListResponse.h"
+#include "CppRestOpenAPIClient/model/RecordingMaterializingSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingSourcesEnvelopeSchema.h"
 #include "CppRestOpenAPIClient/model/RedeemCouponRequestSchema.h"
 #include "CppRestOpenAPIClient/model/RedeemCouponResponseSchema.h"
+#include "CppRestOpenAPIClient/model/RedeemLinkSchema.h"
 #include "CppRestOpenAPIClient/model/ReloadCapabilitiesBulkSchema.h"
 #include "CppRestOpenAPIClient/model/RemoveMemberResponse.h"
-#include "CppRestOpenAPIClient/model/ReplayTimelineEventsResponseSchema.h"
+#include "CppRestOpenAPIClient/model/ReplayTimelineWindowEventsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/ResourceMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/Response.h"
 #include "CppRestOpenAPIClient/model/RobotDescriptionSchema.h"
@@ -900,6 +898,18 @@ public:
         std::shared_ptr<AssetGLBFromAttachmentSchema> assetGLBFromAttachmentSchema
     ) const;
     /// <summary>
+    /// Set Splat From Attachment
+    /// </summary>
+    /// <remarks>
+    /// Set an asset&#39;s Gaussian splat file from an existing attachment. Used by the large-upload path, where the splat is first uploaded as an attachment.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="assetGLBFromAttachmentSchema"></param>
+    pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsSetSplatFromAttachment(
+        utility::string_t uuid,
+        std::shared_ptr<AssetGLBFromAttachmentSchema> assetGLBFromAttachmentSchema
+    ) const;
+    /// <summary>
     /// Sync Simulation Backends
     /// </summary>
     /// <remarks>
@@ -944,6 +954,18 @@ public:
     /// <param name="uuid"></param>
     /// <param name="file"></param>
     pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsUploadGlb(
+        utility::string_t uuid,
+        std::shared_ptr<HttpContent> file
+    ) const;
+    /// <summary>
+    /// Upload Splat
+    /// </summary>
+    /// <remarks>
+    /// Upload a Gaussian splatting file (.ply/.splat/.spz/.ksplat) as the asset&#39;s primary visualization. Larger files use the attachment large-upload flow followed by &#x60;&#x60;/splat-from-attachment&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="file"></param>
+    pplx::task<std::shared_ptr<AssetSchema>> srcAppApiAssetsUploadSplat(
         utility::string_t uuid,
         std::shared_ptr<HttpContent> file
     ) const;
@@ -1165,13 +1187,17 @@ public:
     /// List Controller Policies
     /// </summary>
     /// <remarks>
-    /// List all controller policies visible to the authenticated user, optionally filtered by asset and workspace.
+    /// List all controller policies visible to the authenticated user, optionally filtered by asset and workspace.  Supports optional &#x60;&#x60;offset&#x60;&#x60;/&#x60;&#x60;limit&#x60;&#x60; pagination. When &#x60;&#x60;limit&#x60;&#x60; is omitted the full result set is returned (backward compatible).
     /// </remarks>
     /// <param name="assetUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="workspaceUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="offset"> (optional, default to 0)</param>
     pplx::task<std::vector<std::shared_ptr<ControllerPolicySchema>>> srcAppApiControllerPoliciesListControllerPolicies(
         boost::optional<utility::string_t> assetUuid,
-        boost::optional<utility::string_t> workspaceUuid
+        boost::optional<utility::string_t> workspaceUuid,
+        boost::optional<int32_t> limit,
+        boost::optional<int32_t> offset
     ) const;
     /// <summary>
     /// Send Inference Command
@@ -1220,30 +1246,6 @@ public:
         std::shared_ptr<ControllerPolicyUpdateSchema> controllerPolicyUpdateSchema
     ) const;
     /// <summary>
-    /// List Credit Rate Cards
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="category"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="isActive"> (optional, default to false)</param>
-    pplx::task<std::vector<std::shared_ptr<CreditRateCardSchema>>> srcAppApiCreditsAdminListCreditRateCards(
-        boost::optional<utility::string_t> category,
-        boost::optional<bool> isActive
-    ) const;
-    /// <summary>
-    /// Set Organization Credit Block
-    /// </summary>
-    /// <remarks>
-    /// Force-block (or unblock) an organization from spending credits (staff-only).  A force-block applies regardless of balance or whether credit enforcement is enabled for the org, and survives balance-driven status refreshes until an operator clears it.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="organizationCreditBlockRequestSchema"></param>
-    pplx::task<std::shared_ptr<OrganizationCreditBlockResponseSchema>> srcAppApiCreditsAdminSetOrganizationCreditBlock(
-        utility::string_t uuid,
-        std::shared_ptr<OrganizationCreditBlockRequestSchema> organizationCreditBlockRequestSchema
-    ) const;
-    /// <summary>
     /// Decrease Organization Credits
     /// </summary>
     /// <remarks>
@@ -1286,18 +1288,6 @@ public:
         boost::optional<int32_t> limit
     ) const;
     /// <summary>
-    /// Top Up Organization Credits
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="creditTopUpRequestSchema"></param>
-    pplx::task<std::shared_ptr<CreditTopUpResponseSchema>> srcAppApiCreditsTopUpOrganizationCredits(
-        utility::string_t uuid,
-        std::shared_ptr<CreditTopUpRequestSchema> creditTopUpRequestSchema
-    ) const;
-    /// <summary>
     /// Complete Dataset Import
     /// </summary>
     /// <remarks>
@@ -1311,7 +1301,7 @@ public:
     /// Create Dataset
     /// </summary>
     /// <remarks>
-    /// Create a new dataset and start async episode parquet generation.
+    /// Create the dataset row and dispatch async episode parquet generation.  Synchronous work is flat in episode count: request-shape validation, the pending-recordings gate, and the row insert. Telemetry-dependent checks and generation run in &#x60;&#x60;dispatch_dataset_generation_task&#x60;&#x60;; their failures surface via &#x60;&#x60;processing_status&#x60;&#x60; / &#x60;&#x60;failed_details&#x60;&#x60;.
     /// </remarks>
     /// <param name="datasetCreateSchema"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiDatasetsCreateDataset(
@@ -1331,13 +1321,15 @@ public:
     /// Download Dataset
     /// </summary>
     /// <remarks>
-    /// Request a download URL for a dataset in a specific format.  This endpoint is **idempotent**: calling it multiple times will not spawn duplicate conversion tasks.  Supported &#x60;&#x60;format&#x60;&#x60; values (&#x60;&#x60;DatasetType&#x60;&#x60; values) ---------------------------------------------------- - &#x60;&#x60;parquet&#x60;&#x60;   — Cyberwave joined-parquet zip (native datasets only).                   Deprecated alias: &#x60;&#x60;plain&#x60;&#x60;. - &#x60;&#x60;lerobot3&#x60;&#x60;  — LeRobot v3 (Forge writer).                   Deprecated alias: &#x60;&#x60;lerobot&#x60;&#x60;. - &#x60;&#x60;lerobot21&#x60;&#x60; — LeRobot v2.1 (Forge writer). - &#x60;&#x60;rlds&#x60;&#x60;      — RLDS / TF-Record (Open-X-Embodiment style, Forge writer). - &#x60;&#x60;openvla&#x60;&#x60;   — Cyberwave OpenVLA TFDS bundle (Cyberwave-generated writer). - &#x60;&#x60;robodm&#x60;&#x60;    — Berkeley .vla format (Forge writer).  Planned / not yet implemented (returns 422): &#x60;&#x60;mcap&#x60;&#x60;, &#x60;&#x60;gr00t&#x60;&#x60;, &#x60;&#x60;hdf5&#x60;&#x60;, &#x60;&#x60;zarr&#x60;&#x60;, &#x60;&#x60;rosbag&#x60;&#x60;  Returns ------- HTTP 200 (&#x60;&#x60;DatasetDownloadReadySchema&#x60;&#x60;)     The artifact is ready; &#x60;&#x60;signed_url&#x60;&#x60; is valid for 24 h. HTTP 202 (&#x60;&#x60;DatasetDownloadProcessingSchema&#x60;&#x60;)     A conversion task was queued or is already running.     Poll &#x60;&#x60;poll_url&#x60;&#x60; (this endpoint) again until you get a 200. HTTP 422     The format is not supported (either invalid or TODO).
+    /// Request a download URL for a dataset in a specific format.  This endpoint is **idempotent**: calling it multiple times will not spawn duplicate conversion tasks.  Because it is both the initiate and the poll endpoint, a *failed* conversion reports itself as 409 &#x60;&#x60;conversion_failed&#x60;&#x60; rather than being replaced with a fresh attempt — otherwise a client polling every few seconds spawns a new conversion task on every tick and never learns that it failed. Pass &#x60;&#x60;retry&#x3D;true&#x60;&#x60; to explicitly start a new attempt.  Supported &#x60;&#x60;format&#x60;&#x60; values (&#x60;&#x60;DatasetType&#x60;&#x60; values) ---------------------------------------------------- - &#x60;&#x60;parquet&#x60;&#x60;   — Cyberwave joined-parquet zip (native datasets only).                   Deprecated alias: &#x60;&#x60;plain&#x60;&#x60;. - &#x60;&#x60;lerobot3&#x60;&#x60;  — LeRobot v3 (Forge writer).                   Deprecated alias: &#x60;&#x60;lerobot&#x60;&#x60;. - &#x60;&#x60;lerobot21&#x60;&#x60; — LeRobot v2.1 (Forge writer). - &#x60;&#x60;rlds&#x60;&#x60;      — RLDS / TF-Record (Open-X-Embodiment style, Forge writer). - &#x60;&#x60;openvla&#x60;&#x60;   — Cyberwave OpenVLA TFDS bundle (Cyberwave-generated writer). - &#x60;&#x60;robodm&#x60;&#x60;    — Berkeley .vla format (Forge writer).  Planned / not yet implemented (returns 422): &#x60;&#x60;mcap&#x60;&#x60;, &#x60;&#x60;gr00t&#x60;&#x60;, &#x60;&#x60;hdf5&#x60;&#x60;, &#x60;&#x60;zarr&#x60;&#x60;, &#x60;&#x60;rosbag&#x60;&#x60;  Returns ------- HTTP 200 (&#x60;&#x60;DatasetDownloadReadySchema&#x60;&#x60;)     The artifact is ready; &#x60;&#x60;signed_url&#x60;&#x60; is valid for 24 h. HTTP 202 (&#x60;&#x60;DatasetDownloadProcessingSchema&#x60;&#x60;)     A conversion task was queued or is already running.     Poll &#x60;&#x60;poll_url&#x60;&#x60; (this endpoint) again until you get a 200. HTTP 409     The dataset cannot be converted (&#x60;&#x60;dataset_not_convertible&#x60;&#x60;), or the     last attempt for this format failed (&#x60;&#x60;conversion_failed&#x60;&#x60;). HTTP 422     The format is not supported (either invalid or TODO).
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="format"></param>
+    /// <param name="retry"> (optional, default to false)</param>
     pplx::task<std::shared_ptr<DatasetDownloadReadySchema>> srcAppApiDatasetsDownloadDataset(
         utility::string_t uuid,
-        utility::string_t format
+        utility::string_t format,
+        boost::optional<bool> retry
     ) const;
     /// <summary>
     /// Export Dataset
@@ -1370,16 +1362,6 @@ public:
     /// <param name="slug"></param>
     pplx::task<std::shared_ptr<DatasetSchema>> srcAppApiDatasetsGetDatasetBySlug(
         utility::string_t slug
-    ) const;
-    /// <summary>
-    /// Get Dataset Debug Info
-    /// </summary>
-    /// <remarks>
-    /// Get debug information about dataset episodes and their data sources.  Admin-only endpoint for debugging. Returns detailed information about all episodes in the dataset, including recordings (robot + camera) with signed URLs for parquet files, MP4 videos, and TS chunks.  Used by &#x60;&#x60;debugging/mujoco_dataset_viewer.py&#x60;&#x60; for episode-wise visualization.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    pplx::task<std::shared_ptr<DatasetDebugInfoSchema>> srcAppApiDatasetsGetDatasetDebugInfo(
-        utility::string_t uuid
     ) const;
     /// <summary>
     /// Get Dataset Episode Manifest
@@ -1456,16 +1438,6 @@ public:
         boost::optional<utility::string_t> processingStatus
     ) const;
     /// <summary>
-    /// Recompute Dataset
-    /// </summary>
-    /// <remarks>
-    /// Re-run parquet generation for every episode in the dataset. Admin only.  Clears each episode&#39;s cached parquet metadata, invalidates the dataset&#39;s joined parquet (if any), and dispatches one &#x60;&#x60;generate_episode_parquet_task&#x60;&#x60; per episode. Datasets rejoin lazily via &#x60;&#x60;join_dataset_parquets&#x60;&#x60; once all episodes complete.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiDatasetsRecomputeDataset(
-        utility::string_t uuid
-    ) const;
-    /// <summary>
     /// Remove Episode From Dataset
     /// </summary>
     /// <remarks>
@@ -1481,7 +1453,7 @@ public:
     /// Update Dataset
     /// </summary>
     /// <remarks>
-    /// Update a dataset.
+    /// Update a dataset.  Synchronous validation is flat in episode count, same as &#x60;&#x60;create_dataset&#x60;&#x60;. Recording-count homogeneity and generation for newly attached episodes run in &#x60;&#x60;dispatch_dataset_generation_task&#x60;&#x60;; failures surface via &#x60;&#x60;processing_status&#x60;&#x60; / &#x60;&#x60;failed_details&#x60;&#x60;.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="datasetUpdateSchema"></param>
@@ -2169,15 +2141,59 @@ public:
     /// Get Environment Recordings
     /// </summary>
     /// <remarks>
-    /// Get all available recordings for an environment (no pagination). Returns lean recording metadata (heavy internal fields omitted). Full playback data is loaded via GET .../recordings/{recording_uuid}/data.  Query params: - start_timestamp: Inclusive calendar day start (yyyy-mm-dd), optional - end_timestamp: Inclusive calendar day end (yyyy-mm-dd), optional   When both are set, only recordings whose time window overlaps   [start_timestamp 00:00 UTC, end_timestamp+1day 00:00 UTC) are returned.
+    /// List a stable, filterable recording catalog.  Every response is a bounded, newest-first page ordered by &#x60;&#x60;(effective_start_us, uuid)&#x60;&#x60; descending. With no date filters it covers the environment&#39;s whole eligible history, not only its latest day. Omitting &#x60;&#x60;limit&#x60;&#x60; returns the first &#x60;&#x60;CATALOG_DEFAULT_PAGE_SIZE&#x60;&#x60; (100) items; supplied limits are clamped to &#x60;&#x60;CATALOG_MAX_PAGE_SIZE&#x60;&#x60; (100). Follow &#x60;&#x60;next_cursor&#x60;&#x60; while &#x60;&#x60;has_more&#x60;&#x60; is true to read the selected catalog.  A date window is applied only when both &#x60;&#x60;start_date&#x60;&#x60; and &#x60;&#x60;end_date&#x60;&#x60; (or both legacy &#x60;&#x60;start_timestamp&#x60;&#x60;/&#x60;&#x60;end_timestamp&#x60;&#x60; aliases) are given. &#x60;&#x60;include_unready&#x3D;false&#x60;&#x60; always returns ready rows only; &#x60;&#x60;include_unready&#x3D;true&#x60;&#x60; is restricted to staff/administrators. When it is omitted, non-administrators receive ready rows only and staff/admin users follow the deployment&#39;s &#x60;&#x60;RECORDINGS_READY_ONLY_DEFAULT&#x60;&#x60; policy. Repeated twin/context/source filters are ORed within a kind and ANDed across kinds.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
     /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="startDate"> (optional, default to utility::datetime())</param>
+    /// <param name="endDate"> (optional, default to utility::datetime())</param>
+    /// <param name="includeUnready"> (optional, default to false)</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="cursor"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="twinUuid"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
+    /// <param name="context"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
+    /// <param name="sourceType"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
     pplx::task<std::shared_ptr<RecordingListResponse>> srcAppApiEnvironmentsRecordingsGetEnvironmentRecordings(
         utility::string_t uuid,
         boost::optional<utility::datetime> startTimestamp,
-        boost::optional<utility::datetime> endTimestamp
+        boost::optional<utility::datetime> endTimestamp,
+        boost::optional<utility::datetime> startDate,
+        boost::optional<utility::datetime> endDate,
+        boost::optional<bool> includeUnready,
+        boost::optional<int32_t> limit,
+        boost::optional<utility::string_t> cursor,
+        boost::optional<std::vector<utility::string_t>> twinUuid,
+        boost::optional<std::vector<utility::string_t>> context,
+        boost::optional<std::vector<utility::string_t>> sourceType
+    ) const;
+    /// <summary>
+    /// Get Environment Recordings Availability
+    /// </summary>
+    /// <remarks>
+    /// Return recording-date availability without media IO.  With no date or catalog filters this covers every eligible recording in the environment; unlike the catalog endpoint it is never paginated. &#x60;&#x60;timezone&#x60;&#x60; defaults to &#x60;&#x60;UTC&#x60;&#x60; and controls the date buckets and first/last dates. Date-window and &#x60;&#x60;include_unready&#x60;&#x60; defaults/authorization are identical to :func:&#x60;get_environment_recordings&#x60;: give both date bounds to filter, pass &#x60;&#x60;include_unready&#x3D;false&#x60;&#x60; for ready rows only, and do not rely on an omitted readiness flag when a predictable staff/admin result is required.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="startTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="endTimestamp"> (optional, default to utility::datetime())</param>
+    /// <param name="startDate"> (optional, default to utility::datetime())</param>
+    /// <param name="endDate"> (optional, default to utility::datetime())</param>
+    /// <param name="includeUnready"> (optional, default to false)</param>
+    /// <param name="twinUuid"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
+    /// <param name="context"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
+    /// <param name="sourceType"> (optional, default to std::vector&lt;std::shared_ptr&lt;utility::string_t&gt;&gt;())</param>
+    /// <param name="timezone"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::shared_ptr<RecordingAvailabilityResponse>> srcAppApiEnvironmentsRecordingsGetEnvironmentRecordingsAvailability(
+        utility::string_t uuid,
+        boost::optional<utility::datetime> startTimestamp,
+        boost::optional<utility::datetime> endTimestamp,
+        boost::optional<utility::datetime> startDate,
+        boost::optional<utility::datetime> endDate,
+        boost::optional<bool> includeUnready,
+        boost::optional<std::vector<utility::string_t>> twinUuid,
+        boost::optional<std::vector<utility::string_t>> context,
+        boost::optional<std::vector<utility::string_t>> sourceType,
+        boost::optional<utility::string_t> timezone
     ) const;
     /// <summary>
     /// Get Environment Sessions
@@ -2188,6 +2204,30 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsRecordingsGetEnvironmentSessions(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Environment Timeline Events
+    /// </summary>
+    /// <remarks>
+    /// Return one keyset page of window annotations for a set of time ranges.  This resolves no recording. The caller already holds every window it wants annotated (catalog descriptors carry their own start/end), so requiring a recording here only bought a lookup against the largest table we have — once per recording, to re-derive timestamps the caller passed in anyway.  &#x60;&#x60;windows&#x60;&#x60; is &#x60;&#x60;start_us:end_us&#x60;&#x60; pairs, comma separated. Overlapping and touching ranges are merged, so selecting forty back-to-back recordings costs one or two range predicates rather than forty. Ordering is ascending by &#x60;&#x60;(timestamp_us, kind, uuid)&#x60;&#x60; and paging is keyset: unlike a newest-first &#x60;&#x60;LIMIT&#x60;&#x60;, the oldest windows in a sparse multi-day selection cannot be starved of annotations by a denser recent one.  Events come back with no recording association. Mapping an annotation to the recordings whose window contains it — and applying any per-recording context policy — belongs to the caller, which is the only side that knows each window&#39;s recording identity and context.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="windows"></param>
+    /// <param name="twinUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="includeAlerts"> (optional, default to false)</param>
+    /// <param name="includeTelemetry"> (optional, default to false)</param>
+    /// <param name="telemetryEventTypes"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="limit"> (optional, default to 0)</param>
+    /// <param name="cursor"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::shared_ptr<ReplayTimelineWindowEventsResponseSchema>> srcAppApiEnvironmentsRecordingsGetEnvironmentTimelineEvents(
+        utility::string_t uuid,
+        utility::string_t windows,
+        boost::optional<utility::string_t> twinUuid,
+        boost::optional<bool> includeAlerts,
+        boost::optional<bool> includeTelemetry,
+        boost::optional<utility::string_t> telemetryEventTypes,
+        boost::optional<int32_t> limit,
+        boost::optional<utility::string_t> cursor
     ) const;
     /// <summary>
     /// Get Recording Data
@@ -2202,40 +2242,6 @@ public:
         utility::string_t uuid,
         utility::string_t recordingUuid,
         boost::optional<bool> returnFlatbuffers
-    ) const;
-    /// <summary>
-    /// Get Recording Debug Artifacts
-    /// </summary>
-    /// <remarks>
-    /// Return signed URLs for raw recording artifacts (parquets, TS chunks, MP4).  Admin-only endpoint for debugging synchronization. Collects: - The requested recording&#39;s parquet and MP4. - All related TWIN_RECORDING_INFO recordings in the same environment   that overlap the same session window (robot + cameras). - MPEG-TS source chunks referenced by camera recordings.  Used by &#x60;&#x60;debugging/mujoco_data_sync.py&#x60;&#x60; to download artifacts locally.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="recordingUuid"></param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsRecordingsGetRecordingDebugArtifacts(
-        utility::string_t uuid,
-        utility::string_t recordingUuid
-    ) const;
-    /// <summary>
-    /// Get Recording Timeline Events
-    /// </summary>
-    /// <remarks>
-    /// Return replay timeline markers for alerts and telemetry within a recording window.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="recordingUuid"></param>
-    /// <param name="twinUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="includeAlerts"> (optional, default to false)</param>
-    /// <param name="includeTelemetry"> (optional, default to false)</param>
-    /// <param name="telemetryEventTypes"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    /// <param name="limitPerKind"> (optional, default to 0)</param>
-    pplx::task<std::shared_ptr<ReplayTimelineEventsResponseSchema>> srcAppApiEnvironmentsRecordingsGetRecordingTimelineEvents(
-        utility::string_t uuid,
-        utility::string_t recordingUuid,
-        boost::optional<utility::string_t> twinUuid,
-        boost::optional<bool> includeAlerts,
-        boost::optional<bool> includeTelemetry,
-        boost::optional<utility::string_t> telemetryEventTypes,
-        boost::optional<int32_t> limitPerKind
     ) const;
     /// <summary>
     /// Process All Environment Sessions
@@ -2317,11 +2323,23 @@ public:
     /// Invite User To Environment
     /// </summary>
     /// <remarks>
-    /// Invite a non-existent user to an environment
+    /// Invite a user (existing-but-out-of-org, or brand new) to an environment.
     /// </remarks>
     /// <param name="uuid"></param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingInviteUserToEnvironment(
+    pplx::task<std::shared_ptr<InvitationResponseSchema>> srcAppApiEnvironmentsSharingInviteUserToEnvironment(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Redeem Environment Link
+    /// </summary>
+    /// <remarks>
+    /// Redeem a share link: grant the current user the link&#39;s role on the env.  Requires authentication (global Ninja auth). \&quot;Anyone with the link\&quot; model (like Colab): any signed-in user holding a valid token may redeem it, regardless of their organization. Redemption creates an object-scoped ACL grant on this environment only (cascading to its twins/telemetry/streams via &#x60;&#x60;Twin.highest_role_for&#x60;&#x60;) — the recipient is NOT added to the env&#39;s org/workspace. Feature-level access is still gated by the granted role. Returns 401 (unauthenticated) or 404 (bad/expired/revoked/mismatched token).
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="redeemLinkSchema"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingRedeemEnvironmentLink(
+        utility::string_t uuid,
+        std::shared_ptr<RedeemLinkSchema> redeemLinkSchema
     ) const;
     /// <summary>
     /// Remove User From Environment
@@ -2349,7 +2367,7 @@ public:
     /// Share Environment With User
     /// </summary>
     /// <remarks>
-    /// Share environment with a user by email
+    /// Share environment with a user by email.
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingShareEnvironmentWithUser(
@@ -2632,16 +2650,6 @@ public:
     pplx::task<std::vector<std::shared_ptr<EpisodeSchema>>> srcAppApiEpisodeListEpisodes(
     ) const;
     /// <summary>
-    /// Recompute Episode Parquet
-    /// </summary>
-    /// <remarks>
-    /// Re-run episode parquet generation from source recordings. Admin only.  Clears the cached parquet metadata and dispatches &#x60;&#x60;generate_episode_parquet_task&#x60;&#x60; as a Celery job. Any datasets that contain this episode will have their readiness state refreshed via &#x60;&#x60;_update_dataset_with_episode&#x60;&#x60; when the task completes.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEpisodeRecomputeEpisodeParquet(
-        utility::string_t uuid
-    ) const;
-    /// <summary>
     /// Update Episode
     /// </summary>
     /// <remarks>
@@ -2746,30 +2754,12 @@ public:
         std::shared_ptr<KeybindingUpdateSchema> keybindingUpdateSchema
     ) const;
     /// <summary>
-    /// Admin Force End Session
-    /// </summary>
-    /// <remarks>
-    /// Staff-only: force-end any session or remove a user from the queue.
-    /// </remarks>
-    /// <param name="sessionUuid"></param>
-    pplx::task<std::shared_ptr<EndSessionResponseSchema>> srcAppApiLabsAdminForceEndSession(
-        utility::string_t sessionUuid
-    ) const;
-    /// <summary>
     /// End Lab Session
     /// </summary>
     /// <remarks>
     /// End the user&#39;s active session or cancel their queue entry.  If the user had an active session the next queued user is automatically promoted to the freed lab.
     /// </remarks>
     pplx::task<std::shared_ptr<EndSessionResponseSchema>> srcAppApiLabsEndLabSession(
-    ) const;
-    /// <summary>
-    /// Get Admin Lab Overview
-    /// </summary>
-    /// <remarks>
-    /// Staff-only: overview of all labs — active sessions, global queue, history.
-    /// </remarks>
-    pplx::task<std::shared_ptr<AdminLabOverviewSchema>> srcAppApiLabsGetAdminLabOverview(
     ) const;
     /// <summary>
     /// Get Lab Status
@@ -3189,7 +3179,7 @@ public:
     /// Create Mlmodel
     /// </summary>
     /// <remarks>
-    /// Create a new ML model (staff administrators only).
+    /// Create a new ML model.  Staff/admins can create any model (any provider, any visibility). Other authenticated users may create feature-flagged &#x60;&#x60;custom-api&#x60;&#x60; / &#x60;&#x60;custom-hosted&#x60;&#x60; models scoped to private/workspace visibility and cloud deployment — see &#x60;&#x60;docs/CUSTOM_MLMODELS_SPEC.md&#x60;&#x60;.
     /// </remarks>
     /// <param name="mLModelCreateSchema"></param>
     pplx::task<std::shared_ptr<MLModelSchema>> srcAppApiMlmodelsCreateMlmodel(
@@ -3203,6 +3193,16 @@ public:
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<void> srcAppApiMlmodelsDeleteMlmodel(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Delete Mlmodel Credential
+    /// </summary>
+    /// <remarks>
+    /// Delete a model&#39;s stored auth material, if any.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<MLModelCredentialStatusSchema>> srcAppApiMlmodelsDeleteMlmodelCredential(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -3358,16 +3358,28 @@ public:
         std::shared_ptr<MLModelRunSchema> mLModelRunSchema
     ) const;
     /// <summary>
-    /// Run Mlmodel Playground
+    /// Set Mlmodel Credential
     /// </summary>
     /// <remarks>
-    /// Run a model from the in-app Model Playground (catalog try-it surface).  Browser-only (CSRF-guarded via &#x60;&#x60;@require_same_origin&#x60;&#x60;) and open to unauthenticated users so public models can be tried without signing in. Playground runs are not credit-gated at zero balance. Use &#x60;&#x60;POST /mlmodels/{uuid}/run&#x60;&#x60; for SDK, workflow, and automation callers.
+    /// Store (encrypted) auth material for a &#x60;&#x60;custom-api&#x60;&#x60; model.  Write-only: the secret is never returned by this or any other endpoint. Callers can only tell a credential exists via &#x60;&#x60;MLModelSchema.has_credential&#x60;&#x60;.
     /// </remarks>
     /// <param name="uuid"></param>
-    /// <param name="mLModelRunSchema"></param>
-    pplx::task<std::shared_ptr<MLModelRunResultSchema>> srcAppApiMlmodelsRunMlmodelPlayground(
+    /// <param name="mLModelCredentialSetSchema"></param>
+    pplx::task<std::shared_ptr<MLModelCredentialStatusSchema>> srcAppApiMlmodelsSetMlmodelCredential(
         utility::string_t uuid,
-        std::shared_ptr<MLModelRunSchema> mLModelRunSchema
+        std::shared_ptr<MLModelCredentialSetSchema> mLModelCredentialSetSchema
+    ) const;
+    /// <summary>
+    /// Test Call Mlmodel
+    /// </summary>
+    /// <remarks>
+    /// Run one real invocation against a &#x60;&#x60;custom-api&#x60;&#x60; model&#39;s endpoint.  Lets the owner validate endpoint/auth/payload_template configuration before wiring the model into a workflow. This performs a *real* inference, so it is credit-gated and metered exactly like &#x60;&#x60;POST /{uuid}/run&#x60;&#x60; — under its own &#x60;&#x60;mlmodel_test_call&#x60;&#x60; caller so configuration traffic stays separable in usage dashboards.  Requires &#x60;&#x60;metadata.endpoint_url&#x60;&#x60;: without it the custom-API handler would silently divert to &#x60;&#x60;metadata.fallback_provider&#x60;&#x60; on the platform&#39;s own provider credentials, which tests nothing the caller asked about.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="mLModelTestCallSchema"></param>
+    pplx::task<std::shared_ptr<MLModelTestCallResultSchema>> srcAppApiMlmodelsTestCallMlmodel(
+        utility::string_t uuid,
+        std::shared_ptr<MLModelTestCallSchema> mLModelTestCallSchema
     ) const;
     /// <summary>
     /// Update Mlmodel
@@ -3522,16 +3534,6 @@ public:
         utility::string_t orderUuid
     ) const;
     /// <summary>
-    /// List All Hardware Orders
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="status"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
-    pplx::task<std::vector<std::shared_ptr<HardwareOrderAdminSchema>>> srcAppApiOrdersListAllHardwareOrders(
-        boost::optional<utility::string_t> status
-    ) const;
-    /// <summary>
     /// List Hardware Orders
     /// </summary>
     /// <remarks>
@@ -3540,32 +3542,6 @@ public:
     /// <param name="workspaceUuid"></param>
     pplx::task<std::vector<std::shared_ptr<HardwareOrderSchema>>> srcAppApiOrdersListHardwareOrders(
         utility::string_t workspaceUuid
-    ) const;
-    /// <summary>
-    /// Update Hardware Order Line Item
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="orderUuid"></param>
-    /// <param name="lineItemUuid"></param>
-    /// <param name="hardwareOrderLineItemUpdateSchema"></param>
-    pplx::task<std::shared_ptr<HardwareOrderAdminSchema>> srcAppApiOrdersUpdateHardwareOrderLineItem(
-        utility::string_t orderUuid,
-        utility::string_t lineItemUuid,
-        std::shared_ptr<HardwareOrderLineItemUpdateSchema> hardwareOrderLineItemUpdateSchema
-    ) const;
-    /// <summary>
-    /// Update Hardware Order Status
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="orderUuid"></param>
-    /// <param name="hardwareOrderStatusUpdateSchema"></param>
-    pplx::task<std::shared_ptr<HardwareOrderAdminSchema>> srcAppApiOrdersUpdateHardwareOrderStatus(
-        utility::string_t orderUuid,
-        std::shared_ptr<HardwareOrderStatusUpdateSchema> hardwareOrderStatusUpdateSchema
     ) const;
     /// <summary>
     /// Charge Saved Card
@@ -3636,18 +3612,6 @@ public:
         std::shared_ptr<FinalizeTopupRequestSchema> finalizeTopupRequestSchema
     ) const;
     /// <summary>
-    /// Generate Promo Code
-    /// </summary>
-    /// <remarks>
-    /// Generate an org-bound promotion code carrying credits (staff only).
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="generatePromoCodeRequestSchema"></param>
-    pplx::task<std::shared_ptr<PromoCodeSchema>> srcAppApiPaymentsGeneratePromoCode(
-        utility::string_t uuid,
-        std::shared_ptr<GeneratePromoCodeRequestSchema> generatePromoCodeRequestSchema
-    ) const;
-    /// <summary>
     /// Get Auto Topup Config
     /// </summary>
     /// <remarks>
@@ -3688,16 +3652,6 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
-    /// List Promo Codes
-    /// </summary>
-    /// <remarks>
-    /// List promotion codes bound to this organization (staff only).
-    /// </remarks>
-    /// <param name="uuid"></param>
-    pplx::task<std::vector<std::shared_ptr<PromoCodeSchema>>> srcAppApiPaymentsListPromoCodes(
-        utility::string_t uuid
-    ) const;
-    /// <summary>
     /// Preview Tax
     /// </summary>
     /// <remarks>
@@ -3720,18 +3674,6 @@ public:
     pplx::task<std::shared_ptr<RedeemCouponResponseSchema>> srcAppApiPaymentsRedeemCoupon(
         utility::string_t uuid,
         std::shared_ptr<RedeemCouponRequestSchema> redeemCouponRequestSchema
-    ) const;
-    /// <summary>
-    /// Revoke Promo Code
-    /// </summary>
-    /// <remarks>
-    /// Revoke (deactivate) a generated promotion code (staff only).
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="promoCodeId"></param>
-    pplx::task<void> srcAppApiPaymentsRevokePromoCode(
-        utility::string_t uuid,
-        utility::string_t promoCodeId
     ) const;
     /// <summary>
     /// Update Auto Topup Config
@@ -3852,7 +3794,7 @@ public:
     /// Invite a non-existent user to a project.
     /// </remarks>
     /// <param name="uuid"></param>
-    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiProjectsInviteUserToProject(
+    pplx::task<std::shared_ptr<InvitationResponseSchema>> srcAppApiProjectsInviteUserToProject(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -5032,20 +4974,6 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
-    /// Fix Urdf Project Slug
-    /// </summary>
-    /// <remarks>
-    /// Fix a URDF project&#39;s slug and main_file_path to match actual storage.  This is useful when files exist in storage but the DB record points to the wrong location. Requires staff/superuser permissions.
-    /// </remarks>
-    /// <param name="uuid"></param>
-    /// <param name="newSlug"></param>
-    /// <param name="newMainFilePath"></param>
-    pplx::task<std::shared_ptr<URDFProjectSchema>> srcAppApiUrdfFixUrdfProjectSlug(
-        utility::string_t uuid,
-        utility::string_t newSlug,
-        utility::string_t newMainFilePath
-    ) const;
-    /// <summary>
     /// Get Twin Joint State
     /// </summary>
     /// <remarks>
@@ -5215,7 +5143,7 @@ public:
     /// Activate Workflow
     /// </summary>
     /// <remarks>
-    /// Activate a workflow.
+    /// Activate a workflow.  Decoupled from compilation: it only flips &#x60;&#x60;is_active&#x60;&#x60; after the activation validators pass (:func:&#x60;_validate_workflow_for_activation&#x60;). Compile failures surface later at the edge-sync/run site, not by blocking this state change — a workflow can target several twins/edges and one that can&#39;t compile shouldn&#39;t veto the rest. Missing mandatory inputs DO block activation. See &#x60;&#x60;docs/workflow-error-surfacing.md&#x60;&#x60;.
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::shared_ptr<WorkflowSchema>> srcAppApiWorkflowsActivateWorkflow(
@@ -5267,7 +5195,7 @@ public:
     /// Create Workflow Connection
     /// </summary>
     /// <remarks>
-    /// Create a new connection between nodes.
+    /// Create a new connection between nodes.  The editor can retry this request (double click, optimistic retry, slow network), so treat duplicate create payloads as idempotent and return the existing edge instead of surfacing a DB unique-constraint 500.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="workflowConnectionCreateSchema"></param>

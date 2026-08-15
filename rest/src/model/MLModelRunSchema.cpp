@@ -129,6 +129,11 @@ web::json::value MLModelRunSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("image_source"))] = ModelBase::toJson(m_Image_source.get());
     }
+    if(m_Recording_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("recording_uuid"))] = ModelBase::toJson(m_Recording_uuid.get());
+    }
 
     return val;
 }
@@ -345,6 +350,17 @@ bool MLModelRunSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("recording_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("recording_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setRecordingUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRecordingUuid);
+            setRecordingUuid(refVal_setRecordingUuid);
+            
+        }
+    }
     return ok;
 }
 
@@ -430,6 +446,10 @@ void MLModelRunSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart,
     if(m_Image_source.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("image_source")), m_Image_source.get()));
+    }
+    if(m_Recording_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("recording_uuid")), m_Recording_uuid.get()));
     }
 }
 
@@ -555,6 +575,12 @@ bool MLModelRunSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipar
         utility::string_t refVal_setImageSource;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("image_source"))), refVal_setImageSource );
         setImageSource(refVal_setImageSource);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("recording_uuid"))))
+    {
+        utility::string_t refVal_setRecordingUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("recording_uuid"))), refVal_setRecordingUuid );
+        setRecordingUuid(refVal_setRecordingUuid);
     }
     return ok;
 }
@@ -939,6 +965,26 @@ bool MLModelRunSchema::imageSourceIsSet() const
 void MLModelRunSchema::unsetImage_source()
 {
     m_Image_source.reset();
+}
+utility::string_t MLModelRunSchema::getRecordingUuid() const
+{
+    return m_Recording_uuid.get();
+}
+
+
+void MLModelRunSchema::setRecordingUuid(const utility::string_t& value)
+{
+    m_Recording_uuid = value;
+}
+
+bool MLModelRunSchema::recordingUuidIsSet() const
+{
+    return m_Recording_uuid.has_value();
+}
+
+void MLModelRunSchema::unsetRecording_uuid()
+{
+    m_Recording_uuid.reset();
 }
 
 }

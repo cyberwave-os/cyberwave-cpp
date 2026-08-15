@@ -49,6 +49,11 @@ web::json::value DatasetUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("metadata"))] = ModelBase::toJson(m_Metadata.get());
     }
+    if(m_Allow_pending_recordings.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("allow_pending_recordings"))] = ModelBase::toJson(m_Allow_pending_recordings.get());
+    }
 
     return val;
 }
@@ -89,6 +94,17 @@ bool DatasetUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("allow_pending_recordings"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("allow_pending_recordings")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setAllowPendingRecordings;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAllowPendingRecordings);
+            setAllowPendingRecordings(refVal_setAllowPendingRecordings);
+            
+        }
+    }
     return ok;
 }
 
@@ -110,6 +126,10 @@ void DatasetUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipa
     if(m_Metadata.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata.get()));
+    }
+    if(m_Allow_pending_recordings.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("allow_pending_recordings")), m_Allow_pending_recordings.get()));
     }
 }
 
@@ -139,6 +159,12 @@ bool DatasetUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multi
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))), refVal_setMetadata );
         setMetadata(refVal_setMetadata);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("allow_pending_recordings"))))
+    {
+        bool refVal_setAllowPendingRecordings;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("allow_pending_recordings"))), refVal_setAllowPendingRecordings );
+        setAllowPendingRecordings(refVal_setAllowPendingRecordings);
     }
     return ok;
 }
@@ -203,6 +229,25 @@ bool DatasetUpdateSchema::metadataIsSet() const
 void DatasetUpdateSchema::unsetMetadata()
 {
     m_Metadata.reset();
+}
+bool DatasetUpdateSchema::isAllowPendingRecordings() const
+{
+    return m_Allow_pending_recordings.get();
+}
+
+void DatasetUpdateSchema::setAllowPendingRecordings(bool value)
+{
+    m_Allow_pending_recordings = value;
+}
+
+bool DatasetUpdateSchema::allowPendingRecordingsIsSet() const
+{
+    return m_Allow_pending_recordings.has_value();
+}
+
+void DatasetUpdateSchema::unsetAllow_pending_recordings()
+{
+    m_Allow_pending_recordings.reset();
 }
 
 }

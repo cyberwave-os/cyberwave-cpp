@@ -25,6 +25,7 @@
 #include "CppRestOpenAPIClient/model/Position.h"
 #include "CppRestOpenAPIClient/model/Rotation.h"
 #include <cpprest/details/basic_types.h>
+#include "CppRestOpenAPIClient/model/Near.h"
 #include <map>
 #include "CppRestOpenAPIClient/AnyType.h"
 
@@ -123,6 +124,16 @@ public:
     void unsetLocked();
     void setLocked(bool value);
 
+    bool isAutoPlace() const;
+    bool autoPlaceIsSet() const;
+    void unsetAuto_place();
+    void setAutoPlace(bool value);
+
+    std::shared_ptr<Near> getNear() const;
+    bool nearIsSet() const;
+    void unsetNear();
+    void setNear(const std::shared_ptr<Near>& value);
+
 
 protected:
     boost::optional<utility::string_t> m_Id;
@@ -153,6 +164,11 @@ protected:
 
     bool m_Locked;
     bool m_LockedIsSet;
+
+    bool m_Auto_place;
+    bool m_Auto_placeIsSet;
+
+    boost::optional<std::shared_ptr<Near>> m_Near;
 
 };
 

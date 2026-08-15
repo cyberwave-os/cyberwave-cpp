@@ -90,6 +90,21 @@ public:
     void unsetActions();
     void setActions(const std::shared_ptr<MotionEpisodeSchema>& value);
 
+    utility::string_t getModelUuid() const;
+    bool modelUuidIsSet() const;
+    void unsetModel_uuid();
+    void setModelUuid(const utility::string_t& value);
+
+    utility::string_t getModelSlug() const;
+    bool modelSlugIsSet() const;
+    void unsetModel_slug();
+    void setModelSlug(const utility::string_t& value);
+
+    utility::string_t getStructuredTask() const;
+    bool structuredTaskIsSet() const;
+    void unsetStructured_task();
+    void setStructuredTask(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Status;
@@ -105,6 +120,12 @@ protected:
     boost::optional<utility::string_t> m_Raw;
 
     boost::optional<std::shared_ptr<MotionEpisodeSchema>> m_Actions;
+
+    boost::optional<utility::string_t> m_Model_uuid;
+
+    boost::optional<utility::string_t> m_Model_slug;
+
+    boost::optional<utility::string_t> m_Structured_task;
 
 };
 

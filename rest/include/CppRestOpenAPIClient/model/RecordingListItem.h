@@ -12,7 +12,7 @@
 /*
  * RecordingListItem.h
  *
- * Schema for recording list endpoint responses.  The metadata field is a dict that only contains non-null values.
+ * Schema for recording list endpoint responses.  The metadata field is a dict that only contains non-null values. &#x60;&#x60;playback_readiness&#x60;&#x60; is server-computed (see src/lib/recordings/) and is intentionally NOT inside &#x60;&#x60;metadata&#x60;&#x60;, which is a producer-metadata passthrough.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_RecordingListItem_H_
@@ -34,7 +34,7 @@ namespace model {
 
 
 /// <summary>
-/// Schema for recording list endpoint responses.  The metadata field is a dict that only contains non-null values.
+/// Schema for recording list endpoint responses.  The metadata field is a dict that only contains non-null values. &#x60;&#x60;playback_readiness&#x60;&#x60; is server-computed (see src/lib/recordings/) and is intentionally NOT inside &#x60;&#x60;metadata&#x60;&#x60;, which is a producer-metadata passthrough.
 /// </summary>
 class  RecordingListItem
     : public ModelBase
@@ -79,6 +79,11 @@ public:
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getPlaybackReadiness() const;
+    bool playbackReadinessIsSet() const;
+    void unsetPlayback_readiness();
+    void setPlaybackReadiness(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -91,6 +96,8 @@ protected:
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Metadata;
     bool m_MetadataIsSet;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Playback_readiness;
 
 };
 

@@ -40,6 +40,11 @@ DatasetSchema::DatasetSchema()
     m_Failed_episodes = 0;
     m_Failed_episodesIsSet = false;
     m_Failed_episode_uuidsIsSet = false;
+    m_Failed_detailsIsSet = false;
+    m_Skipped_episodes = 0;
+    m_Skipped_episodesIsSet = false;
+    m_Skipped_episode_uuidsIsSet = false;
+    m_Waiting_on_recordings_episode_uuidsIsSet = false;
     m_Created_at = utility::datetime();
     m_Created_atIsSet = false;
     m_Updated_at = utility::datetime();
@@ -137,6 +142,26 @@ web::json::value DatasetSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("failed_episode_uuids"))] = ModelBase::toJson(m_Failed_episode_uuids);
+    }
+    if(m_Failed_detailsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("failed_details"))] = ModelBase::toJson(m_Failed_details);
+    }
+    if(m_Skipped_episodesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("skipped_episodes"))] = ModelBase::toJson(m_Skipped_episodes);
+    }
+    if(m_Skipped_episode_uuidsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("skipped_episode_uuids"))] = ModelBase::toJson(m_Skipped_episode_uuids);
+    }
+    if(m_Waiting_on_recordings_episode_uuidsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("waiting_on_recordings_episode_uuids"))] = ModelBase::toJson(m_Waiting_on_recordings_episode_uuids);
     }
     if(m_Cameras.has_value())
     {
@@ -366,6 +391,50 @@ bool DatasetSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("failed_details"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("failed_details")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setFailedDetails;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFailedDetails);
+            setFailedDetails(refVal_setFailedDetails);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("skipped_episodes"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("skipped_episodes")));
+        if(!fieldValue.is_null())
+        {
+            int32_t refVal_setSkippedEpisodes;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSkippedEpisodes);
+            setSkippedEpisodes(refVal_setSkippedEpisodes);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("skipped_episode_uuids"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("skipped_episode_uuids")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<utility::string_t> refVal_setSkippedEpisodeUuids;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSkippedEpisodeUuids);
+            setSkippedEpisodeUuids(refVal_setSkippedEpisodeUuids);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("waiting_on_recordings_episode_uuids"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("waiting_on_recordings_episode_uuids")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<utility::string_t> refVal_setWaitingOnRecordingsEpisodeUuids;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setWaitingOnRecordingsEpisodeUuids);
+            setWaitingOnRecordingsEpisodeUuids(refVal_setWaitingOnRecordingsEpisodeUuids);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("cameras"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("cameras")));
@@ -539,6 +608,22 @@ void DatasetSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, co
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("failed_episode_uuids")), m_Failed_episode_uuids));
     }
+    if(m_Failed_detailsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("failed_details")), m_Failed_details));
+    }
+    if(m_Skipped_episodesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("skipped_episodes")), m_Skipped_episodes));
+    }
+    if(m_Skipped_episode_uuidsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("skipped_episode_uuids")), m_Skipped_episode_uuids));
+    }
+    if(m_Waiting_on_recordings_episode_uuidsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("waiting_on_recordings_episode_uuids")), m_Waiting_on_recordings_episode_uuids));
+    }
     if(m_Cameras.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("cameras")), m_Cameras.get()));
@@ -681,6 +766,30 @@ bool DatasetSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, 
         std::vector<utility::string_t> refVal_setFailedEpisodeUuids;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("failed_episode_uuids"))), refVal_setFailedEpisodeUuids );
         setFailedEpisodeUuids(refVal_setFailedEpisodeUuids);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("failed_details"))))
+    {
+        std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setFailedDetails;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("failed_details"))), refVal_setFailedDetails );
+        setFailedDetails(refVal_setFailedDetails);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("skipped_episodes"))))
+    {
+        int32_t refVal_setSkippedEpisodes;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("skipped_episodes"))), refVal_setSkippedEpisodes );
+        setSkippedEpisodes(refVal_setSkippedEpisodes);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("skipped_episode_uuids"))))
+    {
+        std::vector<utility::string_t> refVal_setSkippedEpisodeUuids;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("skipped_episode_uuids"))), refVal_setSkippedEpisodeUuids );
+        setSkippedEpisodeUuids(refVal_setSkippedEpisodeUuids);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("waiting_on_recordings_episode_uuids"))))
+    {
+        std::vector<utility::string_t> refVal_setWaitingOnRecordingsEpisodeUuids;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("waiting_on_recordings_episode_uuids"))), refVal_setWaitingOnRecordingsEpisodeUuids );
+        setWaitingOnRecordingsEpisodeUuids(refVal_setWaitingOnRecordingsEpisodeUuids);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("cameras"))))
     {
@@ -1066,6 +1175,89 @@ bool DatasetSchema::failedEpisodeUuidsIsSet() const
 void DatasetSchema::unsetFailed_episode_uuids()
 {
     m_Failed_episode_uuidsIsSet = false;
+}
+std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> DatasetSchema::getFailedDetails() const
+{
+    return m_Failed_details;
+}
+
+
+void DatasetSchema::setFailedDetails(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value)
+{
+    m_Failed_details = value;
+    m_Failed_detailsIsSet = true;
+}
+
+bool DatasetSchema::failedDetailsIsSet() const
+{
+    return m_Failed_detailsIsSet;
+}
+
+void DatasetSchema::unsetFailed_details()
+{
+    m_Failed_detailsIsSet = false;
+}
+int32_t DatasetSchema::getSkippedEpisodes() const
+{
+    return m_Skipped_episodes;
+}
+
+void DatasetSchema::setSkippedEpisodes(int32_t value)
+{
+    m_Skipped_episodes = value;
+    m_Skipped_episodesIsSet = true;
+}
+
+bool DatasetSchema::skippedEpisodesIsSet() const
+{
+    return m_Skipped_episodesIsSet;
+}
+
+void DatasetSchema::unsetSkipped_episodes()
+{
+    m_Skipped_episodesIsSet = false;
+}
+std::vector<utility::string_t> DatasetSchema::getSkippedEpisodeUuids() const
+{
+    return m_Skipped_episode_uuids;
+}
+
+
+void DatasetSchema::setSkippedEpisodeUuids(const std::vector<utility::string_t>& value)
+{
+    m_Skipped_episode_uuids = value;
+    m_Skipped_episode_uuidsIsSet = true;
+}
+
+bool DatasetSchema::skippedEpisodeUuidsIsSet() const
+{
+    return m_Skipped_episode_uuidsIsSet;
+}
+
+void DatasetSchema::unsetSkipped_episode_uuids()
+{
+    m_Skipped_episode_uuidsIsSet = false;
+}
+std::vector<utility::string_t> DatasetSchema::getWaitingOnRecordingsEpisodeUuids() const
+{
+    return m_Waiting_on_recordings_episode_uuids;
+}
+
+
+void DatasetSchema::setWaitingOnRecordingsEpisodeUuids(const std::vector<utility::string_t>& value)
+{
+    m_Waiting_on_recordings_episode_uuids = value;
+    m_Waiting_on_recordings_episode_uuidsIsSet = true;
+}
+
+bool DatasetSchema::waitingOnRecordingsEpisodeUuidsIsSet() const
+{
+    return m_Waiting_on_recordings_episode_uuidsIsSet;
+}
+
+void DatasetSchema::unsetWaiting_on_recordings_episode_uuids()
+{
+    m_Waiting_on_recordings_episode_uuidsIsSet = false;
 }
 std::vector<utility::string_t> DatasetSchema::getCameras() const
 {
