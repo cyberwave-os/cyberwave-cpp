@@ -455,7 +455,7 @@ std::vector<Asset> AssetManager::list(const std::string&) const
                         boost::optional<utility::string_t>(), boost::optional<utility::string_t>(),
                         boost::optional<utility::string_t>(), boost::optional<utility::string_t>(),
                         boost::optional<utility::string_t>(), boost::optional<utility::string_t>(),
-                        boost::optional<double>(), boost::optional<double>())
+                        boost::optional<double>(), boost::optional<double>(), boost::optional<utility::string_t>())
                        .get();
         std::vector<Asset> out;
         for (auto& ptr : vec)
@@ -523,7 +523,7 @@ Asset AssetManager::update(const std::string& asset_id, const std::string& name,
             body->setName(from_std(name));
         if (!description.empty())
             body->setDescription(from_std(description));
-        auto result = a->srcAppApiAssetsUpdateAsset(from_std(asset_id), body, boost::none).get();
+        auto result = a->srcAppApiAssetsUpdateAsset(from_std(asset_id), body, boost::none, boost::none).get();
         if (!result)
             throw CyberwaveError("Update asset returned no data");
         return Asset::from_schema(std::shared_ptr<void>(std::static_pointer_cast<void>(result)));
@@ -682,17 +682,23 @@ std::string AssetManager::patch_universal_schema(const std::string& asset_id, co
     }
 }
 
-std::string AssetManager::rebuild_universal_schema(const std::string& asset_id, bool sync) const
+std::string AssetManager::rebuild_universal_schema(const std::string& asset_id, bool sync, bool preserve_authored) const
 {
     auto* a = api(client_.get());
     if (!a)
         throw CyberwaveError("Client has no REST API (missing api_key)");
     try
     {
+        // Both flags default to the backend's own default, so only send the
+        // ones that deviate from it.
         boost::optional<bool> sync_opt;
         if (sync)
             sync_opt = true;
-        auto result = a->srcAppApiAssetsRebuildAssetUniversalSchema(from_std(asset_id), sync_opt).get();
+        boost::optional<bool> preserve_authored_opt;
+        if (!preserve_authored)
+            preserve_authored_opt = false;
+        auto result =
+            a->srcAppApiAssetsRebuildAssetUniversalSchema(from_std(asset_id), sync_opt, preserve_authored_opt).get();
         return asset_any_map_to_json(result);
     }
     catch (const org::openapitools::client::api::ApiException& e)
