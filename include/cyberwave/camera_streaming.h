@@ -151,7 +151,8 @@ private:
  * limiting (if ever needed) must happen at GOP granularity upstream, not here.
  *
  * Threading: do not call send_frame() concurrently with stop() or from multiple
- * threads without external synchronization.
+ * threads without external synchronization. start() does spawn a background
+ * thread that publishes edge_health on its own cadence.
  */
 class EncodedH264CameraStreamer
 {
@@ -191,6 +192,18 @@ public:
     bool send_frame(const std::vector<std::uint8_t>& annexb_h264, std::uint64_t timestamp_us);
 
 private:
+    /**
+     * @brief Publish edge_health on a fixed cadence, independent of send_frame().
+     *
+     * No capture loop is owned here, so publishing from send_frame() would stop
+     * the heartbeat exactly when the source dies, leaving the retained
+     * `is_stale: false` as the last word.
+     */
+    void health_loop();
+
+    /** Clear running_ and join health_thread_. Safe to call when not started. */
+    void stop_health_thread();
+
     std::shared_ptr<IMqttClient> mqtt_;
     std::string twin_uuid_;
     std::atomic<bool> running_{false};
@@ -202,10 +215,14 @@ private:
     std::unique_ptr<WebRTCAdapter> webrtc_adapter_;
     std::unique_ptr<MqttSubscriptionHandle> webrtc_mqtt_subscription_;
 
-    double edge_health_stream_started_at_seconds_{0.0};
-    double edge_health_last_publish_ts_seconds_{0.0};
-    double edge_health_last_frame_ts_seconds_{0.0};
-    std::uint64_t edge_health_frames_sent_{0};
+    // Written by send_frame(), read by health_loop() — hence atomic.
+    std::atomic<double> edge_health_stream_started_at_seconds_{0.0};
+    std::atomic<double> edge_health_last_frame_ts_seconds_{0.0};
+    std::atomic<std::uint64_t> edge_health_frames_sent_{0};
+
+    std::thread health_thread_;
+    std::mutex health_mutex_;
+    std::condition_variable health_cv_;
 
     std::function<void(const std::string&)> log_fn_;
 };

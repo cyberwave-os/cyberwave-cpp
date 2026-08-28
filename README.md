@@ -66,6 +66,22 @@ Common options:
 
 The script is idempotent and safe to re-run. Run `./install.sh --help` for all options.
 
+#### OpenAPI deployment compatibility
+
+Source installs generate `rest/` from the configured OpenAPI endpoint when the
+generated client is absent. The generated client and the SDK wrapper must match
+the backend deployment they call. During a backend/API rollout, deploy the
+backend first and then regenerate the SDK, or generate explicitly against the
+target deployment with `--openapi-url`; do not generate a feature branch against
+the production schema before that schema has been deployed. Tagged SDK releases
+include a pre-generated `rest/` client so release builds do not depend on the
+current production schema at install time.
+
+The incremental follow-up is to version an OpenAPI snapshot with the SDK source
+and make that snapshot the default input for regeneration. This will remove the
+merge-to-deploy compatibility window without changing the public C++ wrapper;
+`--openapi-url` will remain available for explicit development targets.
+
 ### Manual install
 
 Install dependencies:
