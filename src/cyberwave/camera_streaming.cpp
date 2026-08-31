@@ -98,7 +98,8 @@ double timestamp_now()
 }
 
 constexpr double edge_health_publish_interval_seconds = 5.0;
-constexpr double edge_health_stale_timeout_seconds = 60.0;
+// Keep in step with the Python SDK's SDK_EDGE_HEALTH_STALE_TIMEOUT_SECONDS.
+constexpr double edge_health_stale_timeout_seconds = 30.0;
 
 } // namespace
 
@@ -129,11 +130,17 @@ void publish_camera_stream_edge_health(IMqttClient& mqtt, const std::string& twi
 
     const double uptime_seconds = std::max(0.0, now_seconds - state.stream_started_at_seconds);
     const double fps = (uptime_seconds > 0.0) ? (static_cast<double>(state.frames_sent) / uptime_seconds) : 0.0;
-    const double time_since_last_frame =
-        (state.last_frame_ts_seconds > 0.0) ? (now_seconds - state.last_frame_ts_seconds) : 0.0;
-    const bool is_stale =
-        state.last_frame_ts_seconds <= 0.0 || time_since_last_frame > edge_health_stale_timeout_seconds;
+
+    // No last_frame_ts yet, so the stale window runs from stream start. That
+    // startup gap is "connecting": "connected" would assert frames are flowing,
+    // "disconnected" would flash red on every start. Mirrors EdgeHealthCheck.
+    const bool awaiting_first_frame = state.last_frame_ts_seconds <= 0.0;
+    const double liveness_ts = awaiting_first_frame ? state.stream_started_at_seconds : state.last_frame_ts_seconds;
+    const bool is_stale = (now_seconds - liveness_ts) > edge_health_stale_timeout_seconds;
     const bool connected = !is_stale;
+    const char* const connection_state =
+        is_stale ? "disconnected" : (awaiting_first_frame ? "connecting" : "connected");
+    const char* const ice_state = awaiting_first_frame ? "new" : "connected";
     const std::string camera_id = state.sensor_name.empty() ? "stream" : state.sensor_name;
     const double rounded_uptime = std::round(uptime_seconds * 10.0) / 10.0;
     const double rounded_fps = std::round(fps * 100.0) / 100.0;
@@ -149,8 +156,8 @@ void publish_camera_stream_edge_health(IMqttClient& mqtt, const std::string& twi
                     {"streams",
                      {{"stream",
                        {{"camera_id", camera_id},
-                        {"connection_state", connected ? "connected" : "disconnected"},
-                        {"ice_connection_state", connected ? "connected" : "new"},
+                        {"connection_state", connection_state},
+                        {"ice_connection_state", ice_state},
                         {"frames_sent", state.frames_sent},
                         {"last_frame_ts", state.last_frame_ts_seconds},
                         {"fps", rounded_fps},
@@ -1441,21 +1448,59 @@ void EncodedH264CameraStreamer::start()
                                });
 
         edge_health_stream_started_at_seconds_ = timestamp_now();
-        edge_health_last_publish_ts_seconds_ = 0.0;
         edge_health_last_frame_ts_seconds_ = 0.0;
         edge_health_frames_sent_ = 0;
+
+        health_thread_ = std::thread(&EncodedH264CameraStreamer::health_loop, this);
     }
     catch (...)
     {
         webrtc_mqtt_subscription_.reset();
         webrtc_adapter_.reset();
+        stop_health_thread();
+    }
+}
+
+void EncodedH264CameraStreamer::stop_health_thread()
+{
+    {
+        // Clear under the same mutex health_loop() waits on, so a notify cannot
+        // land between its predicate check and the wait.
+        std::lock_guard<std::mutex> lock(health_mutex_);
         running_ = false;
+    }
+    health_cv_.notify_all();
+    if (health_thread_.joinable())
+    {
+        health_thread_.join();
+        health_thread_ = std::thread();
+    }
+}
+
+void EncodedH264CameraStreamer::health_loop()
+{
+    // Publish first, then wait: deferring the first heartbeat by a full
+    // interval would show a grey dot for 5 s on every start.
+    while (running_)
+    {
+        const double started_at = edge_health_stream_started_at_seconds_.load();
+        if (mqtt_ && started_at > 0.0)
+        {
+            publish_camera_stream_edge_health(
+                *mqtt_, twin_uuid_, timestamp_now(),
+                {started_at, edge_health_last_frame_ts_seconds_.load(), edge_health_frames_sent_.load(), sensor_name_});
+        }
+
+        std::unique_lock<std::mutex> lock(health_mutex_);
+        health_cv_.wait_for(lock, std::chrono::duration<double>(edge_health_publish_interval_seconds),
+                            [this] { return !running_.load(); });
     }
 }
 
 void EncodedH264CameraStreamer::stop()
 {
-    running_ = false;
+    stop_health_thread();
+
     if (webrtc_adapter_)
     {
         try
@@ -1469,7 +1514,6 @@ void EncodedH264CameraStreamer::stop()
     }
     webrtc_mqtt_subscription_.reset();
     edge_health_stream_started_at_seconds_ = 0.0;
-    edge_health_last_publish_ts_seconds_ = 0.0;
     edge_health_last_frame_ts_seconds_ = 0.0;
     edge_health_frames_sent_ = 0;
 }
@@ -1489,21 +1533,12 @@ bool EncodedH264CameraStreamer::send_frame(const std::vector<std::uint8_t>& anne
             .count());
     const bool sent = webrtc_adapter_->send_frame(annexb_h264, webrtc_ts_us);
 
-    const double now = timestamp_now();
     if (sent)
     {
+        // Record only; health_loop() publishes. Publishing here would tie the
+        // heartbeat to the source still delivering.
         edge_health_frames_sent_ += 1;
-        edge_health_last_frame_ts_seconds_ = now;
-    }
-
-    if (mqtt_ && edge_health_stream_started_at_seconds_ > 0.0 &&
-        (edge_health_last_publish_ts_seconds_ <= 0.0 ||
-         (now - edge_health_last_publish_ts_seconds_) >= edge_health_publish_interval_seconds))
-    {
-        publish_camera_stream_edge_health(*mqtt_, twin_uuid_, now,
-                                          {edge_health_stream_started_at_seconds_, edge_health_last_frame_ts_seconds_,
-                                           edge_health_frames_sent_, sensor_name_});
-        edge_health_last_publish_ts_seconds_ = now;
+        edge_health_last_frame_ts_seconds_ = timestamp_now();
     }
 
     return sent;

@@ -65,7 +65,7 @@ std::vector<Edge> EdgeManager::list() const
         throw CyberwaveError("Client has no REST API (missing api_key)");
     try
     {
-        auto vec = a->srcAppApiEdgesGetEdges().get();
+        auto vec = a->srcAppApiEdgesGetEdges(boost::none).get();
         std::vector<Edge> out;
         for (auto& ptr : vec)
         {
