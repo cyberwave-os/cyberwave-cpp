@@ -186,8 +186,16 @@ public:
     /**
      * Rebuild the authoritative universal schema from source files.
      * Mirrors Python AssetManager.rebuild_universal_schema().
+     *
+     * The rebuild re-parses the stored URDF, which cannot express every schema
+     * field. With @p preserve_authored (the default) everything authored
+     * outside the URDF is carried forward: per-joint home positions, sensors,
+     * actuators, capabilities and collision config. Pass false to discard it
+     * and take the parse wholesale — the right choice when the URDF itself
+     * genuinely changed.
      */
-    std::string rebuild_universal_schema(const std::string& asset_id, bool sync = false) const;
+    std::string rebuild_universal_schema(const std::string& asset_id, bool sync = false,
+                                         bool preserve_authored = true) const;
 
     /**
      * Return the backend-resolved controller setup view for an asset.
