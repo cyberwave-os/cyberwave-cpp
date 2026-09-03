@@ -11,10 +11,27 @@
 
 #include <cassert>
 #include <chrono>
+#include <cstdio>
+#include <cstdlib>
 #include <memory>
+#include <mutex>
+#include <string>
 #include <thread>
+#include <vector>
 
 using namespace cyberwave;
+
+// Release builds define NDEBUG, which compiles <cassert> away — an assert-only
+// test then passes no matter what it observes. Used by the health test below;
+// the older tests here are left on assert() rather than flipped blind.
+static void check(bool ok, const char* what)
+{
+    if (!ok)
+    {
+        std::fprintf(stderr, "FAIL: %s\n", what);
+        std::abort();
+    }
+}
 
 // Mock MQTT for streaming tests
 struct MockMqttForStreaming : IMqttClient
@@ -22,16 +39,44 @@ struct MockMqttForStreaming : IMqttClient
     bool connected = true;
     std::string topic_prefix_;
     int publish_count = 0;
+    mutable std::mutex payload_mutex;
+    std::vector<std::string> payloads;
     bool is_connected() const override { return connected; }
     std::string get_topic_prefix() const override { return topic_prefix_; }
     void update_joint_state(const std::string&, const std::string&, double) override {}
     void publish(const std::string& topic, const std::string& json_payload) override
     {
         (void)topic;
-        (void)json_payload;
+        std::lock_guard<std::mutex> lock(payload_mutex);
+        payloads.push_back(json_payload);
         ++publish_count;
     }
     void subscribe(const std::string&, MqttMessageHandler) override {}
+
+    /** Most recent edge_health payload, or empty if none yet. */
+    std::string last_health() const
+    {
+        std::lock_guard<std::mutex> lock(payload_mutex);
+        for (auto it = payloads.rbegin(); it != payloads.rend(); ++it)
+        {
+            if (it->find("\"edge_health\"") != std::string::npos)
+                return *it;
+        }
+        return std::string();
+    }
+
+    /** Count edge_health heartbeats only — the mock also sees WebRTC signaling. */
+    int health_publish_count() const
+    {
+        std::lock_guard<std::mutex> lock(payload_mutex);
+        int n = 0;
+        for (const auto& p : payloads)
+        {
+            if (p.find("\"edge_health\"") != std::string::npos)
+                ++n;
+        }
+        return n;
+    }
 };
 
 static void test_virtual_frame_source()
@@ -102,6 +147,42 @@ static void test_encoded_h264_streamer_lifecycle()
     assert(!streamer.send_frame(annexb, 0));
 }
 
+static void test_encoded_h264_publishes_health_without_frames()
+{
+    // Frames are pushed in from outside, so publishing edge_health from
+    // send_frame() meant the heartbeat died with the source. The invariant:
+    // heartbeats exist with zero send_frame() calls.
+    auto mqtt = std::make_shared<MockMqttForStreaming>();
+    mqtt->topic_prefix_ = "";
+    EncodedH264CameraStreamer streamer(mqtt, "twin-1");
+    streamer.set_log_callback([](const std::string&) {});
+    streamer.start();
+    if (!streamer.running())
+    {
+        return; // No WebRTC adapter in this build; nothing to assert.
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    check(mqtt->health_publish_count() >= 1, "heartbeat with zero send_frame() calls");
+
+    // No frame yet is "connecting", not "connected" — the dashboard reads the
+    // latter as frames flowing, and "disconnected" would flash red on start.
+    const std::string beat = mqtt->last_health();
+    check(beat.find("\"connection_state\":\"connecting\"") != std::string::npos, "startup reads connecting");
+    check(beat.find("\"is_stale\":false") != std::string::npos, "startup is not stale");
+
+    // stop() must wake the health thread rather than wait out its interval.
+    const auto t0 = std::chrono::steady_clock::now();
+    streamer.stop();
+    const auto stop_ms =
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count();
+    check(stop_ms < 2000, "stop() is prompt");
+
+    const int at_stop = mqtt->health_publish_count();
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    check(mqtt->health_publish_count() == at_stop, "health thread does not outlive stop()");
+}
+
 static void test_camera_twin_start_without_source_throws()
 {
     Config config;
@@ -131,6 +212,7 @@ int main()
     test_virtual_frame_source();
     test_camera_streamer_start_stop();
     test_encoded_h264_streamer_lifecycle();
+    test_encoded_h264_publishes_health_without_frames();
     test_camera_twin_streaming_with_source();
     test_camera_twin_start_without_source_throws();
     return 0;
