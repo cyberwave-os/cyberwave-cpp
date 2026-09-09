@@ -27,6 +27,7 @@
 #include <map>
 #include <vector>
 #include "CppRestOpenAPIClient/AnyType.h"
+#include "CppRestOpenAPIClient/model/EnvironmentAgentInteractionIntent.h"
 
 namespace org {
 namespace openapitools {
@@ -60,19 +61,45 @@ public:
     /////////////////////////////////////////////
     /// EnvironmentAgentRequestSchema members
 
-    enum class Interaction_intentEnum
+    enum class Assistant_modeEnum
     {
-        WORKFLOW_CONTEXT,
+        EDIT,
+        MONITOR,
+        CONTROL,
+    };
+    enum class Control_modeEnum
+    {
+        SIMULATION,
+        LIVE,
     };
 
-    Interaction_intentEnum toInteraction_intentEnum(const utility::string_t& value) const;
-    const utility::string_t fromInteraction_intentEnum(const Interaction_intentEnum value) const;
+    Assistant_modeEnum toAssistant_modeEnum(const utility::string_t& value) const;
+    const utility::string_t fromAssistant_modeEnum(const Assistant_modeEnum value) const;
+
+
+    Control_modeEnum toControl_modeEnum(const utility::string_t& value) const;
+    const utility::string_t fromControl_modeEnum(const Control_modeEnum value) const;
 
 
     utility::string_t getMessage() const;
     bool messageIsSet() const;
     void unsetMessage();
     void setMessage(const utility::string_t& value);
+
+    Assistant_modeEnum getAssistantMode() const;
+    bool assistantModeIsSet() const;
+    void unsetAssistant_mode();
+    void setAssistantMode(const Assistant_modeEnum value);
+
+    Control_modeEnum getControlMode() const;
+    bool controlModeIsSet() const;
+    void unsetControl_mode();
+    void setControlMode(const Control_modeEnum value);
+
+    utility::string_t getSimulationBackend() const;
+    bool simulationBackendIsSet() const;
+    void unsetSimulation_backend();
+    void setSimulationBackend(const utility::string_t& value);
 
     utility::string_t getCyberwaveApiKey() const;
     bool cyberwaveApiKeyIsSet() const;
@@ -84,10 +111,10 @@ public:
     void unsetAssistant_session_id();
     void setAssistantSessionId(const utility::string_t& value);
 
-    Interaction_intentEnum getInteractionIntent() const;
+    std::shared_ptr<EnvironmentAgentInteractionIntent> getInteractionIntent() const;
     bool interactionIntentIsSet() const;
     void unsetInteraction_intent();
-    void setInteractionIntent(const Interaction_intentEnum value);
+    void setInteractionIntent(const std::shared_ptr<EnvironmentAgentInteractionIntent>& value);
 
     std::vector<std::map<utility::string_t, utility::string_t>> getHistory() const;
     bool historyIsSet() const;
@@ -134,12 +161,19 @@ protected:
     utility::string_t m_Message;
     bool m_MessageIsSet;
 
+    Assistant_modeEnum m_Assistant_mode;
+    bool m_Assistant_modeIsSet;
+
+    boost::optional<Control_modeEnum> m_Control_mode;
+
+    boost::optional<utility::string_t> m_Simulation_backend;
+
     utility::string_t m_Cyberwave_api_key;
     bool m_Cyberwave_api_keyIsSet;
 
     boost::optional<utility::string_t> m_Assistant_session_id;
 
-    boost::optional<Interaction_intentEnum> m_Interaction_intent;
+    boost::optional<std::shared_ptr<EnvironmentAgentInteractionIntent>> m_Interaction_intent;
 
     std::vector<std::map<utility::string_t, utility::string_t>> m_History;
     bool m_HistoryIsSet;

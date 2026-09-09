@@ -62,6 +62,13 @@ web::json::value SimulationRuntimeOptionsSchema::toJson() const
         val[utility::conversions::to_string_t(_XPLATSTR("controller_device"))] = ModelBase::toJson(refVal);
         
     }
+    if(m_Robot_stack.has_value())
+    {
+        
+        utility::string_t refVal = fromRobot_stackEnum(m_Robot_stack.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("robot_stack"))] = ModelBase::toJson(refVal);
+        
+    }
     if(m_Num_envs.has_value())
     {
         
@@ -132,6 +139,18 @@ bool SimulationRuntimeOptionsSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("robot_stack"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("robot_stack")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setRobotStack;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRobotStack);
+            
+            setRobotStack(toRobot_stackEnum(refVal_setRobotStack));
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("num_envs"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("num_envs")));
@@ -191,6 +210,10 @@ void SimulationRuntimeOptionsSchema::toMultipart(std::shared_ptr<MultipartFormDa
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controller_device")), fromController_deviceEnum(m_Controller_device.get())));
     }
+    if(m_Robot_stack.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("robot_stack")), fromRobot_stackEnum(m_Robot_stack.get())));
+    }
     if(m_Num_envs.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("num_envs")), m_Num_envs.get()));
@@ -237,6 +260,12 @@ bool SimulationRuntimeOptionsSchema::fromMultiPart(std::shared_ptr<MultipartForm
         utility::string_t refVal_setControllerDevice;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("controller_device"))), refVal_setControllerDevice );
         setControllerDevice(toController_deviceEnum(refVal_setControllerDevice));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("robot_stack"))))
+    {
+        utility::string_t refVal_setRobotStack;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("robot_stack"))), refVal_setRobotStack );
+        setRobotStack(toRobot_stackEnum(refVal_setRobotStack));
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("num_envs"))))
     {
@@ -367,6 +396,33 @@ const utility::string_t SimulationRuntimeOptionsSchema::fromController_deviceEnu
     }
 }
 
+SimulationRuntimeOptionsSchema::Robot_stackEnum SimulationRuntimeOptionsSchema::toRobot_stackEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("auto")) {
+        return Robot_stackEnum::AUTO;
+    }
+    
+    if (value == utility::conversions::to_string_t("physics_only")) {
+        return Robot_stackEnum::PHYSICS_ONLY;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to Robot_stackEnum");
+}
+
+
+const utility::string_t SimulationRuntimeOptionsSchema::fromRobot_stackEnum(const Robot_stackEnum value) const
+{
+    switch(value)
+    {
+        
+        case Robot_stackEnum::AUTO: return utility::conversions::to_string_t("auto");
+        
+        case Robot_stackEnum::PHYSICS_ONLY: return utility::conversions::to_string_t("physics_only");
+        
+    }
+}
+
 
 SimulationRuntimeOptionsSchema::InterfaceEnum SimulationRuntimeOptionsSchema::getInterface() const
 {
@@ -447,6 +503,26 @@ bool SimulationRuntimeOptionsSchema::controllerDeviceIsSet() const
 void SimulationRuntimeOptionsSchema::unsetController_device()
 {
     m_Controller_device.reset();
+}
+SimulationRuntimeOptionsSchema::Robot_stackEnum SimulationRuntimeOptionsSchema::getRobotStack() const
+{
+    return m_Robot_stack.get();
+}
+
+
+void SimulationRuntimeOptionsSchema::setRobotStack(const Robot_stackEnum value)
+{
+    m_Robot_stack = value;
+}
+
+bool SimulationRuntimeOptionsSchema::robotStackIsSet() const
+{
+    return m_Robot_stack.has_value();
+}
+
+void SimulationRuntimeOptionsSchema::unsetRobot_stack()
+{
+    m_Robot_stack.reset();
 }
 int32_t SimulationRuntimeOptionsSchema::getNumEnvs() const
 {

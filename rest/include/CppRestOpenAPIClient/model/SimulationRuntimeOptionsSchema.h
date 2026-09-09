@@ -77,6 +77,11 @@ public:
         CPU,
         GPU,
     };
+    enum class Robot_stackEnum
+    {
+        AUTO,
+        PHYSICS_ONLY,
+    };
 
     InterfaceEnum toInterfaceEnum(const utility::string_t& value) const;
     const utility::string_t fromInterfaceEnum(const InterfaceEnum value) const;
@@ -92,6 +97,10 @@ public:
 
     Controller_deviceEnum toController_deviceEnum(const utility::string_t& value) const;
     const utility::string_t fromController_deviceEnum(const Controller_deviceEnum value) const;
+
+
+    Robot_stackEnum toRobot_stackEnum(const utility::string_t& value) const;
+    const utility::string_t fromRobot_stackEnum(const Robot_stackEnum value) const;
 
 
     InterfaceEnum getInterface() const;
@@ -113,6 +122,11 @@ public:
     bool controllerDeviceIsSet() const;
     void unsetController_device();
     void setControllerDevice(const Controller_deviceEnum value);
+
+    Robot_stackEnum getRobotStack() const;
+    bool robotStackIsSet() const;
+    void unsetRobot_stack();
+    void setRobotStack(const Robot_stackEnum value);
 
     int32_t getNumEnvs() const;
     bool numEnvsIsSet() const;
@@ -138,6 +152,8 @@ protected:
     boost::optional<Physics_deviceEnum> m_Physics_device;
 
     boost::optional<Controller_deviceEnum> m_Controller_device;
+
+    boost::optional<Robot_stackEnum> m_Robot_stack;
 
     boost::optional<int32_t> m_Num_envs;
 

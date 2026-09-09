@@ -124,6 +124,11 @@ public:
     void unsetLocked();
     void setLocked(bool value);
 
+    bool isFixedBase() const;
+    bool fixedBaseIsSet() const;
+    void unsetFixed_base();
+    void setFixedBase(bool value);
+
     bool isAutoPlace() const;
     bool autoPlaceIsSet() const;
     void unsetAuto_place();
@@ -164,6 +169,8 @@ protected:
 
     bool m_Locked;
     bool m_LockedIsSet;
+
+    boost::optional<bool> m_Fixed_base;
 
     bool m_Auto_place;
     bool m_Auto_placeIsSet;

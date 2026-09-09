@@ -135,6 +135,16 @@ public:
     void unsetLocked();
     void setLocked(bool value);
 
+    bool isFixedBase() const;
+    bool fixedBaseIsSet() const;
+    void unsetFixed_base();
+    void setFixedBase(bool value);
+
+    utility::string_t getExpectedRevision() const;
+    bool expectedRevisionIsSet() const;
+    void unsetExpected_revision();
+    void setExpectedRevision(const utility::string_t& value);
+
 
 protected:
     boost::optional<utility::string_t> m_Template_key;
@@ -166,6 +176,10 @@ protected:
     boost::optional<bool> m_Visible;
 
     boost::optional<bool> m_Locked;
+
+    boost::optional<bool> m_Fixed_base;
+
+    boost::optional<utility::string_t> m_Expected_revision;
 
 };
 

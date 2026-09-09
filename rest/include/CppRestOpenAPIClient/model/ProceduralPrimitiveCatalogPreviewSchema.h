@@ -74,6 +74,11 @@ public:
     void unsetParameters();
     void setParameters(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    bool isFixedBase() const;
+    bool fixedBaseIsSet() const;
+    void unsetFixed_base();
+    void setFixedBase(bool value);
+
 
 protected:
     utility::string_t m_Template_key;
@@ -82,6 +87,8 @@ protected:
     boost::optional<utility::string_t> m_Template_version;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Parameters;
+
+    boost::optional<bool> m_Fixed_base;
 
 };
 
