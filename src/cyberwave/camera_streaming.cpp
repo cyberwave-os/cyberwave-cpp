@@ -1,4 +1,5 @@
 #include "cyberwave/camera_streaming.h"
+#include "h264_capture_sei.h"
 
 #include <cpprest/details/basic_types.h>
 #include <cpprest/json.h>
@@ -11,6 +12,7 @@
 #include <functional>
 #include <mutex>
 #include <optional>
+#include <random>
 #include <sstream>
 #include <stdexcept>
 #include <thread>
@@ -205,7 +207,8 @@ public:
     virtual bool handle_candidate(const Json& candidate_message) = 0;
 
     // Frames should be Annex-B H264 bytes.
-    virtual bool send_frame(const std::vector<std::uint8_t>& frame_annexb, std::uint64_t timestamp_us) = 0;
+    virtual bool send_frame(const std::vector<std::uint8_t>& frame_annexb, std::uint64_t timestamp_us,
+                            std::uint64_t wall_ns = 0, std::uint64_t monotonic_ns = 0) = 0;
 };
 
 namespace
@@ -979,7 +982,8 @@ public:
         }
     }
 
-    bool send_frame(const std::vector<std::uint8_t>& frame_annexb, std::uint64_t timestamp_us) override
+    bool send_frame(const std::vector<std::uint8_t>& frame_annexb, std::uint64_t timestamp_us,
+                    std::uint64_t wall_ns = 0, std::uint64_t monotonic_ns = 0) override
     {
         std::lock_guard<std::mutex> lock(mutex_);
         if (!video_track_)
@@ -1002,8 +1006,12 @@ public:
             {
                 rtp_config_->timestamp = timestamp_90khz;
             }
-            const auto* bytes = reinterpret_cast<const std::byte*>(frame_annexb.data());
-            video_track_->send(bytes, frame_annexb.size());
+            const auto timestamped = wall_ns
+                                         ? detail::with_capture_sei(frame_annexb, capture_frame_index_++, timestamp_us,
+                                                                    wall_ns, monotonic_ns, capture_track_id_)
+                                         : frame_annexb;
+            const auto* bytes = reinterpret_cast<const std::byte*>(timestamped.data());
+            video_track_->send(bytes, timestamped.size());
             (void)connected_;
             return true;
         }
@@ -1098,7 +1106,30 @@ private:
     static constexpr std::uint32_t video_clock_rate_{90000};
     static constexpr const char* cname_{"cw-cyberwave-cpp"};
     static constexpr const char* msid_{"cw-cyberwave-cpp-stream"};
-    static constexpr const char* track_id_{"cw-cyberwave-cpp-video"};
+    std::array<std::uint8_t, 16> capture_track_id_ = []
+    {
+        std::array<std::uint8_t, 16> id{};
+        std::random_device random;
+        for (auto& byte : id)
+            byte = static_cast<std::uint8_t>(random());
+        id[6] = (id[6] & 15) | 64;
+        id[8] = (id[8] & 63) | 128;
+        return id;
+    }();
+    std::uint64_t capture_frame_index_ = 0;
+    const std::string track_id_ = [this]
+    {
+        static constexpr char hex[] = "0123456789abcdef";
+        std::string result;
+        for (std::size_t i = 0; i < capture_track_id_.size(); ++i)
+        {
+            if (i == 4 || i == 6 || i == 8 || i == 10)
+                result += '-';
+            result += hex[capture_track_id_[i] >> 4];
+            result += hex[capture_track_id_[i] & 15];
+        }
+        return result;
+    }();
 
     template <typename... Args>
     void log(fmt::format_string<Args...> fmt_str, Args&&... args) const
@@ -1281,6 +1312,16 @@ void CameraStreamer::stream_loop()
         VideoFrame frame;
         if (source_->next_frame(frame) && !frame.data.empty())
         {
+            // Frame sources may supply Unix capture seconds. Legacy monotonic
+            // values fall back to wall time at acquisition, never to RTP time.
+            const double acquired_at = timestamp_now();
+            const double capture_at =
+                std::isfinite(frame.timestamp) && frame.timestamp >= 946684800.0 && frame.timestamp <= acquired_at + 5.0
+                    ? frame.timestamp
+                    : acquired_at;
+            const auto wall_ns = static_cast<std::uint64_t>(capture_at * 1e9);
+            const auto monotonic_ns = static_cast<std::uint64_t>(
+                std::chrono::duration_cast<std::chrono::nanoseconds>(frame_start.time_since_epoch()).count());
             bool sent_via_webrtc = false;
             bool sent_to_cloud = false;
             if (enable_webrtc_ && webrtc_adapter_)
@@ -1311,7 +1352,7 @@ void CameraStreamer::stream_loop()
                     const bool ok = h264_encoder_->encode_to_annexb_h264(frame, h264_bytes);
                     if (ok && !h264_bytes.empty())
                     {
-                        sent_via_webrtc = webrtc_adapter_->send_frame(h264_bytes, webrtc_ts_us);
+                        sent_via_webrtc = webrtc_adapter_->send_frame(h264_bytes, webrtc_ts_us, wall_ns, monotonic_ns);
                         if (sent_via_webrtc)
                         {
                             frame_counter_++;

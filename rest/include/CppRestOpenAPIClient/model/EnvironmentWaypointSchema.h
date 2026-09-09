@@ -18,6 +18,7 @@
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentWaypointSchema_H_
 #define ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentWaypointSchema_H_
 
+#include <stdexcept>
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
@@ -61,6 +62,15 @@ public:
     /////////////////////////////////////////////
     /// EnvironmentWaypointSchema members
 
+    enum class Motion_spaceEnum
+    {
+        SURFACE,
+        FREE_SPACE,
+    };
+
+    Motion_spaceEnum toMotion_spaceEnum(const utility::string_t& value) const;
+    const utility::string_t fromMotion_spaceEnum(const Motion_spaceEnum value) const;
+
 
     utility::string_t getId() const;
     bool idIsSet() const;
@@ -76,6 +86,11 @@ public:
     bool collectionIsSet() const;
     void unsetCollection();
     void setCollection(const utility::string_t& value);
+
+    Motion_spaceEnum getMotionSpace() const;
+    bool motionSpaceIsSet() const;
+    void unsetMotion_space();
+    void setMotionSpace(const Motion_spaceEnum value);
 
     std::shared_ptr<Vector3Schema> getPosition() const;
     bool positionIsSet() const;
@@ -106,6 +121,8 @@ protected:
     bool m_NameIsSet;
 
     boost::optional<utility::string_t> m_Collection;
+
+    boost::optional<Motion_spaceEnum> m_Motion_space;
 
     std::shared_ptr<Vector3Schema> m_Position;
     bool m_PositionIsSet;

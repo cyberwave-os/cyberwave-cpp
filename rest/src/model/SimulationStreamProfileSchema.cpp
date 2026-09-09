@@ -30,6 +30,8 @@ SimulationStreamProfileSchema::SimulationStreamProfileSchema()
     m_Joint_effortsIsSet = false;
     m_Camera_streams = false;
     m_Camera_streamsIsSet = false;
+    m_Audio_streams = false;
+    m_Audio_streamsIsSet = false;
     m_PoseIsSet = false;
     m_VelocityIsSet = false;
 }
@@ -70,6 +72,16 @@ web::json::value SimulationStreamProfileSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("camera_streams"))] = ModelBase::toJson(m_Camera_streams);
+    }
+    if(m_Camera_sensor_ids.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("camera_sensor_ids"))] = ModelBase::toJson(m_Camera_sensor_ids.get());
+    }
+    if(m_Audio_streamsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("audio_streams"))] = ModelBase::toJson(m_Audio_streams);
     }
     if(m_PoseIsSet)
     {
@@ -147,6 +159,28 @@ bool SimulationStreamProfileSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("camera_sensor_ids"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("camera_sensor_ids")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<utility::string_t> refVal_setCameraSensorIds;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCameraSensorIds);
+            setCameraSensorIds(refVal_setCameraSensorIds);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("audio_streams"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("audio_streams")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setAudioStreams;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAudioStreams);
+            setAudioStreams(refVal_setAudioStreams);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("pose"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("pose")));
@@ -201,6 +235,14 @@ void SimulationStreamProfileSchema::toMultipart(std::shared_ptr<MultipartFormDat
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("camera_streams")), m_Camera_streams));
     }
+    if(m_Camera_sensor_ids.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("camera_sensor_ids")), m_Camera_sensor_ids.get()));
+    }
+    if(m_Audio_streamsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("audio_streams")), m_Audio_streams));
+    }
     if(m_PoseIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("pose")), fromPoseEnum(m_Pose)));
@@ -249,6 +291,18 @@ bool SimulationStreamProfileSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         bool refVal_setCameraStreams;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("camera_streams"))), refVal_setCameraStreams );
         setCameraStreams(refVal_setCameraStreams);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("camera_sensor_ids"))))
+    {
+        std::vector<utility::string_t> refVal_setCameraSensorIds;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("camera_sensor_ids"))), refVal_setCameraSensorIds );
+        setCameraSensorIds(refVal_setCameraSensorIds);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("audio_streams"))))
+    {
+        bool refVal_setAudioStreams;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("audio_streams"))), refVal_setAudioStreams );
+        setAudioStreams(refVal_setAudioStreams);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("pose"))))
     {
@@ -431,6 +485,46 @@ bool SimulationStreamProfileSchema::cameraStreamsIsSet() const
 void SimulationStreamProfileSchema::unsetCamera_streams()
 {
     m_Camera_streamsIsSet = false;
+}
+std::vector<utility::string_t> SimulationStreamProfileSchema::getCameraSensorIds() const
+{
+    return m_Camera_sensor_ids.get();
+}
+
+
+void SimulationStreamProfileSchema::setCameraSensorIds(const std::vector<utility::string_t>& value)
+{
+    m_Camera_sensor_ids = value;
+}
+
+bool SimulationStreamProfileSchema::cameraSensorIdsIsSet() const
+{
+    return m_Camera_sensor_ids.has_value();
+}
+
+void SimulationStreamProfileSchema::unsetCamera_sensor_ids()
+{
+    m_Camera_sensor_ids.reset();
+}
+bool SimulationStreamProfileSchema::isAudioStreams() const
+{
+    return m_Audio_streams;
+}
+
+void SimulationStreamProfileSchema::setAudioStreams(bool value)
+{
+    m_Audio_streams = value;
+    m_Audio_streamsIsSet = true;
+}
+
+bool SimulationStreamProfileSchema::audioStreamsIsSet() const
+{
+    return m_Audio_streamsIsSet;
+}
+
+void SimulationStreamProfileSchema::unsetAudio_streams()
+{
+    m_Audio_streamsIsSet = false;
 }
 SimulationStreamProfileSchema::PoseEnum SimulationStreamProfileSchema::getPose() const
 {

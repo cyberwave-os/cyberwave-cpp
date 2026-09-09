@@ -74,10 +74,20 @@ public:
     void unsetPosition();
     void setPosition(std::map<utility::string_t, double> value);
 
+    std::map<utility::string_t, double> getGeodeticPosition() const;
+    bool geodeticPositionIsSet() const;
+    void unsetGeodetic_position();
+    void setGeodeticPosition(std::map<utility::string_t, double> value);
+
     std::shared_ptr<NavigationRotationSchema> getRotation() const;
     bool rotationIsSet() const;
     void unsetRotation();
     void setRotation(const std::shared_ptr<NavigationRotationSchema>& value);
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getOrientation() const;
+    bool orientationIsSet() const;
+    void unsetOrientation();
+    void setOrientation(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
     double getYaw() const;
     bool yawIsSet() const;
@@ -108,10 +118,13 @@ public:
 protected:
     boost::optional<utility::string_t> m_Id;
 
-    std::map<utility::string_t, double> m_Position;
-    bool m_PositionIsSet;
+    boost::optional<std::map<utility::string_t, double>> m_Position;
+
+    boost::optional<std::map<utility::string_t, double>> m_Geodetic_position;
 
     boost::optional<std::shared_ptr<NavigationRotationSchema>> m_Rotation;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Orientation;
 
     boost::optional<double> m_Yaw;
 
