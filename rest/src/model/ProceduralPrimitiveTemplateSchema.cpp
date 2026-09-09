@@ -43,6 +43,8 @@ ProceduralPrimitiveTemplateSchema::ProceduralPrimitiveTemplateSchema()
     m_ValidationIsSet = false;
     m_ExamplesIsSet = false;
     m_MetadataIsSet = false;
+    m_Default_fixed_base = false;
+    m_Default_fixed_baseIsSet = false;
 }
 
 ProceduralPrimitiveTemplateSchema::~ProceduralPrimitiveTemplateSchema()
@@ -146,6 +148,11 @@ web::json::value ProceduralPrimitiveTemplateSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("metadata"))] = ModelBase::toJson(m_Metadata);
+    }
+    if(m_Default_fixed_baseIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("default_fixed_base"))] = ModelBase::toJson(m_Default_fixed_base);
     }
 
     return val;
@@ -352,6 +359,17 @@ bool ProceduralPrimitiveTemplateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("default_fixed_base"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("default_fixed_base")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setDefaultFixedBase;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setDefaultFixedBase);
+            setDefaultFixedBase(refVal_setDefaultFixedBase);
+            
+        }
+    }
     return ok;
 }
 
@@ -433,6 +451,10 @@ void ProceduralPrimitiveTemplateSchema::toMultipart(std::shared_ptr<MultipartFor
     if(m_MetadataIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata));
+    }
+    if(m_Default_fixed_baseIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("default_fixed_base")), m_Default_fixed_base));
     }
 }
 
@@ -552,6 +574,12 @@ bool ProceduralPrimitiveTemplateSchema::fromMultiPart(std::shared_ptr<MultipartF
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))), refVal_setMetadata );
         setMetadata(refVal_setMetadata);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("default_fixed_base"))))
+    {
+        bool refVal_setDefaultFixedBase;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("default_fixed_base"))), refVal_setDefaultFixedBase );
+        setDefaultFixedBase(refVal_setDefaultFixedBase);
     }
     return ok;
 }
@@ -934,6 +962,26 @@ bool ProceduralPrimitiveTemplateSchema::metadataIsSet() const
 void ProceduralPrimitiveTemplateSchema::unsetMetadata()
 {
     m_MetadataIsSet = false;
+}
+bool ProceduralPrimitiveTemplateSchema::isDefaultFixedBase() const
+{
+    return m_Default_fixed_base;
+}
+
+void ProceduralPrimitiveTemplateSchema::setDefaultFixedBase(bool value)
+{
+    m_Default_fixed_base = value;
+    m_Default_fixed_baseIsSet = true;
+}
+
+bool ProceduralPrimitiveTemplateSchema::defaultFixedBaseIsSet() const
+{
+    return m_Default_fixed_baseIsSet;
+}
+
+void ProceduralPrimitiveTemplateSchema::unsetDefault_fixed_base()
+{
+    m_Default_fixed_baseIsSet = false;
 }
 
 }

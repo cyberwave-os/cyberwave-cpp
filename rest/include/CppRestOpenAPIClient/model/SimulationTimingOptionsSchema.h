@@ -76,6 +76,16 @@ public:
     void unsetStream_frequency_hz();
     void setStreamFrequencyHz(double value);
 
+    double getRangeStreamFrequencyHz() const;
+    bool rangeStreamFrequencyHzIsSet() const;
+    void unsetRange_stream_frequency_hz();
+    void setRangeStreamFrequencyHz(double value);
+
+    bool isRangeSelfHitFallback() const;
+    bool rangeSelfHitFallbackIsSet() const;
+    void unsetRange_self_hit_fallback();
+    void setRangeSelfHitFallback(bool value);
+
 
 protected:
     boost::optional<double> m_Dt;
@@ -85,6 +95,10 @@ protected:
     boost::optional<double> m_Simulation_speed;
 
     boost::optional<double> m_Stream_frequency_hz;
+
+    boost::optional<double> m_Range_stream_frequency_hz;
+
+    boost::optional<bool> m_Range_self_hit_fallback;
 
 };
 

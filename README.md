@@ -22,6 +22,10 @@ The SDK provides three integration layers:
 4. **Data plane (first milestone)** — Wire-format helpers, validated data keys, and a filesystem-backed `DataBus` facade for JSON/bytes/ndarray payload exchange (in `include/cyberwave/data.h`).
 5. **Worker/manifest scaffolding** — Hook registration helpers plus a manifest schema/dispatch helper for upcoming worker-runtime parity (in `include/cyberwave/workers.h` and `include/cyberwave/manifest.h`).
 
+## Camera capture timestamps
+
+`CameraStreamer` attaches verified capture identity to each encoded H264 frame for recording finalization. Set `VideoFrame.timestamp` to Unix capture seconds; zero or legacy monotonic values use wall time when the frame is acquired. RTP pacing still uses the monotonic clock. `EncodedH264CameraStreamer` preserves incoming encoded data and SEI unchanged, so hardware sources must supply their own capture metadata.
+
 ## Project Structure
 
 ```
@@ -52,6 +56,10 @@ cyberwave-cpp/
 ```
 
 This handles everything: system dependencies (Ubuntu/Debian via apt), REST client generation if `rest/` is missing, CMake build, and system-wide install to `/usr/local`.
+
+REST regeneration requires Python 3 for generated-code repairs, plus Docker or
+Java to run OpenAPI Generator. The installer installs Python 3 on Ubuntu/Debian;
+provide it yourself when using `--skip-deps` or `--rest-only`.
 
 Common options:
 
@@ -89,7 +97,7 @@ Install dependencies:
 ```bash
 # Ubuntu/Debian
 sudo apt-get update && sudo apt-get install -y \
-  build-essential cmake pkg-config ca-certificates curl git \
+  build-essential cmake pkg-config python3 ca-certificates curl git \
   libcpprest-dev libssl-dev libboost-dev \
   libboost-system-dev libboost-thread-dev libboost-chrono-dev \
   libboost-filesystem-dev libboost-random-dev \
@@ -112,6 +120,7 @@ sudo cmake --install build
 |---|---|---|
 | `cpprestsdk` | Yes | HTTP client for REST API |
 | `OpenSSL` | Yes | TLS |
+| Python 3 + Docker or Java | REST regeneration only | OpenAPI generation and generated-code repairs |
 | `libmosquitto` + `nlohmann_json` + `spdlog` | For MQTT | Real-time pub/sub |
 | `OpenCV` | Optional | `camera_stream_opencv` example (`./install.sh --with-opencv`) |
 | `libdatachannel` | Optional | WebRTC in CameraStreamer and EncodedH264CameraStreamer |

@@ -365,12 +365,12 @@ const utility::string_t RLTaskInferenceLaunchSchema::fromRuntime_acceleratorEnum
 RLTaskInferenceLaunchSchema::ModeEnum RLTaskInferenceLaunchSchema::toModeEnum(const utility::string_t& value) const
 {
     
-    if (value == utility::conversions::to_string_t("live")) {
-        return ModeEnum::LIVE;
-    }
-    
     if (value == utility::conversions::to_string_t("simulation")) {
         return ModeEnum::SIMULATION;
+    }
+    
+    if (value == utility::conversions::to_string_t("live")) {
+        return ModeEnum::LIVE;
     }
     
     throw std::invalid_argument("Invalid value for conversion to ModeEnum");
@@ -382,9 +382,9 @@ const utility::string_t RLTaskInferenceLaunchSchema::fromModeEnum(const ModeEnum
     switch(value)
     {
         
-        case ModeEnum::LIVE: return utility::conversions::to_string_t("live");
-        
         case ModeEnum::SIMULATION: return utility::conversions::to_string_t("simulation");
+        
+        case ModeEnum::LIVE: return utility::conversions::to_string_t("live");
         
     }
 }

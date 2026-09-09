@@ -54,10 +54,25 @@ web::json::value TwinNavigationCommandSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("rotation"))] = ModelBase::toJson(m_Rotation.get());
     }
+    if(m_Orientation.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("orientation"))] = ModelBase::toJson(m_Orientation.get());
+    }
     if(m_Yaw.has_value())
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("yaw"))] = ModelBase::toJson(m_Yaw.get());
+    }
+    if(m_Coordinate_frame.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("coordinate_frame"))] = ModelBase::toJson(m_Coordinate_frame.get());
+    }
+    if(m_Geodetic_position.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("geodetic_position"))] = ModelBase::toJson(m_Geodetic_position.get());
     }
     if(m_Waypoints.has_value())
     {
@@ -155,6 +170,17 @@ bool TwinNavigationCommandSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("orientation"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("orientation")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setOrientation;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setOrientation);
+            setOrientation(refVal_setOrientation);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("yaw"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("yaw")));
@@ -163,6 +189,28 @@ bool TwinNavigationCommandSchema::fromJson(const web::json::value& val)
             double refVal_setYaw;
             ok &= ModelBase::fromJson(fieldValue, refVal_setYaw);
             setYaw(refVal_setYaw);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("coordinate_frame"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("coordinate_frame")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<NavigationCoordinateFrameSchema> refVal_setCoordinateFrame;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCoordinateFrame);
+            setCoordinateFrame(refVal_setCoordinateFrame);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("geodetic_position"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("geodetic_position")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, double> refVal_setGeodeticPosition;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setGeodeticPosition);
+            setGeodeticPosition(refVal_setGeodeticPosition);
             
         }
     }
@@ -309,9 +357,21 @@ void TwinNavigationCommandSchema::toMultipart(std::shared_ptr<MultipartFormData>
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("rotation")), m_Rotation.get()));
     }
+    if(m_Orientation.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("orientation")), m_Orientation.get()));
+    }
     if(m_Yaw.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("yaw")), m_Yaw.get()));
+    }
+    if(m_Coordinate_frame.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("coordinate_frame")), m_Coordinate_frame.get()));
+    }
+    if(m_Geodetic_position.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("geodetic_position")), m_Geodetic_position.get()));
     }
     if(m_Waypoints.has_value())
     {
@@ -386,11 +446,29 @@ bool TwinNavigationCommandSchema::fromMultiPart(std::shared_ptr<MultipartFormDat
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("rotation"))), refVal_setRotation );
         setRotation(refVal_setRotation);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("orientation"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setOrientation;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("orientation"))), refVal_setOrientation );
+        setOrientation(refVal_setOrientation);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("yaw"))))
     {
         double refVal_setYaw;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("yaw"))), refVal_setYaw );
         setYaw(refVal_setYaw);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("coordinate_frame"))))
+    {
+        std::shared_ptr<NavigationCoordinateFrameSchema> refVal_setCoordinateFrame;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("coordinate_frame"))), refVal_setCoordinateFrame );
+        setCoordinateFrame(refVal_setCoordinateFrame);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("geodetic_position"))))
+    {
+        std::map<utility::string_t, double> refVal_setGeodeticPosition;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("geodetic_position"))), refVal_setGeodeticPosition );
+        setGeodeticPosition(refVal_setGeodeticPosition);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("waypoints"))))
     {
@@ -590,6 +668,26 @@ void TwinNavigationCommandSchema::unsetRotation()
 {
     m_Rotation.reset();
 }
+std::map<utility::string_t, std::shared_ptr<AnyType>> TwinNavigationCommandSchema::getOrientation() const
+{
+    return m_Orientation.get();
+}
+
+
+void TwinNavigationCommandSchema::setOrientation(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Orientation = value;
+}
+
+bool TwinNavigationCommandSchema::orientationIsSet() const
+{
+    return m_Orientation.has_value();
+}
+
+void TwinNavigationCommandSchema::unsetOrientation()
+{
+    m_Orientation.reset();
+}
 double TwinNavigationCommandSchema::getYaw() const
 {
     return m_Yaw.get();
@@ -608,6 +706,45 @@ bool TwinNavigationCommandSchema::yawIsSet() const
 void TwinNavigationCommandSchema::unsetYaw()
 {
     m_Yaw.reset();
+}
+std::shared_ptr<NavigationCoordinateFrameSchema> TwinNavigationCommandSchema::getCoordinateFrame() const
+{
+    return m_Coordinate_frame.get();
+}
+
+
+void TwinNavigationCommandSchema::setCoordinateFrame(const std::shared_ptr<NavigationCoordinateFrameSchema>& value)
+{
+    m_Coordinate_frame = value;
+}
+
+bool TwinNavigationCommandSchema::coordinateFrameIsSet() const
+{
+    return m_Coordinate_frame.has_value();
+}
+
+void TwinNavigationCommandSchema::unsetCoordinate_frame()
+{
+    m_Coordinate_frame.reset();
+}
+std::map<utility::string_t, double> TwinNavigationCommandSchema::getGeodeticPosition() const
+{
+    return m_Geodetic_position.get();
+}
+
+void TwinNavigationCommandSchema::setGeodeticPosition(std::map<utility::string_t, double> value)
+{
+    m_Geodetic_position = value;
+}
+
+bool TwinNavigationCommandSchema::geodeticPositionIsSet() const
+{
+    return m_Geodetic_position.has_value();
+}
+
+void TwinNavigationCommandSchema::unsetGeodetic_position()
+{
+    m_Geodetic_position.reset();
 }
 std::vector<std::shared_ptr<NavigationWaypointSchema>> TwinNavigationCommandSchema::getWaypoints() const
 {

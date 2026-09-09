@@ -80,8 +80,24 @@ COPY . /opt/cyberwave-cpp
 # (sharing=shared — sccache is multi-process safe, unlike the old locked ccache
 # mount) backs the local fallback; the gcs_creds secret enables the shared GCS
 # cache in CI and is optional so local builds still work without it.
+#
+# github_token authenticates the GitHub clones this step makes: CMakeLists.txt
+# pulls libdatachannel with FetchContent, and anonymous git-over-HTTPS is rate
+# limited per source IP, so a throttled runner fails the clone with "could not
+# read Username for 'https://github.com'" — which surfaces here as a CMake
+# "Failed to clone repository" and nowhere near its actual cause. The token is
+# handed to git through GIT_CONFIG_* env vars rather than `git config --global`
+# so it is never written to /root/.gitconfig and cannot reach an image layer.
+# The mount is optional, so an unauthenticated local build behaves as before.
 RUN --mount=type=cache,target=/root/.cache/sccache,sharing=shared \
     --mount=type=secret,id=gcs_creds,required=false \
+    --mount=type=secret,id=github_token,required=false \
+    set -eu; \
+    if [ -s /run/secrets/github_token ]; then \
+      export GIT_CONFIG_COUNT=1 \
+        GIT_CONFIG_KEY_0="url.https://x-access-token:$(cat /run/secrets/github_token)@github.com/.insteadOf" \
+        GIT_CONFIG_VALUE_0="https://github.com/"; \
+    fi; \
     sccache-start ./install.sh --skip-deps --openapi-url "${OPENAPI_URL}" --run-tests
 
 # Build examples separately to verify they compile against the installed SDK.

@@ -109,6 +109,16 @@ web::json::value EnvironmentProceduralPrimitivePatchSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("locked"))] = ModelBase::toJson(m_Locked.get());
     }
+    if(m_Fixed_base.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("fixed_base"))] = ModelBase::toJson(m_Fixed_base.get());
+    }
+    if(m_Expected_revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_revision"))] = ModelBase::toJson(m_Expected_revision.get());
+    }
 
     return val;
 }
@@ -281,6 +291,28 @@ bool EnvironmentProceduralPrimitivePatchSchema::fromJson(const web::json::value&
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("fixed_base")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setFixedBase;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFixedBase);
+            setFixedBase(refVal_setFixedBase);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExpectedRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedRevision);
+            setExpectedRevision(refVal_setExpectedRevision);
+            
+        }
+    }
     return ok;
 }
 
@@ -350,6 +382,14 @@ void EnvironmentProceduralPrimitivePatchSchema::toMultipart(std::shared_ptr<Mult
     if(m_Locked.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("locked")), m_Locked.get()));
+    }
+    if(m_Fixed_base.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("fixed_base")), m_Fixed_base.get()));
+    }
+    if(m_Expected_revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_revision")), m_Expected_revision.get()));
     }
 }
 
@@ -451,6 +491,18 @@ bool EnvironmentProceduralPrimitivePatchSchema::fromMultiPart(std::shared_ptr<Mu
         bool refVal_setLocked;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("locked"))), refVal_setLocked );
         setLocked(refVal_setLocked);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        bool refVal_setFixedBase;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))), refVal_setFixedBase );
+        setFixedBase(refVal_setFixedBase);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        utility::string_t refVal_setExpectedRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))), refVal_setExpectedRevision );
+        setExpectedRevision(refVal_setExpectedRevision);
     }
     return ok;
 }
@@ -753,6 +805,45 @@ bool EnvironmentProceduralPrimitivePatchSchema::lockedIsSet() const
 void EnvironmentProceduralPrimitivePatchSchema::unsetLocked()
 {
     m_Locked.reset();
+}
+bool EnvironmentProceduralPrimitivePatchSchema::isFixedBase() const
+{
+    return m_Fixed_base.get();
+}
+
+void EnvironmentProceduralPrimitivePatchSchema::setFixedBase(bool value)
+{
+    m_Fixed_base = value;
+}
+
+bool EnvironmentProceduralPrimitivePatchSchema::fixedBaseIsSet() const
+{
+    return m_Fixed_base.has_value();
+}
+
+void EnvironmentProceduralPrimitivePatchSchema::unsetFixed_base()
+{
+    m_Fixed_base.reset();
+}
+utility::string_t EnvironmentProceduralPrimitivePatchSchema::getExpectedRevision() const
+{
+    return m_Expected_revision.get();
+}
+
+
+void EnvironmentProceduralPrimitivePatchSchema::setExpectedRevision(const utility::string_t& value)
+{
+    m_Expected_revision = value;
+}
+
+bool EnvironmentProceduralPrimitivePatchSchema::expectedRevisionIsSet() const
+{
+    return m_Expected_revision.has_value();
+}
+
+void EnvironmentProceduralPrimitivePatchSchema::unsetExpected_revision()
+{
+    m_Expected_revision.reset();
 }
 
 }
