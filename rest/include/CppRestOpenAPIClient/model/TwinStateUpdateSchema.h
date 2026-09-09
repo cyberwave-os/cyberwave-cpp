@@ -22,6 +22,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include <cpprest/details/basic_types.h>
 
 namespace org {
 namespace openapitools {
@@ -88,6 +89,11 @@ public:
     void unsetRotation_z();
     void setRotationZ(double value);
 
+    utility::string_t getExpectedRevision() const;
+    bool expectedRevisionIsSet() const;
+    void unsetExpected_revision();
+    void setExpectedRevision(const utility::string_t& value);
+
 
 protected:
     boost::optional<double> m_Position_x;
@@ -103,6 +109,8 @@ protected:
     boost::optional<double> m_Rotation_y;
 
     boost::optional<double> m_Rotation_z;
+
+    boost::optional<utility::string_t> m_Expected_revision;
 
 };
 

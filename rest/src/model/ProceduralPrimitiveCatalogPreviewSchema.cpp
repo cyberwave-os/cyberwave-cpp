@@ -51,6 +51,11 @@ web::json::value ProceduralPrimitiveCatalogPreviewSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("parameters"))] = ModelBase::toJson(m_Parameters.get());
     }
+    if(m_Fixed_base.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("fixed_base"))] = ModelBase::toJson(m_Fixed_base.get());
+    }
 
     return val;
 }
@@ -91,6 +96,17 @@ bool ProceduralPrimitiveCatalogPreviewSchema::fromJson(const web::json::value& v
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("fixed_base")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setFixedBase;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFixedBase);
+            setFixedBase(refVal_setFixedBase);
+            
+        }
+    }
     return ok;
 }
 
@@ -112,6 +128,10 @@ void ProceduralPrimitiveCatalogPreviewSchema::toMultipart(std::shared_ptr<Multip
     if(m_Parameters.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("parameters")), m_Parameters.get()));
+    }
+    if(m_Fixed_base.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("fixed_base")), m_Fixed_base.get()));
     }
 }
 
@@ -141,6 +161,12 @@ bool ProceduralPrimitiveCatalogPreviewSchema::fromMultiPart(std::shared_ptr<Mult
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setParameters;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("parameters"))), refVal_setParameters );
         setParameters(refVal_setParameters);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        bool refVal_setFixedBase;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))), refVal_setFixedBase );
+        setFixedBase(refVal_setFixedBase);
     }
     return ok;
 }
@@ -206,6 +232,25 @@ bool ProceduralPrimitiveCatalogPreviewSchema::parametersIsSet() const
 void ProceduralPrimitiveCatalogPreviewSchema::unsetParameters()
 {
     m_Parameters.reset();
+}
+bool ProceduralPrimitiveCatalogPreviewSchema::isFixedBase() const
+{
+    return m_Fixed_base.get();
+}
+
+void ProceduralPrimitiveCatalogPreviewSchema::setFixedBase(bool value)
+{
+    m_Fixed_base = value;
+}
+
+bool ProceduralPrimitiveCatalogPreviewSchema::fixedBaseIsSet() const
+{
+    return m_Fixed_base.has_value();
+}
+
+void ProceduralPrimitiveCatalogPreviewSchema::unsetFixed_base()
+{
+    m_Fixed_base.reset();
 }
 
 }

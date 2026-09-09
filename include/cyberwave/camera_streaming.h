@@ -42,6 +42,7 @@ struct VideoFrame
     int width = 0;
     int height = 0;
     PixelFormat pixel_format = PixelFormat::BGR24;
+    // Unix capture seconds. Zero or legacy monotonic values use acquisition wall time.
     double timestamp = 0.0;
 };
 

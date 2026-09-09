@@ -183,6 +183,11 @@ public:
     void unsetPolicy_interface();
     void setPolicyInterface(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getTaskSpec() const;
+    bool taskSpecIsSet() const;
+    void unsetTask_spec();
+    void setTaskSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
     std::map<utility::string_t, std::shared_ptr<AnyType>> getActionSpec() const;
     bool actionSpecIsSet() const;
     void unsetAction_spec();
@@ -330,6 +335,9 @@ protected:
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Policy_interface;
     bool m_Policy_interfaceIsSet;
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> m_Task_spec;
+    bool m_Task_specIsSet;
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Action_spec;
     bool m_Action_specIsSet;
