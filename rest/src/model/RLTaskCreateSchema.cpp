@@ -124,6 +124,11 @@ web::json::value RLTaskCreateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("policy_interface"))] = ModelBase::toJson(m_Policy_interface.get());
     }
+    if(m_Task_spec.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("task_spec"))] = ModelBase::toJson(m_Task_spec.get());
+    }
     if(m_Action_spec.has_value())
     {
         
@@ -349,6 +354,17 @@ bool RLTaskCreateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("task_spec"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("task_spec")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setTaskSpec;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTaskSpec);
+            setTaskSpec(refVal_setTaskSpec);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("action_spec"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("action_spec")));
@@ -511,6 +527,10 @@ void RLTaskCreateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipar
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("policy_interface")), m_Policy_interface.get()));
     }
+    if(m_Task_spec.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("task_spec")), m_Task_spec.get()));
+    }
     if(m_Action_spec.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("action_spec")), m_Action_spec.get()));
@@ -649,6 +669,12 @@ bool RLTaskCreateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setPolicyInterface;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("policy_interface"))), refVal_setPolicyInterface );
         setPolicyInterface(refVal_setPolicyInterface);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("task_spec"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setTaskSpec;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("task_spec"))), refVal_setTaskSpec );
+        setTaskSpec(refVal_setTaskSpec);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("action_spec"))))
     {
@@ -1078,6 +1104,26 @@ bool RLTaskCreateSchema::policyInterfaceIsSet() const
 void RLTaskCreateSchema::unsetPolicy_interface()
 {
     m_Policy_interface.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> RLTaskCreateSchema::getTaskSpec() const
+{
+    return m_Task_spec.get();
+}
+
+
+void RLTaskCreateSchema::setTaskSpec(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Task_spec = value;
+}
+
+bool RLTaskCreateSchema::taskSpecIsSet() const
+{
+    return m_Task_spec.has_value();
+}
+
+void RLTaskCreateSchema::unsetTask_spec()
+{
+    m_Task_spec.reset();
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> RLTaskCreateSchema::getActionSpec() const
 {

@@ -284,7 +284,7 @@ void TwinManager::delete_twin(const std::string& twin_id) const
         throw CyberwaveError("Client has no REST API (missing api_key)");
     try
     {
-        a->srcAppApiTwinsDeleteTwin(from_std(twin_id)).get();
+        a->srcAppApiTwinsDeleteTwin(from_std(twin_id), boost::none).get();
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {

@@ -42,11 +42,19 @@
 #include "CppRestOpenAPIClient/model/AgentSetupAndDraftSchema.h"
 #include "CppRestOpenAPIClient/model/AgentTwinControlSurface.h"
 #include "CppRestOpenAPIClient/model/AgentWorkflowApplyResponseSchema.h"
+#include "CppRestOpenAPIClient/AnyType.h"
 #include "CppRestOpenAPIClient/model/EnvironmentAgentModelListSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentAgentRequestSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentAgentResponseSchema.h"
+#include "CppRestOpenAPIClient/model/PolicyImprovementPlanSchema.h"
+#include "CppRestOpenAPIClient/model/SkillTeachingRequestConfirmSchema.h"
+#include "CppRestOpenAPIClient/model/SkillTeachingRequestCreateSchema.h"
+#include "CppRestOpenAPIClient/model/SkillTeachingRequestPublishPolicySchema.h"
+#include "CppRestOpenAPIClient/model/SkillTeachingRequestSchema.h"
+#include "CppRestOpenAPIClient/model/SkillTeachingRequestUsePolicySchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionResponseSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowSuggestionsResponseSchema.h"
+#include <map>
 #include <vector>
 #include <cpprest/details/basic_types.h>
 #include <boost/optional.hpp>
@@ -279,6 +287,84 @@ public:
     /// <param name="environmentUuid"></param>
     pplx::task<std::shared_ptr<WorkflowSuggestionsResponseSchema>> srcAppApiAgentsEnvironmentWorkflowAgentsWorkflowSuggestions(
         utility::string_t environmentUuid
+    ) const;
+    /// <summary>
+    /// Cancel Teaching Request
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<SkillTeachingRequestSchema>> srcAppApiAgentsSkillTeachingCancelTeachingRequest(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Confirm Teaching Request
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="skillTeachingRequestConfirmSchema"></param>
+    pplx::task<std::shared_ptr<SkillTeachingRequestSchema>> srcAppApiAgentsSkillTeachingConfirmTeachingRequest(
+        utility::string_t uuid,
+        std::shared_ptr<SkillTeachingRequestConfirmSchema> skillTeachingRequestConfirmSchema
+    ) const;
+    /// <summary>
+    /// Create Teaching Request
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="skillTeachingRequestCreateSchema"></param>
+    pplx::task<std::shared_ptr<SkillTeachingRequestSchema>> srcAppApiAgentsSkillTeachingCreateTeachingRequest(
+        std::shared_ptr<SkillTeachingRequestCreateSchema> skillTeachingRequestCreateSchema
+    ) const;
+    /// <summary>
+    /// Get Teaching Request
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<SkillTeachingRequestSchema>> srcAppApiAgentsSkillTeachingGetTeachingRequest(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Plan Policy Improvement
+    /// </summary>
+    /// <remarks>
+    /// Read-only agent proposal; confirmation and execution remain separate.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="policyImprovementPlanSchema"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiAgentsSkillTeachingPlanPolicyImprovement(
+        utility::string_t uuid,
+        std::shared_ptr<PolicyImprovementPlanSchema> policyImprovementPlanSchema
+    ) const;
+    /// <summary>
+    /// Publish Teaching Request Policy
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="skillTeachingRequestPublishPolicySchema"></param>
+    pplx::task<std::shared_ptr<SkillTeachingRequestSchema>> srcAppApiAgentsSkillTeachingPublishTeachingRequestPolicy(
+        utility::string_t uuid,
+        std::shared_ptr<SkillTeachingRequestPublishPolicySchema> skillTeachingRequestPublishPolicySchema
+    ) const;
+    /// <summary>
+    /// Use Teaching Request Policy
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="skillTeachingRequestUsePolicySchema"></param>
+    pplx::task<std::shared_ptr<SkillTeachingRequestSchema>> srcAppApiAgentsSkillTeachingUseTeachingRequestPolicy(
+        utility::string_t uuid,
+        std::shared_ptr<SkillTeachingRequestUsePolicySchema> skillTeachingRequestUsePolicySchema
     ) const;
     /// <summary>
     /// Plan workflow setup with the configured LLM engine

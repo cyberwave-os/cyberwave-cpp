@@ -141,6 +141,21 @@ public:
     void unsetProposal();
     void setProposal(const std::shared_ptr<AgentProposalSchema>& value);
 
+    utility::string_t getCompositionStrategy() const;
+    bool compositionStrategyIsSet() const;
+    void unsetComposition_strategy();
+    void setCompositionStrategy(const utility::string_t& value);
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getResolvedNodeHints() const;
+    bool resolvedNodeHintsIsSet() const;
+    void unsetResolved_node_hints();
+    void setResolvedNodeHints(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getDroppedNodeHints() const;
+    bool droppedNodeHintsIsSet() const;
+    void unsetDropped_node_hints();
+    void setDroppedNodeHints(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
+
     std::map<utility::string_t, std::shared_ptr<AnyType>> getEngine() const;
     bool engineIsSet() const;
     void unsetEngine();
@@ -193,6 +208,14 @@ protected:
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Intent_assessment;
 
     boost::optional<std::shared_ptr<AgentProposalSchema>> m_Proposal;
+
+    boost::optional<utility::string_t> m_Composition_strategy;
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Resolved_node_hints;
+    bool m_Resolved_node_hintsIsSet;
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Dropped_node_hints;
+    bool m_Dropped_node_hintsIsSet;
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Engine;
     bool m_EngineIsSet;

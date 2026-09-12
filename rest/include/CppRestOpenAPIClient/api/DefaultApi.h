@@ -100,13 +100,19 @@
 #include "CppRestOpenAPIClient/model/EdgeSchema.h"
 #include "CppRestOpenAPIClient/model/EndSessionResponseSchema.h"
 #include "CppRestOpenAPIClient/model/EnsureControllerPolicyResponseSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentActiveRunSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentCloneSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentCreateSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentGeoSettingsPatchSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentNavigationSettingsPatchSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentOccupancyMapGenerateSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentOccupancyMapResultSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentPresenceRequestSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentProceduralPrimitiveCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentProceduralPrimitiveDeleteSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentProceduralPrimitivePatchSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentProceduralPrimitiveSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentSceneHierarchyPatchSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSnapshotCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentSnapshotSchema.h"
@@ -190,6 +196,9 @@
 #include "CppRestOpenAPIClient/model/PaymentMethodSchema.h"
 #include "CppRestOpenAPIClient/model/PermissionsSchema.h"
 #include "CppRestOpenAPIClient/model/PlanSchema.h"
+#include "CppRestOpenAPIClient/model/PointCloudFromAttachmentSchema.h"
+#include "CppRestOpenAPIClient/model/PointCloudImportOptionsSchema.h"
+#include "CppRestOpenAPIClient/model/PointCloudImportResultSchema.h"
 #include "CppRestOpenAPIClient/model/PopularTagsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/ProceduralPrimitiveCatalogPreviewSchema.h"
 #include "CppRestOpenAPIClient/model/ProceduralPrimitiveTemplateSchema.h"
@@ -197,7 +206,13 @@
 #include "CppRestOpenAPIClient/model/ProjectSchema.h"
 #include "CppRestOpenAPIClient/model/ProjectShareResponseSchema.h"
 #include "CppRestOpenAPIClient/model/PublicPricingSchema.h"
+#include "CppRestOpenAPIClient/model/RLDeploymentReplayCreateSchema.h"
+#include "CppRestOpenAPIClient/model/RLDeploymentReportCreateSchema.h"
+#include "CppRestOpenAPIClient/model/RLPolicyEvaluationCreateSchema.h"
+#include "CppRestOpenAPIClient/model/RLPolicyEvaluationSchema.h"
+#include "CppRestOpenAPIClient/model/RLPolicyEvaluationUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskActionSpecSchema.h"
+#include "CppRestOpenAPIClient/model/RLTaskCheckpointArtifactSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskCheckpointCreateSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskCheckpointPublishControllerResponseSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskCheckpointPublishControllerSchema.h"
@@ -227,6 +242,9 @@
 #include "CppRestOpenAPIClient/model/RLTaskTaskSpecUpsertSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskTaskSpecValidateResponseSchema.h"
 #include "CppRestOpenAPIClient/model/RLTaskUpdateSchema.h"
+#include "CppRestOpenAPIClient/model/RLTrainingJobCreateSchema.h"
+#include "CppRestOpenAPIClient/model/RLTrainingJobSchema.h"
+#include "CppRestOpenAPIClient/model/RLTrainingJobUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingAvailabilityResponse.h"
 #include "CppRestOpenAPIClient/model/RecordingDetailSchema.h"
 #include "CppRestOpenAPIClient/model/RecordingGenerationResponseSchema.h"
@@ -250,14 +268,18 @@
 #include "CppRestOpenAPIClient/model/SharesResponseSchema.h"
 #include "CppRestOpenAPIClient/model/SimulationPoseCommitSchema.h"
 #include "CppRestOpenAPIClient/model/SimulationStartSchema.h"
+#include "CppRestOpenAPIClient/model/SkillTeachingRequestSchema.h"
 #include "CppRestOpenAPIClient/model/SlugAvailabilitySchema.h"
 #include "CppRestOpenAPIClient/model/SlugCheckSchema.h"
 #include "CppRestOpenAPIClient/model/SpatialFilterZoneSchema.h"
+#include "CppRestOpenAPIClient/model/StartRecording.h"
 #include "CppRestOpenAPIClient/model/StorageMetricsSchema.h"
 #include "CppRestOpenAPIClient/model/SyncWithAssetSchema.h"
 #include "CppRestOpenAPIClient/model/TaggedFramesCreateSchema.h"
 #include "CppRestOpenAPIClient/model/TaggedFramesSchema.h"
 #include "CppRestOpenAPIClient/model/TaggedFramesUpdateSchema.h"
+#include "CppRestOpenAPIClient/model/Target_Points.h"
+#include "CppRestOpenAPIClient/model/Target_Points_1.h"
 #include "CppRestOpenAPIClient/model/TaskExecutionSchema.h"
 #include "CppRestOpenAPIClient/model/TaskSchema.h"
 #include "CppRestOpenAPIClient/model/TaxPreviewRequestSchema.h"
@@ -266,6 +288,7 @@
 #include "CppRestOpenAPIClient/model/TemplateEnvironmentSchema.h"
 #include "CppRestOpenAPIClient/model/TopupIntentRequestSchema.h"
 #include "CppRestOpenAPIClient/model/TopupIntentResponseSchema.h"
+#include "CppRestOpenAPIClient/model/TrainingWorkerProgress.h"
 #include "CppRestOpenAPIClient/model/TrajectoryFromActionRequestSchema.h"
 #include "CppRestOpenAPIClient/model/TransactionInvoiceSchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionRequestSchema.h"
@@ -277,15 +300,17 @@
 #include "CppRestOpenAPIClient/model/TwinDriverLogsResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinDriverSchemaSetSchema.h"
 #include "CppRestOpenAPIClient/model/TwinFlightRequestSchema.h"
+#include "CppRestOpenAPIClient/model/TwinGpsSettingsPatchSchema.h"
 #include "CppRestOpenAPIClient/model/TwinJointCalibrationSchema.h"
 #include "CppRestOpenAPIClient/model/TwinLatestTrackSchema.h"
+#include "CppRestOpenAPIClient/model/TwinLivePositionSchema.h"
 #include "CppRestOpenAPIClient/model/TwinMetricsQuerySchema.h"
 #include "CppRestOpenAPIClient/model/TwinMotionResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinNavigationCaptureUploadResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinNavigationCommandSchema.h"
+#include "CppRestOpenAPIClient/model/TwinNavigationMapSchema.h"
 #include "CppRestOpenAPIClient/model/TwinObservationCreateSchema.h"
 #include "CppRestOpenAPIClient/model/TwinObservationResponseSchema.h"
-#include "CppRestOpenAPIClient/model/TwinRelationshipSchema.h"
 #include "CppRestOpenAPIClient/model/TwinSchema.h"
 #include "CppRestOpenAPIClient/model/TwinStateUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/TwinSyncWorkflowsResponseSchema.h"
@@ -311,6 +336,7 @@
 #include "CppRestOpenAPIClient/model/WorkflowConnectionSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowCreateSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowExecuteSchema.h"
+#include "CppRestOpenAPIClient/model/WorkflowExecutionArtifactsSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowExecutionSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowInboundEmailSchema.h"
 #include "CppRestOpenAPIClient/model/WorkflowNodeCreateSchema.h"
@@ -955,6 +981,18 @@ public:
         std::shared_ptr<AssetGLBFromAttachmentSchema> assetGLBFromAttachmentSchema
     ) const;
     /// <summary>
+    /// Set Point Cloud From Attachment
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="pointCloudFromAttachmentSchema"></param>
+    pplx::task<std::shared_ptr<PointCloudImportResultSchema>> srcAppApiAssetsSetPointCloudFromAttachment(
+        utility::string_t uuid,
+        std::shared_ptr<PointCloudFromAttachmentSchema> pointCloudFromAttachmentSchema
+    ) const;
+    /// <summary>
     /// Set Splat From Attachment
     /// </summary>
     /// <remarks>
@@ -1017,10 +1055,32 @@ public:
         std::shared_ptr<HttpContent> file
     ) const;
     /// <summary>
+    /// Upload Point Cloud
+    /// </summary>
+    /// <remarks>
+    /// Import a LAS, LAZ, or raw PLY scan as a correctly-sized splat PLY.  A PLY that turns out to hold Gaussian data is preserved as a splat instead of being flattened to points -- see :func:&#x60;_store_asset_scan&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="file"></param>
+    /// <param name="units"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="upAxis"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="recentre"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="targetPoints"> (optional, default to new Target_Points())</param>
+    /// <param name="importAs"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::shared_ptr<PointCloudImportResultSchema>> srcAppApiAssetsUploadPointCloud(
+        utility::string_t uuid,
+        std::shared_ptr<HttpContent> file,
+        boost::optional<utility::string_t> units,
+        boost::optional<utility::string_t> upAxis,
+        boost::optional<utility::string_t> recentre,
+        boost::optional<std::shared_ptr<Target_Points>> targetPoints,
+        boost::optional<utility::string_t> importAs
+    ) const;
+    /// <summary>
     /// Upload Splat
     /// </summary>
     /// <remarks>
-    /// Upload a Gaussian splatting file (.ply/.splat/.spz/.ksplat) as the asset&#39;s primary visualization. Larger files use the attachment large-upload flow followed by &#x60;&#x60;/splat-from-attachment&#x60;&#x60;.
+    /// Upload a Gaussian splatting file (.ply/.splat/.spz/.ksplat) as the asset&#39;s primary visualization. Larger files use the attachment large-upload flow followed by &#x60;&#x60;/splat-from-attachment&#x60;&#x60;.  A &#x60;&#x60;.ply&#x60;&#x60; holding plain points rather than Gaussians is routed to the scan importer so its radius is baked, which keeps older clients that post every PLY here from silently producing an invisible asset.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="file"></param>
@@ -1755,6 +1815,16 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Delete Environment Geo Settings
+    /// </summary>
+    /// <remarks>
+    /// Remove the environment&#39;s georeference.  Refuses while GPS-positioned twins depend on it: deleting the anchor out from under a live twin would leave it with nothing to convert its fixes against, which is exactly the silent breakage this feature exists to avoid.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<EnvironmentSchema>> srcAppApiEnvironmentsDeleteEnvironmentGeoSettings(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
     /// Delete Environment Procedural Primitive
     /// </summary>
     /// <remarks>
@@ -1762,9 +1832,11 @@ public:
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="primitiveId"></param>
+    /// <param name="expectedRevision"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::shared_ptr<EnvironmentProceduralPrimitiveDeleteSchema>> srcAppApiEnvironmentsDeleteEnvironmentProceduralPrimitive(
         utility::string_t uuid,
-        utility::string_t primitiveId
+        utility::string_t primitiveId,
+        boost::optional<utility::string_t> expectedRevision
     ) const;
     /// <summary>
     /// Delete Environment Waypoint
@@ -1777,6 +1849,18 @@ public:
     pplx::task<std::vector<std::shared_ptr<EnvironmentWaypointSchema>>> srcAppApiEnvironmentsDeleteEnvironmentWaypoint(
         utility::string_t uuid,
         utility::string_t waypointId
+    ) const;
+    /// <summary>
+    /// Environment Presence
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="environmentPresenceRequestSchema"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsEnvironmentPresence(
+        utility::string_t uuid,
+        std::shared_ptr<EnvironmentPresenceRequestSchema> environmentPresenceRequestSchema
     ) const;
     /// <summary>
     /// Get Environment Dirty Twins
@@ -1955,6 +2039,18 @@ public:
         boost::optional<bool> compressed
     ) const;
     /// <summary>
+    /// Generate Environment Occupancy Map Endpoint
+    /// </summary>
+    /// <remarks>
+    /// Rasterize this environment&#39;s geometry into a navigable occupancy grid.  The counterpart to SLAM: the result is an ordinary &#x60;&#x60;MapData&#x60;&#x60; occupancy grid, so the viewer overlay and the edge&#39;s preloaded-map path consume it unchanged. Write access, because it also binds the environment&#39;s navigation anchor to the map it produces.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="environmentOccupancyMapGenerateSchema"></param>
+    pplx::task<std::shared_ptr<EnvironmentOccupancyMapResultSchema>> srcAppApiEnvironmentsGenerateEnvironmentOccupancyMapEndpoint(
+        utility::string_t uuid,
+        std::shared_ptr<EnvironmentOccupancyMapGenerateSchema> environmentOccupancyMapGenerateSchema
+    ) const;
+    /// <summary>
     /// Generate Environment Preview
     /// </summary>
     /// <remarks>
@@ -1996,6 +2092,16 @@ public:
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::shared_ptr<EnvironmentSchema>> srcAppApiEnvironmentsGetEnvironment(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Environment Active Run
+    /// </summary>
+    /// <remarks>
+    /// Whether a workflow run is currently walking this environment.  Exists so the client can disable waypoint authoring and NAME the blocking run, using the same query that &#x60;&#x60;_require_no_active_run&#x60;&#x60; enforces with — a client that derived this independently would eventually disagree with the server about whether the route is locked.  Preferred over fanning out &#x60;&#x60;useEnvironmentWorkflowExecutions&#x60;&#x60; (one request per workflow, polled) purely to answer a boolean.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<EnvironmentActiveRunSchema>> srcAppApiEnvironmentsGetEnvironmentActiveRun(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -2063,6 +2169,30 @@ public:
         utility::string_t uuid,
         std::shared_ptr<HttpContent> file,
         boost::optional<bool> replaceExisting
+    ) const;
+    /// <summary>
+    /// Import Environment Point Cloud
+    /// </summary>
+    /// <remarks>
+    /// Create an asset, twin, and scan-map record in one transaction.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="file"></param>
+    /// <param name="assetName"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="units"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="upAxis"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="recentre"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="targetPoints"> (optional, default to new Target_Points_1())</param>
+    /// <param name="importAs"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<std::shared_ptr<PointCloudImportResultSchema>> srcAppApiEnvironmentsImportsImportEnvironmentPointCloud(
+        utility::string_t uuid,
+        std::shared_ptr<HttpContent> file,
+        boost::optional<utility::string_t> assetName,
+        boost::optional<utility::string_t> units,
+        boost::optional<utility::string_t> upAxis,
+        boost::optional<utility::string_t> recentre,
+        boost::optional<std::shared_ptr<Target_Points_1>> targetPoints,
+        boost::optional<utility::string_t> importAs
     ) const;
     /// <summary>
     /// Import Environment Universal Schema
@@ -2189,6 +2319,16 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// List Environment Workflow Executions
+    /// </summary>
+    /// <remarks>
+    /// Bounded run discovery; require both environment and workflow visibility.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::shared_ptr<WorkflowExecutionSchema>>> srcAppApiEnvironmentsListEnvironmentWorkflowExecutions(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
     /// List Environment Workflow Replay Events
     /// </summary>
     /// <remarks>
@@ -2229,6 +2369,18 @@ public:
     pplx::task<std::vector<std::shared_ptr<TemplateEnvironmentSchema>>> srcAppApiEnvironmentsListTemplates(
     ) const;
     /// <summary>
+    /// Patch Environment Geo Settings
+    /// </summary>
+    /// <remarks>
+    /// Set the environment&#39;s georeference (where on Earth its origin sits).  Unlike &#x60;&#x60;patch_environment_navigation_settings&#x60;&#x60; this is an all-or-nothing write: the whole &#x60;&#x60;geo&#x60;&#x60; dict is replaced, and the server owns &#x60;&#x60;contract_version&#x60;&#x60; / &#x60;&#x60;source&#x60;&#x60; / &#x60;&#x60;anchor_status&#x60;&#x60; / &#x60;&#x60;set_at&#x60;&#x60; / &#x60;&#x60;set_by&#x60;&#x60; so a client cannot forge a \&quot;manual\&quot; status onto an unverified anchor.  A dedicated endpoint rather than &#x60;&#x60;PUT /{uuid}&#x60;&#x60; because that path replaces &#x60;&#x60;settings&#x60;&#x60; wholesale, and &#x60;&#x60;settings&#x60;&#x60; is also home to &#x60;&#x60;navigation&#x60;&#x60;, &#x60;&#x60;twin_order&#x60;&#x60; and &#x60;&#x60;scene_order&#x60;&#x60; -- a geo save through it can silently revert a concurrent scene reorder or the mapping bridge&#39;s anchor status.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="environmentGeoSettingsPatchSchema"></param>
+    pplx::task<std::shared_ptr<EnvironmentSchema>> srcAppApiEnvironmentsPatchEnvironmentGeoSettings(
+        utility::string_t uuid,
+        std::shared_ptr<EnvironmentGeoSettingsPatchSchema> environmentGeoSettingsPatchSchema
+    ) const;
+    /// <summary>
     /// Patch Environment Navigation Settings
     /// </summary>
     /// <remarks>
@@ -2241,6 +2393,18 @@ public:
         std::shared_ptr<EnvironmentNavigationSettingsPatchSchema> environmentNavigationSettingsPatchSchema
     ) const;
     /// <summary>
+    /// Patch Environment Scene Hierarchy
+    /// </summary>
+    /// <remarks>
+    /// Merge editor hierarchy keys without replacing unrelated settings.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="environmentSceneHierarchyPatchSchema"></param>
+    pplx::task<std::shared_ptr<EnvironmentSchema>> srcAppApiEnvironmentsPatchEnvironmentSceneHierarchy(
+        utility::string_t uuid,
+        std::shared_ptr<EnvironmentSceneHierarchyPatchSchema> environmentSceneHierarchyPatchSchema
+    ) const;
+    /// <summary>
     /// Patch Environment Universal Schema
     /// </summary>
     /// <remarks>
@@ -2251,6 +2415,26 @@ public:
     pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsPatchEnvironmentUniversalSchema(
         utility::string_t uuid,
         std::shared_ptr<EnvironmentUniversalSchemaPatchSchema> environmentUniversalSchemaPatchSchema
+    ) const;
+    /// <summary>
+    /// Preview Environment Occupancy Map
+    /// </summary>
+    /// <remarks>
+    /// The same raster, rendered to PNG and not stored.  This is what makes the traversability band tunable: an operator drops the step-over height, sees the floor rails reappear, and only then commits. Read access is enough because nothing is written.  PNG rather than the stored PGM so a browser can display it directly; the pixel values are identical.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="resolution"> (optional, default to 0.0)</param>
+    /// <param name="minObstacleHeight"> (optional, default to 0.0)</param>
+    /// <param name="maxObstacleHeight"> (optional, default to 0.0)</param>
+    /// <param name="marginM"> (optional, default to 0.0)</param>
+    /// <param name="twinUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    pplx::task<void> srcAppApiEnvironmentsPreviewEnvironmentOccupancyMap(
+        utility::string_t uuid,
+        boost::optional<double> resolution,
+        boost::optional<double> minObstacleHeight,
+        boost::optional<double> maxObstacleHeight,
+        boost::optional<double> marginM,
+        boost::optional<utility::string_t> twinUuid
     ) const;
     /// <summary>
     /// Preview Environment Procedural Primitive
@@ -2627,6 +2811,52 @@ public:
         boost::optional<bool> activeOnly
     ) const;
     /// <summary>
+    /// Create Simulation Recording
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="startRecording"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSimulationRecordingsCreateSimulationRecording(
+        utility::string_t uuid,
+        std::shared_ptr<StartRecording> startRecording
+    ) const;
+    /// <summary>
+    /// Get Simulation Recording
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="recordingUuid"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSimulationRecordingsGetSimulationRecording(
+        utility::string_t uuid,
+        utility::string_t recordingUuid
+    ) const;
+    /// <summary>
+    /// List Simulation Recordings
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>> srcAppApiEnvironmentsSimulationRecordingsListSimulationRecordings(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Stop Simulation Recording
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="recordingUuid"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSimulationRecordingsStopSimulationRecording(
+        utility::string_t uuid,
+        utility::string_t recordingUuid
+    ) const;
+    /// <summary>
     /// Stop Environment Simulation
     /// </summary>
     /// <remarks>
@@ -2964,7 +3194,7 @@ public:
     /// Request Lab Access
     /// </summary>
     /// <remarks>
-    /// Request access to the next available lab in the requested pool.  - If any lab in the pool is free the user gets immediate access (10 min). - If all labs in the pool are busy the user is added to its queue. - Idempotent: calling again while active/queued in the same pool returns the   existing session. Requesting a *different* kind while holding a session is   refused with 409. - The &#x60;&#x60;ugv&#x60;&#x60; kind additionally requires the &#x60;&#x60;labs_ugv&#x60;&#x60; feature flag.
+    /// Request access to the next available lab in the requested pool.  - If any lab in the pool is free the user gets immediate access (10 min). - If all labs in the pool are busy the user is added to its queue. - If the pool has no online lab and no session in flight, 503 — nothing   would ever promote that queue entry. - Idempotent: calling again while active/queued in the same pool returns the   existing session. Requesting a *different* kind while holding a session is   refused with 409. - The &#x60;&#x60;ugv&#x60;&#x60; kind additionally requires the &#x60;&#x60;labs_ugv&#x60;&#x60; feature flag.
     /// </remarks>
     /// <param name="labAccessRequestSchema"></param>
     pplx::task<std::shared_ptr<LabAccessResponseSchema>> srcAppApiLabsRequestLabAccess(
@@ -3081,10 +3311,32 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Get Map Occupancy Pgm
+    /// </summary>
+    /// <remarks>
+    /// Return the map as the binary PGM &#x60;&#x60;nav2_map_server&#x60;&#x60; loads directly.  The edge&#39;s preloaded-map path writes these bytes to disk beside a &#x60;&#x60;map_server&#x60;&#x60; YAML that names them (see &#x60;&#x60;cyberwave-edge-runtime/PRELOADED_MAP_LOCALIZATION_PLAN.md&#x60;&#x60;). It exists because the stored bytes are *not* in one format — &#x60;&#x60;map_stream_bridge&#x60;&#x60; uploads PGM, the MiR250 sim mapping bridge uploads PNG, a user upload is any Pillow-readable image, and occupancy generation writes an already-trinary PGM — while the consuming ROS image ships no Pillow and must not grow an imaging dependency to decode a format this service already decodes.  Not gzipped here: &#x60;&#x60;config.gzip_middleware.GZipMiddleware&#x60;&#x60; compresses any non-streaming response whose caller advertises &#x60;&#x60;Accept-Encoding: gzip&#x60;&#x60; (&#x60;&#x60;requests&#x60;&#x60; always does), and doing it twice would be worse than once. That matters — an uncompressed grid is ~1 byte/cell, so a 100 m warehouse at 5 cm is megabytes on the wire while its deflated form is tens of kilobytes.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<void> srcAppApiMapsGetMapOccupancyPgm(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Import Map To Asset
+    /// </summary>
+    /// <remarks>
+    /// Turn a stored point-cloud map into an asset and scene twin without re-uploading.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="pointCloudImportOptionsSchema"></param>
+    pplx::task<std::shared_ptr<PointCloudImportResultSchema>> srcAppApiMapsImportMapToAsset(
+        utility::string_t uuid,
+        std::shared_ptr<PointCloudImportOptionsSchema> pointCloudImportOptionsSchema
+    ) const;
+    /// <summary>
     /// List Environment Maps
     /// </summary>
     /// <remarks>
-    /// List all maps in an environment (including maps from twins in that environment).
+    /// List all maps in an environment, including maps from its twins.  Maps from **soft-deleted** twins are included. A survey is a durable record of a mapping run, not a property of the robot that drove it: deleting the robot used to hide its maps while they carried on existing, and &#x60;&#x60;environment.settings.navigation&#x60;&#x60; can still be anchored to one of them — which left an operator told their map was \&quot;bound to another map\&quot; with no way to see or clear the map in question.  No ACL change: the previous filter did not check twin permissions either, so this is the same rule (\&quot;you can read the environment, so you can see the maps made in it\&quot;) applied to a row the environment already owns the history of. &#x60;&#x60;MapDataSchema.twin_is_deleted&#x60;&#x60; lets the UI mark them.
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::vector<std::shared_ptr<MapDataSchema>>> srcAppApiMapsListEnvironmentMaps(
@@ -4065,6 +4317,142 @@ public:
         std::shared_ptr<ProjectCreateSchema> projectCreateSchema
     ) const;
     /// <summary>
+    /// Create Deployment Replay
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLDeploymentReplayCreateSchema"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiRlTaskTrainingCreateDeploymentReplay(
+        utility::string_t uuid,
+        std::shared_ptr<RLDeploymentReplayCreateSchema> rLDeploymentReplayCreateSchema
+    ) const;
+    /// <summary>
+    /// Create Deployment Report
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLDeploymentReportCreateSchema"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiRlTaskTrainingCreateDeploymentReport(
+        utility::string_t uuid,
+        std::shared_ptr<RLDeploymentReportCreateSchema> rLDeploymentReportCreateSchema
+    ) const;
+    /// <summary>
+    /// Create Policy Evaluation
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLPolicyEvaluationCreateSchema"></param>
+    pplx::task<std::shared_ptr<RLPolicyEvaluationSchema>> srcAppApiRlTaskTrainingCreatePolicyEvaluation(
+        utility::string_t uuid,
+        std::shared_ptr<RLPolicyEvaluationCreateSchema> rLPolicyEvaluationCreateSchema
+    ) const;
+    /// <summary>
+    /// Create Training Job
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="rLTrainingJobCreateSchema"></param>
+    pplx::task<std::shared_ptr<RLTrainingJobSchema>> srcAppApiRlTaskTrainingCreateTrainingJob(
+        utility::string_t uuid,
+        std::shared_ptr<RLTrainingJobCreateSchema> rLTrainingJobCreateSchema
+    ) const;
+    /// <summary>
+    /// Get Deployment Replays
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>> srcAppApiRlTaskTrainingGetDeploymentReplays(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Deployment Reports
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>> srcAppApiRlTaskTrainingGetDeploymentReports(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Get Training Options
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiRlTaskTrainingGetTrainingOptions(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// List Policy Evaluations
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::shared_ptr<RLPolicyEvaluationSchema>>> srcAppApiRlTaskTrainingListPolicyEvaluations(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// List Task Teaching Requests
+    /// </summary>
+    /// <remarks>
+    /// The task and chat share the same durable confirmation/progress records.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::shared_ptr<SkillTeachingRequestSchema>>> srcAppApiRlTaskTrainingListTaskTeachingRequests(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// List Training Jobs
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::vector<std::shared_ptr<RLTrainingJobSchema>>> srcAppApiRlTaskTrainingListTrainingJobs(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Update Policy Evaluation
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="evaluationUuid"></param>
+    /// <param name="rLPolicyEvaluationUpdateSchema"></param>
+    pplx::task<std::shared_ptr<RLPolicyEvaluationSchema>> srcAppApiRlTaskTrainingUpdatePolicyEvaluation(
+        utility::string_t uuid,
+        utility::string_t evaluationUuid,
+        std::shared_ptr<RLPolicyEvaluationUpdateSchema> rLPolicyEvaluationUpdateSchema
+    ) const;
+    /// <summary>
+    /// Update Training Job
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="jobUuid"></param>
+    /// <param name="rLTrainingJobUpdateSchema"></param>
+    pplx::task<std::shared_ptr<RLTrainingJobSchema>> srcAppApiRlTaskTrainingUpdateTrainingJob(
+        utility::string_t uuid,
+        utility::string_t jobUuid,
+        std::shared_ptr<RLTrainingJobUpdateSchema> rLTrainingJobUpdateSchema
+    ) const;
+    /// <summary>
     /// Clone Rl Task
     /// </summary>
     /// <remarks>
@@ -4267,6 +4655,20 @@ public:
     pplx::task<void> srcAppApiRlTasksInferenceDeleteRlTaskCheckpoint(
         utility::string_t uuid,
         utility::string_t checkpointUuid
+    ) const;
+    /// <summary>
+    /// Finalize Checkpoint Artifact
+    /// </summary>
+    /// <remarks>
+    /// Attach the immutable, evaluation-backed manifest used for promotion.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="checkpointUuid"></param>
+    /// <param name="rLTaskCheckpointArtifactSchema"></param>
+    pplx::task<std::shared_ptr<RLTaskCheckpointSchema>> srcAppApiRlTasksInferenceFinalizeCheckpointArtifact(
+        utility::string_t uuid,
+        utility::string_t checkpointUuid,
+        std::shared_ptr<RLTaskCheckpointArtifactSchema> rLTaskCheckpointArtifactSchema
     ) const;
     /// <summary>
     /// Get Rl Task Checkpoint
@@ -4559,6 +4961,60 @@ public:
         std::shared_ptr<RLTaskRLConfigSpecSchema> rLTaskRLConfigSpecSchema
     ) const;
     /// <summary>
+    /// Download Training Worker Bundle
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="jobUuid"></param>
+    pplx::task<void> srcAppApiRlTrainingWorkerDownloadTrainingWorkerBundle(
+        utility::string_t uuid,
+        utility::string_t jobUuid
+    ) const;
+    /// <summary>
+    /// Get Training Worker Input
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="jobUuid"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiRlTrainingWorkerGetTrainingWorkerInput(
+        utility::string_t uuid,
+        utility::string_t jobUuid
+    ) const;
+    /// <summary>
+    /// Report Training Worker Progress
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="jobUuid"></param>
+    /// <param name="trainingWorkerProgress"></param>
+    pplx::task<std::shared_ptr<RLTrainingJobSchema>> srcAppApiRlTrainingWorkerReportTrainingWorkerProgress(
+        utility::string_t uuid,
+        utility::string_t jobUuid,
+        std::shared_ptr<TrainingWorkerProgress> trainingWorkerProgress
+    ) const;
+    /// <summary>
+    /// Submit Training Worker Result
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="jobUuid"></param>
+    /// <param name="file"></param>
+    /// <param name="report"></param>
+    pplx::task<std::shared_ptr<RLTrainingJobSchema>> srcAppApiRlTrainingWorkerSubmitTrainingWorkerResult(
+        utility::string_t uuid,
+        utility::string_t jobUuid,
+        std::shared_ptr<HttpContent> file,
+        utility::string_t report
+    ) const;
+    /// <summary>
     /// Check Entity Slug
     /// </summary>
     /// <remarks>
@@ -4767,8 +5223,10 @@ public:
     /// 
     /// </remarks>
     /// <param name="uuid"></param>
+    /// <param name="expectedRevision"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<void> srcAppApiTwinsDeleteTwin(
-        utility::string_t uuid
+        utility::string_t uuid,
+        boost::optional<utility::string_t> expectedRevision
     ) const;
     /// <summary>
     /// Delete Twin Calibration
@@ -4892,19 +5350,21 @@ public:
     /// Get Twin Latest Frame
     /// </summary>
     /// <remarks>
-    /// Get the latest frame from a twin&#39;s camera stream. Serves the frame directly from Redis without saving to permanent storage.  For multi-camera twins, the media service stores frames with key frame:{twin_uuid}_{sensor_id}:rgb:latest. Pass ?sensor_id&#x3D;wrist_camera to get a specific camera.  Query params: - mock: if true, return a deterministic mock JPEG payload. - frame_bucket: &#x60;&#x60;\&quot;policy_depth\&quot;&#x60;&#x60; to fetch the policy-resolution depth   frame rendered by cyberwave-sim at the trained observation resolution   (e.g. 32x32). Parity-critical: returns 404 when no policy-depth frame is   available rather than falling back to a regular RGB frame.
+    /// Get the latest frame from a twin&#39;s camera stream. Serves the frame directly from Redis without saving to permanent storage.  For multi-camera twins, the media service stores frames with key frame:{twin_uuid}_{sensor_id}:rgb:latest. Pass ?sensor_id&#x3D;wrist_camera to get a specific camera.  Query params: - mock: if true, return a deterministic mock JPEG payload. - frame_bucket: &#x60;&#x60;\&quot;policy_depth\&quot;&#x60;&#x60; to fetch the policy-resolution depth   frame rendered by cyberwave-sim at the trained observation resolution   (e.g. 32x32). Parity-critical: returns 404 when no policy-depth frame is   available rather than falling back to a regular RGB frame. - pull: if true, ask the device for a fresh photo over MQTT when nothing   recent is cached, instead of 404ing. See &#x60;&#x60;services/twin_frame_pull&#x60;&#x60;.   Opt-in rather than the default because it puts a capture request on a real   robot, and because every existing caller of this endpoint expects a pure   cache read whose worst case is a fast 404.
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="mock"> (optional, default to false)</param>
     /// <param name="sensorId"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="sourceType"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="frameBucket"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
+    /// <param name="pull"> (optional, default to false)</param>
     pplx::task<void> srcAppApiTwinsGetTwinLatestFrame(
         utility::string_t uuid,
         boost::optional<bool> mock,
         boost::optional<utility::string_t> sensorId,
         boost::optional<utility::string_t> sourceType,
-        boost::optional<utility::string_t> frameBucket
+        boost::optional<utility::string_t> frameBucket,
+        boost::optional<bool> pull
     ) const;
     /// <summary>
     /// Get Twin Latest Metrics
@@ -4941,6 +5401,16 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Get Twin Live Position
+    /// </summary>
+    /// <remarks>
+    /// The twin&#39;s current GNSS-derived position.  Distinct from &#x60;&#x60;GET /{uuid}/telemetry&#x60;&#x60;, which is a *historical* query over persisted rows and requires a time range. This is the live value, read from the pose the MQTT consumer caches when a fix arrives (1-2 Hz), so polling faster than the receiver reports returns the same fix with a larger &#x60;&#x60;ageSeconds&#x60;&#x60;.  **404 when the position is unknown**, rather than the twin&#39;s authored &#x60;&#x60;position_x/y/z&#x60;&#x60;. For a GPS-positioned twin those coordinates are a scene placement that was never georeferenced, so returning them would answer \&quot;where is this robot\&quot; with a number that has never described its location. The 3D viewer takes the same line by hiding such a twin rather than drawing it at its authored pose.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<TwinLivePositionSchema>> srcAppApiTwinsGetTwinLivePosition(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
     /// Get Twin Metrics
     /// </summary>
     /// <remarks>
@@ -4969,6 +5439,16 @@ public:
         boost::optional<utility::string_t> environmentUuid
     ) const;
     /// <summary>
+    /// Get Twin Navigation Map
+    /// </summary>
+    /// <remarks>
+    /// Which occupancy map this twin should navigate in.  The edge&#39;s &#x60;&#x60;preloaded_map_bridge&#x60;&#x60; calls this at boot instead of deciding for itself, because the answer depends on the twin&#39;s traversability profile and that resolution has four precedence layers, the best of which reads the robot&#39;s declared step and standing heights. Mirroring it on the edge would mean a table plus a capability lookup kept in step across two repositories, and the mirror would stop matching for exactly the robots that describe themselves best. &#x60;&#x60;src/lib/navigation_map.py&#x60;&#x60; holds the one implementation; the simulation workload spec calls the same function.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::shared_ptr<TwinNavigationMapSchema>> srcAppApiTwinsGetTwinNavigationMap(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
     /// Get Twin Notebook
     /// </summary>
     /// <remarks>
@@ -4986,16 +5466,6 @@ public:
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::vector<std::shared_ptr<TwinConnectionEventSchema>>> srcAppApiTwinsGetTwinRecordings(
-        utility::string_t uuid
-    ) const;
-    /// <summary>
-    /// Get Twin Relationships
-    /// </summary>
-    /// <remarks>
-    /// MVP: Generate mock relationships based on twin names and environment
-    /// </remarks>
-    /// <param name="uuid"></param>
-    pplx::task<std::vector<std::shared_ptr<TwinRelationshipSchema>>> srcAppApiTwinsGetTwinRelationships(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -5059,6 +5529,18 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::vector<std::shared_ptr<SpatialFilterZoneSchema>>> srcAppApiTwinsListTwinSpatialFilterZones(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Patch Twin Gps Settings
+    /// </summary>
+    /// <remarks>
+    /// Bind (or unbind) this twin&#39;s live position to its GNSS fixes.  LIVE MODE ONLY. In Simulate and Editor the twin keeps rendering from its authored &#x60;&#x60;position_x/y/z&#x60;&#x60;; GPS is not produced by any simulation backend.  Two things are validated up front so a misconfiguration surfaces here rather than mid-flight, when the only symptom would be a drone that will not appear:  1. The environment must already carry a valid geo anchor. Without one there is    nothing to convert a fix against. 2. The twin (or its asset) must declare a &#x60;&#x60;gps&#x60;&#x60; sensor in its universal    schema. The structural fact \&quot;this robot has a GNSS receiver\&quot; belongs there;    this endpoint only records the *routing* decision that the receiver drives    the rendered pose.  Deliberately narrow rather than &#x60;&#x60;PUT /twins/{uuid}&#x60;&#x60; with a &#x60;&#x60;metadata&#x60;&#x60; blob, for the same reason as &#x60;&#x60;set_twin_flight_request&#x60;&#x60; above: that path merges metadata only at the top level, so a client sending a stale copy would wipe whatever the edge has written to &#x60;&#x60;metadata.status&#x60;&#x60; since it fetched. The merge here happens on a re-read under a row lock, and touches only the &#x60;&#x60;gps&#x60;&#x60; key.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="twinGpsSettingsPatchSchema"></param>
+    pplx::task<std::shared_ptr<TwinSchema>> srcAppApiTwinsPatchTwinGpsSettings(
+        utility::string_t uuid,
+        std::shared_ptr<TwinGpsSettingsPatchSchema> twinGpsSettingsPatchSchema
     ) const;
     /// <summary>
     /// Patch Twin Universal Schema
@@ -5366,11 +5848,9 @@ public:
     /// </remarks>
     /// <param name="uuid"></param>
     /// <param name="file"></param>
-    /// <param name="sync"> (optional, default to false)</param>
     pplx::task<std::shared_ptr<URDFProjectSchema>> srcAppApiUrdfUploadZipFile(
         utility::string_t uuid,
-        std::shared_ptr<HttpContent> file,
-        boost::optional<bool> sync
+        std::shared_ptr<HttpContent> file
     ) const;
     /// <summary>
     /// Cancel Workflow Run
@@ -5661,6 +6141,18 @@ public:
     /// <param name="uuid"></param>
     /// <param name="executionUuid"></param>
     pplx::task<std::shared_ptr<WorkflowExecutionSchema>> srcAppApiWorkflowsGetWorkflowExecution(
+        utility::string_t uuid,
+        utility::string_t executionUuid
+    ) const;
+    /// <summary>
+    /// Get Workflow Execution Artifacts
+    /// </summary>
+    /// <remarks>
+    /// Return only attachment references persisted by an execution&#39;s nodes.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="executionUuid"></param>
+    pplx::task<std::shared_ptr<WorkflowExecutionArtifactsSchema>> srcAppApiWorkflowsGetWorkflowExecutionArtifacts(
         utility::string_t uuid,
         utility::string_t executionUuid
     ) const;
