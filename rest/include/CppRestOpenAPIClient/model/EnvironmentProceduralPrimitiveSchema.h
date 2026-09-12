@@ -138,6 +138,16 @@ public:
     void unsetLocked();
     void setLocked(bool value);
 
+    bool isFixedBase() const;
+    bool fixedBaseIsSet() const;
+    void unsetFixed_base();
+    void setFixedBase(bool value);
+
+    utility::string_t getRevision() const;
+    bool revisionIsSet() const;
+    void unsetRevision();
+    void setRevision(const utility::string_t& value);
+
     std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getValidationWarnings() const;
     bool validationWarningsIsSet() const;
     void unsetValidation_warnings();
@@ -184,6 +194,11 @@ protected:
 
     bool m_Locked;
     bool m_LockedIsSet;
+
+    bool m_Fixed_base;
+    bool m_Fixed_baseIsSet;
+
+    boost::optional<utility::string_t> m_Revision;
 
     std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Validation_warnings;
     bool m_Validation_warningsIsSet;

@@ -50,7 +50,10 @@ if(EXISTS ${CMAKE_SOURCE_DIR}/../mqtt/mqtt_client.cpp)
     if(TARGET PkgConfig::MOSQUITTO AND nlohmann_json_FOUND AND spdlog_FOUND)
         add_library(cyberwave_mqtt_client STATIC ${CMAKE_SOURCE_DIR}/../mqtt/mqtt_client.cpp)
         target_include_directories(cyberwave_mqtt_client
-            PUBLIC ${CMAKE_SOURCE_DIR}/../mqtt /usr/local/include)
+            PUBLIC
+                ${CMAKE_SOURCE_DIR}/../mqtt
+                ${CMAKE_SOURCE_DIR}/../include
+                /usr/local/include)
         target_link_libraries(cyberwave_mqtt_client
             PUBLIC PkgConfig::MOSQUITTO nlohmann_json::nlohmann_json spdlog::spdlog)
         if(LIBCJSON_FOUND)
@@ -64,7 +67,11 @@ if(EXISTS ${CMAKE_SOURCE_DIR}/../mqtt/mqtt_client.cpp)
         set_target_properties(cyberwave_mqtt_client PROPERTIES CXX_STANDARD 20)
 
         add_executable(test_mqtt test_mqtt.cpp)
-        target_include_directories(test_mqtt PRIVATE ${CMAKE_SOURCE_DIR}/../mqtt /usr/local/include)
+        target_include_directories(test_mqtt
+            PRIVATE
+                ${CMAKE_SOURCE_DIR}/../mqtt
+                ${CMAKE_SOURCE_DIR}/../include
+                /usr/local/include)
         target_link_libraries(test_mqtt PRIVATE cyberwave_mqtt_client)
         set_target_properties(test_mqtt PROPERTIES CXX_STANDARD 17)
         set(MQTT_TEST_BUILT ON)
@@ -87,4 +94,3 @@ endif()
 message(STATUS "C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "CppRest OpenAPI Client Library: ${CPPREST_OPENAPI_CLIENT_LIB}")
 message(STATUS "OpenSSL Libraries: ${OPENSSL_LIBRARIES}")
-

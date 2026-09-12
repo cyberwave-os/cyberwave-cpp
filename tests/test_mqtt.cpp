@@ -8,7 +8,9 @@
  * Environment variables:
  *   CYBERWAVE_MQTT_HOST   - Broker host (default: localhost)
  *   CYBERWAVE_MQTT_PORT   - Broker port (default: 1883)
- *   CYBERWAVE_API_KEY     - API token used as MQTT password (required for real connect)
+ *   CYBERWAVE_MQTT_USERNAME - Broker username (default: mqttcyb)
+ *   CYBERWAVE_MQTT_PASSWORD - Broker password (falls back to CYBERWAVE_API_KEY)
+ *   CYBERWAVE_MQTT_REQUIRED - Fail instead of skip when the broker is unavailable
  */
 
 #include "mqtt_client.h"
@@ -37,7 +39,9 @@ static int run_test()
 
     std::string host = getEnv("CYBERWAVE_MQTT_HOST", "localhost");
     std::string port_str = getEnv("CYBERWAVE_MQTT_PORT", "1883");
-    std::string token = getEnv("CYBERWAVE_API_KEY", "");
+    std::string username = getEnv("CYBERWAVE_MQTT_USERNAME", "mqttcyb");
+    std::string password = getEnv("CYBERWAVE_MQTT_PASSWORD", getEnv("CYBERWAVE_API_KEY", ""));
+    bool mqtt_required = getEnv("CYBERWAVE_MQTT_REQUIRED", "false") == "true";
 
     int port = 1883;
     try
@@ -52,8 +56,8 @@ static int run_test()
     CyberwaveConfig config;
     config.mqtt_host = host;
     config.mqtt_port = port;
-    config.mqtt_username = "mqttcyb";
-    config.mqtt_api_token = token.empty() ? "test-api-key" : token;
+    config.mqtt_username = username;
+    config.mqtt_api_token = password.empty() ? "test-api-key" : password;
     config.topic_prefix = "";
 
     try
@@ -88,6 +92,12 @@ static int run_test()
     }
     catch (const std::exception& e)
     {
+        if (mqtt_required)
+        {
+            std::cerr << COLOR_RED << "❌ MQTT connection required but failed (" << e.what() << ")" << COLOR_RESET
+                      << std::endl;
+            return 1;
+        }
         std::cout << COLOR_YELLOW << "ℹ️  MQTT broker not available (" << e.what() << "); skipping MQTT test"
                   << COLOR_RESET << std::endl;
         return 0;

@@ -22,6 +22,7 @@ EnvironmentAgentRequestSchema::EnvironmentAgentRequestSchema()
 {
     m_Message = utility::conversions::to_string_t("");
     m_MessageIsSet = false;
+    m_Assistant_modeIsSet = false;
     m_Cyberwave_api_key = utility::conversions::to_string_t("");
     m_Cyberwave_api_keyIsSet = false;
     m_HistoryIsSet = false;
@@ -46,6 +47,25 @@ web::json::value EnvironmentAgentRequestSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("message"))] = ModelBase::toJson(m_Message);
     }
+    if(m_Assistant_modeIsSet)
+    {
+        
+        utility::string_t refVal = fromAssistant_modeEnum(m_Assistant_mode);
+        val[utility::conversions::to_string_t(_XPLATSTR("assistant_mode"))] = ModelBase::toJson(refVal);
+        
+    }
+    if(m_Control_mode.has_value())
+    {
+        
+        utility::string_t refVal = fromControl_modeEnum(m_Control_mode.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("control_mode"))] = ModelBase::toJson(refVal);
+        
+    }
+    if(m_Simulation_backend.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("simulation_backend"))] = ModelBase::toJson(m_Simulation_backend.get());
+    }
     if(m_Cyberwave_api_keyIsSet)
     {
         
@@ -59,9 +79,7 @@ web::json::value EnvironmentAgentRequestSchema::toJson() const
     if(m_Interaction_intent.has_value())
     {
         
-        utility::string_t refVal = fromInteraction_intentEnum(m_Interaction_intent.get());
-        val[utility::conversions::to_string_t(_XPLATSTR("interaction_intent"))] = ModelBase::toJson(refVal);
-        
+        val[utility::conversions::to_string_t(_XPLATSTR("interaction_intent"))] = ModelBase::toJson(m_Interaction_intent.get());
     }
     if(m_HistoryIsSet)
     {
@@ -121,6 +139,41 @@ bool EnvironmentAgentRequestSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("assistant_mode"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("assistant_mode")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setAssistantMode;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAssistantMode);
+            
+            setAssistantMode(toAssistant_modeEnum(refVal_setAssistantMode));
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("control_mode"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("control_mode")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setControlMode;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setControlMode);
+            
+            setControlMode(toControl_modeEnum(refVal_setControlMode));
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("simulation_backend"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("simulation_backend")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setSimulationBackend;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSimulationBackend);
+            setSimulationBackend(refVal_setSimulationBackend);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("cyberwave_api_key"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("cyberwave_api_key")));
@@ -148,10 +201,9 @@ bool EnvironmentAgentRequestSchema::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("interaction_intent")));
         if(!fieldValue.is_null())
         {
-            utility::string_t refVal_setInteractionIntent;
+            std::shared_ptr<EnvironmentAgentInteractionIntent> refVal_setInteractionIntent;
             ok &= ModelBase::fromJson(fieldValue, refVal_setInteractionIntent);
-            
-            setInteractionIntent(toInteraction_intentEnum(refVal_setInteractionIntent));
+            setInteractionIntent(refVal_setInteractionIntent);
             
         }
     }
@@ -257,6 +309,18 @@ void EnvironmentAgentRequestSchema::toMultipart(std::shared_ptr<MultipartFormDat
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("message")), m_Message));
     }
+    if(m_Assistant_modeIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("assistant_mode")), fromAssistant_modeEnum(m_Assistant_mode)));
+    }
+    if(m_Control_mode.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("control_mode")), fromControl_modeEnum(m_Control_mode.get())));
+    }
+    if(m_Simulation_backend.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("simulation_backend")), m_Simulation_backend.get()));
+    }
     if(m_Cyberwave_api_keyIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("cyberwave_api_key")), m_Cyberwave_api_key));
@@ -267,7 +331,7 @@ void EnvironmentAgentRequestSchema::toMultipart(std::shared_ptr<MultipartFormDat
     }
     if(m_Interaction_intent.has_value())
     {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("interaction_intent")), fromInteraction_intentEnum(m_Interaction_intent.get())));
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("interaction_intent")), m_Interaction_intent.get()));
     }
     if(m_HistoryIsSet)
     {
@@ -318,6 +382,24 @@ bool EnvironmentAgentRequestSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("message"))), refVal_setMessage );
         setMessage(refVal_setMessage);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("assistant_mode"))))
+    {
+        utility::string_t refVal_setAssistantMode;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("assistant_mode"))), refVal_setAssistantMode );
+        setAssistantMode(toAssistant_modeEnum(refVal_setAssistantMode));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("control_mode"))))
+    {
+        utility::string_t refVal_setControlMode;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("control_mode"))), refVal_setControlMode );
+        setControlMode(toControl_modeEnum(refVal_setControlMode));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("simulation_backend"))))
+    {
+        utility::string_t refVal_setSimulationBackend;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("simulation_backend"))), refVal_setSimulationBackend );
+        setSimulationBackend(refVal_setSimulationBackend);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("cyberwave_api_key"))))
     {
         utility::string_t refVal_setCyberwaveApiKey;
@@ -332,9 +414,9 @@ bool EnvironmentAgentRequestSchema::fromMultiPart(std::shared_ptr<MultipartFormD
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("interaction_intent"))))
     {
-        utility::string_t refVal_setInteractionIntent;
+        std::shared_ptr<EnvironmentAgentInteractionIntent> refVal_setInteractionIntent;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("interaction_intent"))), refVal_setInteractionIntent );
-        setInteractionIntent(toInteraction_intentEnum(refVal_setInteractionIntent));
+        setInteractionIntent(refVal_setInteractionIntent);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("history"))))
     {
@@ -387,23 +469,62 @@ bool EnvironmentAgentRequestSchema::fromMultiPart(std::shared_ptr<MultipartFormD
     return ok;
 }
 
-EnvironmentAgentRequestSchema::Interaction_intentEnum EnvironmentAgentRequestSchema::toInteraction_intentEnum(const utility::string_t& value) const
+EnvironmentAgentRequestSchema::Assistant_modeEnum EnvironmentAgentRequestSchema::toAssistant_modeEnum(const utility::string_t& value) const
 {
     
-    if (value == utility::conversions::to_string_t("workflow_context")) {
-        return Interaction_intentEnum::WORKFLOW_CONTEXT;
+    if (value == utility::conversions::to_string_t("edit")) {
+        return Assistant_modeEnum::EDIT;
     }
     
-    throw std::invalid_argument("Invalid value for conversion to Interaction_intentEnum");
+    if (value == utility::conversions::to_string_t("monitor")) {
+        return Assistant_modeEnum::MONITOR;
+    }
+    
+    if (value == utility::conversions::to_string_t("control")) {
+        return Assistant_modeEnum::CONTROL;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to Assistant_modeEnum");
 }
 
 
-const utility::string_t EnvironmentAgentRequestSchema::fromInteraction_intentEnum(const Interaction_intentEnum value) const
+const utility::string_t EnvironmentAgentRequestSchema::fromAssistant_modeEnum(const Assistant_modeEnum value) const
 {
     switch(value)
     {
         
-        case Interaction_intentEnum::WORKFLOW_CONTEXT: return utility::conversions::to_string_t("workflow_context");
+        case Assistant_modeEnum::EDIT: return utility::conversions::to_string_t("edit");
+        
+        case Assistant_modeEnum::MONITOR: return utility::conversions::to_string_t("monitor");
+        
+        case Assistant_modeEnum::CONTROL: return utility::conversions::to_string_t("control");
+        
+    }
+}
+
+EnvironmentAgentRequestSchema::Control_modeEnum EnvironmentAgentRequestSchema::toControl_modeEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("simulation")) {
+        return Control_modeEnum::SIMULATION;
+    }
+    
+    if (value == utility::conversions::to_string_t("live")) {
+        return Control_modeEnum::LIVE;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to Control_modeEnum");
+}
+
+
+const utility::string_t EnvironmentAgentRequestSchema::fromControl_modeEnum(const Control_modeEnum value) const
+{
+    switch(value)
+    {
+        
+        case Control_modeEnum::SIMULATION: return utility::conversions::to_string_t("simulation");
+        
+        case Control_modeEnum::LIVE: return utility::conversions::to_string_t("live");
         
     }
 }
@@ -429,6 +550,67 @@ bool EnvironmentAgentRequestSchema::messageIsSet() const
 void EnvironmentAgentRequestSchema::unsetMessage()
 {
     m_MessageIsSet = false;
+}
+EnvironmentAgentRequestSchema::Assistant_modeEnum EnvironmentAgentRequestSchema::getAssistantMode() const
+{
+    return m_Assistant_mode;
+}
+
+
+void EnvironmentAgentRequestSchema::setAssistantMode(const Assistant_modeEnum value)
+{
+    m_Assistant_mode = value;
+    m_Assistant_modeIsSet = true;
+}
+
+bool EnvironmentAgentRequestSchema::assistantModeIsSet() const
+{
+    return m_Assistant_modeIsSet;
+}
+
+void EnvironmentAgentRequestSchema::unsetAssistant_mode()
+{
+    m_Assistant_modeIsSet = false;
+}
+EnvironmentAgentRequestSchema::Control_modeEnum EnvironmentAgentRequestSchema::getControlMode() const
+{
+    return m_Control_mode.get();
+}
+
+
+void EnvironmentAgentRequestSchema::setControlMode(const Control_modeEnum value)
+{
+    m_Control_mode = value;
+}
+
+bool EnvironmentAgentRequestSchema::controlModeIsSet() const
+{
+    return m_Control_mode.has_value();
+}
+
+void EnvironmentAgentRequestSchema::unsetControl_mode()
+{
+    m_Control_mode.reset();
+}
+utility::string_t EnvironmentAgentRequestSchema::getSimulationBackend() const
+{
+    return m_Simulation_backend.get();
+}
+
+
+void EnvironmentAgentRequestSchema::setSimulationBackend(const utility::string_t& value)
+{
+    m_Simulation_backend = value;
+}
+
+bool EnvironmentAgentRequestSchema::simulationBackendIsSet() const
+{
+    return m_Simulation_backend.has_value();
+}
+
+void EnvironmentAgentRequestSchema::unsetSimulation_backend()
+{
+    m_Simulation_backend.reset();
 }
 utility::string_t EnvironmentAgentRequestSchema::getCyberwaveApiKey() const
 {
@@ -471,13 +653,13 @@ void EnvironmentAgentRequestSchema::unsetAssistant_session_id()
 {
     m_Assistant_session_id.reset();
 }
-EnvironmentAgentRequestSchema::Interaction_intentEnum EnvironmentAgentRequestSchema::getInteractionIntent() const
+std::shared_ptr<EnvironmentAgentInteractionIntent> EnvironmentAgentRequestSchema::getInteractionIntent() const
 {
     return m_Interaction_intent.get();
 }
 
 
-void EnvironmentAgentRequestSchema::setInteractionIntent(const Interaction_intentEnum value)
+void EnvironmentAgentRequestSchema::setInteractionIntent(const std::shared_ptr<EnvironmentAgentInteractionIntent>& value)
 {
     m_Interaction_intent = value;
 }

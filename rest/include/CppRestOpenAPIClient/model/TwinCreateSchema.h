@@ -75,6 +75,16 @@ public:
     void unsetAsset_uuid();
     void setAssetUuid(const utility::string_t& value);
 
+    utility::string_t getExpectedAssetUuid() const;
+    bool expectedAssetUuidIsSet() const;
+    void unsetExpected_asset_uuid();
+    void setExpectedAssetUuid(const utility::string_t& value);
+
+    utility::string_t getExpectedRevision() const;
+    bool expectedRevisionIsSet() const;
+    void unsetExpected_revision();
+    void setExpectedRevision(const utility::string_t& value);
+
     utility::string_t getEnvironmentUuid() const;
     bool environmentUuidIsSet() const;
     void unsetEnvironment_uuid();
@@ -212,6 +222,10 @@ protected:
     boost::optional<utility::string_t> m_Description;
 
     boost::optional<utility::string_t> m_Asset_uuid;
+
+    boost::optional<utility::string_t> m_Expected_asset_uuid;
+
+    boost::optional<utility::string_t> m_Expected_revision;
 
     boost::optional<utility::string_t> m_Environment_uuid;
 
