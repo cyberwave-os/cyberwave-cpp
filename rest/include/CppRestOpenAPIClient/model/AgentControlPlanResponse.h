@@ -88,6 +88,11 @@ public:
     const utility::string_t fromReadinessEnum(const ReadinessEnum value) const;
 
 
+    utility::string_t getPlanId() const;
+    bool planIdIsSet() const;
+    void unsetPlan_id();
+    void setPlanId(const utility::string_t& value);
+
     utility::string_t getSummary() const;
     bool summaryIsSet() const;
     void unsetSummary();
@@ -170,6 +175,9 @@ public:
 
 
 protected:
+    utility::string_t m_Plan_id;
+    bool m_Plan_idIsSet;
+
     utility::string_t m_Summary;
     bool m_SummaryIsSet;
 

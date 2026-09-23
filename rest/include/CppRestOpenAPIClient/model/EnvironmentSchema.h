@@ -127,6 +127,11 @@ public:
     void unsetIs_template();
     void setIsTemplate(bool value);
 
+    utility::string_t getControlPlaneAccess() const;
+    bool controlPlaneAccessIsSet() const;
+    void unsetControl_plane_access();
+    void setControlPlaneAccess(const utility::string_t& value);
+
     double getTotalMonthlyCost() const;
     bool totalMonthlyCostIsSet() const;
     void unsetTotal_monthly_cost();
@@ -178,6 +183,9 @@ protected:
 
     bool m_Is_template;
     bool m_Is_templateIsSet;
+
+    utility::string_t m_Control_plane_access;
+    bool m_Control_plane_accessIsSet;
 
     boost::optional<double> m_Total_monthly_cost;
 

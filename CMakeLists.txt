@@ -322,7 +322,7 @@ if(CYBERWAVE_BUILD_TESTS)
         test_workflows test_scene test_data test_workers test_manifest
         test_utils test_twin_subclasses test_compact test_motion test_locomotion_contracts
         test_navigation test_keyboard test_device_pairing test_edge_node
-        test_amr_edge_node test_camera_streaming test_depth_streaming
+        test_amr_edge_node test_camera_streaming test_h264_capture_sei test_depth_streaming
         test_mqtt_config test_twin test_mqtt_interface
     )
     foreach(_t IN LISTS _CYBERWAVE_UNIT_TESTS)

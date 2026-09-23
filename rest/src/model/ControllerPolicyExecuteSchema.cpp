@@ -745,12 +745,12 @@ bool ControllerPolicyExecuteSchema::fromMultiPart(std::shared_ptr<MultipartFormD
 ControllerPolicyExecuteSchema::ModeEnum ControllerPolicyExecuteSchema::toModeEnum(const utility::string_t& value) const
 {
     
-    if (value == utility::conversions::to_string_t("live")) {
-        return ModeEnum::LIVE;
-    }
-    
     if (value == utility::conversions::to_string_t("simulation")) {
         return ModeEnum::SIMULATION;
+    }
+    
+    if (value == utility::conversions::to_string_t("live")) {
+        return ModeEnum::LIVE;
     }
     
     throw std::invalid_argument("Invalid value for conversion to ModeEnum");
@@ -762,9 +762,9 @@ const utility::string_t ControllerPolicyExecuteSchema::fromModeEnum(const ModeEn
     switch(value)
     {
         
-        case ModeEnum::LIVE: return utility::conversions::to_string_t("live");
-        
         case ModeEnum::SIMULATION: return utility::conversions::to_string_t("simulation");
+        
+        case ModeEnum::LIVE: return utility::conversions::to_string_t("live");
         
     }
 }

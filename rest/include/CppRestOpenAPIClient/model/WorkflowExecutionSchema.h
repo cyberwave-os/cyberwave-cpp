@@ -24,6 +24,7 @@
 
 #include "CppRestOpenAPIClient/model/WorkflowNodeExecutionSchema.h"
 #include <cpprest/details/basic_types.h>
+#include "CppRestOpenAPIClient/model/WorkflowExecutionProgressSchema.h"
 #include <map>
 #include <vector>
 #include "CppRestOpenAPIClient/AnyType.h"
@@ -34,6 +35,7 @@ namespace client {
 namespace model {
 
 class WorkflowNodeExecutionSchema;
+class WorkflowExecutionProgressSchema;
 
 
 class  WorkflowExecutionSchema
@@ -109,6 +111,21 @@ public:
     void unsetNode_executions();
     void setNodeExecutions(const std::vector<std::shared_ptr<WorkflowNodeExecutionSchema>>& value);
 
+    utility::string_t getWorkflowName() const;
+    bool workflowNameIsSet() const;
+    void unsetWorkflow_name();
+    void setWorkflowName(const utility::string_t& value);
+
+    utility::string_t getWorkflowSlug() const;
+    bool workflowSlugIsSet() const;
+    void unsetWorkflow_slug();
+    void setWorkflowSlug(const utility::string_t& value);
+
+    std::shared_ptr<WorkflowExecutionProgressSchema> getProgress() const;
+    bool progressIsSet() const;
+    void unsetProgress();
+    void setProgress(const std::shared_ptr<WorkflowExecutionProgressSchema>& value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -137,6 +154,14 @@ protected:
     bool m_MetadataIsSet;
 
     boost::optional<std::vector<std::shared_ptr<WorkflowNodeExecutionSchema>>> m_Node_executions;
+
+    utility::string_t m_Workflow_name;
+    bool m_Workflow_nameIsSet;
+
+    utility::string_t m_Workflow_slug;
+    bool m_Workflow_slugIsSet;
+
+    boost::optional<std::shared_ptr<WorkflowExecutionProgressSchema>> m_Progress;
 
 };
 

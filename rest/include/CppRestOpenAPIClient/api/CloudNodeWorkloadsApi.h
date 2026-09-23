@@ -22,6 +22,7 @@
 
 #include "CppRestOpenAPIClient/ApiClient.h"
 
+#include "CppRestOpenAPIClient/AnyType.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadAssignSchema.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadAttachmentResponseSchema.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadAttachmentSchema.h"
@@ -31,6 +32,7 @@
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadSchema.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/DeferredTaskExecutionResponseSchema.h"
+#include <map>
 #include <vector>
 #include <cpprest/details/basic_types.h>
 #include <boost/optional.hpp>
@@ -193,6 +195,16 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Read Simulation Audit
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiCloudNodeWorkloadsReadSimulationAudit(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
     /// Update Workload
     /// </summary>
     /// <remarks>
@@ -203,6 +215,18 @@ public:
     pplx::task<std::shared_ptr<CloudNodeWorkloadSchema>> srcAppApiCloudNodeWorkloadsUpdateWorkload(
         utility::string_t uuid,
         std::shared_ptr<CloudNodeWorkloadUpdateSchema> cloudNodeWorkloadUpdateSchema
+    ) const;
+    /// <summary>
+    /// Upload Simulation Audit
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="requestBody"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiCloudNodeWorkloadsUploadSimulationAudit(
+        utility::string_t uuid,
+        std::map<utility::string_t, std::shared_ptr<AnyType>> requestBody
     ) const;
     /// <summary>
     /// Workload Upload Results

@@ -147,6 +147,11 @@ public:
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    bool isDefaultFixedBase() const;
+    bool defaultFixedBaseIsSet() const;
+    void unsetDefault_fixed_base();
+    void setDefaultFixedBase(bool value);
+
 
 protected:
     utility::string_t m_Key;
@@ -202,6 +207,9 @@ protected:
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Metadata;
     bool m_MetadataIsSet;
+
+    bool m_Default_fixed_base;
+    bool m_Default_fixed_baseIsSet;
 
 };
 

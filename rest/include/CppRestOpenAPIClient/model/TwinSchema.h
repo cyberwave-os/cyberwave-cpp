@@ -23,6 +23,7 @@
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include <cpprest/details/basic_types.h>
+#include "CppRestOpenAPIClient/model/ConfigurationFeedbackSchema.h"
 #include <map>
 #include <vector>
 #include "CppRestOpenAPIClient/AnyType.h"
@@ -32,6 +33,7 @@ namespace openapitools {
 namespace client {
 namespace model {
 
+class ConfigurationFeedbackSchema;
 
 
 class  TwinSchema
@@ -92,10 +94,10 @@ public:
     void unsetCreated_at();
     void setCreatedAt(const utility::datetime& value);
 
-    utility::datetime getUpdatedAt() const;
+    utility::string_t getUpdatedAt() const;
     bool updatedAtIsSet() const;
     void unsetUpdated_at();
-    void setUpdatedAt(const utility::datetime& value);
+    void setUpdatedAt(const utility::string_t& value);
 
     utility::string_t getGlbFile() const;
     bool glbFileIsSet() const;
@@ -111,6 +113,11 @@ public:
     bool urdfFileIsSet() const;
     void unsetUrdf_file();
     void setUrdfFile(const utility::string_t& value);
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getVisualAssetStatus() const;
+    bool visualAssetStatusIsSet() const;
+    void unsetVisual_asset_status();
+    void setVisualAssetStatus(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
     double getPositionX() const;
     bool positionXIsSet() const;
@@ -186,6 +193,11 @@ public:
     bool capabilitiesIsSet() const;
     void unsetCapabilities();
     void setCapabilities(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    std::vector<std::shared_ptr<ConfigurationFeedbackSchema>> getConfigurationFeedback() const;
+    bool configurationFeedbackIsSet() const;
+    void unsetConfiguration_feedback();
+    void setConfigurationFeedback(const std::vector<std::shared_ptr<ConfigurationFeedbackSchema>>& value);
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> getUniversalSchema() const;
     bool universalSchemaIsSet() const;
@@ -304,7 +316,7 @@ protected:
     utility::datetime m_Created_at;
     bool m_Created_atIsSet;
 
-    utility::datetime m_Updated_at;
+    utility::string_t m_Updated_at;
     bool m_Updated_atIsSet;
 
     boost::optional<utility::string_t> m_Glb_file;
@@ -312,6 +324,9 @@ protected:
     boost::optional<utility::string_t> m_Splat_file;
 
     boost::optional<utility::string_t> m_Urdf_file;
+
+    std::map<utility::string_t, std::shared_ptr<AnyType>> m_Visual_asset_status;
+    bool m_Visual_asset_statusIsSet;
 
     double m_Position_x;
     bool m_Position_xIsSet;
@@ -354,6 +369,9 @@ protected:
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Capabilities;
     bool m_CapabilitiesIsSet;
+
+    std::vector<std::shared_ptr<ConfigurationFeedbackSchema>> m_Configuration_feedback;
+    bool m_Configuration_feedbackIsSet;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Universal_schema;
 

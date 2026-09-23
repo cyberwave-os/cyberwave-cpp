@@ -32,6 +32,10 @@ WorkflowExecutionSchema::WorkflowExecutionSchema()
     m_Error_message = utility::conversions::to_string_t("");
     m_Error_messageIsSet = false;
     m_MetadataIsSet = false;
+    m_Workflow_name = utility::conversions::to_string_t("");
+    m_Workflow_nameIsSet = false;
+    m_Workflow_slug = utility::conversions::to_string_t("");
+    m_Workflow_slugIsSet = false;
 }
 
 WorkflowExecutionSchema::~WorkflowExecutionSchema()
@@ -95,6 +99,21 @@ web::json::value WorkflowExecutionSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("node_executions"))] = ModelBase::toJson(m_Node_executions.get());
+    }
+    if(m_Workflow_nameIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("workflow_name"))] = ModelBase::toJson(m_Workflow_name);
+    }
+    if(m_Workflow_slugIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("workflow_slug"))] = ModelBase::toJson(m_Workflow_slug);
+    }
+    if(m_Progress.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("progress"))] = ModelBase::toJson(m_Progress.get());
     }
 
     return val;
@@ -213,6 +232,39 @@ bool WorkflowExecutionSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("workflow_name"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("workflow_name")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setWorkflowName;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setWorkflowName);
+            setWorkflowName(refVal_setWorkflowName);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("workflow_slug"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("workflow_slug")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setWorkflowSlug;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setWorkflowSlug);
+            setWorkflowSlug(refVal_setWorkflowSlug);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("progress"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("progress")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<WorkflowExecutionProgressSchema> refVal_setProgress;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setProgress);
+            setProgress(refVal_setProgress);
+            
+        }
+    }
     return ok;
 }
 
@@ -262,6 +314,18 @@ void WorkflowExecutionSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     if(m_Node_executions.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("node_executions")), m_Node_executions.get()));
+    }
+    if(m_Workflow_nameIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workflow_name")), m_Workflow_name));
+    }
+    if(m_Workflow_slugIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("workflow_slug")), m_Workflow_slug));
+    }
+    if(m_Progress.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("progress")), m_Progress.get()));
     }
 }
 
@@ -333,6 +397,24 @@ bool WorkflowExecutionSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
         std::vector<std::shared_ptr<WorkflowNodeExecutionSchema>> refVal_setNodeExecutions;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("node_executions"))), refVal_setNodeExecutions );
         setNodeExecutions(refVal_setNodeExecutions);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("workflow_name"))))
+    {
+        utility::string_t refVal_setWorkflowName;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workflow_name"))), refVal_setWorkflowName );
+        setWorkflowName(refVal_setWorkflowName);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("workflow_slug"))))
+    {
+        utility::string_t refVal_setWorkflowSlug;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("workflow_slug"))), refVal_setWorkflowSlug );
+        setWorkflowSlug(refVal_setWorkflowSlug);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("progress"))))
+    {
+        std::shared_ptr<WorkflowExecutionProgressSchema> refVal_setProgress;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("progress"))), refVal_setProgress );
+        setProgress(refVal_setProgress);
     }
     return ok;
 }
@@ -544,6 +626,68 @@ bool WorkflowExecutionSchema::nodeExecutionsIsSet() const
 void WorkflowExecutionSchema::unsetNode_executions()
 {
     m_Node_executions.reset();
+}
+utility::string_t WorkflowExecutionSchema::getWorkflowName() const
+{
+    return m_Workflow_name;
+}
+
+
+void WorkflowExecutionSchema::setWorkflowName(const utility::string_t& value)
+{
+    m_Workflow_name = value;
+    m_Workflow_nameIsSet = true;
+}
+
+bool WorkflowExecutionSchema::workflowNameIsSet() const
+{
+    return m_Workflow_nameIsSet;
+}
+
+void WorkflowExecutionSchema::unsetWorkflow_name()
+{
+    m_Workflow_nameIsSet = false;
+}
+utility::string_t WorkflowExecutionSchema::getWorkflowSlug() const
+{
+    return m_Workflow_slug;
+}
+
+
+void WorkflowExecutionSchema::setWorkflowSlug(const utility::string_t& value)
+{
+    m_Workflow_slug = value;
+    m_Workflow_slugIsSet = true;
+}
+
+bool WorkflowExecutionSchema::workflowSlugIsSet() const
+{
+    return m_Workflow_slugIsSet;
+}
+
+void WorkflowExecutionSchema::unsetWorkflow_slug()
+{
+    m_Workflow_slugIsSet = false;
+}
+std::shared_ptr<WorkflowExecutionProgressSchema> WorkflowExecutionSchema::getProgress() const
+{
+    return m_Progress.get();
+}
+
+
+void WorkflowExecutionSchema::setProgress(const std::shared_ptr<WorkflowExecutionProgressSchema>& value)
+{
+    m_Progress = value;
+}
+
+bool WorkflowExecutionSchema::progressIsSet() const
+{
+    return m_Progress.has_value();
+}
+
+void WorkflowExecutionSchema::unsetProgress()
+{
+    m_Progress.reset();
 }
 
 }

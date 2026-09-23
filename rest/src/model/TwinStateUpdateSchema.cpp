@@ -69,6 +69,11 @@ web::json::value TwinStateUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("rotation_z"))] = ModelBase::toJson(m_Rotation_z.get());
     }
+    if(m_Expected_revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_revision"))] = ModelBase::toJson(m_Expected_revision.get());
+    }
 
     return val;
 }
@@ -153,6 +158,17 @@ bool TwinStateUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExpectedRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedRevision);
+            setExpectedRevision(refVal_setExpectedRevision);
+            
+        }
+    }
     return ok;
 }
 
@@ -190,6 +206,10 @@ void TwinStateUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData> multi
     if(m_Rotation_z.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("rotation_z")), m_Rotation_z.get()));
+    }
+    if(m_Expected_revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_revision")), m_Expected_revision.get()));
     }
 }
 
@@ -243,6 +263,12 @@ bool TwinStateUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> mul
         double refVal_setRotationZ;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("rotation_z"))), refVal_setRotationZ );
         setRotationZ(refVal_setRotationZ);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        utility::string_t refVal_setExpectedRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))), refVal_setExpectedRevision );
+        setExpectedRevision(refVal_setExpectedRevision);
     }
     return ok;
 }
@@ -380,6 +406,26 @@ bool TwinStateUpdateSchema::rotationZIsSet() const
 void TwinStateUpdateSchema::unsetRotation_z()
 {
     m_Rotation_z.reset();
+}
+utility::string_t TwinStateUpdateSchema::getExpectedRevision() const
+{
+    return m_Expected_revision.get();
+}
+
+
+void TwinStateUpdateSchema::setExpectedRevision(const utility::string_t& value)
+{
+    m_Expected_revision = value;
+}
+
+bool TwinStateUpdateSchema::expectedRevisionIsSet() const
+{
+    return m_Expected_revision.has_value();
+}
+
+void TwinStateUpdateSchema::unsetExpected_revision()
+{
+    m_Expected_revision.reset();
 }
 
 }

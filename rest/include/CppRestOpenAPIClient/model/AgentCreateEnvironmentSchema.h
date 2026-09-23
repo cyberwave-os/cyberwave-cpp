@@ -23,13 +23,18 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/AgentReferenceImageSchema.h"
 #include <cpprest/details/basic_types.h>
+#include <map>
+#include <vector>
+#include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
+class AgentReferenceImageSchema;
 
 
 /// <summary>
@@ -57,12 +62,23 @@ public:
     /////////////////////////////////////////////
     /// AgentCreateEnvironmentSchema members
 
+    enum class VisibilityEnum
+    {
+        PRIVATE,
+        WORKSPACE,
+        ORG,
+        PUBLIC,
+    };
     enum class Image_mime_typeEnum
     {
         IMAGE_PNG,
         IMAGE_JPEG,
         IMAGE_WEBP,
     };
+
+    VisibilityEnum toVisibilityEnum(const utility::string_t& value) const;
+    const utility::string_t fromVisibilityEnum(const VisibilityEnum value) const;
+
 
     Image_mime_typeEnum toImage_mime_typeEnum(const utility::string_t& value) const;
     const utility::string_t fromImage_mime_typeEnum(const Image_mime_typeEnum value) const;
@@ -72,6 +88,11 @@ public:
     bool promptIsSet() const;
     void unsetPrompt();
     void setPrompt(const utility::string_t& value);
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getContextRefs() const;
+    bool contextRefsIsSet() const;
+    void unsetContext_refs();
+    void setContextRefs(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
 
     utility::string_t getCyberwaveApiKey() const;
     bool cyberwaveApiKeyIsSet() const;
@@ -87,6 +108,11 @@ public:
     bool projectUuidIsSet() const;
     void unsetProject_uuid();
     void setProjectUuid(const utility::string_t& value);
+
+    VisibilityEnum getVisibility() const;
+    bool visibilityIsSet() const;
+    void unsetVisibility();
+    void setVisibility(const VisibilityEnum value);
 
     utility::string_t getMlmodelUuid() const;
     bool mlmodelUuidIsSet() const;
@@ -113,10 +139,18 @@ public:
     void unsetImage_name();
     void setImageName(const utility::string_t& value);
 
+    std::vector<std::shared_ptr<AgentReferenceImageSchema>> getAdditionalImages() const;
+    bool additionalImagesIsSet() const;
+    void unsetAdditional_images();
+    void setAdditionalImages(const std::vector<std::shared_ptr<AgentReferenceImageSchema>>& value);
+
 
 protected:
     utility::string_t m_Prompt;
     bool m_PromptIsSet;
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Context_refs;
+    bool m_Context_refsIsSet;
 
     utility::string_t m_Cyberwave_api_key;
     bool m_Cyberwave_api_keyIsSet;
@@ -124,6 +158,9 @@ protected:
     boost::optional<utility::string_t> m_Workspace_uuid;
 
     boost::optional<utility::string_t> m_Project_uuid;
+
+    VisibilityEnum m_Visibility;
+    bool m_VisibilityIsSet;
 
     boost::optional<utility::string_t> m_Mlmodel_uuid;
 
@@ -134,6 +171,9 @@ protected:
     boost::optional<Image_mime_typeEnum> m_Image_mime_type;
 
     boost::optional<utility::string_t> m_Image_name;
+
+    std::vector<std::shared_ptr<AgentReferenceImageSchema>> m_Additional_images;
+    bool m_Additional_imagesIsSet;
 
 };
 

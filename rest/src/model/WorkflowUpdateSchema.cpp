@@ -69,6 +69,16 @@ web::json::value WorkflowUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("run_on_edge"))] = ModelBase::toJson(m_Run_on_edge.get());
     }
+    if(m_Allow_concurrent_executions.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("allow_concurrent_executions"))] = ModelBase::toJson(m_Allow_concurrent_executions.get());
+    }
+    if(m_Concurrency_blocked_by_workflow_uuids.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("concurrency_blocked_by_workflow_uuids"))] = ModelBase::toJson(m_Concurrency_blocked_by_workflow_uuids.get());
+    }
     if(m_Execution_target.has_value())
     {
         
@@ -173,6 +183,28 @@ bool WorkflowUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("allow_concurrent_executions"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("allow_concurrent_executions")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setAllowConcurrentExecutions;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAllowConcurrentExecutions);
+            setAllowConcurrentExecutions(refVal_setAllowConcurrentExecutions);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("concurrency_blocked_by_workflow_uuids"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("concurrency_blocked_by_workflow_uuids")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<utility::string_t> refVal_setConcurrencyBlockedByWorkflowUuids;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setConcurrencyBlockedByWorkflowUuids);
+            setConcurrencyBlockedByWorkflowUuids(refVal_setConcurrencyBlockedByWorkflowUuids);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("execution_target"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("execution_target")));
@@ -255,6 +287,14 @@ void WorkflowUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData> multip
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("run_on_edge")), m_Run_on_edge.get()));
     }
+    if(m_Allow_concurrent_executions.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("allow_concurrent_executions")), m_Allow_concurrent_executions.get()));
+    }
+    if(m_Concurrency_blocked_by_workflow_uuids.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("concurrency_blocked_by_workflow_uuids")), m_Concurrency_blocked_by_workflow_uuids.get()));
+    }
     if(m_Execution_target.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("execution_target")), m_Execution_target.get()));
@@ -323,6 +363,18 @@ bool WorkflowUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> mult
         bool refVal_setRunOnEdge;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("run_on_edge"))), refVal_setRunOnEdge );
         setRunOnEdge(refVal_setRunOnEdge);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("allow_concurrent_executions"))))
+    {
+        bool refVal_setAllowConcurrentExecutions;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("allow_concurrent_executions"))), refVal_setAllowConcurrentExecutions );
+        setAllowConcurrentExecutions(refVal_setAllowConcurrentExecutions);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("concurrency_blocked_by_workflow_uuids"))))
+    {
+        std::vector<utility::string_t> refVal_setConcurrencyBlockedByWorkflowUuids;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("concurrency_blocked_by_workflow_uuids"))), refVal_setConcurrencyBlockedByWorkflowUuids );
+        setConcurrencyBlockedByWorkflowUuids(refVal_setConcurrencyBlockedByWorkflowUuids);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("execution_target"))))
     {
@@ -489,6 +541,45 @@ bool WorkflowUpdateSchema::runOnEdgeIsSet() const
 void WorkflowUpdateSchema::unsetRun_on_edge()
 {
     m_Run_on_edge.reset();
+}
+bool WorkflowUpdateSchema::isAllowConcurrentExecutions() const
+{
+    return m_Allow_concurrent_executions.get();
+}
+
+void WorkflowUpdateSchema::setAllowConcurrentExecutions(bool value)
+{
+    m_Allow_concurrent_executions = value;
+}
+
+bool WorkflowUpdateSchema::allowConcurrentExecutionsIsSet() const
+{
+    return m_Allow_concurrent_executions.has_value();
+}
+
+void WorkflowUpdateSchema::unsetAllow_concurrent_executions()
+{
+    m_Allow_concurrent_executions.reset();
+}
+std::vector<utility::string_t> WorkflowUpdateSchema::getConcurrencyBlockedByWorkflowUuids() const
+{
+    return m_Concurrency_blocked_by_workflow_uuids.get();
+}
+
+
+void WorkflowUpdateSchema::setConcurrencyBlockedByWorkflowUuids(const std::vector<utility::string_t>& value)
+{
+    m_Concurrency_blocked_by_workflow_uuids = value;
+}
+
+bool WorkflowUpdateSchema::concurrencyBlockedByWorkflowUuidsIsSet() const
+{
+    return m_Concurrency_blocked_by_workflow_uuids.has_value();
+}
+
+void WorkflowUpdateSchema::unsetConcurrency_blocked_by_workflow_uuids()
+{
+    m_Concurrency_blocked_by_workflow_uuids.reset();
 }
 utility::string_t WorkflowUpdateSchema::getExecutionTarget() const
 {

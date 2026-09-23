@@ -23,6 +23,7 @@
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include <cpprest/details/basic_types.h>
+#include "CppRestOpenAPIClient/model/ConfigurationFeedbackSchema.h"
 #include <map>
 #include <vector>
 #include "CppRestOpenAPIClient/AnyType.h"
@@ -32,6 +33,7 @@ namespace openapitools {
 namespace client {
 namespace model {
 
+class ConfigurationFeedbackSchema;
 
 
 class  AssetSchema
@@ -86,6 +88,11 @@ public:
     bool visibilityIsSet() const;
     void unsetVisibility();
     void setVisibility(const utility::string_t& value);
+
+    utility::string_t getOriginEnvironmentUuid() const;
+    bool originEnvironmentUuidIsSet() const;
+    void unsetOrigin_environment_uuid();
+    void setOriginEnvironmentUuid(const utility::string_t& value);
 
     utility::string_t getOwnerUuid() const;
     bool ownerUuidIsSet() const;
@@ -147,6 +154,11 @@ public:
     void unsetCapabilities();
     void setCapabilities(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::vector<std::shared_ptr<ConfigurationFeedbackSchema>> getConfigurationFeedback() const;
+    bool configurationFeedbackIsSet() const;
+    void unsetConfiguration_feedback();
+    void setConfigurationFeedback(const std::vector<std::shared_ptr<ConfigurationFeedbackSchema>>& value);
+
     utility::string_t getThumbnail() const;
     bool thumbnailIsSet() const;
     void unsetThumbnail();
@@ -156,6 +168,16 @@ public:
     bool hasUniversalSchemaIsSet() const;
     void unsetHas_universal_schema();
     void setHasUniversalSchema(bool value);
+
+    utility::string_t getBuildStatus() const;
+    bool buildStatusIsSet() const;
+    void unsetBuild_status();
+    void setBuildStatus(const utility::string_t& value);
+
+    utility::string_t getUniversalSchemaSource() const;
+    bool universalSchemaSourceIsSet() const;
+    void unsetUniversal_schema_source();
+    void setUniversalSchemaSource(const utility::string_t& value);
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> getUniversalSchema() const;
     bool universalSchemaIsSet() const;
@@ -211,6 +233,8 @@ protected:
 
     boost::optional<utility::string_t> m_Visibility;
 
+    boost::optional<utility::string_t> m_Origin_environment_uuid;
+
     boost::optional<utility::string_t> m_Owner_uuid;
 
     boost::optional<utility::string_t> m_Registry_id;
@@ -235,10 +259,17 @@ protected:
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Capabilities;
 
+    std::vector<std::shared_ptr<ConfigurationFeedbackSchema>> m_Configuration_feedback;
+    bool m_Configuration_feedbackIsSet;
+
     boost::optional<utility::string_t> m_Thumbnail;
 
     bool m_Has_universal_schema;
     bool m_Has_universal_schemaIsSet;
+
+    boost::optional<utility::string_t> m_Build_status;
+
+    boost::optional<utility::string_t> m_Universal_schema_source;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Universal_schema;
 
