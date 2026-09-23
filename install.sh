@@ -167,6 +167,7 @@ install_deps_debian() {
         build-essential \
         cmake \
         pkg-config \
+        python3 \
         ca-certificates \
         curl \
         git \
@@ -285,6 +286,10 @@ if impl_signature not in cpp_text:
         cpp_text = cpp_text.replace(block, block + addition, 1)
         cpp_path.write_text(cpp_text)
 PY
+
+    # Kept inside the standalone SDK so Docker builds and the public mirror use
+    # the same wire-type repair as the monorepo cpp-sdk-gen.sh entry point.
+    python3 "${SCRIPT_DIR}/scripts/patch_cpp_numeric_enums.py" "${SCRIPT_DIR}/rest"
 }
 
 apply_cmake_patches() {

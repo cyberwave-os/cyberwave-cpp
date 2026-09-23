@@ -22,8 +22,11 @@ AgentCreateEnvironmentSchema::AgentCreateEnvironmentSchema()
 {
     m_Prompt = utility::conversions::to_string_t("");
     m_PromptIsSet = false;
+    m_Context_refsIsSet = false;
     m_Cyberwave_api_key = utility::conversions::to_string_t("");
     m_Cyberwave_api_keyIsSet = false;
+    m_VisibilityIsSet = false;
+    m_Additional_imagesIsSet = false;
 }
 
 AgentCreateEnvironmentSchema::~AgentCreateEnvironmentSchema()
@@ -43,6 +46,11 @@ web::json::value AgentCreateEnvironmentSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("prompt"))] = ModelBase::toJson(m_Prompt);
     }
+    if(m_Context_refsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("context_refs"))] = ModelBase::toJson(m_Context_refs);
+    }
     if(m_Cyberwave_api_keyIsSet)
     {
         
@@ -57,6 +65,13 @@ web::json::value AgentCreateEnvironmentSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("project_uuid"))] = ModelBase::toJson(m_Project_uuid.get());
+    }
+    if(m_VisibilityIsSet)
+    {
+        
+        utility::string_t refVal = fromVisibilityEnum(m_Visibility);
+        val[utility::conversions::to_string_t(_XPLATSTR("visibility"))] = ModelBase::toJson(refVal);
+        
     }
     if(m_Mlmodel_uuid.has_value())
     {
@@ -85,6 +100,11 @@ web::json::value AgentCreateEnvironmentSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("image_name"))] = ModelBase::toJson(m_Image_name.get());
     }
+    if(m_Additional_imagesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("additional_images"))] = ModelBase::toJson(m_Additional_images);
+    }
 
     return val;
 }
@@ -100,6 +120,17 @@ bool AgentCreateEnvironmentSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setPrompt;
             ok &= ModelBase::fromJson(fieldValue, refVal_setPrompt);
             setPrompt(refVal_setPrompt);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("context_refs"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("context_refs")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setContextRefs;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setContextRefs);
+            setContextRefs(refVal_setContextRefs);
             
         }
     }
@@ -133,6 +164,18 @@ bool AgentCreateEnvironmentSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setProjectUuid;
             ok &= ModelBase::fromJson(fieldValue, refVal_setProjectUuid);
             setProjectUuid(refVal_setProjectUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("visibility"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("visibility")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setVisibility;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setVisibility);
+            
+            setVisibility(toVisibilityEnum(refVal_setVisibility));
             
         }
     }
@@ -192,6 +235,17 @@ bool AgentCreateEnvironmentSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("additional_images"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("additional_images")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<AgentReferenceImageSchema>> refVal_setAdditionalImages;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setAdditionalImages);
+            setAdditionalImages(refVal_setAdditionalImages);
+            
+        }
+    }
     return ok;
 }
 
@@ -206,6 +260,10 @@ void AgentCreateEnvironmentSchema::toMultipart(std::shared_ptr<MultipartFormData
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("prompt")), m_Prompt));
     }
+    if(m_Context_refsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("context_refs")), m_Context_refs));
+    }
     if(m_Cyberwave_api_keyIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("cyberwave_api_key")), m_Cyberwave_api_key));
@@ -217,6 +275,10 @@ void AgentCreateEnvironmentSchema::toMultipart(std::shared_ptr<MultipartFormData
     if(m_Project_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("project_uuid")), m_Project_uuid.get()));
+    }
+    if(m_VisibilityIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("visibility")), fromVisibilityEnum(m_Visibility)));
     }
     if(m_Mlmodel_uuid.has_value())
     {
@@ -238,6 +300,10 @@ void AgentCreateEnvironmentSchema::toMultipart(std::shared_ptr<MultipartFormData
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("image_name")), m_Image_name.get()));
     }
+    if(m_Additional_imagesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("additional_images")), m_Additional_images));
+    }
 }
 
 bool AgentCreateEnvironmentSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix)
@@ -254,6 +320,12 @@ bool AgentCreateEnvironmentSchema::fromMultiPart(std::shared_ptr<MultipartFormDa
         utility::string_t refVal_setPrompt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("prompt"))), refVal_setPrompt );
         setPrompt(refVal_setPrompt);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("context_refs"))))
+    {
+        std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setContextRefs;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("context_refs"))), refVal_setContextRefs );
+        setContextRefs(refVal_setContextRefs);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("cyberwave_api_key"))))
     {
@@ -272,6 +344,12 @@ bool AgentCreateEnvironmentSchema::fromMultiPart(std::shared_ptr<MultipartFormDa
         utility::string_t refVal_setProjectUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("project_uuid"))), refVal_setProjectUuid );
         setProjectUuid(refVal_setProjectUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("visibility"))))
+    {
+        utility::string_t refVal_setVisibility;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("visibility"))), refVal_setVisibility );
+        setVisibility(toVisibilityEnum(refVal_setVisibility));
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("mlmodel_uuid"))))
     {
@@ -303,7 +381,52 @@ bool AgentCreateEnvironmentSchema::fromMultiPart(std::shared_ptr<MultipartFormDa
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("image_name"))), refVal_setImageName );
         setImageName(refVal_setImageName);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("additional_images"))))
+    {
+        std::vector<std::shared_ptr<AgentReferenceImageSchema>> refVal_setAdditionalImages;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("additional_images"))), refVal_setAdditionalImages );
+        setAdditionalImages(refVal_setAdditionalImages);
+    }
     return ok;
+}
+
+AgentCreateEnvironmentSchema::VisibilityEnum AgentCreateEnvironmentSchema::toVisibilityEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("private")) {
+        return VisibilityEnum::PRIVATE;
+    }
+    
+    if (value == utility::conversions::to_string_t("workspace")) {
+        return VisibilityEnum::WORKSPACE;
+    }
+    
+    if (value == utility::conversions::to_string_t("org")) {
+        return VisibilityEnum::ORG;
+    }
+    
+    if (value == utility::conversions::to_string_t("public")) {
+        return VisibilityEnum::PUBLIC;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to VisibilityEnum");
+}
+
+
+const utility::string_t AgentCreateEnvironmentSchema::fromVisibilityEnum(const VisibilityEnum value) const
+{
+    switch(value)
+    {
+        
+        case VisibilityEnum::PRIVATE: return utility::conversions::to_string_t("private");
+        
+        case VisibilityEnum::WORKSPACE: return utility::conversions::to_string_t("workspace");
+        
+        case VisibilityEnum::ORG: return utility::conversions::to_string_t("org");
+        
+        case VisibilityEnum::PUBLIC: return utility::conversions::to_string_t("public");
+        
+    }
 }
 
 AgentCreateEnvironmentSchema::Image_mime_typeEnum AgentCreateEnvironmentSchema::toImage_mime_typeEnum(const utility::string_t& value) const
@@ -360,6 +483,27 @@ bool AgentCreateEnvironmentSchema::promptIsSet() const
 void AgentCreateEnvironmentSchema::unsetPrompt()
 {
     m_PromptIsSet = false;
+}
+std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> AgentCreateEnvironmentSchema::getContextRefs() const
+{
+    return m_Context_refs;
+}
+
+
+void AgentCreateEnvironmentSchema::setContextRefs(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value)
+{
+    m_Context_refs = value;
+    m_Context_refsIsSet = true;
+}
+
+bool AgentCreateEnvironmentSchema::contextRefsIsSet() const
+{
+    return m_Context_refsIsSet;
+}
+
+void AgentCreateEnvironmentSchema::unsetContext_refs()
+{
+    m_Context_refsIsSet = false;
 }
 utility::string_t AgentCreateEnvironmentSchema::getCyberwaveApiKey() const
 {
@@ -421,6 +565,27 @@ bool AgentCreateEnvironmentSchema::projectUuidIsSet() const
 void AgentCreateEnvironmentSchema::unsetProject_uuid()
 {
     m_Project_uuid.reset();
+}
+AgentCreateEnvironmentSchema::VisibilityEnum AgentCreateEnvironmentSchema::getVisibility() const
+{
+    return m_Visibility;
+}
+
+
+void AgentCreateEnvironmentSchema::setVisibility(const VisibilityEnum value)
+{
+    m_Visibility = value;
+    m_VisibilityIsSet = true;
+}
+
+bool AgentCreateEnvironmentSchema::visibilityIsSet() const
+{
+    return m_VisibilityIsSet;
+}
+
+void AgentCreateEnvironmentSchema::unsetVisibility()
+{
+    m_VisibilityIsSet = false;
 }
 utility::string_t AgentCreateEnvironmentSchema::getMlmodelUuid() const
 {
@@ -521,6 +686,27 @@ bool AgentCreateEnvironmentSchema::imageNameIsSet() const
 void AgentCreateEnvironmentSchema::unsetImage_name()
 {
     m_Image_name.reset();
+}
+std::vector<std::shared_ptr<AgentReferenceImageSchema>> AgentCreateEnvironmentSchema::getAdditionalImages() const
+{
+    return m_Additional_images;
+}
+
+
+void AgentCreateEnvironmentSchema::setAdditionalImages(const std::vector<std::shared_ptr<AgentReferenceImageSchema>>& value)
+{
+    m_Additional_images = value;
+    m_Additional_imagesIsSet = true;
+}
+
+bool AgentCreateEnvironmentSchema::additionalImagesIsSet() const
+{
+    return m_Additional_imagesIsSet;
+}
+
+void AgentCreateEnvironmentSchema::unsetAdditional_images()
+{
+    m_Additional_imagesIsSet = false;
 }
 
 }

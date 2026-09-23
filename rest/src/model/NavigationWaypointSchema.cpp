@@ -20,7 +20,6 @@ namespace model {
 
 NavigationWaypointSchema::NavigationWaypointSchema()
 {
-    m_PositionIsSet = false;
 }
 
 NavigationWaypointSchema::~NavigationWaypointSchema()
@@ -40,15 +39,25 @@ web::json::value NavigationWaypointSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("id"))] = ModelBase::toJson(m_Id.get());
     }
-    if(m_PositionIsSet)
+    if(m_Position.has_value())
     {
         
-        val[utility::conversions::to_string_t(_XPLATSTR("position"))] = ModelBase::toJson(m_Position);
+        val[utility::conversions::to_string_t(_XPLATSTR("position"))] = ModelBase::toJson(m_Position.get());
+    }
+    if(m_Geodetic_position.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("geodetic_position"))] = ModelBase::toJson(m_Geodetic_position.get());
     }
     if(m_Rotation.has_value())
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("rotation"))] = ModelBase::toJson(m_Rotation.get());
+    }
+    if(m_Orientation.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("orientation"))] = ModelBase::toJson(m_Orientation.get());
     }
     if(m_Yaw.has_value())
     {
@@ -104,6 +113,17 @@ bool NavigationWaypointSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("geodetic_position"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("geodetic_position")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, double> refVal_setGeodeticPosition;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setGeodeticPosition);
+            setGeodeticPosition(refVal_setGeodeticPosition);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("rotation"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("rotation")));
@@ -112,6 +132,17 @@ bool NavigationWaypointSchema::fromJson(const web::json::value& val)
             std::shared_ptr<NavigationRotationSchema> refVal_setRotation;
             ok &= ModelBase::fromJson(fieldValue, refVal_setRotation);
             setRotation(refVal_setRotation);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("orientation"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("orientation")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setOrientation;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setOrientation);
+            setOrientation(refVal_setOrientation);
             
         }
     }
@@ -184,13 +215,21 @@ void NavigationWaypointSchema::toMultipart(std::shared_ptr<MultipartFormData> mu
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("id")), m_Id.get()));
     }
-    if(m_PositionIsSet)
+    if(m_Position.has_value())
     {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("position")), m_Position));
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("position")), m_Position.get()));
+    }
+    if(m_Geodetic_position.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("geodetic_position")), m_Geodetic_position.get()));
     }
     if(m_Rotation.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("rotation")), m_Rotation.get()));
+    }
+    if(m_Orientation.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("orientation")), m_Orientation.get()));
     }
     if(m_Yaw.has_value())
     {
@@ -235,11 +274,23 @@ bool NavigationWaypointSchema::fromMultiPart(std::shared_ptr<MultipartFormData> 
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("position"))), refVal_setPosition );
         setPosition(refVal_setPosition);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("geodetic_position"))))
+    {
+        std::map<utility::string_t, double> refVal_setGeodeticPosition;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("geodetic_position"))), refVal_setGeodeticPosition );
+        setGeodeticPosition(refVal_setGeodeticPosition);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("rotation"))))
     {
         std::shared_ptr<NavigationRotationSchema> refVal_setRotation;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("rotation"))), refVal_setRotation );
         setRotation(refVal_setRotation);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("orientation"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setOrientation;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("orientation"))), refVal_setOrientation );
+        setOrientation(refVal_setOrientation);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("yaw"))))
     {
@@ -297,23 +348,41 @@ void NavigationWaypointSchema::unsetId()
 }
 std::map<utility::string_t, double> NavigationWaypointSchema::getPosition() const
 {
-    return m_Position;
+    return m_Position.get();
 }
 
 void NavigationWaypointSchema::setPosition(std::map<utility::string_t, double> value)
 {
     m_Position = value;
-    m_PositionIsSet = true;
 }
 
 bool NavigationWaypointSchema::positionIsSet() const
 {
-    return m_PositionIsSet;
+    return m_Position.has_value();
 }
 
 void NavigationWaypointSchema::unsetPosition()
 {
-    m_PositionIsSet = false;
+    m_Position.reset();
+}
+std::map<utility::string_t, double> NavigationWaypointSchema::getGeodeticPosition() const
+{
+    return m_Geodetic_position.get();
+}
+
+void NavigationWaypointSchema::setGeodeticPosition(std::map<utility::string_t, double> value)
+{
+    m_Geodetic_position = value;
+}
+
+bool NavigationWaypointSchema::geodeticPositionIsSet() const
+{
+    return m_Geodetic_position.has_value();
+}
+
+void NavigationWaypointSchema::unsetGeodetic_position()
+{
+    m_Geodetic_position.reset();
 }
 std::shared_ptr<NavigationRotationSchema> NavigationWaypointSchema::getRotation() const
 {
@@ -334,6 +403,26 @@ bool NavigationWaypointSchema::rotationIsSet() const
 void NavigationWaypointSchema::unsetRotation()
 {
     m_Rotation.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> NavigationWaypointSchema::getOrientation() const
+{
+    return m_Orientation.get();
+}
+
+
+void NavigationWaypointSchema::setOrientation(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Orientation = value;
+}
+
+bool NavigationWaypointSchema::orientationIsSet() const
+{
+    return m_Orientation.has_value();
+}
+
+void NavigationWaypointSchema::unsetOrientation()
+{
+    m_Orientation.reset();
 }
 double NavigationWaypointSchema::getYaw() const
 {

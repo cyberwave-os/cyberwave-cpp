@@ -77,6 +77,11 @@ public:
     void unsetSettings();
     void setSettings(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getSettingsBase() const;
+    bool settingsBaseIsSet() const;
+    void unsetSettings_base();
+    void setSettingsBase(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
     std::map<utility::string_t, std::shared_ptr<AnyType>> getUniversalSchema() const;
     bool universalSchemaIsSet() const;
     void unsetUniversal_schema();
@@ -112,6 +117,16 @@ public:
     void unsetIs_template();
     void setIsTemplate(bool value);
 
+    utility::string_t getControlPlaneAccess() const;
+    bool controlPlaneAccessIsSet() const;
+    void unsetControl_plane_access();
+    void setControlPlaneAccess(const utility::string_t& value);
+
+    std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> getExpectedObjectRevisions() const;
+    bool expectedObjectRevisionsIsSet() const;
+    void unsetExpected_object_revisions();
+    void setExpectedObjectRevisions(const std::map<utility::string_t, std::map<utility::string_t, utility::string_t>>& value);
+
     utility::string_t getTwinAssetUuid() const;
     bool twinAssetUuidIsSet() const;
     void unsetTwin_asset_uuid();
@@ -134,6 +149,8 @@ protected:
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Settings;
 
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Settings_base;
+
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Universal_schema;
 
     boost::optional<utility::string_t> m_Asset_uuid;
@@ -147,6 +164,10 @@ protected:
     boost::optional<std::vector<utility::string_t>> m_Tags;
 
     boost::optional<bool> m_Is_template;
+
+    boost::optional<utility::string_t> m_Control_plane_access;
+
+    boost::optional<std::map<utility::string_t, std::map<utility::string_t, utility::string_t>>> m_Expected_object_revisions;
 
     boost::optional<utility::string_t> m_Twin_asset_uuid;
 

@@ -83,6 +83,11 @@ web::json::value WorkflowRunSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("finished_at"))] = ModelBase::toJson(m_Finished_at.get());
     }
+    if(m_Progress.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("progress"))] = ModelBase::toJson(m_Progress.get());
+    }
 
     return val;
 }
@@ -178,6 +183,17 @@ bool WorkflowRunSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("progress"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("progress")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<WorkflowExecutionProgressSchema> refVal_setProgress;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setProgress);
+            setProgress(refVal_setProgress);
+            
+        }
+    }
     return ok;
 }
 
@@ -219,6 +235,10 @@ void WorkflowRunSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart
     if(m_Finished_at.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("finished_at")), m_Finished_at.get()));
+    }
+    if(m_Progress.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("progress")), m_Progress.get()));
     }
 }
 
@@ -278,6 +298,12 @@ bool WorkflowRunSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
         utility::datetime refVal_setFinishedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("finished_at"))), refVal_setFinishedAt );
         setFinishedAt(refVal_setFinishedAt);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("progress"))))
+    {
+        std::shared_ptr<WorkflowExecutionProgressSchema> refVal_setProgress;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("progress"))), refVal_setProgress );
+        setProgress(refVal_setProgress);
     }
     return ok;
 }
@@ -447,6 +473,26 @@ bool WorkflowRunSchema::finishedAtIsSet() const
 void WorkflowRunSchema::unsetFinished_at()
 {
     m_Finished_at.reset();
+}
+std::shared_ptr<WorkflowExecutionProgressSchema> WorkflowRunSchema::getProgress() const
+{
+    return m_Progress.get();
+}
+
+
+void WorkflowRunSchema::setProgress(const std::shared_ptr<WorkflowExecutionProgressSchema>& value)
+{
+    m_Progress = value;
+}
+
+bool WorkflowRunSchema::progressIsSet() const
+{
+    return m_Progress.has_value();
+}
+
+void WorkflowRunSchema::unsetProgress()
+{
+    m_Progress.reset();
 }
 
 }

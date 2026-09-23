@@ -107,6 +107,11 @@ web::json::value EnvironmentProceduralPrimitiveCreateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("locked"))] = ModelBase::toJson(m_Locked);
     }
+    if(m_Fixed_base.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("fixed_base"))] = ModelBase::toJson(m_Fixed_base.get());
+    }
     if(m_Auto_placeIsSet)
     {
         
@@ -267,6 +272,17 @@ bool EnvironmentProceduralPrimitiveCreateSchema::fromJson(const web::json::value
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("fixed_base")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setFixedBase;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFixedBase);
+            setFixedBase(refVal_setFixedBase);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("auto_place"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("auto_place")));
@@ -350,6 +366,10 @@ void EnvironmentProceduralPrimitiveCreateSchema::toMultipart(std::shared_ptr<Mul
     if(m_LockedIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("locked")), m_Locked));
+    }
+    if(m_Fixed_base.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("fixed_base")), m_Fixed_base.get()));
     }
     if(m_Auto_placeIsSet)
     {
@@ -447,6 +467,12 @@ bool EnvironmentProceduralPrimitiveCreateSchema::fromMultiPart(std::shared_ptr<M
         bool refVal_setLocked;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("locked"))), refVal_setLocked );
         setLocked(refVal_setLocked);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        bool refVal_setFixedBase;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))), refVal_setFixedBase );
+        setFixedBase(refVal_setFixedBase);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("auto_place"))))
     {
@@ -724,6 +750,25 @@ bool EnvironmentProceduralPrimitiveCreateSchema::lockedIsSet() const
 void EnvironmentProceduralPrimitiveCreateSchema::unsetLocked()
 {
     m_LockedIsSet = false;
+}
+bool EnvironmentProceduralPrimitiveCreateSchema::isFixedBase() const
+{
+    return m_Fixed_base.get();
+}
+
+void EnvironmentProceduralPrimitiveCreateSchema::setFixedBase(bool value)
+{
+    m_Fixed_base = value;
+}
+
+bool EnvironmentProceduralPrimitiveCreateSchema::fixedBaseIsSet() const
+{
+    return m_Fixed_base.has_value();
+}
+
+void EnvironmentProceduralPrimitiveCreateSchema::unsetFixed_base()
+{
+    m_Fixed_base.reset();
 }
 bool EnvironmentProceduralPrimitiveCreateSchema::isAutoPlace() const
 {

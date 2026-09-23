@@ -20,6 +20,8 @@ namespace model {
 
 AgentControlPlanResponse::AgentControlPlanResponse()
 {
+    m_Plan_id = utility::conversions::to_string_t("");
+    m_Plan_idIsSet = false;
     m_Summary = utility::conversions::to_string_t("");
     m_SummaryIsSet = false;
     m_ModeIsSet = false;
@@ -50,6 +52,11 @@ void AgentControlPlanResponse::validate()
 web::json::value AgentControlPlanResponse::toJson() const
 {
     web::json::value val = web::json::value::object();
+    if(m_Plan_idIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("plan_id"))] = ModelBase::toJson(m_Plan_id);
+    }
     if(m_SummaryIsSet)
     {
         
@@ -141,6 +148,17 @@ web::json::value AgentControlPlanResponse::toJson() const
 bool AgentControlPlanResponse::fromJson(const web::json::value& val)
 {
     bool ok = true;
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("plan_id"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("plan_id")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setPlanId;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPlanId);
+            setPlanId(refVal_setPlanId);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("summary"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("summary")));
@@ -329,6 +347,10 @@ void AgentControlPlanResponse::toMultipart(std::shared_ptr<MultipartFormData> mu
     {
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
+    if(m_Plan_idIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("plan_id")), m_Plan_id));
+    }
     if(m_SummaryIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("summary")), m_Summary));
@@ -404,6 +426,12 @@ bool AgentControlPlanResponse::fromMultiPart(std::shared_ptr<MultipartFormData> 
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
 
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("plan_id"))))
+    {
+        utility::string_t refVal_setPlanId;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("plan_id"))), refVal_setPlanId );
+        setPlanId(refVal_setPlanId);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("summary"))))
     {
         utility::string_t refVal_setSummary;
@@ -576,6 +604,27 @@ const utility::string_t AgentControlPlanResponse::fromReadinessEnum(const Readin
 }
 
 
+utility::string_t AgentControlPlanResponse::getPlanId() const
+{
+    return m_Plan_id;
+}
+
+
+void AgentControlPlanResponse::setPlanId(const utility::string_t& value)
+{
+    m_Plan_id = value;
+    m_Plan_idIsSet = true;
+}
+
+bool AgentControlPlanResponse::planIdIsSet() const
+{
+    return m_Plan_idIsSet;
+}
+
+void AgentControlPlanResponse::unsetPlan_id()
+{
+    m_Plan_idIsSet = false;
+}
 utility::string_t AgentControlPlanResponse::getSummary() const
 {
     return m_Summary;

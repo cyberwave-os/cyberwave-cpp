@@ -30,6 +30,7 @@ AssetSchema::AssetSchema()
     m_Created_atIsSet = false;
     m_Updated_at = utility::datetime();
     m_Updated_atIsSet = false;
+    m_Configuration_feedbackIsSet = false;
     m_Has_universal_schema = false;
     m_Has_universal_schemaIsSet = false;
     m_Fixed_base = false;
@@ -82,6 +83,11 @@ web::json::value AssetSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("visibility"))] = ModelBase::toJson(m_Visibility.get());
+    }
+    if(m_Origin_environment_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("origin_environment_uuid"))] = ModelBase::toJson(m_Origin_environment_uuid.get());
     }
     if(m_Owner_uuid.has_value())
     {
@@ -143,6 +149,11 @@ web::json::value AssetSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("capabilities"))] = ModelBase::toJson(m_Capabilities.get());
     }
+    if(m_Configuration_feedbackIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("configuration_feedback"))] = ModelBase::toJson(m_Configuration_feedback);
+    }
     if(m_Thumbnail.has_value())
     {
         
@@ -152,6 +163,16 @@ web::json::value AssetSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("has_universal_schema"))] = ModelBase::toJson(m_Has_universal_schema);
+    }
+    if(m_Build_status.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("build_status"))] = ModelBase::toJson(m_Build_status.get());
+    }
+    if(m_Universal_schema_source.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("universal_schema_source"))] = ModelBase::toJson(m_Universal_schema_source.get());
     }
     if(m_Universal_schema.has_value())
     {
@@ -258,6 +279,17 @@ bool AssetSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setVisibility;
             ok &= ModelBase::fromJson(fieldValue, refVal_setVisibility);
             setVisibility(refVal_setVisibility);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("origin_environment_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("origin_environment_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setOriginEnvironmentUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setOriginEnvironmentUuid);
+            setOriginEnvironmentUuid(refVal_setOriginEnvironmentUuid);
             
         }
     }
@@ -393,6 +425,17 @@ bool AssetSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("configuration_feedback"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("configuration_feedback")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<ConfigurationFeedbackSchema>> refVal_setConfigurationFeedback;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setConfigurationFeedback);
+            setConfigurationFeedback(refVal_setConfigurationFeedback);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("thumbnail"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("thumbnail")));
@@ -412,6 +455,28 @@ bool AssetSchema::fromJson(const web::json::value& val)
             bool refVal_setHasUniversalSchema;
             ok &= ModelBase::fromJson(fieldValue, refVal_setHasUniversalSchema);
             setHasUniversalSchema(refVal_setHasUniversalSchema);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("build_status"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("build_status")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setBuildStatus;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setBuildStatus);
+            setBuildStatus(refVal_setBuildStatus);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("universal_schema_source"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("universal_schema_source")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setUniversalSchemaSource;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setUniversalSchemaSource);
+            setUniversalSchemaSource(refVal_setUniversalSchemaSource);
             
         }
     }
@@ -526,6 +591,10 @@ void AssetSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, cons
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("visibility")), m_Visibility.get()));
     }
+    if(m_Origin_environment_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("origin_environment_uuid")), m_Origin_environment_uuid.get()));
+    }
     if(m_Owner_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("owner_uuid")), m_Owner_uuid.get()));
@@ -574,6 +643,10 @@ void AssetSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, cons
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("capabilities")), m_Capabilities.get()));
     }
+    if(m_Configuration_feedbackIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("configuration_feedback")), m_Configuration_feedback));
+    }
     if(m_Thumbnail.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("thumbnail")), m_Thumbnail.get()));
@@ -581,6 +654,14 @@ void AssetSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, cons
     if(m_Has_universal_schemaIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("has_universal_schema")), m_Has_universal_schema));
+    }
+    if(m_Build_status.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("build_status")), m_Build_status.get()));
+    }
+    if(m_Universal_schema_source.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("universal_schema_source")), m_Universal_schema_source.get()));
     }
     if(m_Universal_schema.has_value())
     {
@@ -657,6 +738,12 @@ bool AssetSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, co
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("visibility"))), refVal_setVisibility );
         setVisibility(refVal_setVisibility);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("origin_environment_uuid"))))
+    {
+        utility::string_t refVal_setOriginEnvironmentUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("origin_environment_uuid"))), refVal_setOriginEnvironmentUuid );
+        setOriginEnvironmentUuid(refVal_setOriginEnvironmentUuid);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("owner_uuid"))))
     {
         utility::string_t refVal_setOwnerUuid;
@@ -729,6 +816,12 @@ bool AssetSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, co
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("capabilities"))), refVal_setCapabilities );
         setCapabilities(refVal_setCapabilities);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("configuration_feedback"))))
+    {
+        std::vector<std::shared_ptr<ConfigurationFeedbackSchema>> refVal_setConfigurationFeedback;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("configuration_feedback"))), refVal_setConfigurationFeedback );
+        setConfigurationFeedback(refVal_setConfigurationFeedback);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("thumbnail"))))
     {
         utility::string_t refVal_setThumbnail;
@@ -740,6 +833,18 @@ bool AssetSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, co
         bool refVal_setHasUniversalSchema;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("has_universal_schema"))), refVal_setHasUniversalSchema );
         setHasUniversalSchema(refVal_setHasUniversalSchema);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("build_status"))))
+    {
+        utility::string_t refVal_setBuildStatus;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("build_status"))), refVal_setBuildStatus );
+        setBuildStatus(refVal_setBuildStatus);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("universal_schema_source"))))
+    {
+        utility::string_t refVal_setUniversalSchemaSource;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("universal_schema_source"))), refVal_setUniversalSchemaSource );
+        setUniversalSchemaSource(refVal_setUniversalSchemaSource);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("universal_schema"))))
     {
@@ -911,6 +1016,26 @@ bool AssetSchema::visibilityIsSet() const
 void AssetSchema::unsetVisibility()
 {
     m_Visibility.reset();
+}
+utility::string_t AssetSchema::getOriginEnvironmentUuid() const
+{
+    return m_Origin_environment_uuid.get();
+}
+
+
+void AssetSchema::setOriginEnvironmentUuid(const utility::string_t& value)
+{
+    m_Origin_environment_uuid = value;
+}
+
+bool AssetSchema::originEnvironmentUuidIsSet() const
+{
+    return m_Origin_environment_uuid.has_value();
+}
+
+void AssetSchema::unsetOrigin_environment_uuid()
+{
+    m_Origin_environment_uuid.reset();
 }
 utility::string_t AssetSchema::getOwnerUuid() const
 {
@@ -1152,6 +1277,27 @@ void AssetSchema::unsetCapabilities()
 {
     m_Capabilities.reset();
 }
+std::vector<std::shared_ptr<ConfigurationFeedbackSchema>> AssetSchema::getConfigurationFeedback() const
+{
+    return m_Configuration_feedback;
+}
+
+
+void AssetSchema::setConfigurationFeedback(const std::vector<std::shared_ptr<ConfigurationFeedbackSchema>>& value)
+{
+    m_Configuration_feedback = value;
+    m_Configuration_feedbackIsSet = true;
+}
+
+bool AssetSchema::configurationFeedbackIsSet() const
+{
+    return m_Configuration_feedbackIsSet;
+}
+
+void AssetSchema::unsetConfiguration_feedback()
+{
+    m_Configuration_feedbackIsSet = false;
+}
 utility::string_t AssetSchema::getThumbnail() const
 {
     return m_Thumbnail.get();
@@ -1191,6 +1337,46 @@ bool AssetSchema::hasUniversalSchemaIsSet() const
 void AssetSchema::unsetHas_universal_schema()
 {
     m_Has_universal_schemaIsSet = false;
+}
+utility::string_t AssetSchema::getBuildStatus() const
+{
+    return m_Build_status.get();
+}
+
+
+void AssetSchema::setBuildStatus(const utility::string_t& value)
+{
+    m_Build_status = value;
+}
+
+bool AssetSchema::buildStatusIsSet() const
+{
+    return m_Build_status.has_value();
+}
+
+void AssetSchema::unsetBuild_status()
+{
+    m_Build_status.reset();
+}
+utility::string_t AssetSchema::getUniversalSchemaSource() const
+{
+    return m_Universal_schema_source.get();
+}
+
+
+void AssetSchema::setUniversalSchemaSource(const utility::string_t& value)
+{
+    m_Universal_schema_source = value;
+}
+
+bool AssetSchema::universalSchemaSourceIsSet() const
+{
+    return m_Universal_schema_source.has_value();
+}
+
+void AssetSchema::unsetUniversal_schema_source()
+{
+    m_Universal_schema_source.reset();
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> AssetSchema::getUniversalSchema() const
 {

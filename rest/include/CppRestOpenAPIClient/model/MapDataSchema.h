@@ -144,6 +144,16 @@ public:
     void unsetUpdated_at();
     void setUpdatedAt(const utility::datetime& value);
 
+    utility::string_t getTwinName() const;
+    bool twinNameIsSet() const;
+    void unsetTwin_name();
+    void setTwinName(const utility::string_t& value);
+
+    bool isTwinIsDeleted() const;
+    bool twinIsDeletedIsSet() const;
+    void unsetTwin_is_deleted();
+    void setTwinIsDeleted(bool value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -184,6 +194,11 @@ protected:
 
     utility::datetime m_Updated_at;
     bool m_Updated_atIsSet;
+
+    boost::optional<utility::string_t> m_Twin_name;
+
+    bool m_Twin_is_deleted;
+    bool m_Twin_is_deletedIsSet;
 
 };
 
