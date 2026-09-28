@@ -28,7 +28,7 @@ MLModelSchema::MLModelSchema()
     m_DescriptionIsSet = false;
     m_Created_at = utility::datetime();
     m_Created_atIsSet = false;
-    m_Updated_at = utility::datetime();
+    m_Updated_at = utility::conversions::to_string_t("");
     m_Updated_atIsSet = false;
     m_Workspace_uuid = utility::conversions::to_string_t("");
     m_Workspace_uuidIsSet = false;
@@ -67,6 +67,7 @@ MLModelSchema::MLModelSchema()
     m_Required_inputsIsSet = false;
     m_Has_credential = false;
     m_Has_credentialIsSet = false;
+    m_Task_contractsIsSet = false;
 }
 
 MLModelSchema::~MLModelSchema()
@@ -256,6 +257,11 @@ web::json::value MLModelSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("execution_surfaces"))] = ModelBase::toJson(m_Execution_surfaces);
     }
+    if(m_Inference_issue.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("inference_issue"))] = ModelBase::toJson(m_Inference_issue.get());
+    }
     if(m_Sdk_load_id.has_value())
     {
         
@@ -305,6 +311,11 @@ web::json::value MLModelSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("io_schema"))] = ModelBase::toJson(m_Io_schema.get());
+    }
+    if(m_Task_contractsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("task_contracts"))] = ModelBase::toJson(m_Task_contracts);
     }
 
     return val;
@@ -373,7 +384,7 @@ bool MLModelSchema::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("updated_at")));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_setUpdatedAt;
+            utility::string_t refVal_setUpdatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_setUpdatedAt);
             setUpdatedAt(refVal_setUpdatedAt);
             
@@ -698,6 +709,17 @@ bool MLModelSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("inference_issue"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("inference_issue")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setInferenceIssue;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setInferenceIssue);
+            setInferenceIssue(refVal_setInferenceIssue);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("sdk_load_id"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("sdk_load_id")));
@@ -805,6 +827,17 @@ bool MLModelSchema::fromJson(const web::json::value& val)
             std::shared_ptr<IOSchemaSchema> refVal_setIoSchema;
             ok &= ModelBase::fromJson(fieldValue, refVal_setIoSchema);
             setIoSchema(refVal_setIoSchema);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("task_contracts"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("task_contracts")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<ModelTaskContractSchema>> refVal_setTaskContracts;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTaskContracts);
+            setTaskContracts(refVal_setTaskContracts);
             
         }
     }
@@ -958,6 +991,10 @@ void MLModelSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, co
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("execution_surfaces")), m_Execution_surfaces));
     }
+    if(m_Inference_issue.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("inference_issue")), m_Inference_issue.get()));
+    }
     if(m_Sdk_load_id.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("sdk_load_id")), m_Sdk_load_id.get()));
@@ -997,6 +1034,10 @@ void MLModelSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, co
     if(m_Io_schema.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("io_schema")), m_Io_schema.get()));
+    }
+    if(m_Task_contractsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("task_contracts")), m_Task_contracts));
     }
 }
 
@@ -1041,7 +1082,7 @@ bool MLModelSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, 
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("updated_at"))))
     {
-        utility::datetime refVal_setUpdatedAt;
+        utility::string_t refVal_setUpdatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("updated_at"))), refVal_setUpdatedAt );
         setUpdatedAt(refVal_setUpdatedAt);
     }
@@ -1219,6 +1260,12 @@ bool MLModelSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, 
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("execution_surfaces"))), refVal_setExecutionSurfaces );
         setExecutionSurfaces(refVal_setExecutionSurfaces);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("inference_issue"))))
+    {
+        utility::string_t refVal_setInferenceIssue;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("inference_issue"))), refVal_setInferenceIssue );
+        setInferenceIssue(refVal_setInferenceIssue);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("sdk_load_id"))))
     {
         utility::string_t refVal_setSdkLoadId;
@@ -1278,6 +1325,12 @@ bool MLModelSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, 
         std::shared_ptr<IOSchemaSchema> refVal_setIoSchema;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("io_schema"))), refVal_setIoSchema );
         setIoSchema(refVal_setIoSchema);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("task_contracts"))))
+    {
+        std::vector<std::shared_ptr<ModelTaskContractSchema>> refVal_setTaskContracts;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("task_contracts"))), refVal_setTaskContracts );
+        setTaskContracts(refVal_setTaskContracts);
     }
     return ok;
 }
@@ -1387,13 +1440,13 @@ void MLModelSchema::unsetCreated_at()
 {
     m_Created_atIsSet = false;
 }
-utility::datetime MLModelSchema::getUpdatedAt() const
+utility::string_t MLModelSchema::getUpdatedAt() const
 {
     return m_Updated_at;
 }
 
 
-void MLModelSchema::setUpdatedAt(const utility::datetime& value)
+void MLModelSchema::setUpdatedAt(const utility::string_t& value)
 {
     m_Updated_at = value;
     m_Updated_atIsSet = true;
@@ -1998,6 +2051,26 @@ void MLModelSchema::unsetExecution_surfaces()
 {
     m_Execution_surfacesIsSet = false;
 }
+utility::string_t MLModelSchema::getInferenceIssue() const
+{
+    return m_Inference_issue.get();
+}
+
+
+void MLModelSchema::setInferenceIssue(const utility::string_t& value)
+{
+    m_Inference_issue = value;
+}
+
+bool MLModelSchema::inferenceIssueIsSet() const
+{
+    return m_Inference_issue.has_value();
+}
+
+void MLModelSchema::unsetInference_issue()
+{
+    m_Inference_issue.reset();
+}
 utility::string_t MLModelSchema::getSdkLoadId() const
 {
     return m_Sdk_load_id.get();
@@ -2198,6 +2271,27 @@ bool MLModelSchema::ioSchemaIsSet() const
 void MLModelSchema::unsetIo_schema()
 {
     m_Io_schema.reset();
+}
+std::vector<std::shared_ptr<ModelTaskContractSchema>> MLModelSchema::getTaskContracts() const
+{
+    return m_Task_contracts;
+}
+
+
+void MLModelSchema::setTaskContracts(const std::vector<std::shared_ptr<ModelTaskContractSchema>>& value)
+{
+    m_Task_contracts = value;
+    m_Task_contractsIsSet = true;
+}
+
+bool MLModelSchema::taskContractsIsSet() const
+{
+    return m_Task_contractsIsSet;
+}
+
+void MLModelSchema::unsetTask_contracts()
+{
+    m_Task_contractsIsSet = false;
 }
 
 }

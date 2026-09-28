@@ -102,6 +102,11 @@ public:
     void unsetSimulation_ready();
     void setSimulationReady(bool value);
 
+    double getSimulationElapsedS() const;
+    bool simulationElapsedSIsSet() const;
+    void unsetSimulation_elapsed_s();
+    void setSimulationElapsedS(double value);
+
 
 protected:
     boost::optional<utility::string_t> m_Status;
@@ -121,6 +126,8 @@ protected:
     boost::optional<utility::string_t> m_Rejecting_instance_uuid;
 
     boost::optional<bool> m_Simulation_ready;
+
+    boost::optional<double> m_Simulation_elapsed_s;
 
 };
 

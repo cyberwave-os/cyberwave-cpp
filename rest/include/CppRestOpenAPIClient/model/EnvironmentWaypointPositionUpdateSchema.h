@@ -12,7 +12,7 @@
 /*
  * EnvironmentWaypointPositionUpdateSchema.h
  *
- * Partial update for a single waypoint&#39;s position/rotation.  Deliberately excludes &#x60;&#x60;frame&#x60;&#x60; — see &#x60;&#x60;update_environment_waypoint_position&#x60;&#x60; in &#x60;&#x60;src.app.api.environments&#x60;&#x60;. Fields not sent are left untouched (the endpoint reads this via &#x60;&#x60;.dict(exclude_unset&#x3D;True)&#x60;&#x60;).
+ * Partial update for a single waypoint&#39;s position/rotation.  Deliberately excludes &#x60;&#x60;frame&#x60;&#x60; — see &#x60;&#x60;update_environment_waypoint_position&#x60;&#x60; in &#x60;&#x60;src.app.api.environments&#x60;&#x60;. Fields not sent are left untouched (the endpoint reads this via &#x60;&#x60;.dict(exclude_unset&#x3D;True)&#x60;&#x60;).  Either pose may be omitted, but a pose that *is* sent must carry every axis: the &#x60;&#x60;Required*&#x60;&#x60; variants exist so the generated client cannot zero-fill one on its way out (CYB-3809).
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentWaypointPositionUpdateSchema_H_
@@ -22,20 +22,20 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
-#include "CppRestOpenAPIClient/model/QuaternionSchema.h"
-#include "CppRestOpenAPIClient/model/Vector3Schema.h"
+#include "CppRestOpenAPIClient/model/RequiredQuaternionSchema.h"
+#include "CppRestOpenAPIClient/model/RequiredVector3Schema.h"
 
 namespace org {
 namespace openapitools {
 namespace client {
 namespace model {
 
-class Vector3Schema;
-class QuaternionSchema;
+class RequiredVector3Schema;
+class RequiredQuaternionSchema;
 
 
 /// <summary>
-/// Partial update for a single waypoint&#39;s position/rotation.  Deliberately excludes &#x60;&#x60;frame&#x60;&#x60; — see &#x60;&#x60;update_environment_waypoint_position&#x60;&#x60; in &#x60;&#x60;src.app.api.environments&#x60;&#x60;. Fields not sent are left untouched (the endpoint reads this via &#x60;&#x60;.dict(exclude_unset&#x3D;True)&#x60;&#x60;).
+/// Partial update for a single waypoint&#39;s position/rotation.  Deliberately excludes &#x60;&#x60;frame&#x60;&#x60; — see &#x60;&#x60;update_environment_waypoint_position&#x60;&#x60; in &#x60;&#x60;src.app.api.environments&#x60;&#x60;. Fields not sent are left untouched (the endpoint reads this via &#x60;&#x60;.dict(exclude_unset&#x3D;True)&#x60;&#x60;).  Either pose may be omitted, but a pose that *is* sent must carry every axis: the &#x60;&#x60;Required*&#x60;&#x60; variants exist so the generated client cannot zero-fill one on its way out (CYB-3809).
 /// </summary>
 class  EnvironmentWaypointPositionUpdateSchema
     : public ModelBase
@@ -60,21 +60,21 @@ public:
     /// EnvironmentWaypointPositionUpdateSchema members
 
 
-    std::shared_ptr<Vector3Schema> getPosition() const;
+    std::shared_ptr<RequiredVector3Schema> getPosition() const;
     bool positionIsSet() const;
     void unsetPosition();
-    void setPosition(const std::shared_ptr<Vector3Schema>& value);
+    void setPosition(const std::shared_ptr<RequiredVector3Schema>& value);
 
-    std::shared_ptr<QuaternionSchema> getRotation() const;
+    std::shared_ptr<RequiredQuaternionSchema> getRotation() const;
     bool rotationIsSet() const;
     void unsetRotation();
-    void setRotation(const std::shared_ptr<QuaternionSchema>& value);
+    void setRotation(const std::shared_ptr<RequiredQuaternionSchema>& value);
 
 
 protected:
-    boost::optional<std::shared_ptr<Vector3Schema>> m_Position;
+    boost::optional<std::shared_ptr<RequiredVector3Schema>> m_Position;
 
-    boost::optional<std::shared_ptr<QuaternionSchema>> m_Rotation;
+    boost::optional<std::shared_ptr<RequiredQuaternionSchema>> m_Rotation;
 
 };
 

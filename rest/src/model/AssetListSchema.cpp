@@ -20,6 +20,8 @@ namespace model {
 
 AssetListSchema::AssetListSchema()
 {
+    m_Is_kit = false;
+    m_Is_kitIsSet = false;
     m_Uuid = utility::conversions::to_string_t("");
     m_UuidIsSet = false;
     m_Name = utility::conversions::to_string_t("");
@@ -53,6 +55,11 @@ void AssetListSchema::validate()
 web::json::value AssetListSchema::toJson() const
 {
     web::json::value val = web::json::value::object();
+    if(m_Is_kitIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("is_kit"))] = ModelBase::toJson(m_Is_kit);
+    }
     if(m_UuidIsSet)
     {
         
@@ -133,6 +140,16 @@ web::json::value AssetListSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("has_universal_schema"))] = ModelBase::toJson(m_Has_universal_schema);
     }
+    if(m_Build_status.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("build_status"))] = ModelBase::toJson(m_Build_status.get());
+    }
+    if(m_Universal_schema_source.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("universal_schema_source"))] = ModelBase::toJson(m_Universal_schema_source.get());
+    }
     if(m_Fixed_baseIsSet)
     {
         
@@ -170,6 +187,17 @@ web::json::value AssetListSchema::toJson() const
 bool AssetListSchema::fromJson(const web::json::value& val)
 {
     bool ok = true;
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("is_kit"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("is_kit")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setIsKit;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setIsKit);
+            setIsKit(refVal_setIsKit);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("uuid"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("uuid")));
@@ -346,6 +374,28 @@ bool AssetListSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("build_status"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("build_status")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setBuildStatus;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setBuildStatus);
+            setBuildStatus(refVal_setBuildStatus);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("universal_schema_source"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("universal_schema_source")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setUniversalSchemaSource;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setUniversalSchemaSource);
+            setUniversalSchemaSource(refVal_setUniversalSchemaSource);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("fixed_base")));
@@ -422,6 +472,10 @@ void AssetListSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, 
     {
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
+    if(m_Is_kitIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("is_kit")), m_Is_kit));
+    }
     if(m_UuidIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("uuid")), m_Uuid));
@@ -486,6 +540,14 @@ void AssetListSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, 
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("has_universal_schema")), m_Has_universal_schema));
     }
+    if(m_Build_status.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("build_status")), m_Build_status.get()));
+    }
+    if(m_Universal_schema_source.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("universal_schema_source")), m_Universal_schema_source.get()));
+    }
     if(m_Fixed_baseIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("fixed_base")), m_Fixed_base));
@@ -521,6 +583,12 @@ bool AssetListSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
 
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("is_kit"))))
+    {
+        bool refVal_setIsKit;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("is_kit"))), refVal_setIsKit );
+        setIsKit(refVal_setIsKit);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("uuid"))))
     {
         utility::string_t refVal_setUuid;
@@ -617,6 +685,18 @@ bool AssetListSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("has_universal_schema"))), refVal_setHasUniversalSchema );
         setHasUniversalSchema(refVal_setHasUniversalSchema);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("build_status"))))
+    {
+        utility::string_t refVal_setBuildStatus;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("build_status"))), refVal_setBuildStatus );
+        setBuildStatus(refVal_setBuildStatus);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("universal_schema_source"))))
+    {
+        utility::string_t refVal_setUniversalSchemaSource;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("universal_schema_source"))), refVal_setUniversalSchemaSource );
+        setUniversalSchemaSource(refVal_setUniversalSchemaSource);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
     {
         bool refVal_setFixedBase;
@@ -657,6 +737,26 @@ bool AssetListSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart
 }
 
 
+bool AssetListSchema::isIsKit() const
+{
+    return m_Is_kit;
+}
+
+void AssetListSchema::setIsKit(bool value)
+{
+    m_Is_kit = value;
+    m_Is_kitIsSet = true;
+}
+
+bool AssetListSchema::isKitIsSet() const
+{
+    return m_Is_kitIsSet;
+}
+
+void AssetListSchema::unsetIs_kit()
+{
+    m_Is_kitIsSet = false;
+}
 utility::string_t AssetListSchema::getUuid() const
 {
     return m_Uuid;
@@ -981,6 +1081,46 @@ bool AssetListSchema::hasUniversalSchemaIsSet() const
 void AssetListSchema::unsetHas_universal_schema()
 {
     m_Has_universal_schemaIsSet = false;
+}
+utility::string_t AssetListSchema::getBuildStatus() const
+{
+    return m_Build_status.get();
+}
+
+
+void AssetListSchema::setBuildStatus(const utility::string_t& value)
+{
+    m_Build_status = value;
+}
+
+bool AssetListSchema::buildStatusIsSet() const
+{
+    return m_Build_status.has_value();
+}
+
+void AssetListSchema::unsetBuild_status()
+{
+    m_Build_status.reset();
+}
+utility::string_t AssetListSchema::getUniversalSchemaSource() const
+{
+    return m_Universal_schema_source.get();
+}
+
+
+void AssetListSchema::setUniversalSchemaSource(const utility::string_t& value)
+{
+    m_Universal_schema_source = value;
+}
+
+bool AssetListSchema::universalSchemaSourceIsSet() const
+{
+    return m_Universal_schema_source.has_value();
+}
+
+void AssetListSchema::unsetUniversal_schema_source()
+{
+    m_Universal_schema_source.reset();
 }
 bool AssetListSchema::isFixedBase() const
 {

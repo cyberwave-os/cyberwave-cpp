@@ -20,6 +20,7 @@ namespace model {
 
 AgentTwinControlSurface::AgentTwinControlSurface()
 {
+    m_RuntimesIsSet = false;
     m_Twin_uuid = utility::conversions::to_string_t("");
     m_Twin_uuidIsSet = false;
     m_Twin_name = utility::conversions::to_string_t("");
@@ -27,6 +28,7 @@ AgentTwinControlSurface::AgentTwinControlSurface()
     m_CapabilitiesIsSet = false;
     m_Capability_detailsIsSet = false;
     m_ControlsIsSet = false;
+    m_Control_capabilitiesIsSet = false;
     m_RoutesIsSet = false;
 }
 
@@ -42,6 +44,11 @@ void AgentTwinControlSurface::validate()
 web::json::value AgentTwinControlSurface::toJson() const
 {
     web::json::value val = web::json::value::object();
+    if(m_RuntimesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("runtimes"))] = ModelBase::toJson(m_Runtimes);
+    }
     if(m_Twin_uuidIsSet)
     {
         
@@ -84,6 +91,11 @@ web::json::value AgentTwinControlSurface::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("controls"))] = ModelBase::toJson(m_Controls);
     }
+    if(m_Control_capabilitiesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("control_capabilities"))] = ModelBase::toJson(m_Control_capabilities);
+    }
     if(m_RoutesIsSet)
     {
         
@@ -96,6 +108,17 @@ web::json::value AgentTwinControlSurface::toJson() const
 bool AgentTwinControlSurface::fromJson(const web::json::value& val)
 {
     bool ok = true;
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("runtimes"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("runtimes")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setRuntimes;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRuntimes);
+            setRuntimes(refVal_setRuntimes);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("twin_uuid")));
@@ -185,6 +208,17 @@ bool AgentTwinControlSurface::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("control_capabilities"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("control_capabilities")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<AgentBoundControlCapabilitySchema>> refVal_setControlCapabilities;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setControlCapabilities);
+            setControlCapabilities(refVal_setControlCapabilities);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("routes"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("routes")));
@@ -205,6 +239,10 @@ void AgentTwinControlSurface::toMultipart(std::shared_ptr<MultipartFormData> mul
     if(namePrefix.size() > 0 && namePrefix.substr(namePrefix.size() - 1) != utility::conversions::to_string_t(_XPLATSTR(".")))
     {
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
+    }
+    if(m_RuntimesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("runtimes")), m_Runtimes));
     }
     if(m_Twin_uuidIsSet)
     {
@@ -238,6 +276,10 @@ void AgentTwinControlSurface::toMultipart(std::shared_ptr<MultipartFormData> mul
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controls")), m_Controls));
     }
+    if(m_Control_capabilitiesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("control_capabilities")), m_Control_capabilities));
+    }
     if(m_RoutesIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("routes")), m_Routes));
@@ -253,6 +295,12 @@ bool AgentTwinControlSurface::fromMultiPart(std::shared_ptr<MultipartFormData> m
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
 
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("runtimes"))))
+    {
+        std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setRuntimes;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("runtimes"))), refVal_setRuntimes );
+        setRuntimes(refVal_setRuntimes);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))))
     {
         utility::string_t refVal_setTwinUuid;
@@ -300,6 +348,12 @@ bool AgentTwinControlSurface::fromMultiPart(std::shared_ptr<MultipartFormData> m
         std::vector<std::shared_ptr<AgentTwinControl>> refVal_setControls;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("controls"))), refVal_setControls );
         setControls(refVal_setControls);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("control_capabilities"))))
+    {
+        std::vector<std::shared_ptr<AgentBoundControlCapabilitySchema>> refVal_setControlCapabilities;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("control_capabilities"))), refVal_setControlCapabilities );
+        setControlCapabilities(refVal_setControlCapabilities);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("routes"))))
     {
@@ -360,6 +414,27 @@ std::vector<AgentTwinControlSurface::CapabilitiesEnum> AgentTwinControlSurface::
     return ret;
 }
 
+std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AnyType>>> AgentTwinControlSurface::getRuntimes() const
+{
+    return m_Runtimes;
+}
+
+
+void AgentTwinControlSurface::setRuntimes(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AnyType>>>& value)
+{
+    m_Runtimes = value;
+    m_RuntimesIsSet = true;
+}
+
+bool AgentTwinControlSurface::runtimesIsSet() const
+{
+    return m_RuntimesIsSet;
+}
+
+void AgentTwinControlSurface::unsetRuntimes()
+{
+    m_RuntimesIsSet = false;
+}
 utility::string_t AgentTwinControlSurface::getTwinUuid() const
 {
     return m_Twin_uuid;
@@ -524,6 +599,27 @@ bool AgentTwinControlSurface::controlsIsSet() const
 void AgentTwinControlSurface::unsetControls()
 {
     m_ControlsIsSet = false;
+}
+std::vector<std::shared_ptr<AgentBoundControlCapabilitySchema>> AgentTwinControlSurface::getControlCapabilities() const
+{
+    return m_Control_capabilities;
+}
+
+
+void AgentTwinControlSurface::setControlCapabilities(const std::vector<std::shared_ptr<AgentBoundControlCapabilitySchema>>& value)
+{
+    m_Control_capabilities = value;
+    m_Control_capabilitiesIsSet = true;
+}
+
+bool AgentTwinControlSurface::controlCapabilitiesIsSet() const
+{
+    return m_Control_capabilitiesIsSet;
+}
+
+void AgentTwinControlSurface::unsetControl_capabilities()
+{
+    m_Control_capabilitiesIsSet = false;
 }
 std::vector<std::shared_ptr<AgentTwinControlRoute>> AgentTwinControlSurface::getRoutes() const
 {

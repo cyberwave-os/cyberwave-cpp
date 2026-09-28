@@ -72,6 +72,11 @@ public:
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    utility::datetime getExpectedUpdatedAt() const;
+    bool expectedUpdatedAtIsSet() const;
+    void unsetExpected_updated_at();
+    void setExpectedUpdatedAt(const utility::datetime& value);
+
     utility::string_t getVisibility() const;
     bool visibilityIsSet() const;
     void unsetVisibility();
@@ -164,6 +169,8 @@ protected:
     boost::optional<utility::string_t> m_Description;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
+
+    boost::optional<utility::datetime> m_Expected_updated_at;
 
     boost::optional<utility::string_t> m_Visibility;
 

@@ -24,6 +24,8 @@ EnvironmentCreateSchema::EnvironmentCreateSchema()
     m_NameIsSet = false;
     m_Description = utility::conversions::to_string_t("");
     m_DescriptionIsSet = false;
+    m_Preserve_template_visibility = false;
+    m_Preserve_template_visibilityIsSet = false;
 }
 
 EnvironmentCreateSchema::~EnvironmentCreateSchema()
@@ -57,6 +59,11 @@ web::json::value EnvironmentCreateSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("settings"))] = ModelBase::toJson(m_Settings.get());
+    }
+    if(m_Settings_base.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("settings_base"))] = ModelBase::toJson(m_Settings_base.get());
     }
     if(m_Universal_schema.has_value())
     {
@@ -92,6 +99,31 @@ web::json::value EnvironmentCreateSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("is_template"))] = ModelBase::toJson(m_Is_template.get());
+    }
+    if(m_Is_lab.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("is_lab"))] = ModelBase::toJson(m_Is_lab.get());
+    }
+    if(m_Lab_kind.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("lab_kind"))] = ModelBase::toJson(m_Lab_kind.get());
+    }
+    if(m_Preserve_template_visibilityIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("preserve_template_visibility"))] = ModelBase::toJson(m_Preserve_template_visibility);
+    }
+    if(m_Control_plane_access.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("control_plane_access"))] = ModelBase::toJson(m_Control_plane_access.get());
+    }
+    if(m_Expected_object_revisions.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_object_revisions"))] = ModelBase::toJson(m_Expected_object_revisions.get());
     }
     if(m_Twin_asset_uuid.has_value())
     {
@@ -151,6 +183,17 @@ bool EnvironmentCreateSchema::fromJson(const web::json::value& val)
             std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setSettings;
             ok &= ModelBase::fromJson(fieldValue, refVal_setSettings);
             setSettings(refVal_setSettings);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("settings_base"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("settings_base")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setSettingsBase;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSettingsBase);
+            setSettingsBase(refVal_setSettingsBase);
             
         }
     }
@@ -231,6 +274,61 @@ bool EnvironmentCreateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("is_lab"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("is_lab")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setIsLab;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setIsLab);
+            setIsLab(refVal_setIsLab);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("lab_kind"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("lab_kind")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<LabKind> refVal_setLabKind;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setLabKind);
+            setLabKind(refVal_setLabKind);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("preserve_template_visibility"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("preserve_template_visibility")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setPreserveTemplateVisibility;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPreserveTemplateVisibility);
+            setPreserveTemplateVisibility(refVal_setPreserveTemplateVisibility);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("control_plane_access"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("control_plane_access")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setControlPlaneAccess;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setControlPlaneAccess);
+            setControlPlaneAccess(refVal_setControlPlaneAccess);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_object_revisions"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_object_revisions")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> refVal_setExpectedObjectRevisions;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedObjectRevisions);
+            setExpectedObjectRevisions(refVal_setExpectedObjectRevisions);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("twin_asset_uuid"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("twin_asset_uuid")));
@@ -279,6 +377,10 @@ void EnvironmentCreateSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("settings")), m_Settings.get()));
     }
+    if(m_Settings_base.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("settings_base")), m_Settings_base.get()));
+    }
     if(m_Universal_schema.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("universal_schema")), m_Universal_schema.get()));
@@ -306,6 +408,26 @@ void EnvironmentCreateSchema::toMultipart(std::shared_ptr<MultipartFormData> mul
     if(m_Is_template.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("is_template")), m_Is_template.get()));
+    }
+    if(m_Is_lab.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("is_lab")), m_Is_lab.get()));
+    }
+    if(m_Lab_kind.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("lab_kind")), m_Lab_kind.get()));
+    }
+    if(m_Preserve_template_visibilityIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("preserve_template_visibility")), m_Preserve_template_visibility));
+    }
+    if(m_Control_plane_access.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("control_plane_access")), m_Control_plane_access.get()));
+    }
+    if(m_Expected_object_revisions.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_object_revisions")), m_Expected_object_revisions.get()));
     }
     if(m_Twin_asset_uuid.has_value())
     {
@@ -350,6 +472,12 @@ bool EnvironmentCreateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("settings"))), refVal_setSettings );
         setSettings(refVal_setSettings);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("settings_base"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setSettingsBase;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("settings_base"))), refVal_setSettingsBase );
+        setSettingsBase(refVal_setSettingsBase);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("universal_schema"))))
     {
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setUniversalSchema;
@@ -391,6 +519,36 @@ bool EnvironmentCreateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> m
         bool refVal_setIsTemplate;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("is_template"))), refVal_setIsTemplate );
         setIsTemplate(refVal_setIsTemplate);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("is_lab"))))
+    {
+        bool refVal_setIsLab;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("is_lab"))), refVal_setIsLab );
+        setIsLab(refVal_setIsLab);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("lab_kind"))))
+    {
+        std::shared_ptr<LabKind> refVal_setLabKind;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("lab_kind"))), refVal_setLabKind );
+        setLabKind(refVal_setLabKind);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("preserve_template_visibility"))))
+    {
+        bool refVal_setPreserveTemplateVisibility;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("preserve_template_visibility"))), refVal_setPreserveTemplateVisibility );
+        setPreserveTemplateVisibility(refVal_setPreserveTemplateVisibility);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("control_plane_access"))))
+    {
+        utility::string_t refVal_setControlPlaneAccess;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("control_plane_access"))), refVal_setControlPlaneAccess );
+        setControlPlaneAccess(refVal_setControlPlaneAccess);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_object_revisions"))))
+    {
+        std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> refVal_setExpectedObjectRevisions;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_object_revisions"))), refVal_setExpectedObjectRevisions );
+        setExpectedObjectRevisions(refVal_setExpectedObjectRevisions);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("twin_asset_uuid"))))
     {
@@ -489,6 +647,26 @@ bool EnvironmentCreateSchema::settingsIsSet() const
 void EnvironmentCreateSchema::unsetSettings()
 {
     m_Settings.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> EnvironmentCreateSchema::getSettingsBase() const
+{
+    return m_Settings_base.get();
+}
+
+
+void EnvironmentCreateSchema::setSettingsBase(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Settings_base = value;
+}
+
+bool EnvironmentCreateSchema::settingsBaseIsSet() const
+{
+    return m_Settings_base.has_value();
+}
+
+void EnvironmentCreateSchema::unsetSettings_base()
+{
+    m_Settings_base.reset();
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> EnvironmentCreateSchema::getUniversalSchema() const
 {
@@ -628,6 +806,105 @@ bool EnvironmentCreateSchema::isTemplateIsSet() const
 void EnvironmentCreateSchema::unsetIs_template()
 {
     m_Is_template.reset();
+}
+bool EnvironmentCreateSchema::isIsLab() const
+{
+    return m_Is_lab.get();
+}
+
+void EnvironmentCreateSchema::setIsLab(bool value)
+{
+    m_Is_lab = value;
+}
+
+bool EnvironmentCreateSchema::isLabIsSet() const
+{
+    return m_Is_lab.has_value();
+}
+
+void EnvironmentCreateSchema::unsetIs_lab()
+{
+    m_Is_lab.reset();
+}
+std::shared_ptr<LabKind> EnvironmentCreateSchema::getLabKind() const
+{
+    return m_Lab_kind.get();
+}
+
+
+void EnvironmentCreateSchema::setLabKind(const std::shared_ptr<LabKind>& value)
+{
+    m_Lab_kind = value;
+}
+
+bool EnvironmentCreateSchema::labKindIsSet() const
+{
+    return m_Lab_kind.has_value();
+}
+
+void EnvironmentCreateSchema::unsetLab_kind()
+{
+    m_Lab_kind.reset();
+}
+bool EnvironmentCreateSchema::isPreserveTemplateVisibility() const
+{
+    return m_Preserve_template_visibility;
+}
+
+void EnvironmentCreateSchema::setPreserveTemplateVisibility(bool value)
+{
+    m_Preserve_template_visibility = value;
+    m_Preserve_template_visibilityIsSet = true;
+}
+
+bool EnvironmentCreateSchema::preserveTemplateVisibilityIsSet() const
+{
+    return m_Preserve_template_visibilityIsSet;
+}
+
+void EnvironmentCreateSchema::unsetPreserve_template_visibility()
+{
+    m_Preserve_template_visibilityIsSet = false;
+}
+utility::string_t EnvironmentCreateSchema::getControlPlaneAccess() const
+{
+    return m_Control_plane_access.get();
+}
+
+
+void EnvironmentCreateSchema::setControlPlaneAccess(const utility::string_t& value)
+{
+    m_Control_plane_access = value;
+}
+
+bool EnvironmentCreateSchema::controlPlaneAccessIsSet() const
+{
+    return m_Control_plane_access.has_value();
+}
+
+void EnvironmentCreateSchema::unsetControl_plane_access()
+{
+    m_Control_plane_access.reset();
+}
+std::map<utility::string_t, std::map<utility::string_t, utility::string_t>> EnvironmentCreateSchema::getExpectedObjectRevisions() const
+{
+    return m_Expected_object_revisions.get();
+}
+
+
+void EnvironmentCreateSchema::setExpectedObjectRevisions(const std::map<utility::string_t, std::map<utility::string_t, utility::string_t>>& value)
+{
+    m_Expected_object_revisions = value;
+}
+
+bool EnvironmentCreateSchema::expectedObjectRevisionsIsSet() const
+{
+    return m_Expected_object_revisions.has_value();
+}
+
+void EnvironmentCreateSchema::unsetExpected_object_revisions()
+{
+    m_Expected_object_revisions.reset();
 }
 utility::string_t EnvironmentCreateSchema::getTwinAssetUuid() const
 {

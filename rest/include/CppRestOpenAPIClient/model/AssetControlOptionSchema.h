@@ -27,6 +27,7 @@
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include "CppRestOpenAPIClient/AnyType.h"
+#include "CppRestOpenAPIClient/model/ControlInputCompatibilitySchema.h"
 
 namespace org {
 namespace openapitools {
@@ -35,6 +36,7 @@ namespace model {
 
 class ControllerRefSchema;
 class ControllerPolicySchema;
+class ControlInputCompatibilitySchema;
 
 
 class  AssetControlOptionSchema
@@ -95,6 +97,11 @@ public:
     void unsetController_policy();
     void setControllerPolicy(const std::shared_ptr<ControllerPolicySchema>& value);
 
+    std::map<utility::string_t, std::shared_ptr<ControlInputCompatibilitySchema>> getInputCompatibility() const;
+    bool inputCompatibilityIsSet() const;
+    void unsetInput_compatibility();
+    void setInputCompatibility(const std::map<utility::string_t, std::shared_ptr<ControlInputCompatibilitySchema>>& value);
+
 
 protected:
     utility::string_t m_Option_id;
@@ -117,6 +124,8 @@ protected:
 
     std::shared_ptr<ControllerPolicySchema> m_Controller_policy;
     bool m_Controller_policyIsSet;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<ControlInputCompatibilitySchema>>> m_Input_compatibility;
 
 };
 

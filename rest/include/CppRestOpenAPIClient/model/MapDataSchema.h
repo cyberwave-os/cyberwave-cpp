@@ -119,6 +119,11 @@ public:
     void unsetData_file_uuid();
     void setDataFileUuid(const utility::string_t& value);
 
+    utility::string_t getDataFormat() const;
+    bool dataFormatIsSet() const;
+    void unsetData_format();
+    void setDataFormat(const utility::string_t& value);
+
     int32_t getImageWidth() const;
     bool imageWidthIsSet() const;
     void unsetImage_width();
@@ -143,6 +148,16 @@ public:
     bool updatedAtIsSet() const;
     void unsetUpdated_at();
     void setUpdatedAt(const utility::datetime& value);
+
+    utility::string_t getTwinName() const;
+    bool twinNameIsSet() const;
+    void unsetTwin_name();
+    void setTwinName(const utility::string_t& value);
+
+    bool isTwinIsDeleted() const;
+    bool twinIsDeletedIsSet() const;
+    void unsetTwin_is_deleted();
+    void setTwinIsDeleted(bool value);
 
 
 protected:
@@ -173,6 +188,8 @@ protected:
     utility::string_t m_Data_file_uuid;
     bool m_Data_file_uuidIsSet;
 
+    boost::optional<utility::string_t> m_Data_format;
+
     boost::optional<int32_t> m_Image_width;
 
     boost::optional<int32_t> m_Image_height;
@@ -184,6 +201,11 @@ protected:
 
     utility::datetime m_Updated_at;
     bool m_Updated_atIsSet;
+
+    boost::optional<utility::string_t> m_Twin_name;
+
+    bool m_Twin_is_deleted;
+    bool m_Twin_is_deletedIsSet;
 
 };
 

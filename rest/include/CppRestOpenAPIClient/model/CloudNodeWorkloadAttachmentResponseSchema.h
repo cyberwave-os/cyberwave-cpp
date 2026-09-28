@@ -18,6 +18,7 @@
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_CloudNodeWorkloadAttachmentResponseSchema_H_
 #define ORG_OPENAPITOOLS_CLIENT_MODEL_CloudNodeWorkloadAttachmentResponseSchema_H_
 
+#include <stdexcept>
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
@@ -56,6 +57,15 @@ public:
     /////////////////////////////////////////////
     /// CloudNodeWorkloadAttachmentResponseSchema members
 
+    enum class Upload_methodEnum
+    {
+        SIGNED_URL,
+        MULTIPART,
+    };
+
+    Upload_methodEnum toUpload_methodEnum(const utility::string_t& value) const;
+    const utility::string_t fromUpload_methodEnum(const Upload_methodEnum value) const;
+
 
     utility::string_t getSignedUrl() const;
     bool signedUrlIsSet() const;
@@ -72,6 +82,11 @@ public:
     void unsetExpiration_hours();
     void setExpirationHours(int32_t value);
 
+    Upload_methodEnum getUploadMethod() const;
+    bool uploadMethodIsSet() const;
+    void unsetUpload_method();
+    void setUploadMethod(const Upload_methodEnum value);
+
 
 protected:
     utility::string_t m_Signed_url;
@@ -82,6 +97,9 @@ protected:
 
     int32_t m_Expiration_hours;
     bool m_Expiration_hoursIsSet;
+
+    Upload_methodEnum m_Upload_method;
+    bool m_Upload_methodIsSet;
 
 };
 

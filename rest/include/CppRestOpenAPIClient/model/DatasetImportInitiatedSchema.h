@@ -61,9 +61,18 @@ public:
     {
         AWAITING_UPLOAD,
     };
+    enum class Upload_methodEnum
+    {
+        SIGNED_URL,
+        MULTIPART,
+    };
 
     StatusEnum toStatusEnum(const utility::string_t& value) const;
     const utility::string_t fromStatusEnum(const StatusEnum value) const;
+
+
+    Upload_methodEnum toUpload_methodEnum(const utility::string_t& value) const;
+    const utility::string_t fromUpload_methodEnum(const Upload_methodEnum value) const;
 
 
     StatusEnum getStatus() const;
@@ -80,6 +89,11 @@ public:
     bool uploadUrlIsSet() const;
     void unsetUpload_url();
     void setUploadUrl(const utility::string_t& value);
+
+    Upload_methodEnum getUploadMethod() const;
+    bool uploadMethodIsSet() const;
+    void unsetUpload_method();
+    void setUploadMethod(const Upload_methodEnum value);
 
     utility::string_t getUploadPath() const;
     bool uploadPathIsSet() const;
@@ -111,6 +125,9 @@ protected:
 
     utility::string_t m_Upload_url;
     bool m_Upload_urlIsSet;
+
+    Upload_methodEnum m_Upload_method;
+    bool m_Upload_methodIsSet;
 
     utility::string_t m_Upload_path;
     bool m_Upload_pathIsSet;

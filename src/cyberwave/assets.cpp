@@ -450,13 +450,28 @@ std::vector<Asset> AssetManager::list(const std::string&) const
     }
     try
     {
-        auto vec = a->srcAppApiAssetsListAssets(
-                        boost::optional<int>(), boost::optional<int>(), boost::optional<utility::string_t>(),
-                        boost::optional<utility::string_t>(), boost::optional<utility::string_t>(),
-                        boost::optional<utility::string_t>(), boost::optional<utility::string_t>(),
-                        boost::optional<utility::string_t>(), boost::optional<utility::string_t>(),
-                        boost::optional<double>(), boost::optional<double>(), boost::optional<utility::string_t>())
-                       .get();
+        auto vec =
+            a->srcAppApiAssetsListAssets(boost::optional<utility::string_t>(), // ordering: preserve the server default
+                                         boost::optional<int>(),               // limit
+                                         boost::optional<int>(),               // offset
+                                         boost::optional<utility::string_t>(), // registry_id
+                                         boost::optional<utility::string_t>(), // registry_vendor
+                                         boost::optional<utility::string_t>(), // owned
+                                         boost::optional<bool>(),              // public_only
+                                         boost::optional<bool>(),              // exclude_owned
+                                         boost::optional<utility::string_t>(), // search
+                                         boost::optional<utility::string_t>(), // tag
+                                         boost::optional<utility::string_t>(), // tags_any
+                                         boost::optional<utility::string_t>(), // tags_all
+                                         boost::optional<utility::string_t>(), // vendor
+                                         boost::optional<utility::string_t>(), // sensor_tags
+                                         boost::optional<utility::string_t>(), // capability_tags
+                                         boost::optional<utility::string_t>(), // metadata_key
+                                         boost::optional<utility::string_t>(), // metadata_value
+                                         boost::optional<double>(),            // min_price
+                                         boost::optional<double>(),            // max_price
+                                         boost::optional<utility::string_t>()) // workspace_uuid
+                .get();
         std::vector<Asset> out;
         for (auto& ptr : vec)
         {

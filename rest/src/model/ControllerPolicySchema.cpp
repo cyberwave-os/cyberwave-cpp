@@ -33,7 +33,7 @@ ControllerPolicySchema::ControllerPolicySchema()
     m_VisibilityIsSet = false;
     m_Created_at = utility::datetime();
     m_Created_atIsSet = false;
-    m_Updated_at = utility::datetime();
+    m_Updated_at = utility::conversions::to_string_t("");
     m_Updated_atIsSet = false;
     m_Asset_uuidsIsSet = false;
     m_Can_write = false;
@@ -116,6 +116,11 @@ web::json::value ControllerPolicySchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("can_write"))] = ModelBase::toJson(m_Can_write);
+    }
+    if(m_Command_key_revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("command_key_revision"))] = ModelBase::toJson(m_Command_key_revision.get());
     }
     if(m_Device.has_value())
     {
@@ -222,7 +227,7 @@ bool ControllerPolicySchema::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("updated_at")));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_setUpdatedAt;
+            utility::string_t refVal_setUpdatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_setUpdatedAt);
             setUpdatedAt(refVal_setUpdatedAt);
             
@@ -269,6 +274,17 @@ bool ControllerPolicySchema::fromJson(const web::json::value& val)
             bool refVal_setCanWrite;
             ok &= ModelBase::fromJson(fieldValue, refVal_setCanWrite);
             setCanWrite(refVal_setCanWrite);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("command_key_revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("command_key_revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setCommandKeyRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCommandKeyRevision);
+            setCommandKeyRevision(refVal_setCommandKeyRevision);
             
         }
     }
@@ -345,6 +361,10 @@ void ControllerPolicySchema::toMultipart(std::shared_ptr<MultipartFormData> mult
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("can_write")), m_Can_write));
     }
+    if(m_Command_key_revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("command_key_revision")), m_Command_key_revision.get()));
+    }
     if(m_Device.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("device")), m_Device.get()));
@@ -410,7 +430,7 @@ bool ControllerPolicySchema::fromMultiPart(std::shared_ptr<MultipartFormData> mu
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("updated_at"))))
     {
-        utility::datetime refVal_setUpdatedAt;
+        utility::string_t refVal_setUpdatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("updated_at"))), refVal_setUpdatedAt );
         setUpdatedAt(refVal_setUpdatedAt);
     }
@@ -437,6 +457,12 @@ bool ControllerPolicySchema::fromMultiPart(std::shared_ptr<MultipartFormData> mu
         bool refVal_setCanWrite;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("can_write"))), refVal_setCanWrite );
         setCanWrite(refVal_setCanWrite);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("command_key_revision"))))
+    {
+        utility::string_t refVal_setCommandKeyRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("command_key_revision"))), refVal_setCommandKeyRevision );
+        setCommandKeyRevision(refVal_setCommandKeyRevision);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("device"))))
     {
@@ -615,13 +641,13 @@ void ControllerPolicySchema::unsetCreated_at()
 {
     m_Created_atIsSet = false;
 }
-utility::datetime ControllerPolicySchema::getUpdatedAt() const
+utility::string_t ControllerPolicySchema::getUpdatedAt() const
 {
     return m_Updated_at;
 }
 
 
-void ControllerPolicySchema::setUpdatedAt(const utility::datetime& value)
+void ControllerPolicySchema::setUpdatedAt(const utility::string_t& value)
 {
     m_Updated_at = value;
     m_Updated_atIsSet = true;
@@ -716,6 +742,26 @@ bool ControllerPolicySchema::canWriteIsSet() const
 void ControllerPolicySchema::unsetCan_write()
 {
     m_Can_writeIsSet = false;
+}
+utility::string_t ControllerPolicySchema::getCommandKeyRevision() const
+{
+    return m_Command_key_revision.get();
+}
+
+
+void ControllerPolicySchema::setCommandKeyRevision(const utility::string_t& value)
+{
+    m_Command_key_revision = value;
+}
+
+bool ControllerPolicySchema::commandKeyRevisionIsSet() const
+{
+    return m_Command_key_revision.has_value();
+}
+
+void ControllerPolicySchema::unsetCommand_key_revision()
+{
+    m_Command_key_revision.reset();
 }
 utility::string_t ControllerPolicySchema::getDevice() const
 {

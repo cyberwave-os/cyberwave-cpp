@@ -24,6 +24,7 @@
 
 #include "CppRestOpenAPIClient/model/AssetControlRecommendationSchema.h"
 #include "CppRestOpenAPIClient/model/AssetBasicSimulationCapabilitySchema.h"
+#include "CppRestOpenAPIClient/model/AssetControlCapabilitySchema.h"
 #include "CppRestOpenAPIClient/model/AssetControlRuntimeRouteSchema.h"
 #include "CppRestOpenAPIClient/model/ControllerRefSchema.h"
 #include <cpprest/details/basic_types.h>
@@ -40,6 +41,7 @@ namespace model {
 class ControllerRefSchema;
 class AssetControlOptionSchema;
 class AssetBasicSimulationCapabilitySchema;
+class AssetControlCapabilitySchema;
 class AssetControlRuntimeRouteSchema;
 class AssetControlRecommendationSchema;
 
@@ -71,6 +73,16 @@ public:
     bool assetUuidIsSet() const;
     void unsetAsset_uuid();
     void setAssetUuid(const utility::string_t& value);
+
+    utility::string_t getRevision() const;
+    bool revisionIsSet() const;
+    void unsetRevision();
+    void setRevision(const utility::string_t& value);
+
+    bool isCanWrite() const;
+    bool canWriteIsSet() const;
+    void unsetCan_write();
+    void setCanWrite(bool value);
 
     std::shared_ptr<ControllerRefSchema> getManualControllerRef() const;
     bool manualControllerRefIsSet() const;
@@ -132,6 +144,11 @@ public:
     void unsetBasic_simulation_capabilities();
     void setBasicSimulationCapabilities(const std::vector<std::shared_ptr<AssetBasicSimulationCapabilitySchema>>& value);
 
+    std::vector<std::shared_ptr<AssetControlCapabilitySchema>> getControlCapabilities() const;
+    bool controlCapabilitiesIsSet() const;
+    void unsetControl_capabilities();
+    void setControlCapabilities(const std::vector<std::shared_ptr<AssetControlCapabilitySchema>>& value);
+
     std::vector<std::shared_ptr<AssetControlRuntimeRouteSchema>> getRuntimeRoutes() const;
     bool runtimeRoutesIsSet() const;
     void unsetRuntime_routes();
@@ -156,6 +173,11 @@ public:
 protected:
     utility::string_t m_Asset_uuid;
     bool m_Asset_uuidIsSet;
+
+    boost::optional<utility::string_t> m_Revision;
+
+    bool m_Can_write;
+    bool m_Can_writeIsSet;
 
     boost::optional<std::shared_ptr<ControllerRefSchema>> m_Manual_controller_ref;
 
@@ -188,6 +210,9 @@ protected:
 
     std::vector<std::shared_ptr<AssetBasicSimulationCapabilitySchema>> m_Basic_simulation_capabilities;
     bool m_Basic_simulation_capabilitiesIsSet;
+
+    std::vector<std::shared_ptr<AssetControlCapabilitySchema>> m_Control_capabilities;
+    bool m_Control_capabilitiesIsSet;
 
     std::vector<std::shared_ptr<AssetControlRuntimeRouteSchema>> m_Runtime_routes;
     bool m_Runtime_routesIsSet;

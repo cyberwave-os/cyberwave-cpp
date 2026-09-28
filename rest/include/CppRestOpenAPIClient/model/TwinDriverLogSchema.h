@@ -12,7 +12,7 @@
 /*
  * TwinDriverLogSchema.h
  *
- * Schema for persisted twin driver logs.
+ * One persisted driver-log row.  Shared by both driver-log read paths, so the row shape cannot drift between them: &#x60;&#x60;GET /twins/{uuid}/logs&#x60;&#x60; and &#x60;&#x60;GET /environments/{uuid}/driver-logs&#x60;&#x60;.  &#x60;&#x60;twin_uuid&#x60;&#x60; says which twin the row came from. It is redundant on the twin route and load-bearing on the environment route, where rows from several twins are interleaved and position in &#x60;&#x60;items&#x60;&#x60; no longer identifies the twin. It comes off the FK&#39;s raw column value, so it costs no join.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_TwinDriverLogSchema_H_
@@ -34,7 +34,7 @@ namespace model {
 
 
 /// <summary>
-/// Schema for persisted twin driver logs.
+/// One persisted driver-log row.  Shared by both driver-log read paths, so the row shape cannot drift between them: &#x60;&#x60;GET /twins/{uuid}/logs&#x60;&#x60; and &#x60;&#x60;GET /environments/{uuid}/driver-logs&#x60;&#x60;.  &#x60;&#x60;twin_uuid&#x60;&#x60; says which twin the row came from. It is redundant on the twin route and load-bearing on the environment route, where rows from several twins are interleaved and position in &#x60;&#x60;items&#x60;&#x60; no longer identifies the twin. It comes off the FK&#39;s raw column value, so it costs no join.
 /// </summary>
 class  TwinDriverLogSchema
     : public ModelBase
@@ -63,6 +63,11 @@ public:
     bool uuidIsSet() const;
     void unsetUuid();
     void setUuid(const utility::string_t& value);
+
+    utility::string_t getTwinUuid() const;
+    bool twinUuidIsSet() const;
+    void unsetTwin_uuid();
+    void setTwinUuid(const utility::string_t& value);
 
     utility::string_t getTimestamp() const;
     bool timestampIsSet() const;
@@ -113,6 +118,8 @@ public:
 protected:
     utility::string_t m_Uuid;
     bool m_UuidIsSet;
+
+    boost::optional<utility::string_t> m_Twin_uuid;
 
     utility::string_t m_Timestamp;
     bool m_TimestampIsSet;

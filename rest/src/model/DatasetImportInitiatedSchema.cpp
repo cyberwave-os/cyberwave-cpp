@@ -25,6 +25,7 @@ DatasetImportInitiatedSchema::DatasetImportInitiatedSchema()
     m_Dataset_uuidIsSet = false;
     m_Upload_url = utility::conversions::to_string_t("");
     m_Upload_urlIsSet = false;
+    m_Upload_methodIsSet = false;
     m_Upload_path = utility::conversions::to_string_t("");
     m_Upload_pathIsSet = false;
     m_Expires_at = utility::conversions::to_string_t("");
@@ -63,6 +64,13 @@ web::json::value DatasetImportInitiatedSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("upload_url"))] = ModelBase::toJson(m_Upload_url);
+    }
+    if(m_Upload_methodIsSet)
+    {
+        
+        utility::string_t refVal = fromUpload_methodEnum(m_Upload_method);
+        val[utility::conversions::to_string_t(_XPLATSTR("upload_method"))] = ModelBase::toJson(refVal);
+        
     }
     if(m_Upload_pathIsSet)
     {
@@ -122,6 +130,18 @@ bool DatasetImportInitiatedSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setUploadUrl;
             ok &= ModelBase::fromJson(fieldValue, refVal_setUploadUrl);
             setUploadUrl(refVal_setUploadUrl);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("upload_method"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("upload_method")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setUploadMethod;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setUploadMethod);
+            
+            setUploadMethod(toUpload_methodEnum(refVal_setUploadMethod));
             
         }
     }
@@ -191,6 +211,10 @@ void DatasetImportInitiatedSchema::toMultipart(std::shared_ptr<MultipartFormData
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("upload_url")), m_Upload_url));
     }
+    if(m_Upload_methodIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("upload_method")), fromUpload_methodEnum(m_Upload_method)));
+    }
     if(m_Upload_pathIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("upload_path")), m_Upload_path));
@@ -236,6 +260,12 @@ bool DatasetImportInitiatedSchema::fromMultiPart(std::shared_ptr<MultipartFormDa
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("upload_url"))), refVal_setUploadUrl );
         setUploadUrl(refVal_setUploadUrl);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("upload_method"))))
+    {
+        utility::string_t refVal_setUploadMethod;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("upload_method"))), refVal_setUploadMethod );
+        setUploadMethod(toUpload_methodEnum(refVal_setUploadMethod));
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("upload_path"))))
     {
         utility::string_t refVal_setUploadPath;
@@ -280,6 +310,33 @@ const utility::string_t DatasetImportInitiatedSchema::fromStatusEnum(const Statu
     {
         
         case StatusEnum::AWAITING_UPLOAD: return utility::conversions::to_string_t("awaiting_upload");
+        
+    }
+}
+
+DatasetImportInitiatedSchema::Upload_methodEnum DatasetImportInitiatedSchema::toUpload_methodEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("signed_url")) {
+        return Upload_methodEnum::SIGNED_URL;
+    }
+    
+    if (value == utility::conversions::to_string_t("multipart")) {
+        return Upload_methodEnum::MULTIPART;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to Upload_methodEnum");
+}
+
+
+const utility::string_t DatasetImportInitiatedSchema::fromUpload_methodEnum(const Upload_methodEnum value) const
+{
+    switch(value)
+    {
+        
+        case Upload_methodEnum::SIGNED_URL: return utility::conversions::to_string_t("signed_url");
+        
+        case Upload_methodEnum::MULTIPART: return utility::conversions::to_string_t("multipart");
         
     }
 }
@@ -347,6 +404,27 @@ bool DatasetImportInitiatedSchema::uploadUrlIsSet() const
 void DatasetImportInitiatedSchema::unsetUpload_url()
 {
     m_Upload_urlIsSet = false;
+}
+DatasetImportInitiatedSchema::Upload_methodEnum DatasetImportInitiatedSchema::getUploadMethod() const
+{
+    return m_Upload_method;
+}
+
+
+void DatasetImportInitiatedSchema::setUploadMethod(const Upload_methodEnum value)
+{
+    m_Upload_method = value;
+    m_Upload_methodIsSet = true;
+}
+
+bool DatasetImportInitiatedSchema::uploadMethodIsSet() const
+{
+    return m_Upload_methodIsSet;
+}
+
+void DatasetImportInitiatedSchema::unsetUpload_method()
+{
+    m_Upload_methodIsSet = false;
 }
 utility::string_t DatasetImportInitiatedSchema::getUploadPath() const
 {

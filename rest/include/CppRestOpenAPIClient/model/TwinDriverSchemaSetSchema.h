@@ -22,6 +22,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include <cpprest/details/basic_types.h>
 #include <map>
 #include "CppRestOpenAPIClient/AnyType.h"
 
@@ -68,6 +69,11 @@ public:
     void unsetMerge();
     void setMerge(bool value);
 
+    utility::string_t getExpectedRevision() const;
+    bool expectedRevisionIsSet() const;
+    void unsetExpected_revision();
+    void setExpectedRevision(const utility::string_t& value);
+
 
 protected:
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Driver_config;
@@ -75,6 +81,8 @@ protected:
 
     bool m_Merge;
     bool m_MergeIsSet;
+
+    boost::optional<utility::string_t> m_Expected_revision;
 
 };
 

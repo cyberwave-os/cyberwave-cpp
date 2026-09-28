@@ -12,7 +12,7 @@
 /*
  * UniversalSchemaBatchPatchSchema.h
  *
- * Many JSON Pointer operations applied in order as one all-or-nothing batch.
+ * Many JSON Pointer operations applied in order as one all-or-nothing batch.  &#x60;&#x60;expected_schema_hash&#x60;&#x60; is the batch-level precondition; a per-operation one would be meaningless since the batch resolves against a single locked read.  The item model declares the field anyway, because the single-op endpoint uses that same model as its entire request body and genuinely honours it there. So a caller scaling up from one edit to a batch can carry the token along with the operations and have it silently dropped -- the batch reads only its own top-level field. Losing a concurrency precondition quietly is worse than not offering one, because the caller stops watching for the overwrite it was meant to prevent. Refuse it instead.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_UniversalSchemaBatchPatchSchema_H_
@@ -23,6 +23,7 @@
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include "CppRestOpenAPIClient/model/UniversalSchemaPatchSchema.h"
+#include <cpprest/details/basic_types.h>
 #include <vector>
 
 namespace org {
@@ -34,7 +35,7 @@ class UniversalSchemaPatchSchema;
 
 
 /// <summary>
-/// Many JSON Pointer operations applied in order as one all-or-nothing batch.
+/// Many JSON Pointer operations applied in order as one all-or-nothing batch.  &#x60;&#x60;expected_schema_hash&#x60;&#x60; is the batch-level precondition; a per-operation one would be meaningless since the batch resolves against a single locked read.  The item model declares the field anyway, because the single-op endpoint uses that same model as its entire request body and genuinely honours it there. So a caller scaling up from one edit to a batch can carry the token along with the operations and have it silently dropped -- the batch reads only its own top-level field. Losing a concurrency precondition quietly is worse than not offering one, because the caller stops watching for the overwrite it was meant to prevent. Refuse it instead.
 /// </summary>
 class  UniversalSchemaBatchPatchSchema
     : public ModelBase
@@ -64,10 +65,17 @@ public:
     void unsetOperations();
     void setOperations(const std::vector<std::shared_ptr<UniversalSchemaPatchSchema>>& value);
 
+    utility::string_t getExpectedSchemaHash() const;
+    bool expectedSchemaHashIsSet() const;
+    void unsetExpected_schema_hash();
+    void setExpectedSchemaHash(const utility::string_t& value);
+
 
 protected:
     std::vector<std::shared_ptr<UniversalSchemaPatchSchema>> m_Operations;
     bool m_OperationsIsSet;
+
+    boost::optional<utility::string_t> m_Expected_schema_hash;
 
 };
 

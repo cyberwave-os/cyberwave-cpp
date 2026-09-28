@@ -89,6 +89,16 @@ public:
     void unsetPurchase_type();
     void setPurchaseType(const utility::string_t& value);
 
+    int32_t getBookedAmountMinor() const;
+    bool bookedAmountMinorIsSet() const;
+    void unsetBooked_amount_minor();
+    void setBookedAmountMinor(int32_t value);
+
+    utility::string_t getBookedCurrency() const;
+    bool bookedCurrencyIsSet() const;
+    void unsetBooked_currency();
+    void setBookedCurrency(const utility::string_t& value);
+
     utility::string_t getTotalCostCredits() const;
     bool totalCostCreditsIsSet() const;
     void unsetTotal_cost_credits();
@@ -193,6 +203,11 @@ protected:
 
     utility::string_t m_Purchase_type;
     bool m_Purchase_typeIsSet;
+
+    boost::optional<int32_t> m_Booked_amount_minor;
+
+    utility::string_t m_Booked_currency;
+    bool m_Booked_currencyIsSet;
 
     utility::string_t m_Total_cost_credits;
     bool m_Total_cost_creditsIsSet;

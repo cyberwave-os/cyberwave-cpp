@@ -40,6 +40,11 @@ web::json::value UniversalSchemaBatchPatchSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("operations"))] = ModelBase::toJson(m_Operations);
     }
+    if(m_Expected_schema_hash.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_schema_hash"))] = ModelBase::toJson(m_Expected_schema_hash.get());
+    }
 
     return val;
 }
@@ -58,6 +63,17 @@ bool UniversalSchemaBatchPatchSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_schema_hash"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_schema_hash")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExpectedSchemaHash;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedSchemaHash);
+            setExpectedSchemaHash(refVal_setExpectedSchemaHash);
+            
+        }
+    }
     return ok;
 }
 
@@ -71,6 +87,10 @@ void UniversalSchemaBatchPatchSchema::toMultipart(std::shared_ptr<MultipartFormD
     if(m_OperationsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("operations")), m_Operations));
+    }
+    if(m_Expected_schema_hash.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_schema_hash")), m_Expected_schema_hash.get()));
     }
 }
 
@@ -88,6 +108,12 @@ bool UniversalSchemaBatchPatchSchema::fromMultiPart(std::shared_ptr<MultipartFor
         std::vector<std::shared_ptr<UniversalSchemaPatchSchema>> refVal_setOperations;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("operations"))), refVal_setOperations );
         setOperations(refVal_setOperations);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_schema_hash"))))
+    {
+        utility::string_t refVal_setExpectedSchemaHash;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_schema_hash"))), refVal_setExpectedSchemaHash );
+        setExpectedSchemaHash(refVal_setExpectedSchemaHash);
     }
     return ok;
 }
@@ -113,6 +139,26 @@ bool UniversalSchemaBatchPatchSchema::operationsIsSet() const
 void UniversalSchemaBatchPatchSchema::unsetOperations()
 {
     m_OperationsIsSet = false;
+}
+utility::string_t UniversalSchemaBatchPatchSchema::getExpectedSchemaHash() const
+{
+    return m_Expected_schema_hash.get();
+}
+
+
+void UniversalSchemaBatchPatchSchema::setExpectedSchemaHash(const utility::string_t& value)
+{
+    m_Expected_schema_hash = value;
+}
+
+bool UniversalSchemaBatchPatchSchema::expectedSchemaHashIsSet() const
+{
+    return m_Expected_schema_hash.has_value();
+}
+
+void UniversalSchemaBatchPatchSchema::unsetExpected_schema_hash()
+{
+    m_Expected_schema_hash.reset();
 }
 
 }

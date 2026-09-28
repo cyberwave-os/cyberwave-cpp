@@ -10,6 +10,7 @@
 #include "CppRestOpenAPIClient/model/JointCalibrationSchema.h"
 #include "CppRestOpenAPIClient/model/JointStateUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/JointStatesSchema.h"
+#include "CppRestOpenAPIClient/model/TwinCreateResultSchema.h"
 #include "CppRestOpenAPIClient/model/TwinCreateSchema.h"
 #include "CppRestOpenAPIClient/model/TwinJointCalibrationSchema.h"
 #include "CppRestOpenAPIClient/model/TwinSchema.h"
@@ -135,7 +136,12 @@ Twin TwinManager::create(const std::string& asset_id, const std::string& environ
         if (fixed_base)
             body->setFixedBase(true);
         auto result = a->srcAppApiTwinsCreateTwin(body).get();
-        return twin_from_schema(client_.get(), result);
+        // OpenAPI flattens the creation result into a separate generated type.
+        // Twin owns a TwinSchema, so normalize the shared wire fields first.
+        auto schema = std::make_shared<org::openapitools::client::model::TwinSchema>();
+        if (!result || !schema->fromJson(result->toJson()))
+            throw CyberwaveAPIError("Invalid twin creation response", 0);
+        return twin_from_schema(client_.get(), schema);
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {
@@ -284,7 +290,7 @@ void TwinManager::delete_twin(const std::string& twin_id) const
         throw CyberwaveError("Client has no REST API (missing api_key)");
     try
     {
-        a->srcAppApiTwinsDeleteTwin(from_std(twin_id)).get();
+        a->srcAppApiTwinsDeleteTwin(from_std(twin_id), boost::none).get();
     }
     catch (const org::openapitools::client::api::ApiException& e)
     {

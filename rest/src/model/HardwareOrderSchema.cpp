@@ -32,6 +32,8 @@ HardwareOrderSchema::HardwareOrderSchema()
     m_StatusIsSet = false;
     m_Purchase_type = utility::conversions::to_string_t("");
     m_Purchase_typeIsSet = false;
+    m_Booked_currency = utility::conversions::to_string_t("");
+    m_Booked_currencyIsSet = false;
     m_Total_cost_credits = utility::conversions::to_string_t("");
     m_Total_cost_creditsIsSet = false;
     m_Tracking_number = utility::conversions::to_string_t("");
@@ -105,6 +107,16 @@ web::json::value HardwareOrderSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("purchase_type"))] = ModelBase::toJson(m_Purchase_type);
+    }
+    if(m_Booked_amount_minor.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("booked_amount_minor"))] = ModelBase::toJson(m_Booked_amount_minor.get());
+    }
+    if(m_Booked_currencyIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("booked_currency"))] = ModelBase::toJson(m_Booked_currency);
     }
     if(m_Total_cost_creditsIsSet)
     {
@@ -261,6 +273,28 @@ bool HardwareOrderSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setPurchaseType;
             ok &= ModelBase::fromJson(fieldValue, refVal_setPurchaseType);
             setPurchaseType(refVal_setPurchaseType);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("booked_amount_minor"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("booked_amount_minor")));
+        if(!fieldValue.is_null())
+        {
+            int32_t refVal_setBookedAmountMinor;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setBookedAmountMinor);
+            setBookedAmountMinor(refVal_setBookedAmountMinor);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("booked_currency"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("booked_currency")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setBookedCurrency;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setBookedCurrency);
+            setBookedCurrency(refVal_setBookedCurrency);
             
         }
     }
@@ -485,6 +519,14 @@ void HardwareOrderSchema::toMultipart(std::shared_ptr<MultipartFormData> multipa
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("purchase_type")), m_Purchase_type));
     }
+    if(m_Booked_amount_minor.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("booked_amount_minor")), m_Booked_amount_minor.get()));
+    }
+    if(m_Booked_currencyIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("booked_currency")), m_Booked_currency));
+    }
     if(m_Total_cost_creditsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("total_cost_credits")), m_Total_cost_credits));
@@ -599,6 +641,18 @@ bool HardwareOrderSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multi
         utility::string_t refVal_setPurchaseType;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("purchase_type"))), refVal_setPurchaseType );
         setPurchaseType(refVal_setPurchaseType);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("booked_amount_minor"))))
+    {
+        int32_t refVal_setBookedAmountMinor;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("booked_amount_minor"))), refVal_setBookedAmountMinor );
+        setBookedAmountMinor(refVal_setBookedAmountMinor);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("booked_currency"))))
+    {
+        utility::string_t refVal_setBookedCurrency;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("booked_currency"))), refVal_setBookedCurrency );
+        setBookedCurrency(refVal_setBookedCurrency);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("total_cost_credits"))))
     {
@@ -831,6 +885,46 @@ bool HardwareOrderSchema::purchaseTypeIsSet() const
 void HardwareOrderSchema::unsetPurchase_type()
 {
     m_Purchase_typeIsSet = false;
+}
+int32_t HardwareOrderSchema::getBookedAmountMinor() const
+{
+    return m_Booked_amount_minor.get();
+}
+
+void HardwareOrderSchema::setBookedAmountMinor(int32_t value)
+{
+    m_Booked_amount_minor = value;
+}
+
+bool HardwareOrderSchema::bookedAmountMinorIsSet() const
+{
+    return m_Booked_amount_minor.has_value();
+}
+
+void HardwareOrderSchema::unsetBooked_amount_minor()
+{
+    m_Booked_amount_minor.reset();
+}
+utility::string_t HardwareOrderSchema::getBookedCurrency() const
+{
+    return m_Booked_currency;
+}
+
+
+void HardwareOrderSchema::setBookedCurrency(const utility::string_t& value)
+{
+    m_Booked_currency = value;
+    m_Booked_currencyIsSet = true;
+}
+
+bool HardwareOrderSchema::bookedCurrencyIsSet() const
+{
+    return m_Booked_currencyIsSet;
+}
+
+void HardwareOrderSchema::unsetBooked_currency()
+{
+    m_Booked_currencyIsSet = false;
 }
 utility::string_t HardwareOrderSchema::getTotalCostCredits() const
 {

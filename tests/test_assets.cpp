@@ -133,7 +133,7 @@ static void test_assets_list_throws_without_api_key()
     assert(threw);
 }
 
-static void test_assets_list_accepts_legacy_workspace_argument()
+static void test_assets_list_preserves_server_defaults()
 {
     std::string request_query;
 
@@ -158,6 +158,11 @@ static void test_assets_list_accepts_legacy_workspace_argument()
     cfg.api_key = "token";
     Client client(cfg);
     AssetManager assets = client.assets();
+
+    const auto default_assets = assets.list();
+    assert(default_assets.size() == 1);
+    assert(default_assets.front().uuid() == "asset-uuid");
+    assert(request_query.empty());
 
     const auto listed_assets = assets.list("workspace-legacy");
     assert(listed_assets.size() == 1);
@@ -633,7 +638,7 @@ int main()
     test_asset_view_from_asset_schema();
     test_asset_view_from_asset_list_schema();
     test_assets_list_throws_without_api_key();
-    test_assets_list_accepts_legacy_workspace_argument();
+    test_assets_list_preserves_server_defaults();
     test_assets_get_by_registry_id_throws_without_api_key();
     test_assets_get_universal_schema_throws_without_api_key();
     test_assets_patch_universal_schema_throws_without_api_key();

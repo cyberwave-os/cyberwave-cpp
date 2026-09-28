@@ -21,8 +21,6 @@ namespace model {
 TwinDriverLogsResponseSchema::TwinDriverLogsResponseSchema()
 {
     m_ItemsIsSet = false;
-    m_Total = 0;
-    m_TotalIsSet = false;
     m_Limit = 0;
     m_LimitIsSet = false;
     m_Offset = 0;
@@ -48,10 +46,10 @@ web::json::value TwinDriverLogsResponseSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("items"))] = ModelBase::toJson(m_Items);
     }
-    if(m_TotalIsSet)
+    if(m_Total.has_value())
     {
         
-        val[utility::conversions::to_string_t(_XPLATSTR("total"))] = ModelBase::toJson(m_Total);
+        val[utility::conversions::to_string_t(_XPLATSTR("total"))] = ModelBase::toJson(m_Total.get());
     }
     if(m_LimitIsSet)
     {
@@ -144,9 +142,9 @@ void TwinDriverLogsResponseSchema::toMultipart(std::shared_ptr<MultipartFormData
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("items")), m_Items));
     }
-    if(m_TotalIsSet)
+    if(m_Total.has_value())
     {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("total")), m_Total));
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("total")), m_Total.get()));
     }
     if(m_LimitIsSet)
     {
@@ -228,23 +226,22 @@ void TwinDriverLogsResponseSchema::unsetItems()
 }
 int32_t TwinDriverLogsResponseSchema::getTotal() const
 {
-    return m_Total;
+    return m_Total.get();
 }
 
 void TwinDriverLogsResponseSchema::setTotal(int32_t value)
 {
     m_Total = value;
-    m_TotalIsSet = true;
 }
 
 bool TwinDriverLogsResponseSchema::totalIsSet() const
 {
-    return m_TotalIsSet;
+    return m_Total.has_value();
 }
 
 void TwinDriverLogsResponseSchema::unsetTotal()
 {
-    m_TotalIsSet = false;
+    m_Total.reset();
 }
 int32_t TwinDriverLogsResponseSchema::getLimit() const
 {

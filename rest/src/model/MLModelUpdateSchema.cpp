@@ -49,6 +49,11 @@ web::json::value MLModelUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("metadata"))] = ModelBase::toJson(m_Metadata.get());
     }
+    if(m_Expected_updated_at.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_updated_at"))] = ModelBase::toJson(m_Expected_updated_at.get());
+    }
     if(m_Visibility.has_value())
     {
         
@@ -171,6 +176,17 @@ bool MLModelUpdateSchema::fromJson(const web::json::value& val)
             std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
             ok &= ModelBase::fromJson(fieldValue, refVal_setMetadata);
             setMetadata(refVal_setMetadata);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_updated_at"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_updated_at")));
+        if(!fieldValue.is_null())
+        {
+            utility::datetime refVal_setExpectedUpdatedAt;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedUpdatedAt);
+            setExpectedUpdatedAt(refVal_setExpectedUpdatedAt);
             
         }
     }
@@ -383,6 +399,10 @@ void MLModelUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipa
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata.get()));
     }
+    if(m_Expected_updated_at.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_updated_at")), m_Expected_updated_at.get()));
+    }
     if(m_Visibility.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("visibility")), m_Visibility.get()));
@@ -479,6 +499,12 @@ bool MLModelUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multi
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))), refVal_setMetadata );
         setMetadata(refVal_setMetadata);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_updated_at"))))
+    {
+        utility::datetime refVal_setExpectedUpdatedAt;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_updated_at"))), refVal_setExpectedUpdatedAt );
+        setExpectedUpdatedAt(refVal_setExpectedUpdatedAt);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("visibility"))))
     {
@@ -645,6 +671,26 @@ bool MLModelUpdateSchema::metadataIsSet() const
 void MLModelUpdateSchema::unsetMetadata()
 {
     m_Metadata.reset();
+}
+utility::datetime MLModelUpdateSchema::getExpectedUpdatedAt() const
+{
+    return m_Expected_updated_at.get();
+}
+
+
+void MLModelUpdateSchema::setExpectedUpdatedAt(const utility::datetime& value)
+{
+    m_Expected_updated_at = value;
+}
+
+bool MLModelUpdateSchema::expectedUpdatedAtIsSet() const
+{
+    return m_Expected_updated_at.has_value();
+}
+
+void MLModelUpdateSchema::unsetExpected_updated_at()
+{
+    m_Expected_updated_at.reset();
 }
 utility::string_t MLModelUpdateSchema::getVisibility() const
 {

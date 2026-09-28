@@ -87,6 +87,11 @@ public:
     void unsetMap_name();
     void setMapName(const utility::string_t& value);
 
+    utility::string_t getServiceProvider() const;
+    bool serviceProviderIsSet() const;
+    void unsetService_provider();
+    void setServiceProvider(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Twin_uuid;
@@ -98,6 +103,8 @@ protected:
     boost::optional<double> m_Resolution;
 
     boost::optional<utility::string_t> m_Map_name;
+
+    boost::optional<utility::string_t> m_Service_provider;
 
 };
 

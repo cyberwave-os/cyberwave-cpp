@@ -43,6 +43,11 @@ void ControllerPolicyExecuteSchema::validate()
 web::json::value ControllerPolicyExecuteSchema::toJson() const
 {
     web::json::value val = web::json::value::object();
+    if(m_Policy_joint_binding_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid"))] = ModelBase::toJson(m_Policy_joint_binding_uuid.get());
+    }
     if(m_Twin_uuidIsSet)
     {
         
@@ -187,6 +192,17 @@ web::json::value ControllerPolicyExecuteSchema::toJson() const
 bool ControllerPolicyExecuteSchema::fromJson(const web::json::value& val)
 {
     bool ok = true;
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setPolicyJointBindingUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPolicyJointBindingUuid);
+            setPolicyJointBindingUuid(refVal_setPolicyJointBindingUuid);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("twin_uuid")));
@@ -478,6 +494,10 @@ void ControllerPolicyExecuteSchema::toMultipart(std::shared_ptr<MultipartFormDat
     {
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
+    if(m_Policy_joint_binding_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid")), m_Policy_joint_binding_uuid.get()));
+    }
     if(m_Twin_uuidIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("twin_uuid")), m_Twin_uuid));
@@ -589,6 +609,12 @@ bool ControllerPolicyExecuteSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
 
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid"))))
+    {
+        utility::string_t refVal_setPolicyJointBindingUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid"))), refVal_setPolicyJointBindingUuid );
+        setPolicyJointBindingUuid(refVal_setPolicyJointBindingUuid);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))))
     {
         utility::string_t refVal_setTwinUuid;
@@ -745,12 +771,12 @@ bool ControllerPolicyExecuteSchema::fromMultiPart(std::shared_ptr<MultipartFormD
 ControllerPolicyExecuteSchema::ModeEnum ControllerPolicyExecuteSchema::toModeEnum(const utility::string_t& value) const
 {
     
-    if (value == utility::conversions::to_string_t("live")) {
-        return ModeEnum::LIVE;
-    }
-    
     if (value == utility::conversions::to_string_t("simulation")) {
         return ModeEnum::SIMULATION;
+    }
+    
+    if (value == utility::conversions::to_string_t("live")) {
+        return ModeEnum::LIVE;
     }
     
     throw std::invalid_argument("Invalid value for conversion to ModeEnum");
@@ -762,9 +788,9 @@ const utility::string_t ControllerPolicyExecuteSchema::fromModeEnum(const ModeEn
     switch(value)
     {
         
-        case ModeEnum::LIVE: return utility::conversions::to_string_t("live");
-        
         case ModeEnum::SIMULATION: return utility::conversions::to_string_t("simulation");
+        
+        case ModeEnum::LIVE: return utility::conversions::to_string_t("live");
         
     }
 }
@@ -923,6 +949,26 @@ const utility::string_t ControllerPolicyExecuteSchema::fromOriginEnum(const Orig
 }
 
 
+utility::string_t ControllerPolicyExecuteSchema::getPolicyJointBindingUuid() const
+{
+    return m_Policy_joint_binding_uuid.get();
+}
+
+
+void ControllerPolicyExecuteSchema::setPolicyJointBindingUuid(const utility::string_t& value)
+{
+    m_Policy_joint_binding_uuid = value;
+}
+
+bool ControllerPolicyExecuteSchema::policyJointBindingUuidIsSet() const
+{
+    return m_Policy_joint_binding_uuid.has_value();
+}
+
+void ControllerPolicyExecuteSchema::unsetPolicy_joint_binding_uuid()
+{
+    m_Policy_joint_binding_uuid.reset();
+}
 utility::string_t ControllerPolicyExecuteSchema::getTwinUuid() const
 {
     return m_Twin_uuid;

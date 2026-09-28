@@ -33,6 +33,12 @@ EnvironmentSchema::EnvironmentSchema()
     m_TagsIsSet = false;
     m_Is_template = false;
     m_Is_templateIsSet = false;
+    m_Is_lab = false;
+    m_Is_labIsSet = false;
+    m_Lab_kind = utility::conversions::to_string_t("");
+    m_Lab_kindIsSet = false;
+    m_Control_plane_access = utility::conversions::to_string_t("");
+    m_Control_plane_accessIsSet = false;
     m_Has_running_simulation = false;
     m_Has_running_simulationIsSet = false;
 }
@@ -118,6 +124,21 @@ web::json::value EnvironmentSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("is_template"))] = ModelBase::toJson(m_Is_template);
+    }
+    if(m_Is_labIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("is_lab"))] = ModelBase::toJson(m_Is_lab);
+    }
+    if(m_Lab_kindIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("lab_kind"))] = ModelBase::toJson(m_Lab_kind);
+    }
+    if(m_Control_plane_accessIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("control_plane_access"))] = ModelBase::toJson(m_Control_plane_access);
     }
     if(m_Total_monthly_cost.has_value())
     {
@@ -295,6 +316,39 @@ bool EnvironmentSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("is_lab"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("is_lab")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setIsLab;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setIsLab);
+            setIsLab(refVal_setIsLab);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("lab_kind"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("lab_kind")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setLabKind;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setLabKind);
+            setLabKind(refVal_setLabKind);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("control_plane_access"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("control_plane_access")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setControlPlaneAccess;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setControlPlaneAccess);
+            setControlPlaneAccess(refVal_setControlPlaneAccess);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("total_monthly_cost"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("total_monthly_cost")));
@@ -393,6 +447,18 @@ void EnvironmentSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart
     if(m_Is_templateIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("is_template")), m_Is_template));
+    }
+    if(m_Is_labIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("is_lab")), m_Is_lab));
+    }
+    if(m_Lab_kindIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("lab_kind")), m_Lab_kind));
+    }
+    if(m_Control_plane_accessIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("control_plane_access")), m_Control_plane_access));
     }
     if(m_Total_monthly_cost.has_value())
     {
@@ -500,6 +566,24 @@ bool EnvironmentSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
         bool refVal_setIsTemplate;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("is_template"))), refVal_setIsTemplate );
         setIsTemplate(refVal_setIsTemplate);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("is_lab"))))
+    {
+        bool refVal_setIsLab;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("is_lab"))), refVal_setIsLab );
+        setIsLab(refVal_setIsLab);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("lab_kind"))))
+    {
+        utility::string_t refVal_setLabKind;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("lab_kind"))), refVal_setLabKind );
+        setLabKind(refVal_setLabKind);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("control_plane_access"))))
+    {
+        utility::string_t refVal_setControlPlaneAccess;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("control_plane_access"))), refVal_setControlPlaneAccess );
+        setControlPlaneAccess(refVal_setControlPlaneAccess);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("total_monthly_cost"))))
     {
@@ -808,6 +892,68 @@ bool EnvironmentSchema::isTemplateIsSet() const
 void EnvironmentSchema::unsetIs_template()
 {
     m_Is_templateIsSet = false;
+}
+bool EnvironmentSchema::isIsLab() const
+{
+    return m_Is_lab;
+}
+
+void EnvironmentSchema::setIsLab(bool value)
+{
+    m_Is_lab = value;
+    m_Is_labIsSet = true;
+}
+
+bool EnvironmentSchema::isLabIsSet() const
+{
+    return m_Is_labIsSet;
+}
+
+void EnvironmentSchema::unsetIs_lab()
+{
+    m_Is_labIsSet = false;
+}
+utility::string_t EnvironmentSchema::getLabKind() const
+{
+    return m_Lab_kind;
+}
+
+
+void EnvironmentSchema::setLabKind(const utility::string_t& value)
+{
+    m_Lab_kind = value;
+    m_Lab_kindIsSet = true;
+}
+
+bool EnvironmentSchema::labKindIsSet() const
+{
+    return m_Lab_kindIsSet;
+}
+
+void EnvironmentSchema::unsetLab_kind()
+{
+    m_Lab_kindIsSet = false;
+}
+utility::string_t EnvironmentSchema::getControlPlaneAccess() const
+{
+    return m_Control_plane_access;
+}
+
+
+void EnvironmentSchema::setControlPlaneAccess(const utility::string_t& value)
+{
+    m_Control_plane_access = value;
+    m_Control_plane_accessIsSet = true;
+}
+
+bool EnvironmentSchema::controlPlaneAccessIsSet() const
+{
+    return m_Control_plane_accessIsSet;
+}
+
+void EnvironmentSchema::unsetControl_plane_access()
+{
+    m_Control_plane_accessIsSet = false;
 }
 double EnvironmentSchema::getTotalMonthlyCost() const
 {

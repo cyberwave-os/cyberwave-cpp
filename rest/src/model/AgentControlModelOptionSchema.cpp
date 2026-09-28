@@ -34,6 +34,7 @@ AgentControlModelOptionSchema::AgentControlModelOptionSchema()
     m_Is_default = false;
     m_Is_defaultIsSet = false;
     m_Supported_task_idsIsSet = false;
+    m_Task_contractsIsSet = false;
 }
 
 AgentControlModelOptionSchema::~AgentControlModelOptionSchema()
@@ -102,6 +103,11 @@ web::json::value AgentControlModelOptionSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("supported_task_ids"))] = ModelBase::toJson(m_Supported_task_ids);
+    }
+    if(m_Task_contractsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("task_contracts"))] = ModelBase::toJson(m_Task_contracts);
     }
 
     return val;
@@ -231,6 +237,17 @@ bool AgentControlModelOptionSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("task_contracts"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("task_contracts")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<ModelTaskContractSchema>> refVal_setTaskContracts;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTaskContracts);
+            setTaskContracts(refVal_setTaskContracts);
+            
+        }
+    }
     return ok;
 }
 
@@ -284,6 +301,10 @@ void AgentControlModelOptionSchema::toMultipart(std::shared_ptr<MultipartFormDat
     if(m_Supported_task_idsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("supported_task_ids")), m_Supported_task_ids));
+    }
+    if(m_Task_contractsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("task_contracts")), m_Task_contracts));
     }
 }
 
@@ -361,6 +382,12 @@ bool AgentControlModelOptionSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         std::vector<utility::string_t> refVal_setSupportedTaskIds;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("supported_task_ids"))), refVal_setSupportedTaskIds );
         setSupportedTaskIds(refVal_setSupportedTaskIds);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("task_contracts"))))
+    {
+        std::vector<std::shared_ptr<ModelTaskContractSchema>> refVal_setTaskContracts;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("task_contracts"))), refVal_setTaskContracts );
+        setTaskContracts(refVal_setTaskContracts);
     }
     return ok;
 }
@@ -592,6 +619,27 @@ bool AgentControlModelOptionSchema::supportedTaskIdsIsSet() const
 void AgentControlModelOptionSchema::unsetSupported_task_ids()
 {
     m_Supported_task_idsIsSet = false;
+}
+std::vector<std::shared_ptr<ModelTaskContractSchema>> AgentControlModelOptionSchema::getTaskContracts() const
+{
+    return m_Task_contracts;
+}
+
+
+void AgentControlModelOptionSchema::setTaskContracts(const std::vector<std::shared_ptr<ModelTaskContractSchema>>& value)
+{
+    m_Task_contracts = value;
+    m_Task_contractsIsSet = true;
+}
+
+bool AgentControlModelOptionSchema::taskContractsIsSet() const
+{
+    return m_Task_contractsIsSet;
+}
+
+void AgentControlModelOptionSchema::unsetTask_contracts()
+{
+    m_Task_contractsIsSet = false;
 }
 
 }

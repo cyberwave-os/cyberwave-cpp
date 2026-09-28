@@ -106,6 +106,16 @@ public:
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    utility::datetime getExpectedUpdatedAt() const;
+    bool expectedUpdatedAtIsSet() const;
+    void unsetExpected_updated_at();
+    void setExpectedUpdatedAt(const utility::datetime& value);
+
+    utility::datetime getExpectedModelUpdatedAt() const;
+    bool expectedModelUpdatedAtIsSet() const;
+    void unsetExpected_model_updated_at();
+    void setExpectedModelUpdatedAt(const utility::datetime& value);
+
 
 protected:
     boost::optional<utility::string_t> m_Name;
@@ -127,6 +137,10 @@ protected:
     boost::optional<bool> m_Is_disabled;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
+
+    boost::optional<utility::datetime> m_Expected_updated_at;
+
+    boost::optional<utility::datetime> m_Expected_model_updated_at;
 
 };
 

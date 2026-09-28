@@ -44,6 +44,11 @@ web::json::value RobotContextSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))] = ModelBase::toJson(m_Asset_uuid.get());
     }
+    if(m_Policy_joint_binding_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid"))] = ModelBase::toJson(m_Policy_joint_binding_uuid.get());
+    }
     if(m_Frame_id.has_value())
     {
         
@@ -80,6 +85,17 @@ bool RobotContextSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setAssetUuid;
             ok &= ModelBase::fromJson(fieldValue, refVal_setAssetUuid);
             setAssetUuid(refVal_setAssetUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setPolicyJointBindingUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPolicyJointBindingUuid);
+            setPolicyJointBindingUuid(refVal_setPolicyJointBindingUuid);
             
         }
     }
@@ -123,6 +139,10 @@ void RobotContextSchema::toMultipart(std::shared_ptr<MultipartFormData> multipar
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_uuid")), m_Asset_uuid.get()));
     }
+    if(m_Policy_joint_binding_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid")), m_Policy_joint_binding_uuid.get()));
+    }
     if(m_Frame_id.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("frame_id")), m_Frame_id.get()));
@@ -153,6 +173,12 @@ bool RobotContextSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         utility::string_t refVal_setAssetUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))), refVal_setAssetUuid );
         setAssetUuid(refVal_setAssetUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid"))))
+    {
+        utility::string_t refVal_setPolicyJointBindingUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("policy_joint_binding_uuid"))), refVal_setPolicyJointBindingUuid );
+        setPolicyJointBindingUuid(refVal_setPolicyJointBindingUuid);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("frame_id"))))
     {
@@ -209,6 +235,26 @@ bool RobotContextSchema::assetUuidIsSet() const
 void RobotContextSchema::unsetAsset_uuid()
 {
     m_Asset_uuid.reset();
+}
+utility::string_t RobotContextSchema::getPolicyJointBindingUuid() const
+{
+    return m_Policy_joint_binding_uuid.get();
+}
+
+
+void RobotContextSchema::setPolicyJointBindingUuid(const utility::string_t& value)
+{
+    m_Policy_joint_binding_uuid = value;
+}
+
+bool RobotContextSchema::policyJointBindingUuidIsSet() const
+{
+    return m_Policy_joint_binding_uuid.has_value();
+}
+
+void RobotContextSchema::unsetPolicy_joint_binding_uuid()
+{
+    m_Policy_joint_binding_uuid.reset();
 }
 utility::string_t RobotContextSchema::getFrameId() const
 {

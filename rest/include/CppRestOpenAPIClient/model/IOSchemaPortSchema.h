@@ -23,6 +23,8 @@
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include <cpprest/details/basic_types.h>
+#include <map>
+#include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
 namespace openapitools {
@@ -72,6 +74,11 @@ public:
     void unsetRequired();
     void setRequired(bool value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getSemantics() const;
+    bool semanticsIsSet() const;
+    void unsetSemantics();
+    void setSemantics(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
 
 protected:
     utility::string_t m_Name;
@@ -82,6 +89,8 @@ protected:
 
     bool m_Required;
     bool m_RequiredIsSet;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Semantics;
 
 };
 

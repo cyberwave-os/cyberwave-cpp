@@ -96,6 +96,21 @@ public:
     void unsetManual_block_reason();
     void setManualBlockReason(const utility::string_t& value);
 
+    utility::string_t getBillingProvider() const;
+    bool billingProviderIsSet() const;
+    void unsetBilling_provider();
+    void setBillingProvider(const utility::string_t& value);
+
+    utility::string_t getBillingProviderLabel() const;
+    bool billingProviderLabelIsSet() const;
+    void unsetBilling_provider_label();
+    void setBillingProviderLabel(const utility::string_t& value);
+
+    utility::string_t getBillingStatus() const;
+    bool billingStatusIsSet() const;
+    void unsetBilling_status();
+    void setBillingStatus(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Organization_uuid;
@@ -121,6 +136,15 @@ protected:
 
     utility::string_t m_Manual_block_reason;
     bool m_Manual_block_reasonIsSet;
+
+    utility::string_t m_Billing_provider;
+    bool m_Billing_providerIsSet;
+
+    utility::string_t m_Billing_provider_label;
+    bool m_Billing_provider_labelIsSet;
+
+    utility::string_t m_Billing_status;
+    bool m_Billing_statusIsSet;
 
 };
 

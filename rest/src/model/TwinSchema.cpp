@@ -32,8 +32,9 @@ TwinSchema::TwinSchema()
     m_Environment_uuidIsSet = false;
     m_Created_at = utility::datetime();
     m_Created_atIsSet = false;
-    m_Updated_at = utility::datetime();
+    m_Updated_at = utility::conversions::to_string_t("");
     m_Updated_atIsSet = false;
+    m_Visual_asset_statusIsSet = false;
     m_Position_x = 0.0;
     m_Position_xIsSet = false;
     m_Position_y = 0.0;
@@ -56,6 +57,7 @@ TwinSchema::TwinSchema()
     m_Scale_zIsSet = false;
     m_MetadataIsSet = false;
     m_CapabilitiesIsSet = false;
+    m_Configuration_feedbackIsSet = false;
     m_Child_twin_uuidsIsSet = false;
     m_Attach_offset_x = 0.0;
     m_Attach_offset_xIsSet = false;
@@ -146,6 +148,11 @@ web::json::value TwinSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("urdf_file"))] = ModelBase::toJson(m_Urdf_file.get());
     }
+    if(m_Visual_asset_statusIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("visual_asset_status"))] = ModelBase::toJson(m_Visual_asset_status);
+    }
     if(m_Position_xIsSet)
     {
         
@@ -220,6 +227,11 @@ web::json::value TwinSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("capabilities"))] = ModelBase::toJson(m_Capabilities);
+    }
+    if(m_Configuration_feedbackIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("configuration_feedback"))] = ModelBase::toJson(m_Configuration_feedback);
     }
     if(m_Universal_schema.has_value())
     {
@@ -405,7 +417,7 @@ bool TwinSchema::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("updated_at")));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_setUpdatedAt;
+            utility::string_t refVal_setUpdatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_setUpdatedAt);
             setUpdatedAt(refVal_setUpdatedAt);
             
@@ -441,6 +453,17 @@ bool TwinSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setUrdfFile;
             ok &= ModelBase::fromJson(fieldValue, refVal_setUrdfFile);
             setUrdfFile(refVal_setUrdfFile);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("visual_asset_status"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("visual_asset_status")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setVisualAssetStatus;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setVisualAssetStatus);
+            setVisualAssetStatus(refVal_setVisualAssetStatus);
             
         }
     }
@@ -606,6 +629,17 @@ bool TwinSchema::fromJson(const web::json::value& val)
             std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setCapabilities;
             ok &= ModelBase::fromJson(fieldValue, refVal_setCapabilities);
             setCapabilities(refVal_setCapabilities);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("configuration_feedback"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("configuration_feedback")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<ConfigurationFeedbackSchema>> refVal_setConfigurationFeedback;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setConfigurationFeedback);
+            setConfigurationFeedback(refVal_setConfigurationFeedback);
             
         }
     }
@@ -872,6 +906,10 @@ void TwinSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("urdf_file")), m_Urdf_file.get()));
     }
+    if(m_Visual_asset_statusIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("visual_asset_status")), m_Visual_asset_status));
+    }
     if(m_Position_xIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("position_x")), m_Position_x));
@@ -931,6 +969,10 @@ void TwinSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, const
     if(m_CapabilitiesIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("capabilities")), m_Capabilities));
+    }
+    if(m_Configuration_feedbackIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("configuration_feedback")), m_Configuration_feedback));
     }
     if(m_Universal_schema.has_value())
     {
@@ -1063,7 +1105,7 @@ bool TwinSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("updated_at"))))
     {
-        utility::datetime refVal_setUpdatedAt;
+        utility::string_t refVal_setUpdatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("updated_at"))), refVal_setUpdatedAt );
         setUpdatedAt(refVal_setUpdatedAt);
     }
@@ -1084,6 +1126,12 @@ bool TwinSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
         utility::string_t refVal_setUrdfFile;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("urdf_file"))), refVal_setUrdfFile );
         setUrdfFile(refVal_setUrdfFile);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("visual_asset_status"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setVisualAssetStatus;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("visual_asset_status"))), refVal_setVisualAssetStatus );
+        setVisualAssetStatus(refVal_setVisualAssetStatus);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("position_x"))))
     {
@@ -1174,6 +1222,12 @@ bool TwinSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setCapabilities;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("capabilities"))), refVal_setCapabilities );
         setCapabilities(refVal_setCapabilities);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("configuration_feedback"))))
+    {
+        std::vector<std::shared_ptr<ConfigurationFeedbackSchema>> refVal_setConfigurationFeedback;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("configuration_feedback"))), refVal_setConfigurationFeedback );
+        setConfigurationFeedback(refVal_setConfigurationFeedback);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("universal_schema"))))
     {
@@ -1439,13 +1493,13 @@ void TwinSchema::unsetCreated_at()
 {
     m_Created_atIsSet = false;
 }
-utility::datetime TwinSchema::getUpdatedAt() const
+utility::string_t TwinSchema::getUpdatedAt() const
 {
     return m_Updated_at;
 }
 
 
-void TwinSchema::setUpdatedAt(const utility::datetime& value)
+void TwinSchema::setUpdatedAt(const utility::string_t& value)
 {
     m_Updated_at = value;
     m_Updated_atIsSet = true;
@@ -1519,6 +1573,27 @@ bool TwinSchema::urdfFileIsSet() const
 void TwinSchema::unsetUrdf_file()
 {
     m_Urdf_file.reset();
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> TwinSchema::getVisualAssetStatus() const
+{
+    return m_Visual_asset_status;
+}
+
+
+void TwinSchema::setVisualAssetStatus(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Visual_asset_status = value;
+    m_Visual_asset_statusIsSet = true;
+}
+
+bool TwinSchema::visualAssetStatusIsSet() const
+{
+    return m_Visual_asset_statusIsSet;
+}
+
+void TwinSchema::unsetVisual_asset_status()
+{
+    m_Visual_asset_statusIsSet = false;
 }
 double TwinSchema::getPositionX() const
 {
@@ -1821,6 +1896,27 @@ bool TwinSchema::capabilitiesIsSet() const
 void TwinSchema::unsetCapabilities()
 {
     m_CapabilitiesIsSet = false;
+}
+std::vector<std::shared_ptr<ConfigurationFeedbackSchema>> TwinSchema::getConfigurationFeedback() const
+{
+    return m_Configuration_feedback;
+}
+
+
+void TwinSchema::setConfigurationFeedback(const std::vector<std::shared_ptr<ConfigurationFeedbackSchema>>& value)
+{
+    m_Configuration_feedback = value;
+    m_Configuration_feedbackIsSet = true;
+}
+
+bool TwinSchema::configurationFeedbackIsSet() const
+{
+    return m_Configuration_feedbackIsSet;
+}
+
+void TwinSchema::unsetConfiguration_feedback()
+{
+    m_Configuration_feedbackIsSet = false;
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> TwinSchema::getUniversalSchema() const
 {

@@ -79,8 +79,8 @@ public:
     /// <param name="limit"> (optional, default to 0)</param>
     pplx::task<std::shared_ptr<CloudNodeInstanceLogsResponse>> srcAppApiCloudNodesGetInstanceLogs(
         utility::string_t uuid,
-        boost::optional<utility::string_t> logType,
-        boost::optional<int32_t> limit
+        boost::optional<utility::string_t> logType = boost::none,
+        boost::optional<int32_t> limit = boost::none
     ) const;
     /// <summary>
     /// Get Instance Metadata
@@ -112,9 +112,9 @@ public:
     /// <param name="status"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="workspaceSlug"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::vector<std::shared_ptr<CloudNodeInstanceSchema>>> srcAppApiCloudNodesListInstances(
-        boost::optional<utility::string_t> profileSlug,
-        boost::optional<utility::string_t> status,
-        boost::optional<utility::string_t> workspaceSlug
+        boost::optional<utility::string_t> profileSlug = boost::none,
+        boost::optional<utility::string_t> status = boost::none,
+        boost::optional<utility::string_t> workspaceSlug = boost::none
     ) const;
     /// <summary>
     /// Mark Instance Failed

@@ -24,6 +24,7 @@
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include <cpprest/details/basic_types.h>
+#include <vector>
 
 namespace org {
 namespace openapitools {
@@ -103,6 +104,16 @@ public:
     void unsetCamera_streams();
     void setCameraStreams(bool value);
 
+    std::vector<utility::string_t> getCameraSensorIds() const;
+    bool cameraSensorIdsIsSet() const;
+    void unsetCamera_sensor_ids();
+    void setCameraSensorIds(const std::vector<utility::string_t>& value);
+
+    bool isAudioStreams() const;
+    bool audioStreamsIsSet() const;
+    void unsetAudio_streams();
+    void setAudioStreams(bool value);
+
     PoseEnum getPose() const;
     bool poseIsSet() const;
     void unsetPose();
@@ -129,6 +140,11 @@ protected:
 
     bool m_Camera_streams;
     bool m_Camera_streamsIsSet;
+
+    boost::optional<std::vector<utility::string_t>> m_Camera_sensor_ids;
+
+    bool m_Audio_streams;
+    bool m_Audio_streamsIsSet;
 
     PoseEnum m_Pose;
     bool m_PoseIsSet;

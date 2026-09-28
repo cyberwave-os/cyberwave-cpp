@@ -54,6 +54,11 @@ public:
     /// AssetControlRoutePatchSchema members
 
 
+    utility::string_t getExpectedRevision() const;
+    bool expectedRevisionIsSet() const;
+    void unsetExpected_revision();
+    void setExpectedRevision(const utility::string_t& value);
+
     utility::string_t getOptionId() const;
     bool optionIdIsSet() const;
     void unsetOption_id();
@@ -61,6 +66,8 @@ public:
 
 
 protected:
+    boost::optional<utility::string_t> m_Expected_revision;
+
     boost::optional<utility::string_t> m_Option_id;
 
 };

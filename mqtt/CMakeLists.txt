@@ -16,6 +16,8 @@ endif()
 if(NOT TARGET spdlog::spdlog)
   find_package(spdlog REQUIRED)
 endif()
+# cyberwave/mqtt_identity.h derives the username from the token's sha256.
+find_package(OpenSSL REQUIRED)
 
 # libmosquitto 2.1+ exposes cJSON in public headers on some builds (Homebrew macOS).
 pkg_check_modules(CJSON QUIET IMPORTED_TARGET libcjson)
@@ -48,6 +50,7 @@ target_link_libraries(cyberwave_mqtt_client
         PkgConfig::MOSQUITTO
         nlohmann_json::nlohmann_json
         spdlog::spdlog
+        OpenSSL::Crypto
 )
 if(CJSON_FOUND)
     target_link_libraries(cyberwave_mqtt_client PUBLIC PkgConfig::CJSON)
@@ -89,6 +92,7 @@ if(NOT TARGET PkgConfig::MOSQUITTO)
 endif()
 find_dependency(nlohmann_json REQUIRED)
 find_dependency(spdlog REQUIRED)
+find_dependency(OpenSSL REQUIRED)
 if(NOT TARGET PkgConfig::CJSON)
   pkg_check_modules(CJSON QUIET IMPORTED_TARGET libcjson)
   if(NOT CJSON_FOUND)

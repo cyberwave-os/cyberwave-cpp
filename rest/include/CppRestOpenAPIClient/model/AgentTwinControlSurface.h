@@ -27,7 +27,10 @@
 #include "CppRestOpenAPIClient/model/AgentTwinControl.h"
 #include "CppRestOpenAPIClient/model/AgentControlCapabilityDetailsSchema.h"
 #include <cpprest/details/basic_types.h>
+#include <map>
+#include "CppRestOpenAPIClient/model/AgentBoundControlCapabilitySchema.h"
 #include <vector>
+#include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
 namespace openapitools {
@@ -36,6 +39,7 @@ namespace model {
 
 class AgentControlCapabilityDetailsSchema;
 class AgentTwinControl;
+class AgentBoundControlCapabilitySchema;
 class AgentTwinControlRoute;
 
 
@@ -75,6 +79,11 @@ public:
     std::vector<CapabilitiesEnum> toCapabilitiesEnum(const std::vector<utility::string_t>& value) const;
     std::vector<utility::string_t> fromCapabilitiesEnum(const std::vector<CapabilitiesEnum>& value) const;
     
+
+    std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AnyType>>> getRuntimes() const;
+    bool runtimesIsSet() const;
+    void unsetRuntimes();
+    void setRuntimes(const std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
 
     utility::string_t getTwinUuid() const;
     bool twinUuidIsSet() const;
@@ -116,6 +125,11 @@ public:
     void unsetControls();
     void setControls(const std::vector<std::shared_ptr<AgentTwinControl>>& value);
 
+    std::vector<std::shared_ptr<AgentBoundControlCapabilitySchema>> getControlCapabilities() const;
+    bool controlCapabilitiesIsSet() const;
+    void unsetControl_capabilities();
+    void setControlCapabilities(const std::vector<std::shared_ptr<AgentBoundControlCapabilitySchema>>& value);
+
     std::vector<std::shared_ptr<AgentTwinControlRoute>> getRoutes() const;
     bool routesIsSet() const;
     void unsetRoutes();
@@ -123,6 +137,9 @@ public:
 
 
 protected:
+    std::map<utility::string_t, std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Runtimes;
+    bool m_RuntimesIsSet;
+
     utility::string_t m_Twin_uuid;
     bool m_Twin_uuidIsSet;
 
@@ -143,6 +160,9 @@ protected:
 
     std::vector<std::shared_ptr<AgentTwinControl>> m_Controls;
     bool m_ControlsIsSet;
+
+    std::vector<std::shared_ptr<AgentBoundControlCapabilitySchema>> m_Control_capabilities;
+    bool m_Control_capabilitiesIsSet;
 
     std::vector<std::shared_ptr<AgentTwinControlRoute>> m_Routes;
     bool m_RoutesIsSet;

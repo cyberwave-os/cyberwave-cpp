@@ -84,6 +84,7 @@ set(CYBERWAVE_SDK_HEADERS
     include/cyberwave/twin_subclasses.h
     include/cyberwave/compact.h
     include/cyberwave/keyboard.h
+    include/cyberwave/mqtt_identity.h
     include/cyberwave/mqtt_interface.h
     include/cyberwave/cyberwave_mqtt_client_adapter.h
     include/cyberwave/device_pairing.h
@@ -322,8 +323,8 @@ if(CYBERWAVE_BUILD_TESTS)
         test_workflows test_scene test_data test_workers test_manifest
         test_utils test_twin_subclasses test_compact test_motion test_locomotion_contracts
         test_navigation test_keyboard test_device_pairing test_edge_node
-        test_amr_edge_node test_camera_streaming test_depth_streaming
-        test_mqtt_config test_twin test_mqtt_interface
+        test_amr_edge_node test_camera_streaming test_h264_capture_sei test_depth_streaming
+        test_mqtt_config test_twin test_mqtt_interface test_mqtt_identity
     )
     foreach(_t IN LISTS _CYBERWAVE_UNIT_TESTS)
         add_executable(${_t} tests/${_t}.cpp)

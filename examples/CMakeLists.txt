@@ -63,6 +63,8 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/../mqtt/mqtt_client.cpp)
     pkg_check_modules(MOSQUITTO REQUIRED IMPORTED_TARGET libmosquitto)
     find_package(nlohmann_json REQUIRED)
     find_package(spdlog REQUIRED)
+    # cyberwave/mqtt_identity.h derives the username from the token's sha256.
+    find_package(OpenSSL REQUIRED)
 
     # Build static library from the mqtt source file (compile inside this build tree)
     add_library(cyberwave_mqtt_client STATIC ${CMAKE_SOURCE_DIR}/../mqtt/mqtt_client.cpp)
@@ -73,7 +75,7 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/../mqtt/mqtt_client.cpp)
             /usr/local/include
     )
     target_link_libraries(cyberwave_mqtt_client
-        PUBLIC PkgConfig::MOSQUITTO
+        PUBLIC PkgConfig::MOSQUITTO OpenSSL::Crypto
         PRIVATE nlohmann_json::nlohmann_json spdlog::spdlog
     )
 

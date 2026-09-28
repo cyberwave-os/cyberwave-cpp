@@ -57,6 +57,11 @@ public:
     /// AssetUpdateSchema members
 
 
+    utility::string_t getExpectedRevision() const;
+    bool expectedRevisionIsSet() const;
+    void unsetExpected_revision();
+    void setExpectedRevision(const utility::string_t& value);
+
     utility::string_t getName() const;
     bool nameIsSet() const;
     void unsetName();
@@ -129,6 +134,8 @@ public:
 
 
 protected:
+    boost::optional<utility::string_t> m_Expected_revision;
+
     boost::optional<utility::string_t> m_Name;
 
     boost::optional<utility::string_t> m_Description;

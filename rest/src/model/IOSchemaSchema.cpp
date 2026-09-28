@@ -22,6 +22,7 @@ IOSchemaSchema::IOSchemaSchema()
 {
     m_InputsIsSet = false;
     m_OutputsIsSet = false;
+    m_Semantic_issuesIsSet = false;
 }
 
 IOSchemaSchema::~IOSchemaSchema()
@@ -45,6 +46,16 @@ web::json::value IOSchemaSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("outputs"))] = ModelBase::toJson(m_Outputs);
+    }
+    if(m_Semantics_version.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("semantics_version"))] = ModelBase::toJson(m_Semantics_version.get());
+    }
+    if(m_Semantic_issuesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("semantic_issues"))] = ModelBase::toJson(m_Semantic_issues);
     }
 
     return val;
@@ -75,6 +86,28 @@ bool IOSchemaSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("semantics_version"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("semantics_version")));
+        if(!fieldValue.is_null())
+        {
+            int32_t refVal_setSemanticsVersion;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSemanticsVersion);
+            setSemanticsVersion(refVal_setSemanticsVersion);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("semantic_issues"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("semantic_issues")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<utility::string_t> refVal_setSemanticIssues;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSemanticIssues);
+            setSemanticIssues(refVal_setSemanticIssues);
+            
+        }
+    }
     return ok;
 }
 
@@ -92,6 +125,14 @@ void IOSchemaSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, c
     if(m_OutputsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("outputs")), m_Outputs));
+    }
+    if(m_Semantics_version.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("semantics_version")), m_Semantics_version.get()));
+    }
+    if(m_Semantic_issuesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("semantic_issues")), m_Semantic_issues));
     }
 }
 
@@ -115,6 +156,18 @@ bool IOSchemaSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart,
         std::vector<std::shared_ptr<IOSchemaPortSchema>> refVal_setOutputs;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("outputs"))), refVal_setOutputs );
         setOutputs(refVal_setOutputs);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("semantics_version"))))
+    {
+        int32_t refVal_setSemanticsVersion;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("semantics_version"))), refVal_setSemanticsVersion );
+        setSemanticsVersion(refVal_setSemanticsVersion);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("semantic_issues"))))
+    {
+        std::vector<utility::string_t> refVal_setSemanticIssues;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("semantic_issues"))), refVal_setSemanticIssues );
+        setSemanticIssues(refVal_setSemanticIssues);
     }
     return ok;
 }
@@ -161,6 +214,46 @@ bool IOSchemaSchema::outputsIsSet() const
 void IOSchemaSchema::unsetOutputs()
 {
     m_OutputsIsSet = false;
+}
+int32_t IOSchemaSchema::getSemanticsVersion() const
+{
+    return m_Semantics_version.get();
+}
+
+void IOSchemaSchema::setSemanticsVersion(int32_t value)
+{
+    m_Semantics_version = value;
+}
+
+bool IOSchemaSchema::semanticsVersionIsSet() const
+{
+    return m_Semantics_version.has_value();
+}
+
+void IOSchemaSchema::unsetSemantics_version()
+{
+    m_Semantics_version.reset();
+}
+std::vector<utility::string_t> IOSchemaSchema::getSemanticIssues() const
+{
+    return m_Semantic_issues;
+}
+
+
+void IOSchemaSchema::setSemanticIssues(const std::vector<utility::string_t>& value)
+{
+    m_Semantic_issues = value;
+    m_Semantic_issuesIsSet = true;
+}
+
+bool IOSchemaSchema::semanticIssuesIsSet() const
+{
+    return m_Semantic_issuesIsSet;
+}
+
+void IOSchemaSchema::unsetSemantic_issues()
+{
+    m_Semantic_issuesIsSet = false;
 }
 
 }

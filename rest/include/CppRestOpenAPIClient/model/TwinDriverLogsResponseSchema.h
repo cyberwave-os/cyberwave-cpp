@@ -12,7 +12,7 @@
 /*
  * TwinDriverLogsResponseSchema.h
  *
- * Paginated response for twin driver logs.
+ * Paginated driver-log response, shared by both read paths.  &#x60;&#x60;total&#x60;&#x60; is &#x60;&#x60;None&#x60;&#x60; when the caller passed &#x60;&#x60;include_total&#x3D;false&#x60;&#x60;: the count is a second pass over the window on the busiest table in the schema, so a caller that only tails the newest rows can opt out of paying for it and read &#x60;&#x60;has_more&#x60;&#x60; instead.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_TwinDriverLogsResponseSchema_H_
@@ -34,7 +34,7 @@ class TwinDriverLogSchema;
 
 
 /// <summary>
-/// Paginated response for twin driver logs.
+/// Paginated driver-log response, shared by both read paths.  &#x60;&#x60;total&#x60;&#x60; is &#x60;&#x60;None&#x60;&#x60; when the caller passed &#x60;&#x60;include_total&#x3D;false&#x60;&#x60;: the count is a second pass over the window on the busiest table in the schema, so a caller that only tails the newest rows can opt out of paying for it and read &#x60;&#x60;has_more&#x60;&#x60; instead.
 /// </summary>
 class  TwinDriverLogsResponseSchema
     : public ModelBase
@@ -89,8 +89,7 @@ protected:
     std::vector<std::shared_ptr<TwinDriverLogSchema>> m_Items;
     bool m_ItemsIsSet;
 
-    int32_t m_Total;
-    bool m_TotalIsSet;
+    boost::optional<int32_t> m_Total;
 
     int32_t m_Limit;
     bool m_LimitIsSet;

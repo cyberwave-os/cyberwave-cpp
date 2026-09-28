@@ -42,6 +42,21 @@ void TemplateTwinSummarySchema::validate()
 web::json::value TemplateTwinSummarySchema::toJson() const
 {
     web::json::value val = web::json::value::object();
+    if(m_Uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("uuid"))] = ModelBase::toJson(m_Uuid.get());
+    }
+    if(m_Position_x.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("position_x"))] = ModelBase::toJson(m_Position_x.get());
+    }
+    if(m_Position_y.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("position_y"))] = ModelBase::toJson(m_Position_y.get());
+    }
     if(m_NameIsSet)
     {
         
@@ -84,6 +99,39 @@ web::json::value TemplateTwinSummarySchema::toJson() const
 bool TemplateTwinSummarySchema::fromJson(const web::json::value& val)
 {
     bool ok = true;
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setUuid);
+            setUuid(refVal_setUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("position_x"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("position_x")));
+        if(!fieldValue.is_null())
+        {
+            double refVal_setPositionX;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPositionX);
+            setPositionX(refVal_setPositionX);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("position_y"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("position_y")));
+        if(!fieldValue.is_null())
+        {
+            double refVal_setPositionY;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPositionY);
+            setPositionY(refVal_setPositionY);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("name"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("name")));
@@ -171,6 +219,18 @@ void TemplateTwinSummarySchema::toMultipart(std::shared_ptr<MultipartFormData> m
     {
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
+    if(m_Uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("uuid")), m_Uuid.get()));
+    }
+    if(m_Position_x.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("position_x")), m_Position_x.get()));
+    }
+    if(m_Position_y.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("position_y")), m_Position_y.get()));
+    }
     if(m_NameIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("name")), m_Name));
@@ -210,6 +270,24 @@ bool TemplateTwinSummarySchema::fromMultiPart(std::shared_ptr<MultipartFormData>
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
 
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("uuid"))))
+    {
+        utility::string_t refVal_setUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("uuid"))), refVal_setUuid );
+        setUuid(refVal_setUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("position_x"))))
+    {
+        double refVal_setPositionX;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("position_x"))), refVal_setPositionX );
+        setPositionX(refVal_setPositionX);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("position_y"))))
+    {
+        double refVal_setPositionY;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("position_y"))), refVal_setPositionY );
+        setPositionY(refVal_setPositionY);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("name"))))
     {
         utility::string_t refVal_setName;
@@ -256,6 +334,64 @@ bool TemplateTwinSummarySchema::fromMultiPart(std::shared_ptr<MultipartFormData>
 }
 
 
+utility::string_t TemplateTwinSummarySchema::getUuid() const
+{
+    return m_Uuid.get();
+}
+
+
+void TemplateTwinSummarySchema::setUuid(const utility::string_t& value)
+{
+    m_Uuid = value;
+}
+
+bool TemplateTwinSummarySchema::uuidIsSet() const
+{
+    return m_Uuid.has_value();
+}
+
+void TemplateTwinSummarySchema::unsetUuid()
+{
+    m_Uuid.reset();
+}
+double TemplateTwinSummarySchema::getPositionX() const
+{
+    return m_Position_x.get();
+}
+
+void TemplateTwinSummarySchema::setPositionX(double value)
+{
+    m_Position_x = value;
+}
+
+bool TemplateTwinSummarySchema::positionXIsSet() const
+{
+    return m_Position_x.has_value();
+}
+
+void TemplateTwinSummarySchema::unsetPosition_x()
+{
+    m_Position_x.reset();
+}
+double TemplateTwinSummarySchema::getPositionY() const
+{
+    return m_Position_y.get();
+}
+
+void TemplateTwinSummarySchema::setPositionY(double value)
+{
+    m_Position_y = value;
+}
+
+bool TemplateTwinSummarySchema::positionYIsSet() const
+{
+    return m_Position_y.has_value();
+}
+
+void TemplateTwinSummarySchema::unsetPosition_y()
+{
+    m_Position_y.reset();
+}
 utility::string_t TemplateTwinSummarySchema::getName() const
 {
     return m_Name;

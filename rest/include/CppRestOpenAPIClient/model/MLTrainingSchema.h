@@ -109,8 +109,7 @@ protected:
     utility::string_t m_Dataset_uuid;
     bool m_Dataset_uuidIsSet;
 
-    utility::string_t m_Mlmodel_uuid;
-    bool m_Mlmodel_uuidIsSet;
+    boost::optional<utility::string_t> m_Mlmodel_uuid;
 
     utility::string_t m_Created_by_uuid;
     bool m_Created_by_uuidIsSet;

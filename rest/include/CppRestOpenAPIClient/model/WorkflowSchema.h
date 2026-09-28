@@ -114,6 +114,16 @@ public:
     void unsetRun_on_edge();
     void setRunOnEdge(bool value);
 
+    bool isAllowConcurrentExecutions() const;
+    bool allowConcurrentExecutionsIsSet() const;
+    void unsetAllow_concurrent_executions();
+    void setAllowConcurrentExecutions(bool value);
+
+    std::vector<utility::string_t> getConcurrencyBlockedByWorkflowUuids() const;
+    bool concurrencyBlockedByWorkflowUuidsIsSet() const;
+    void unsetConcurrency_blocked_by_workflow_uuids();
+    void setConcurrencyBlockedByWorkflowUuids(const std::vector<utility::string_t>& value);
+
     utility::string_t getExecutionTarget() const;
     bool executionTargetIsSet() const;
     void unsetExecution_target();
@@ -202,6 +212,12 @@ protected:
 
     bool m_Run_on_edge;
     bool m_Run_on_edgeIsSet;
+
+    bool m_Allow_concurrent_executions;
+    bool m_Allow_concurrent_executionsIsSet;
+
+    std::vector<utility::string_t> m_Concurrency_blocked_by_workflow_uuids;
+    bool m_Concurrency_blocked_by_workflow_uuidsIsSet;
 
     utility::string_t m_Execution_target;
     bool m_Execution_targetIsSet;

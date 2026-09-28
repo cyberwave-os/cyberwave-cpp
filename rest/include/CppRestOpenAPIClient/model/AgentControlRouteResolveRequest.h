@@ -23,6 +23,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/AgentSavedControlActionReference.h"
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include "CppRestOpenAPIClient/AnyType.h"
@@ -32,6 +33,7 @@ namespace openapitools {
 namespace client {
 namespace model {
 
+class AgentSavedControlActionReference;
 
 
 /// <summary>
@@ -74,6 +76,11 @@ public:
     bool routeIdIsSet() const;
     void unsetRoute_id();
     void setRouteId(const utility::string_t& value);
+
+    std::shared_ptr<AgentSavedControlActionReference> getSavedAction() const;
+    bool savedActionIsSet() const;
+    void unsetSaved_action();
+    void setSavedAction(const std::shared_ptr<AgentSavedControlActionReference>& value);
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> getInputs() const;
     bool inputsIsSet() const;
@@ -134,6 +141,8 @@ public:
 protected:
     utility::string_t m_Route_id;
     bool m_Route_idIsSet;
+
+    boost::optional<std::shared_ptr<AgentSavedControlActionReference>> m_Saved_action;
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Inputs;
     bool m_InputsIsSet;

@@ -1,4 +1,5 @@
 #include "cyberwave/camera_streaming.h"
+#include "h264_capture_sei.h"
 
 #include <cpprest/details/basic_types.h>
 #include <cpprest/json.h>
@@ -9,8 +10,10 @@
 #include <cstdint>
 #include <cstdlib>
 #include <functional>
+#include <iostream>
 #include <mutex>
 #include <optional>
+#include <random>
 #include <sstream>
 #include <stdexcept>
 #include <thread>
@@ -27,8 +30,6 @@
 
 #if CYBERWAVE_HAS_LIBDATACHANNEL
 #include <rtc/rtc.hpp>
-#include <spdlog/fmt/fmt.h>
-#include <spdlog/spdlog.h>
 #endif
 
 // Important: these includes must live at file scope (not inside namespace cyberwave),
@@ -189,6 +190,7 @@ public:
     struct Config
     {
         std::string sensor{"default"};
+        std::string frontend_type{"rgb"};
         std::string stun_url{"stun:stun.l.google.com:19302"};
         std::vector<std::string> turn_servers;
         bool recording{false};
@@ -204,12 +206,33 @@ public:
     virtual bool handle_answer(const Json& answer) = 0;
     virtual bool handle_candidate(const Json& candidate_message) = 0;
 
+    // Recreate a terminal peer connection after its bounded retry delay. This
+    // is called from the frame-producing thread, never from an rtc callback,
+    // so replacing the old PeerConnection cannot destroy its callback stack.
+    virtual void maintain_connection() = 0;
+
     // Frames should be Annex-B H264 bytes.
-    virtual bool send_frame(const std::vector<std::uint8_t>& frame_annexb, std::uint64_t timestamp_us) = 0;
+    virtual bool send_frame(const std::vector<std::uint8_t>& frame_annexb, std::uint64_t timestamp_us,
+                            std::uint64_t wall_ns = 0, std::uint64_t monotonic_ns = 0) = 0;
 };
 
 namespace
 {
+bool signaling_matches_stream(const Json& message, const std::string& frontend_type, const std::string& sensor)
+{
+    if (message.contains("frontend_type") && message["frontend_type"].is_string() &&
+        message["frontend_type"].get<std::string>() != frontend_type)
+    {
+        return false;
+    }
+    if (!sensor.empty() && message.contains("sensor") && message["sensor"].is_string() &&
+        message["sensor"].get<std::string>() != sensor)
+    {
+        return false;
+    }
+    return true;
+}
+
 [[maybe_unused]] std::vector<std::uint8_t> as_annex_b_h264_fallback(const std::vector<unsigned char>& bytes)
 {
     // Not a real encoder. This exists to validate the WebRTC plumbing while
@@ -853,46 +876,11 @@ public:
         publish_signal_ = std::move(publish_signal);
         log_fn_ = cfg.log_fn;
         sensor_ = cfg.sensor;
+        frontend_type_ = cfg.frontend_type;
         recording_ = cfg.recording;
-
-        rtc::Configuration rtc_cfg;
-        if (!cfg.stun_url.empty())
-        {
-            rtc_cfg.iceServers.emplace_back(cfg.stun_url);
-        }
-        for (const auto& turn : cfg.turn_servers)
-        {
-            rtc_cfg.iceServers.emplace_back(turn);
-        }
-        rtc_cfg.disableAutoNegotiation = true;
-
-        peer_connection_ = std::make_shared<rtc::PeerConnection>(rtc_cfg);
-        register_callbacks_locked();
-
-        ssrc_ = 1 + (std::rand() % 0xFFFFFFFEu);
-        auto video_description = rtc::Description::Video("video", rtc::Description::Direction::SendOnly);
-        video_description.addH264Codec(payload_type_h264_,
-                                       "profile-level-id=42001f;packetization-mode=1;level-asymmetry-allowed=1");
-        video_description.addSSRC(ssrc_, cname_, msid_, track_id_);
-        video_track_ = peer_connection_->addTrack(video_description);
-
-        rtp_config_ =
-            std::make_shared<rtc::RtpPacketizationConfig>(ssrc_, cname_, payload_type_h264_, video_clock_rate_);
-        auto packetizer =
-            std::make_shared<rtc::H264RtpPacketizer>(rtc::NalUnit::Separator::LongStartSequence, rtp_config_);
-        auto sr_reporter = std::make_shared<rtc::RtcpSrReporter>(rtp_config_);
-        auto nack_responder = std::make_shared<rtc::RtcpNackResponder>();
-        packetizer->addToChain(sr_reporter);
-        sr_reporter->addToChain(nack_responder);
-
-        video_track_->setMediaHandler(packetizer);
-        video_track_->onOpen([this]() {});
-
-        log("[WebRTCAdapter] Calling setLocalDescription (stun={})", cfg.stun_url);
-        peer_connection_->setLocalDescription();
-        log("[WebRTCAdapter] setLocalDescription returned, gatheringState={}",
-            static_cast<int>(peer_connection_->gatheringState()));
+        rtc_config_ = cfg;
         started_ = true;
+        create_connection_locked();
     }
 
     void stop() override
@@ -905,8 +893,10 @@ public:
         {
             std::lock_guard<std::mutex> lock(mutex_);
             started_ = false;
+            ++connection_generation_;
             connected_ = false;
             remote_description_set_ = false;
+            reconnect_requested_ = false;
             local_sdp_.reset();
             track_to_destroy = std::move(video_track_);
             pc_to_destroy = std::move(peer_connection_);
@@ -927,6 +917,11 @@ public:
             return false;
         }
         if (!answer.contains("sdp") || !answer["sdp"].is_string())
+        {
+            return false;
+        }
+        if (answer.contains("session_id") && answer["session_id"].is_string() &&
+            answer["session_id"].get<std::string>() != session_id_)
         {
             return false;
         }
@@ -958,6 +953,11 @@ public:
         {
             return false;
         }
+        if (candidate_message.contains("session_id") && candidate_message["session_id"].is_string() &&
+            candidate_message["session_id"].get<std::string>() != session_id_)
+        {
+            return false;
+        }
 
         try
         {
@@ -979,8 +979,54 @@ public:
         }
     }
 
-    bool send_frame(const std::vector<std::uint8_t>& frame_annexb, std::uint64_t timestamp_us) override
+    void maintain_connection() override
     {
+        std::shared_ptr<rtc::PeerConnection> stale_peer;
+        std::shared_ptr<rtc::Track> stale_track;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            if (!started_ || !reconnect_requested_ || std::chrono::steady_clock::now() < reconnect_not_before_)
+            {
+                return;
+            }
+
+            // Invalidate callbacks from the connection being replaced before
+            // releasing it. Its destruction can emit Closed asynchronously.
+            ++connection_generation_;
+            stale_track = std::move(video_track_);
+            stale_peer = std::move(peer_connection_);
+            rtp_config_.reset();
+            local_sdp_.reset();
+            connected_ = false;
+            remote_description_set_ = false;
+            reconnect_requested_ = false;
+        }
+
+        log("[WebRTCAdapter] rebuilding closed peer connection");
+        stale_track.reset();
+        stale_peer.reset();
+
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (!started_)
+        {
+            return;
+        }
+        try
+        {
+            reconnect_backoff_ = std::min(reconnect_backoff_ * 2, reconnect_backoff_max_);
+            create_connection_locked();
+        }
+        catch (...)
+        {
+            reconnect_requested_ = true;
+            reconnect_not_before_ = std::chrono::steady_clock::now() + reconnect_backoff_;
+        }
+    }
+
+    bool send_frame(const std::vector<std::uint8_t>& frame_annexb, std::uint64_t timestamp_us,
+                    std::uint64_t wall_ns = 0, std::uint64_t monotonic_ns = 0) override
+    {
+        maintain_connection();
         std::lock_guard<std::mutex> lock(mutex_);
         if (!video_track_)
         {
@@ -1002,8 +1048,12 @@ public:
             {
                 rtp_config_->timestamp = timestamp_90khz;
             }
-            const auto* bytes = reinterpret_cast<const std::byte*>(frame_annexb.data());
-            video_track_->send(bytes, frame_annexb.size());
+            const auto timestamped = wall_ns
+                                         ? detail::with_capture_sei(frame_annexb, capture_frame_index_++, timestamp_us,
+                                                                    wall_ns, monotonic_ns, capture_track_id_)
+                                         : frame_annexb;
+            const auto* bytes = reinterpret_cast<const std::byte*>(timestamped.data());
+            video_track_->send(bytes, timestamped.size());
             (void)connected_;
             return true;
         }
@@ -1014,18 +1064,76 @@ public:
     }
 
 private:
-    void register_callbacks_locked()
+    void create_connection_locked()
     {
-        peer_connection_->onStateChange(
-            [this](rtc::PeerConnection::State state)
+        rtc::Configuration rtc_cfg;
+        if (!rtc_config_.stun_url.empty())
+        {
+            rtc_cfg.iceServers.emplace_back(rtc_config_.stun_url);
+        }
+        for (const auto& turn : rtc_config_.turn_servers)
+        {
+            rtc_cfg.iceServers.emplace_back(turn);
+        }
+        rtc_cfg.disableAutoNegotiation = true;
+
+        peer_connection_ = std::make_shared<rtc::PeerConnection>(rtc_cfg);
+        const auto generation = ++connection_generation_;
+        session_id_ = track_id_ + "-" + std::to_string(generation);
+        register_callbacks_locked(peer_connection_, generation);
+
+        ssrc_ = 1 + (std::rand() % 0xFFFFFFFEu);
+        auto video_description = rtc::Description::Video("video", rtc::Description::Direction::SendOnly);
+        video_description.addH264Codec(payload_type_h264_,
+                                       "profile-level-id=42001f;packetization-mode=1;level-asymmetry-allowed=1");
+        video_description.addSSRC(ssrc_, cname_, msid_, track_id_);
+        video_track_ = peer_connection_->addTrack(video_description);
+
+        rtp_config_ =
+            std::make_shared<rtc::RtpPacketizationConfig>(ssrc_, cname_, payload_type_h264_, video_clock_rate_);
+        auto packetizer =
+            std::make_shared<rtc::H264RtpPacketizer>(rtc::NalUnit::Separator::LongStartSequence, rtp_config_);
+        auto sr_reporter = std::make_shared<rtc::RtcpSrReporter>(rtp_config_);
+        auto nack_responder = std::make_shared<rtc::RtcpNackResponder>();
+        packetizer->addToChain(sr_reporter);
+        sr_reporter->addToChain(nack_responder);
+        video_track_->setMediaHandler(packetizer);
+        video_track_->onOpen([]() {});
+
+        log("[WebRTCAdapter] Calling setLocalDescription (stun={})", rtc_config_.stun_url);
+        peer_connection_->setLocalDescription();
+        log("[WebRTCAdapter] setLocalDescription returned, gatheringState={}",
+            static_cast<int>(peer_connection_->gatheringState()));
+    }
+
+    void register_callbacks_locked(const std::shared_ptr<rtc::PeerConnection>& connection, std::uint64_t generation)
+    {
+        const std::weak_ptr<rtc::PeerConnection> weak_connection = connection;
+        connection->onStateChange(
+            [this, generation](rtc::PeerConnection::State state)
             {
                 log("[WebRTCAdapter] onStateChange: state={}", static_cast<int>(state));
                 std::lock_guard<std::mutex> lock(mutex_);
+                if (!started_ || generation != connection_generation_)
+                {
+                    return;
+                }
                 connected_ = (state == rtc::PeerConnection::State::Connected);
+                if (connected_)
+                {
+                    reconnect_requested_ = false;
+                    reconnect_backoff_ = reconnect_backoff_initial_;
+                }
+                else if (state == rtc::PeerConnection::State::Disconnected ||
+                         state == rtc::PeerConnection::State::Failed || state == rtc::PeerConnection::State::Closed)
+                {
+                    reconnect_requested_ = true;
+                    reconnect_not_before_ = std::chrono::steady_clock::now() + reconnect_backoff_;
+                }
             });
 
-        peer_connection_->onGatheringStateChange(
-            [this](rtc::PeerConnection::GatheringState state)
+        connection->onGatheringStateChange(
+            [this, weak_connection, generation](rtc::PeerConnection::GatheringState state)
             {
                 log("[WebRTCAdapter] onGatheringStateChange: state={}", static_cast<int>(state));
                 if (state != rtc::PeerConnection::GatheringState::Complete)
@@ -1033,7 +1141,16 @@ private:
                     return;
                 }
                 std::lock_guard<std::mutex> lock(mutex_);
-                const auto local_description = peer_connection_->localDescription();
+                if (!started_ || generation != connection_generation_)
+                {
+                    return;
+                }
+                const auto connection = weak_connection.lock();
+                if (!connection)
+                {
+                    return;
+                }
+                const auto local_description = connection->localDescription();
                 if (!local_description.has_value())
                 {
                     return;
@@ -1047,18 +1164,27 @@ private:
                     {"sdp", local_sdp_.value()},
                     {"timestamp", timestamp_now()},
                     {"recording", recording_},
+                    {"session_id", session_id_},
                 };
                 if (!sensor_.empty())
                 {
                     payload["sensor"] = sensor_;
                 }
+                if (!frontend_type_.empty())
+                {
+                    payload["frontend_type"] = frontend_type_;
+                }
                 publish_signal_(payload);
             });
 
-        peer_connection_->onLocalCandidate(
-            [this](const rtc::Candidate& candidate)
+        connection->onLocalCandidate(
+            [this, generation](const rtc::Candidate& candidate)
             {
                 std::lock_guard<std::mutex> lock(mutex_);
+                if (!started_ || generation != connection_generation_)
+                {
+                    return;
+                }
                 Json payload = {
                     {"target", "backend"},
                     {"sender", "edge"},
@@ -1069,10 +1195,15 @@ private:
                          {"sdpMid", candidate.mid()},
                      }},
                     {"timestamp", timestamp_now()},
+                    {"session_id", session_id_},
                 };
                 if (!sensor_.empty())
                 {
                     payload["sensor"] = sensor_;
+                }
+                if (!frontend_type_.empty())
+                {
+                    payload["frontend_type"] = frontend_type_;
                 }
                 publish_signal_(payload);
             });
@@ -1086,32 +1217,80 @@ private:
     std::shared_ptr<rtc::RtpPacketizationConfig> rtp_config_;
     std::optional<std::string> local_sdp_;
     std::string sensor_{};
+    std::string frontend_type_{"rgb"};
+    std::string session_id_;
     bool recording_{false};
     LogCallback log_fn_;
+    Config rtc_config_;
 
     std::atomic<bool> started_{false};
     bool connected_{false};
     bool remote_description_set_{false};
+    bool reconnect_requested_{false};
+    std::uint64_t connection_generation_{0};
+    std::chrono::steady_clock::time_point reconnect_not_before_{};
+    static constexpr std::chrono::seconds reconnect_backoff_initial_{2};
+    static constexpr std::chrono::seconds reconnect_backoff_max_{30};
+    std::chrono::seconds reconnect_backoff_{reconnect_backoff_initial_};
 
     std::uint32_t ssrc_{0};
     static constexpr std::uint8_t payload_type_h264_{102};
     static constexpr std::uint32_t video_clock_rate_{90000};
     static constexpr const char* cname_{"cw-cyberwave-cpp"};
     static constexpr const char* msid_{"cw-cyberwave-cpp-stream"};
-    static constexpr const char* track_id_{"cw-cyberwave-cpp-video"};
-
-    template <typename... Args>
-    void log(fmt::format_string<Args...> fmt_str, Args&&... args) const
+    std::array<std::uint8_t, 16> capture_track_id_ = []
     {
-        auto msg = fmt::format(fmt_str, std::forward<Args>(args)...);
+        std::array<std::uint8_t, 16> id{};
+        std::random_device random;
+        for (auto& byte : id)
+            byte = static_cast<std::uint8_t>(random());
+        id[6] = (id[6] & 15) | 64;
+        id[8] = (id[8] & 63) | 128;
+        return id;
+    }();
+    std::uint64_t capture_frame_index_ = 0;
+    const std::string track_id_ = [this]
+    {
+        static constexpr char hex[] = "0123456789abcdef";
+        std::string result;
+        for (std::size_t i = 0; i < capture_track_id_.size(); ++i)
+        {
+            if (i == 4 || i == 6 || i == 8 || i == 10)
+                result += '-';
+            result += hex[capture_track_id_[i] >> 4];
+            result += hex[capture_track_id_[i] & 15];
+        }
+        return result;
+    }();
+
+    void emit_log(const std::string& message) const
+    {
         if (log_fn_)
         {
-            log_fn_(msg);
+            log_fn_(message);
         }
         else
         {
-            spdlog::info("{}", msg);
+            std::clog << message << '\n';
         }
+    }
+
+    void log(const std::string& message) const { emit_log(message); }
+
+    template <typename T>
+    void log(const std::string& pattern, const T& value) const
+    {
+        std::ostringstream formatted;
+        const auto placeholder = pattern.find("{}");
+        if (placeholder == std::string::npos)
+        {
+            formatted << pattern << ' ' << value;
+        }
+        else
+        {
+            formatted << pattern.substr(0, placeholder) << value << pattern.substr(placeholder + 2);
+        }
+        emit_log(formatted.str());
     }
 };
 
@@ -1143,13 +1322,18 @@ CameraStreamer::CameraStreamer(std::shared_ptr<IMqttClient> mqtt, const std::str
     : mqtt_(std::move(mqtt)), twin_uuid_(twin_uuid), source_(std::move(source)), fps_(fps > 0 ? fps : 30),
       sensor_name_(std::move(sensor_name)), enable_webrtc_(enable_webrtc),
       enable_mqtt_video_fallback_(enable_mqtt_video_fallback), webrtc_stun_url_(std::move(webrtc_stun_url)),
-      webrtc_turn_servers_(std::move(webrtc_turn_servers))
+      webrtc_turn_servers_(std::move(webrtc_turn_servers)), frontend_type_("rgb")
 {
 }
 
 CameraStreamer::~CameraStreamer() { stop(); }
 
 void CameraStreamer::set_log_callback(std::function<void(const std::string&)> fn) { log_fn_ = std::move(fn); }
+
+void CameraStreamer::set_frontend_type(std::string frontend_type)
+{
+    frontend_type_ = frontend_type.empty() ? "rgb" : std::move(frontend_type);
+}
 
 void CameraStreamer::start()
 {
@@ -1165,38 +1349,41 @@ void CameraStreamer::start()
     {
         try
         {
-            webrtc_mqtt_subscription_ =
-                mqtt_->subscribe_webrtc_messages_scoped(twin_uuid_,
-                                                        [this](const std::string& json_payload)
-                                                        {
-                                                            if (!webrtc_adapter_)
-                                                            {
-                                                                return;
-                                                            }
-                                                            try
-                                                            {
-                                                                Json msg = Json::parse(json_payload);
-                                                                if (msg.contains("type") && msg["type"].is_string())
-                                                                {
-                                                                    const std::string type =
-                                                                        msg["type"].get<std::string>();
-                                                                    if (type == "answer")
-                                                                    {
-                                                                        webrtc_adapter_->handle_answer(msg);
-                                                                        return;
-                                                                    }
-                                                                    if (type == "candidate")
-                                                                    {
-                                                                        webrtc_adapter_->handle_candidate(msg);
-                                                                        return;
-                                                                    }
-                                                                }
-                                                            }
-                                                            catch (...)
-                                                            {
-                                                                // ignore malformed payloads
-                                                            }
-                                                        });
+            webrtc_mqtt_subscription_ = mqtt_->subscribe_webrtc_messages_scoped(
+                twin_uuid_,
+                [this](const std::string& json_payload)
+                {
+                    if (!webrtc_adapter_)
+                    {
+                        return;
+                    }
+                    try
+                    {
+                        Json msg = Json::parse(json_payload);
+                        if (!signaling_matches_stream(msg, frontend_type_, sensor_name_))
+                        {
+                            return;
+                        }
+                        if (msg.contains("type") && msg["type"].is_string())
+                        {
+                            const std::string type = msg["type"].get<std::string>();
+                            if (type == "answer")
+                            {
+                                webrtc_adapter_->handle_answer(msg);
+                                return;
+                            }
+                            if (type == "candidate")
+                            {
+                                webrtc_adapter_->handle_candidate(msg);
+                                return;
+                            }
+                        }
+                    }
+                    catch (...)
+                    {
+                        // ignore malformed payloads
+                    }
+                });
 
             webrtc_adapter_ = create_webrtc_adapter();
             if (!webrtc_adapter_)
@@ -1205,6 +1392,7 @@ void CameraStreamer::start()
             }
             WebRTCAdapter::Config cfg;
             cfg.sensor = sensor_name_;
+            cfg.frontend_type = frontend_type_.empty() ? "rgb" : frontend_type_;
             cfg.stun_url = webrtc_stun_url_;
             cfg.turn_servers = webrtc_turn_servers_;
             cfg.recording = recording_;
@@ -1281,6 +1469,16 @@ void CameraStreamer::stream_loop()
         VideoFrame frame;
         if (source_->next_frame(frame) && !frame.data.empty())
         {
+            // Frame sources may supply Unix capture seconds. Legacy monotonic
+            // values fall back to wall time at acquisition, never to RTP time.
+            const double acquired_at = timestamp_now();
+            const double capture_at =
+                std::isfinite(frame.timestamp) && frame.timestamp >= 946684800.0 && frame.timestamp <= acquired_at + 5.0
+                    ? frame.timestamp
+                    : acquired_at;
+            const auto wall_ns = static_cast<std::uint64_t>(capture_at * 1e9);
+            const auto monotonic_ns = static_cast<std::uint64_t>(
+                std::chrono::duration_cast<std::chrono::nanoseconds>(frame_start.time_since_epoch()).count());
             bool sent_via_webrtc = false;
             bool sent_to_cloud = false;
             if (enable_webrtc_ && webrtc_adapter_)
@@ -1311,7 +1509,7 @@ void CameraStreamer::stream_loop()
                     const bool ok = h264_encoder_->encode_to_annexb_h264(frame, h264_bytes);
                     if (ok && !h264_bytes.empty())
                     {
-                        sent_via_webrtc = webrtc_adapter_->send_frame(h264_bytes, webrtc_ts_us);
+                        sent_via_webrtc = webrtc_adapter_->send_frame(h264_bytes, webrtc_ts_us, wall_ns, monotonic_ns);
                         if (sent_via_webrtc)
                         {
                             frame_counter_++;
@@ -1406,6 +1604,10 @@ void EncodedH264CameraStreamer::start()
                                                         try
                                                         {
                                                             Json msg = Json::parse(json_payload);
+                                                            if (!signaling_matches_stream(msg, "rgb", sensor_name_))
+                                                            {
+                                                                return;
+                                                            }
                                                             if (msg.contains("type") && msg["type"].is_string())
                                                             {
                                                                 const std::string type = msg["type"].get<std::string>();

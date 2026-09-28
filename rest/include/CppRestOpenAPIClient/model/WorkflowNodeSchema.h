@@ -116,15 +116,20 @@ public:
     void unsetCreated_at();
     void setCreatedAt(const utility::datetime& value);
 
-    utility::datetime getUpdatedAt() const;
+    utility::string_t getUpdatedAt() const;
     bool updatedAtIsSet() const;
     void unsetUpdated_at();
-    void setUpdatedAt(const utility::datetime& value);
+    void setUpdatedAt(const utility::string_t& value);
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> getMetadata() const;
     bool metadataIsSet() const;
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
+    bool isSupportsModelTaskBinding() const;
+    bool supportsModelTaskBindingIsSet() const;
+    void unsetSupports_model_task_binding();
+    void setSupportsModelTaskBinding(bool value);
 
 
 protected:
@@ -163,11 +168,14 @@ protected:
     utility::datetime m_Created_at;
     bool m_Created_atIsSet;
 
-    utility::datetime m_Updated_at;
+    utility::string_t m_Updated_at;
     bool m_Updated_atIsSet;
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Metadata;
     bool m_MetadataIsSet;
+
+    bool m_Supports_model_task_binding;
+    bool m_Supports_model_task_bindingIsSet;
 
 };
 

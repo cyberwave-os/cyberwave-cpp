@@ -23,6 +23,7 @@
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include "CppRestOpenAPIClient/model/IOSchemaSchema.h"
+#include "CppRestOpenAPIClient/model/ModelTaskContractSchema.h"
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include <vector>
@@ -34,6 +35,7 @@ namespace client {
 namespace model {
 
 class IOSchemaSchema;
+class ModelTaskContractSchema;
 
 
 /// <summary>
@@ -87,10 +89,10 @@ public:
     void unsetCreated_at();
     void setCreatedAt(const utility::datetime& value);
 
-    utility::datetime getUpdatedAt() const;
+    utility::string_t getUpdatedAt() const;
     bool updatedAtIsSet() const;
     void unsetUpdated_at();
-    void setUpdatedAt(const utility::datetime& value);
+    void setUpdatedAt(const utility::string_t& value);
 
     utility::string_t getCreatedBy() const;
     bool createdByIsSet() const;
@@ -237,6 +239,11 @@ public:
     void unsetExecution_surfaces();
     void setExecutionSurfaces(const std::vector<utility::string_t>& value);
 
+    utility::string_t getInferenceIssue() const;
+    bool inferenceIssueIsSet() const;
+    void unsetInference_issue();
+    void setInferenceIssue(const utility::string_t& value);
+
     utility::string_t getSdkLoadId() const;
     bool sdkLoadIdIsSet() const;
     void unsetSdk_load_id();
@@ -287,6 +294,11 @@ public:
     void unsetIo_schema();
     void setIoSchema(const std::shared_ptr<IOSchemaSchema>& value);
 
+    std::vector<std::shared_ptr<ModelTaskContractSchema>> getTaskContracts() const;
+    bool taskContractsIsSet() const;
+    void unsetTask_contracts();
+    void setTaskContracts(const std::vector<std::shared_ptr<ModelTaskContractSchema>>& value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -303,7 +315,7 @@ protected:
     utility::datetime m_Created_at;
     bool m_Created_atIsSet;
 
-    utility::datetime m_Updated_at;
+    utility::string_t m_Updated_at;
     bool m_Updated_atIsSet;
 
     boost::optional<utility::string_t> m_Created_by;
@@ -382,6 +394,8 @@ protected:
     std::vector<utility::string_t> m_Execution_surfaces;
     bool m_Execution_surfacesIsSet;
 
+    boost::optional<utility::string_t> m_Inference_issue;
+
     boost::optional<utility::string_t> m_Sdk_load_id;
 
     boost::optional<utility::string_t> m_Edge_catalog_id;
@@ -404,6 +418,9 @@ protected:
     boost::optional<utility::string_t> m_Credential_header_name;
 
     boost::optional<std::shared_ptr<IOSchemaSchema>> m_Io_schema;
+
+    std::vector<std::shared_ptr<ModelTaskContractSchema>> m_Task_contracts;
+    bool m_Task_contractsIsSet;
 
 };
 
