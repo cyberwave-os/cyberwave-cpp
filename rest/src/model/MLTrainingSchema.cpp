@@ -24,8 +24,6 @@ MLTrainingSchema::MLTrainingSchema()
     m_UuidIsSet = false;
     m_Dataset_uuid = utility::conversions::to_string_t("");
     m_Dataset_uuidIsSet = false;
-    m_Mlmodel_uuid = utility::conversions::to_string_t("");
-    m_Mlmodel_uuidIsSet = false;
     m_Created_by_uuid = utility::conversions::to_string_t("");
     m_Created_by_uuidIsSet = false;
     m_Workspace_uuid = utility::conversions::to_string_t("");
@@ -61,10 +59,10 @@ web::json::value MLTrainingSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("dataset_uuid"))] = ModelBase::toJson(m_Dataset_uuid);
     }
-    if(m_Mlmodel_uuidIsSet)
+    if(m_Mlmodel_uuid.has_value())
     {
         
-        val[utility::conversions::to_string_t(_XPLATSTR("mlmodel_uuid"))] = ModelBase::toJson(m_Mlmodel_uuid);
+        val[utility::conversions::to_string_t(_XPLATSTR("mlmodel_uuid"))] = ModelBase::toJson(m_Mlmodel_uuid.get());
     }
     if(m_Created_by_uuidIsSet)
     {
@@ -220,9 +218,9 @@ void MLTrainingSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart,
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("dataset_uuid")), m_Dataset_uuid));
     }
-    if(m_Mlmodel_uuidIsSet)
+    if(m_Mlmodel_uuid.has_value())
     {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("mlmodel_uuid")), m_Mlmodel_uuid));
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("mlmodel_uuid")), m_Mlmodel_uuid.get()));
     }
     if(m_Created_by_uuidIsSet)
     {
@@ -361,24 +359,23 @@ void MLTrainingSchema::unsetDataset_uuid()
 }
 utility::string_t MLTrainingSchema::getMlmodelUuid() const
 {
-    return m_Mlmodel_uuid;
+    return m_Mlmodel_uuid.get();
 }
 
 
 void MLTrainingSchema::setMlmodelUuid(const utility::string_t& value)
 {
     m_Mlmodel_uuid = value;
-    m_Mlmodel_uuidIsSet = true;
 }
 
 bool MLTrainingSchema::mlmodelUuidIsSet() const
 {
-    return m_Mlmodel_uuidIsSet;
+    return m_Mlmodel_uuid.has_value();
 }
 
 void MLTrainingSchema::unsetMlmodel_uuid()
 {
-    m_Mlmodel_uuidIsSet = false;
+    m_Mlmodel_uuid.reset();
 }
 utility::string_t MLTrainingSchema::getCreatedByUuid() const
 {

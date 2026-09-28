@@ -35,6 +35,7 @@ AgentTwinControlRoute::AgentTwinControlRoute()
     m_Priority = 0;
     m_PriorityIsSet = false;
     m_Resolver_metadataIsSet = false;
+    m_Operator_uiIsSet = false;
 }
 
 AgentTwinControlRoute::~AgentTwinControlRoute()
@@ -63,6 +64,16 @@ web::json::value AgentTwinControlRoute::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("route_kind"))] = ModelBase::toJson(m_Route_kind);
+    }
+    if(m_Capability_label.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("capability_label"))] = ModelBase::toJson(m_Capability_label.get());
+    }
+    if(m_Capability_id.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("capability_id"))] = ModelBase::toJson(m_Capability_id.get());
     }
     if(m_Input_kindsIsSet)
     {
@@ -143,6 +154,11 @@ web::json::value AgentTwinControlRoute::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("resolver_metadata"))] = ModelBase::toJson(m_Resolver_metadata);
     }
+    if(m_Operator_uiIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("operator_ui"))] = ModelBase::toJson(m_Operator_ui);
+    }
 
     return val;
 }
@@ -180,6 +196,28 @@ bool AgentTwinControlRoute::fromJson(const web::json::value& val)
             utility::string_t refVal_setRouteKind;
             ok &= ModelBase::fromJson(fieldValue, refVal_setRouteKind);
             setRouteKind(refVal_setRouteKind);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("capability_label"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("capability_label")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setCapabilityLabel;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCapabilityLabel);
+            setCapabilityLabel(refVal_setCapabilityLabel);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("capability_id"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("capability_id")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setCapabilityId;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCapabilityId);
+            setCapabilityId(refVal_setCapabilityId);
             
         }
     }
@@ -350,6 +388,17 @@ bool AgentTwinControlRoute::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("operator_ui"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("operator_ui")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<ControlOperatorUISchema> refVal_setOperatorUi;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setOperatorUi);
+            setOperatorUi(refVal_setOperatorUi);
+            
+        }
+    }
     return ok;
 }
 
@@ -371,6 +420,14 @@ void AgentTwinControlRoute::toMultipart(std::shared_ptr<MultipartFormData> multi
     if(m_Route_kindIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("route_kind")), m_Route_kind));
+    }
+    if(m_Capability_label.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("capability_label")), m_Capability_label.get()));
+    }
+    if(m_Capability_id.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("capability_id")), m_Capability_id.get()));
     }
     if(m_Input_kindsIsSet)
     {
@@ -432,6 +489,10 @@ void AgentTwinControlRoute::toMultipart(std::shared_ptr<MultipartFormData> multi
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("resolver_metadata")), m_Resolver_metadata));
     }
+    if(m_Operator_uiIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("operator_ui")), m_Operator_ui));
+    }
 }
 
 bool AgentTwinControlRoute::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix)
@@ -460,6 +521,18 @@ bool AgentTwinControlRoute::fromMultiPart(std::shared_ptr<MultipartFormData> mul
         utility::string_t refVal_setRouteKind;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("route_kind"))), refVal_setRouteKind );
         setRouteKind(refVal_setRouteKind);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("capability_label"))))
+    {
+        utility::string_t refVal_setCapabilityLabel;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("capability_label"))), refVal_setCapabilityLabel );
+        setCapabilityLabel(refVal_setCapabilityLabel);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("capability_id"))))
+    {
+        utility::string_t refVal_setCapabilityId;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("capability_id"))), refVal_setCapabilityId );
+        setCapabilityId(refVal_setCapabilityId);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("input_kinds"))))
     {
@@ -550,6 +623,12 @@ bool AgentTwinControlRoute::fromMultiPart(std::shared_ptr<MultipartFormData> mul
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setResolverMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("resolver_metadata"))), refVal_setResolverMetadata );
         setResolverMetadata(refVal_setResolverMetadata);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("operator_ui"))))
+    {
+        std::shared_ptr<ControlOperatorUISchema> refVal_setOperatorUi;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("operator_ui"))), refVal_setOperatorUi );
+        setOperatorUi(refVal_setOperatorUi);
     }
     return ok;
 }
@@ -719,6 +798,46 @@ bool AgentTwinControlRoute::routeKindIsSet() const
 void AgentTwinControlRoute::unsetRoute_kind()
 {
     m_Route_kindIsSet = false;
+}
+utility::string_t AgentTwinControlRoute::getCapabilityLabel() const
+{
+    return m_Capability_label.get();
+}
+
+
+void AgentTwinControlRoute::setCapabilityLabel(const utility::string_t& value)
+{
+    m_Capability_label = value;
+}
+
+bool AgentTwinControlRoute::capabilityLabelIsSet() const
+{
+    return m_Capability_label.has_value();
+}
+
+void AgentTwinControlRoute::unsetCapability_label()
+{
+    m_Capability_label.reset();
+}
+utility::string_t AgentTwinControlRoute::getCapabilityId() const
+{
+    return m_Capability_id.get();
+}
+
+
+void AgentTwinControlRoute::setCapabilityId(const utility::string_t& value)
+{
+    m_Capability_id = value;
+}
+
+bool AgentTwinControlRoute::capabilityIdIsSet() const
+{
+    return m_Capability_id.has_value();
+}
+
+void AgentTwinControlRoute::unsetCapability_id()
+{
+    m_Capability_id.reset();
 }
 std::vector<utility::string_t> AgentTwinControlRoute::getInputKinds() const
 {
@@ -1024,6 +1143,27 @@ bool AgentTwinControlRoute::resolverMetadataIsSet() const
 void AgentTwinControlRoute::unsetResolver_metadata()
 {
     m_Resolver_metadataIsSet = false;
+}
+std::shared_ptr<ControlOperatorUISchema> AgentTwinControlRoute::getOperatorUi() const
+{
+    return m_Operator_ui;
+}
+
+
+void AgentTwinControlRoute::setOperatorUi(const std::shared_ptr<ControlOperatorUISchema>& value)
+{
+    m_Operator_ui = value;
+    m_Operator_uiIsSet = true;
+}
+
+bool AgentTwinControlRoute::operatorUiIsSet() const
+{
+    return m_Operator_uiIsSet;
+}
+
+void AgentTwinControlRoute::unsetOperator_ui()
+{
+    m_Operator_uiIsSet = false;
 }
 
 }

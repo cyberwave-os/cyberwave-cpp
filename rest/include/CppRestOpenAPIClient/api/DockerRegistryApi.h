@@ -53,7 +53,7 @@ public:
     /// <param name="currentTag"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::shared_ptr<DockerTagInfoSchema>> srcAppApiDockerRegistryGetDockerTags(
         utility::string_t image,
-        boost::optional<utility::string_t> currentTag
+        boost::optional<utility::string_t> currentTag = boost::none
     ) const;
 
 protected:

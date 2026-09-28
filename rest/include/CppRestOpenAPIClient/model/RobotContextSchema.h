@@ -67,6 +67,11 @@ public:
     void unsetAsset_uuid();
     void setAssetUuid(const utility::string_t& value);
 
+    utility::string_t getPolicyJointBindingUuid() const;
+    bool policyJointBindingUuidIsSet() const;
+    void unsetPolicy_joint_binding_uuid();
+    void setPolicyJointBindingUuid(const utility::string_t& value);
+
     utility::string_t getFrameId() const;
     bool frameIdIsSet() const;
     void unsetFrame_id();
@@ -82,6 +87,8 @@ protected:
     boost::optional<utility::string_t> m_Twin_uuid;
 
     boost::optional<utility::string_t> m_Asset_uuid;
+
+    boost::optional<utility::string_t> m_Policy_joint_binding_uuid;
 
     boost::optional<utility::string_t> m_Frame_id;
 

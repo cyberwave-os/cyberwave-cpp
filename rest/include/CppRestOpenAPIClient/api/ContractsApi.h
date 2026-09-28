@@ -47,7 +47,7 @@ public:
     /// Get Contract Schema
     /// </summary>
     /// <remarks>
-    /// Return the JSON Schema for a single contract.
+    /// Return the JSON Schema for a single contract.  &#x60;&#x60;contract_id&#x60;&#x60; is a single path segment, so it cannot contain &#x60;&#x60;/&#x60;&#x60;; the &#x60;&#x60;..&#x60;&#x60; case is still rejected explicitly rather than left to that accident. The cache is keyed only after that check, so a malformed id cannot grow it.
     /// </remarks>
     /// <param name="contractId"></param>
     pplx::task<void> srcAppApiContractsGetContractSchema(
@@ -57,7 +57,7 @@ public:
     /// List Contracts
     /// </summary>
     /// <remarks>
-    /// Return the identifiers of all available contracts.
+    /// Return the identifiers of all available contracts.  The suffix is stripped whole: &#x60;&#x60;Path.stem&#x60;&#x60; drops only &#x60;&#x60;.json&#x60;&#x60; and leaves a trailing &#x60;&#x60;.schema&#x60;&#x60;, which every caller then re-appends, so each listed id resolved to &#x60;&#x60;&lt;id&gt;.schema.schema.json&#x60;&#x60; and 404&#39;d.
     /// </remarks>
     pplx::task<std::vector<utility::string_t>> srcAppApiContractsListContracts(
     ) const;

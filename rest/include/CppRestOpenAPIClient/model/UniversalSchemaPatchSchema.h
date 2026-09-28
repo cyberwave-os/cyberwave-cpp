@@ -12,7 +12,7 @@
 /*
  * UniversalSchemaPatchSchema.h
  *
- * 
+ * One JSON Pointer operation against an asset&#39;s &#x60;&#x60;universal_schema&#x60;&#x60;.  &#x60;&#x60;expected_schema_hash&#x60;&#x60;, if given, must match the asset&#39;s stored &#x60;&#x60;extensions.cyberwave.schema_hash&#x60;&#x60; or the request is rejected with 409. It is the same token &#x60;&#x60;GET /assets/{uuid}/schemas/base&#x60;&#x60; returns, and the same one carried inside the schema document itself.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_UniversalSchemaPatchSchema_H_
@@ -32,6 +32,9 @@ namespace model {
 
 
 
+/// <summary>
+/// One JSON Pointer operation against an asset&#39;s &#x60;&#x60;universal_schema&#x60;&#x60;.  &#x60;&#x60;expected_schema_hash&#x60;&#x60;, if given, must match the asset&#39;s stored &#x60;&#x60;extensions.cyberwave.schema_hash&#x60;&#x60; or the request is rejected with 409. It is the same token &#x60;&#x60;GET /assets/{uuid}/schemas/base&#x60;&#x60; returns, and the same one carried inside the schema document itself.
+/// </summary>
 class  UniversalSchemaPatchSchema
     : public ModelBase
 {
@@ -70,6 +73,11 @@ public:
     void unsetValue();
     void setValue(const std::shared_ptr<AnyType>& value);
 
+    utility::string_t getExpectedSchemaHash() const;
+    bool expectedSchemaHashIsSet() const;
+    void unsetExpected_schema_hash();
+    void setExpectedSchemaHash(const utility::string_t& value);
+
 
 protected:
     utility::string_t m_Op;
@@ -79,6 +87,8 @@ protected:
     bool m_PathIsSet;
 
     boost::optional<std::shared_ptr<AnyType>> m_Value;
+
+    boost::optional<utility::string_t> m_Expected_schema_hash;
 
 };
 

@@ -56,7 +56,7 @@ bool EnvironmentWaypointPositionUpdateSchema::fromJson(const web::json::value& v
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("position")));
         if(!fieldValue.is_null())
         {
-            std::shared_ptr<Vector3Schema> refVal_setPosition;
+            std::shared_ptr<RequiredVector3Schema> refVal_setPosition;
             ok &= ModelBase::fromJson(fieldValue, refVal_setPosition);
             setPosition(refVal_setPosition);
             
@@ -67,7 +67,7 @@ bool EnvironmentWaypointPositionUpdateSchema::fromJson(const web::json::value& v
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("rotation")));
         if(!fieldValue.is_null())
         {
-            std::shared_ptr<QuaternionSchema> refVal_setRotation;
+            std::shared_ptr<RequiredQuaternionSchema> refVal_setRotation;
             ok &= ModelBase::fromJson(fieldValue, refVal_setRotation);
             setRotation(refVal_setRotation);
             
@@ -104,13 +104,13 @@ bool EnvironmentWaypointPositionUpdateSchema::fromMultiPart(std::shared_ptr<Mult
 
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("position"))))
     {
-        std::shared_ptr<Vector3Schema> refVal_setPosition;
+        std::shared_ptr<RequiredVector3Schema> refVal_setPosition;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("position"))), refVal_setPosition );
         setPosition(refVal_setPosition);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("rotation"))))
     {
-        std::shared_ptr<QuaternionSchema> refVal_setRotation;
+        std::shared_ptr<RequiredQuaternionSchema> refVal_setRotation;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("rotation"))), refVal_setRotation );
         setRotation(refVal_setRotation);
     }
@@ -118,13 +118,13 @@ bool EnvironmentWaypointPositionUpdateSchema::fromMultiPart(std::shared_ptr<Mult
 }
 
 
-std::shared_ptr<Vector3Schema> EnvironmentWaypointPositionUpdateSchema::getPosition() const
+std::shared_ptr<RequiredVector3Schema> EnvironmentWaypointPositionUpdateSchema::getPosition() const
 {
     return m_Position.get();
 }
 
 
-void EnvironmentWaypointPositionUpdateSchema::setPosition(const std::shared_ptr<Vector3Schema>& value)
+void EnvironmentWaypointPositionUpdateSchema::setPosition(const std::shared_ptr<RequiredVector3Schema>& value)
 {
     m_Position = value;
 }
@@ -138,13 +138,13 @@ void EnvironmentWaypointPositionUpdateSchema::unsetPosition()
 {
     m_Position.reset();
 }
-std::shared_ptr<QuaternionSchema> EnvironmentWaypointPositionUpdateSchema::getRotation() const
+std::shared_ptr<RequiredQuaternionSchema> EnvironmentWaypointPositionUpdateSchema::getRotation() const
 {
     return m_Rotation.get();
 }
 
 
-void EnvironmentWaypointPositionUpdateSchema::setRotation(const std::shared_ptr<QuaternionSchema>& value)
+void EnvironmentWaypointPositionUpdateSchema::setRotation(const std::shared_ptr<RequiredQuaternionSchema>& value)
 {
     m_Rotation = value;
 }

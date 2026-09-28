@@ -22,6 +22,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/ModelTaskContractSchema.h"
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include <vector>
@@ -32,6 +33,7 @@ namespace openapitools {
 namespace client {
 namespace model {
 
+class ModelTaskContractSchema;
 
 
 /// <summary>
@@ -115,6 +117,11 @@ public:
     void unsetSupported_task_ids();
     void setSupportedTaskIds(const std::vector<utility::string_t>& value);
 
+    std::vector<std::shared_ptr<ModelTaskContractSchema>> getTaskContracts() const;
+    bool taskContractsIsSet() const;
+    void unsetTask_contracts();
+    void setTaskContracts(const std::vector<std::shared_ptr<ModelTaskContractSchema>>& value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -146,6 +153,9 @@ protected:
 
     std::vector<utility::string_t> m_Supported_task_ids;
     bool m_Supported_task_idsIsSet;
+
+    std::vector<std::shared_ptr<ModelTaskContractSchema>> m_Task_contracts;
+    bool m_Task_contractsIsSet;
 
 };
 

@@ -127,6 +127,21 @@ public:
     void unsetIs_template();
     void setIsTemplate(bool value);
 
+    bool isIsLab() const;
+    bool isLabIsSet() const;
+    void unsetIs_lab();
+    void setIsLab(bool value);
+
+    utility::string_t getLabKind() const;
+    bool labKindIsSet() const;
+    void unsetLab_kind();
+    void setLabKind(const utility::string_t& value);
+
+    utility::string_t getControlPlaneAccess() const;
+    bool controlPlaneAccessIsSet() const;
+    void unsetControl_plane_access();
+    void setControlPlaneAccess(const utility::string_t& value);
+
     double getTotalMonthlyCost() const;
     bool totalMonthlyCostIsSet() const;
     void unsetTotal_monthly_cost();
@@ -178,6 +193,15 @@ protected:
 
     bool m_Is_template;
     bool m_Is_templateIsSet;
+
+    bool m_Is_lab;
+    bool m_Is_labIsSet;
+
+    utility::string_t m_Lab_kind;
+    bool m_Lab_kindIsSet;
+
+    utility::string_t m_Control_plane_access;
+    bool m_Control_plane_accessIsSet;
 
     boost::optional<double> m_Total_monthly_cost;
 

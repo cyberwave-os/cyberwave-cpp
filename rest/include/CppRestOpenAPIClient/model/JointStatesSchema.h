@@ -12,7 +12,7 @@
 /*
  * JointStatesSchema.h
  *
- * ROS-style &#x60;&#x60;sensor_msgs/JointState&#x60;&#x60; projection.  &#x60;&#x60;velocity&#x60;&#x60; / &#x60;&#x60;effort&#x60;&#x60; arrays follow ROS semantics: an empty array means the channel is not measured/commanded for any joint. They are only populated when every reported joint carries an explicit value.  &#x60;&#x60;position_source&#x60;&#x60; is a Cyberwave extension parallel to &#x60;&#x60;name&#x60;&#x60;, and the only way a caller can tell a measured pose from a fabricated one. Every controllable joint is reported, and a joint with no recorded runtime state falls back to its authored &#x60;&#x60;home_position&#x60;&#x60; and then to the geometric zero — which on the wire is indistinguishable from a robot that really is at home or at zero. A client that treats a &#x60;&#x60;home&#x60;&#x60;/&#x60;&#x60;default&#x60;&#x60; row as a live reading will show a never-moved joint as measured, and (in teleop) will step from a pose nothing ever observed. Consumers that need a live pose must filter on &#x60;&#x60;state&#x60;&#x60;; consumers that only need *a* pose can ignore it.
+ * ROS-style &#x60;&#x60;sensor_msgs/JointState&#x60;&#x60; projection.  &#x60;&#x60;velocity&#x60;&#x60; / &#x60;&#x60;effort&#x60;&#x60; arrays follow ROS semantics: an empty array means the channel is not measured/commanded for any joint. They are only populated when every reported joint carries an explicit value.  &#x60;&#x60;position_source&#x60;&#x60; is a Cyberwave extension parallel to &#x60;&#x60;name&#x60;&#x60;, and the only way a caller can tell a measured pose from a fabricated one. Every controllable joint is reported, and a joint with no recorded runtime state falls back to its authored &#x60;&#x60;home_position&#x60;&#x60; and then to the geometric zero — which on the wire is indistinguishable from a robot that really is at home or at zero. A client that treats a &#x60;&#x60;home&#x60;&#x60;/&#x60;&#x60;default&#x60;&#x60; row as a live reading will show a never-moved joint as measured, and (in teleop) will step from a pose nothing ever observed. &#x60;&#x60;state&#x60;&#x60; identifies persisted runtime state, not its freshness. &#x60;&#x60;source&#x3D;simulation&#x60;&#x60; requires a fresh observation from the active simulation and returns its timestamp/session metadata; it never falls back to the saved scene pose.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_JointStatesSchema_H_
@@ -25,6 +25,7 @@
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include <vector>
+#include "CppRestOpenAPIClient/AnyType.h"
 
 namespace org {
 namespace openapitools {
@@ -34,7 +35,7 @@ namespace model {
 
 
 /// <summary>
-/// ROS-style &#x60;&#x60;sensor_msgs/JointState&#x60;&#x60; projection.  &#x60;&#x60;velocity&#x60;&#x60; / &#x60;&#x60;effort&#x60;&#x60; arrays follow ROS semantics: an empty array means the channel is not measured/commanded for any joint. They are only populated when every reported joint carries an explicit value.  &#x60;&#x60;position_source&#x60;&#x60; is a Cyberwave extension parallel to &#x60;&#x60;name&#x60;&#x60;, and the only way a caller can tell a measured pose from a fabricated one. Every controllable joint is reported, and a joint with no recorded runtime state falls back to its authored &#x60;&#x60;home_position&#x60;&#x60; and then to the geometric zero — which on the wire is indistinguishable from a robot that really is at home or at zero. A client that treats a &#x60;&#x60;home&#x60;&#x60;/&#x60;&#x60;default&#x60;&#x60; row as a live reading will show a never-moved joint as measured, and (in teleop) will step from a pose nothing ever observed. Consumers that need a live pose must filter on &#x60;&#x60;state&#x60;&#x60;; consumers that only need *a* pose can ignore it.
+/// ROS-style &#x60;&#x60;sensor_msgs/JointState&#x60;&#x60; projection.  &#x60;&#x60;velocity&#x60;&#x60; / &#x60;&#x60;effort&#x60;&#x60; arrays follow ROS semantics: an empty array means the channel is not measured/commanded for any joint. They are only populated when every reported joint carries an explicit value.  &#x60;&#x60;position_source&#x60;&#x60; is a Cyberwave extension parallel to &#x60;&#x60;name&#x60;&#x60;, and the only way a caller can tell a measured pose from a fabricated one. Every controllable joint is reported, and a joint with no recorded runtime state falls back to its authored &#x60;&#x60;home_position&#x60;&#x60; and then to the geometric zero — which on the wire is indistinguishable from a robot that really is at home or at zero. A client that treats a &#x60;&#x60;home&#x60;&#x60;/&#x60;&#x60;default&#x60;&#x60; row as a live reading will show a never-moved joint as measured, and (in teleop) will step from a pose nothing ever observed. &#x60;&#x60;state&#x60;&#x60; identifies persisted runtime state, not its freshness. &#x60;&#x60;source&#x3D;simulation&#x60;&#x60; requires a fresh observation from the active simulation and returns its timestamp/session metadata; it never falls back to the saved scene pose.
 /// </summary>
 class  JointStatesSchema
     : public ModelBase
@@ -89,6 +90,11 @@ public:
     void unsetPosition_source();
     void setPositionSource(const std::vector<utility::string_t>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getObservation() const;
+    bool observationIsSet() const;
+    void unsetObservation();
+    void setObservation(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
 
 protected:
     std::map<utility::string_t, utility::string_t> m_Header;
@@ -108,6 +114,8 @@ protected:
 
     std::vector<utility::string_t> m_Position_source;
     bool m_Position_sourceIsSet;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Observation;
 
 };
 

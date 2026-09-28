@@ -54,6 +54,21 @@ public:
     /// TemplateTwinSummarySchema members
 
 
+    utility::string_t getUuid() const;
+    bool uuidIsSet() const;
+    void unsetUuid();
+    void setUuid(const utility::string_t& value);
+
+    double getPositionX() const;
+    bool positionXIsSet() const;
+    void unsetPosition_x();
+    void setPositionX(double value);
+
+    double getPositionY() const;
+    bool positionYIsSet() const;
+    void unsetPosition_y();
+    void setPositionY(double value);
+
     utility::string_t getName() const;
     bool nameIsSet() const;
     void unsetName();
@@ -91,6 +106,12 @@ public:
 
 
 protected:
+    boost::optional<utility::string_t> m_Uuid;
+
+    boost::optional<double> m_Position_x;
+
+    boost::optional<double> m_Position_y;
+
     utility::string_t m_Name;
     bool m_NameIsSet;
 

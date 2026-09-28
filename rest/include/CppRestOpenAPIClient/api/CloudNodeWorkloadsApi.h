@@ -22,6 +22,7 @@
 
 #include "CppRestOpenAPIClient/ApiClient.h"
 
+#include "CppRestOpenAPIClient/AnyType.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadAssignSchema.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadAttachmentResponseSchema.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadAttachmentSchema.h"
@@ -31,6 +32,8 @@
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadSchema.h"
 #include "CppRestOpenAPIClient/model/CloudNodeWorkloadUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/DeferredTaskExecutionResponseSchema.h"
+#include "CppRestOpenAPIClient/HttpContent.h"
+#include <map>
 #include <vector>
 #include <cpprest/details/basic_types.h>
 #include <boost/optional.hpp>
@@ -160,15 +163,15 @@ public:
     /// <param name="environmentUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     /// <param name="mlmodelUuid"> (optional, default to utility::conversions::to_string_t(&quot;&quot;))</param>
     pplx::task<std::vector<std::shared_ptr<CloudNodeWorkloadSchema>>> srcAppApiCloudNodeWorkloadsListWorkloads(
-        boost::optional<utility::string_t> status,
-        boost::optional<utility::string_t> statuses,
-        boost::optional<utility::string_t> profileSlug,
-        boost::optional<utility::string_t> workspaceUuid,
-        boost::optional<utility::string_t> commandType,
-        boost::optional<utility::string_t> twinUuid,
-        boost::optional<utility::string_t> controllerPolicyUuid,
-        boost::optional<utility::string_t> environmentUuid,
-        boost::optional<utility::string_t> mlmodelUuid
+        boost::optional<utility::string_t> status = boost::none,
+        boost::optional<utility::string_t> statuses = boost::none,
+        boost::optional<utility::string_t> profileSlug = boost::none,
+        boost::optional<utility::string_t> workspaceUuid = boost::none,
+        boost::optional<utility::string_t> commandType = boost::none,
+        boost::optional<utility::string_t> twinUuid = boost::none,
+        boost::optional<utility::string_t> controllerPolicyUuid = boost::none,
+        boost::optional<utility::string_t> environmentUuid = boost::none,
+        boost::optional<utility::string_t> mlmodelUuid = boost::none
     ) const;
     /// <summary>
     /// Mark Workload Completed
@@ -180,7 +183,7 @@ public:
     /// <param name="cloudNodeWorkloadCompleteSchema"> (optional)</param>
     pplx::task<std::shared_ptr<CloudNodeWorkloadSchema>> srcAppApiCloudNodeWorkloadsMarkWorkloadCompleted(
         utility::string_t uuid,
-        boost::optional<std::shared_ptr<CloudNodeWorkloadCompleteSchema>> cloudNodeWorkloadCompleteSchema
+        boost::optional<std::shared_ptr<CloudNodeWorkloadCompleteSchema>> cloudNodeWorkloadCompleteSchema = boost::none
     ) const;
     /// <summary>
     /// Mark Workload Failed
@@ -190,6 +193,16 @@ public:
     /// </remarks>
     /// <param name="uuid"></param>
     pplx::task<std::shared_ptr<CloudNodeWorkloadSchema>> srcAppApiCloudNodeWorkloadsMarkWorkloadFailed(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Read Simulation Audit
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiCloudNodeWorkloadsReadSimulationAudit(
         utility::string_t uuid
     ) const;
     /// <summary>
@@ -203,6 +216,32 @@ public:
     pplx::task<std::shared_ptr<CloudNodeWorkloadSchema>> srcAppApiCloudNodeWorkloadsUpdateWorkload(
         utility::string_t uuid,
         std::shared_ptr<CloudNodeWorkloadUpdateSchema> cloudNodeWorkloadUpdateSchema
+    ) const;
+    /// <summary>
+    /// Upload Simulation Audit
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="requestBody"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiCloudNodeWorkloadsUploadSimulationAudit(
+        utility::string_t uuid,
+        std::map<utility::string_t, std::shared_ptr<AnyType>> requestBody
+    ) const;
+    /// <summary>
+    /// Upload Workload Attachment
+    /// </summary>
+    /// <remarks>
+    /// Receive worker artifacts when storage has no signed PUT capability.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="attachmentUuid"></param>
+    /// <param name="file"></param>
+    pplx::task<void> srcAppApiCloudNodeWorkloadsUploadWorkloadAttachment(
+        utility::string_t uuid,
+        utility::string_t attachmentUuid,
+        std::shared_ptr<HttpContent> file
     ) const;
     /// <summary>
     /// Workload Upload Results

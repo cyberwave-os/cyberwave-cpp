@@ -33,6 +33,8 @@ EnvironmentProceduralPrimitiveSchema::EnvironmentProceduralPrimitiveSchema()
     m_VisibleIsSet = false;
     m_Locked = false;
     m_LockedIsSet = false;
+    m_Fixed_base = false;
+    m_Fixed_baseIsSet = false;
     m_Validation_warningsIsSet = false;
 }
 
@@ -127,6 +129,16 @@ web::json::value EnvironmentProceduralPrimitiveSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("locked"))] = ModelBase::toJson(m_Locked);
+    }
+    if(m_Fixed_baseIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("fixed_base"))] = ModelBase::toJson(m_Fixed_base);
+    }
+    if(m_Revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("revision"))] = ModelBase::toJson(m_Revision.get());
     }
     if(m_Validation_warningsIsSet)
     {
@@ -316,6 +328,28 @@ bool EnvironmentProceduralPrimitiveSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("fixed_base")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setFixedBase;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFixedBase);
+            setFixedBase(refVal_setFixedBase);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRevision);
+            setRevision(refVal_setRevision);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("validation_warnings"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("validation_warnings")));
@@ -400,6 +434,14 @@ void EnvironmentProceduralPrimitiveSchema::toMultipart(std::shared_ptr<Multipart
     if(m_LockedIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("locked")), m_Locked));
+    }
+    if(m_Fixed_baseIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("fixed_base")), m_Fixed_base));
+    }
+    if(m_Revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("revision")), m_Revision.get()));
     }
     if(m_Validation_warningsIsSet)
     {
@@ -511,6 +553,18 @@ bool EnvironmentProceduralPrimitiveSchema::fromMultiPart(std::shared_ptr<Multipa
         bool refVal_setLocked;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("locked"))), refVal_setLocked );
         setLocked(refVal_setLocked);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        bool refVal_setFixedBase;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))), refVal_setFixedBase );
+        setFixedBase(refVal_setFixedBase);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("revision"))))
+    {
+        utility::string_t refVal_setRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("revision"))), refVal_setRevision );
+        setRevision(refVal_setRevision);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("validation_warnings"))))
     {
@@ -844,6 +898,46 @@ bool EnvironmentProceduralPrimitiveSchema::lockedIsSet() const
 void EnvironmentProceduralPrimitiveSchema::unsetLocked()
 {
     m_LockedIsSet = false;
+}
+bool EnvironmentProceduralPrimitiveSchema::isFixedBase() const
+{
+    return m_Fixed_base;
+}
+
+void EnvironmentProceduralPrimitiveSchema::setFixedBase(bool value)
+{
+    m_Fixed_base = value;
+    m_Fixed_baseIsSet = true;
+}
+
+bool EnvironmentProceduralPrimitiveSchema::fixedBaseIsSet() const
+{
+    return m_Fixed_baseIsSet;
+}
+
+void EnvironmentProceduralPrimitiveSchema::unsetFixed_base()
+{
+    m_Fixed_baseIsSet = false;
+}
+utility::string_t EnvironmentProceduralPrimitiveSchema::getRevision() const
+{
+    return m_Revision.get();
+}
+
+
+void EnvironmentProceduralPrimitiveSchema::setRevision(const utility::string_t& value)
+{
+    m_Revision = value;
+}
+
+bool EnvironmentProceduralPrimitiveSchema::revisionIsSet() const
+{
+    return m_Revision.has_value();
+}
+
+void EnvironmentProceduralPrimitiveSchema::unsetRevision()
+{
+    m_Revision.reset();
 }
 std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> EnvironmentProceduralPrimitiveSchema::getValidationWarnings() const
 {

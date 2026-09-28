@@ -42,6 +42,7 @@ struct VideoFrame
     int width = 0;
     int height = 0;
     PixelFormat pixel_format = PixelFormat::BGR24;
+    // Unix capture seconds. Zero or legacy monotonic values use acquisition wall time.
     double timestamp = 0.0;
 };
 
@@ -99,6 +100,14 @@ public:
      */
     void set_recording(bool recording) { recording_ = recording; }
 
+    /**
+     * @brief Select the media-service stream type advertised by WebRTC offers.
+     *
+     * Normal cameras keep the default ``rgb`` identity. Rendered sensor layers
+     * may set a distinct type (for example ``occupancy``) before start().
+     */
+    void set_frontend_type(std::string frontend_type);
+
 private:
     void stream_loop();
 
@@ -116,6 +125,9 @@ private:
     bool recording_{false};
     std::string webrtc_stun_url_;
     std::vector<std::string> webrtc_turn_servers_;
+    // Media-service stream identity ("rgb" for normal cameras; e.g.
+    // "occupancy" for a rendered navigation map).
+    std::string frontend_type_;
     std::unique_ptr<WebRTCAdapter> webrtc_adapter_;
     std::unique_ptr<MqttSubscriptionHandle> webrtc_mqtt_subscription_;
 

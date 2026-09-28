@@ -22,6 +22,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include <cpprest/details/basic_types.h>
 #include <map>
 #include <vector>
 #include "CppRestOpenAPIClient/AnyType.h"
@@ -56,14 +57,42 @@ public:
     /// AssetControlProfileSettingsPatchSchema members
 
 
+    utility::string_t getExpectedRevision() const;
+    bool expectedRevisionIsSet() const;
+    void unsetExpected_revision();
+    void setExpectedRevision(const utility::string_t& value);
+
+    utility::datetime getExpectedPolicyUpdatedAt() const;
+    bool expectedPolicyUpdatedAtIsSet() const;
+    void unsetExpected_policy_updated_at();
+    void setExpectedPolicyUpdatedAt(const utility::datetime& value);
+
     std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getKeyboardBindings() const;
     bool keyboardBindingsIsSet() const;
     void unsetKeyboard_bindings();
     void setKeyboardBindings(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
 
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getLeaderArmBindings() const;
+    bool leaderArmBindingsIsSet() const;
+    void unsetLeader_arm_bindings();
+    void setLeaderArmBindings(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
+
+    std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getCustomLeaderArmBindings() const;
+    bool customLeaderArmBindingsIsSet() const;
+    void unsetCustom_leader_arm_bindings();
+    void setCustomLeaderArmBindings(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
+
 
 protected:
+    boost::optional<utility::string_t> m_Expected_revision;
+
+    boost::optional<utility::datetime> m_Expected_policy_updated_at;
+
     boost::optional<std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>> m_Keyboard_bindings;
+
+    boost::optional<std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>> m_Leader_arm_bindings;
+
+    boost::optional<std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>> m_Custom_leader_arm_bindings;
 
 };
 

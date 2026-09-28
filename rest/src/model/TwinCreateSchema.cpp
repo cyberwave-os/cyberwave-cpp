@@ -49,6 +49,16 @@ web::json::value TwinCreateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))] = ModelBase::toJson(m_Asset_uuid.get());
     }
+    if(m_Expected_asset_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_asset_uuid"))] = ModelBase::toJson(m_Expected_asset_uuid.get());
+    }
+    if(m_Expected_revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_revision"))] = ModelBase::toJson(m_Expected_revision.get());
+    }
     if(m_Environment_uuid.has_value())
     {
         
@@ -216,6 +226,28 @@ bool TwinCreateSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setAssetUuid;
             ok &= ModelBase::fromJson(fieldValue, refVal_setAssetUuid);
             setAssetUuid(refVal_setAssetUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_asset_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_asset_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExpectedAssetUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedAssetUuid);
+            setExpectedAssetUuid(refVal_setExpectedAssetUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExpectedRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedRevision);
+            setExpectedRevision(refVal_setExpectedRevision);
             
         }
     }
@@ -527,6 +559,14 @@ void TwinCreateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart,
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_uuid")), m_Asset_uuid.get()));
     }
+    if(m_Expected_asset_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_asset_uuid")), m_Expected_asset_uuid.get()));
+    }
+    if(m_Expected_revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_revision")), m_Expected_revision.get()));
+    }
     if(m_Environment_uuid.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("environment_uuid")), m_Environment_uuid.get()));
@@ -659,6 +699,18 @@ bool TwinCreateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipar
         utility::string_t refVal_setAssetUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))), refVal_setAssetUuid );
         setAssetUuid(refVal_setAssetUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_asset_uuid"))))
+    {
+        utility::string_t refVal_setExpectedAssetUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_asset_uuid"))), refVal_setExpectedAssetUuid );
+        setExpectedAssetUuid(refVal_setExpectedAssetUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        utility::string_t refVal_setExpectedRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))), refVal_setExpectedRevision );
+        setExpectedRevision(refVal_setExpectedRevision);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("environment_uuid"))))
     {
@@ -879,6 +931,46 @@ bool TwinCreateSchema::assetUuidIsSet() const
 void TwinCreateSchema::unsetAsset_uuid()
 {
     m_Asset_uuid.reset();
+}
+utility::string_t TwinCreateSchema::getExpectedAssetUuid() const
+{
+    return m_Expected_asset_uuid.get();
+}
+
+
+void TwinCreateSchema::setExpectedAssetUuid(const utility::string_t& value)
+{
+    m_Expected_asset_uuid = value;
+}
+
+bool TwinCreateSchema::expectedAssetUuidIsSet() const
+{
+    return m_Expected_asset_uuid.has_value();
+}
+
+void TwinCreateSchema::unsetExpected_asset_uuid()
+{
+    m_Expected_asset_uuid.reset();
+}
+utility::string_t TwinCreateSchema::getExpectedRevision() const
+{
+    return m_Expected_revision.get();
+}
+
+
+void TwinCreateSchema::setExpectedRevision(const utility::string_t& value)
+{
+    m_Expected_revision = value;
+}
+
+bool TwinCreateSchema::expectedRevisionIsSet() const
+{
+    return m_Expected_revision.has_value();
+}
+
+void TwinCreateSchema::unsetExpected_revision()
+{
+    m_Expected_revision.reset();
 }
 utility::string_t TwinCreateSchema::getEnvironmentUuid() const
 {

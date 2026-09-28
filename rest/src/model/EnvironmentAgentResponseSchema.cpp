@@ -60,6 +60,11 @@ web::json::value EnvironmentAgentResponseSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("structured_results"))] = ModelBase::toJson(m_Structured_results);
     }
+    if(m_Scene_changes.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("scene_changes"))] = ModelBase::toJson(m_Scene_changes.get());
+    }
 
     return val;
 }
@@ -111,6 +116,17 @@ bool EnvironmentAgentResponseSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("scene_changes"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("scene_changes")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setSceneChanges;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSceneChanges);
+            setSceneChanges(refVal_setSceneChanges);
+            
+        }
+    }
     return ok;
 }
 
@@ -136,6 +152,10 @@ void EnvironmentAgentResponseSchema::toMultipart(std::shared_ptr<MultipartFormDa
     if(m_Structured_resultsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("structured_results")), m_Structured_results));
+    }
+    if(m_Scene_changes.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("scene_changes")), m_Scene_changes.get()));
     }
 }
 
@@ -171,6 +191,12 @@ bool EnvironmentAgentResponseSchema::fromMultiPart(std::shared_ptr<MultipartForm
         std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setStructuredResults;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("structured_results"))), refVal_setStructuredResults );
         setStructuredResults(refVal_setStructuredResults);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("scene_changes"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setSceneChanges;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("scene_changes"))), refVal_setSceneChanges );
+        setSceneChanges(refVal_setSceneChanges);
     }
     return ok;
 }
@@ -259,6 +285,26 @@ bool EnvironmentAgentResponseSchema::structuredResultsIsSet() const
 void EnvironmentAgentResponseSchema::unsetStructured_results()
 {
     m_Structured_resultsIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> EnvironmentAgentResponseSchema::getSceneChanges() const
+{
+    return m_Scene_changes.get();
+}
+
+
+void EnvironmentAgentResponseSchema::setSceneChanges(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Scene_changes = value;
+}
+
+bool EnvironmentAgentResponseSchema::sceneChangesIsSet() const
+{
+    return m_Scene_changes.has_value();
+}
+
+void EnvironmentAgentResponseSchema::unsetScene_changes()
+{
+    m_Scene_changes.reset();
 }
 
 }

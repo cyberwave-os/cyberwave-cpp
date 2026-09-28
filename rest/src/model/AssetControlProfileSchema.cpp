@@ -22,6 +22,8 @@ AssetControlProfileSchema::AssetControlProfileSchema()
 {
     m_Asset_uuid = utility::conversions::to_string_t("");
     m_Asset_uuidIsSet = false;
+    m_Can_write = false;
+    m_Can_writeIsSet = false;
     m_Default_runtime_routesIsSet = false;
     m_Default_runtime_option_idsIsSet = false;
     m_Compatible_controllersIsSet = false;
@@ -30,6 +32,7 @@ AssetControlProfileSchema::AssetControlProfileSchema()
     m_Controller_settingsIsSet = false;
     m_Controller_optionsIsSet = false;
     m_Basic_simulation_capabilitiesIsSet = false;
+    m_Control_capabilitiesIsSet = false;
     m_Runtime_routesIsSet = false;
     m_RecommendationIsSet = false;
 }
@@ -50,6 +53,16 @@ web::json::value AssetControlProfileSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))] = ModelBase::toJson(m_Asset_uuid);
+    }
+    if(m_Revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("revision"))] = ModelBase::toJson(m_Revision.get());
+    }
+    if(m_Can_writeIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("can_write"))] = ModelBase::toJson(m_Can_write);
     }
     if(m_Manual_controller_ref.has_value())
     {
@@ -111,6 +124,11 @@ web::json::value AssetControlProfileSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("basic_simulation_capabilities"))] = ModelBase::toJson(m_Basic_simulation_capabilities);
     }
+    if(m_Control_capabilitiesIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("control_capabilities"))] = ModelBase::toJson(m_Control_capabilities);
+    }
     if(m_Runtime_routesIsSet)
     {
         
@@ -146,6 +164,28 @@ bool AssetControlProfileSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setAssetUuid;
             ok &= ModelBase::fromJson(fieldValue, refVal_setAssetUuid);
             setAssetUuid(refVal_setAssetUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRevision);
+            setRevision(refVal_setRevision);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("can_write"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("can_write")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setCanWrite;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCanWrite);
+            setCanWrite(refVal_setCanWrite);
             
         }
     }
@@ -281,6 +321,17 @@ bool AssetControlProfileSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("control_capabilities"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("control_capabilities")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::shared_ptr<AssetControlCapabilitySchema>> refVal_setControlCapabilities;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setControlCapabilities);
+            setControlCapabilities(refVal_setControlCapabilities);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("runtime_routes"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("runtime_routes")));
@@ -339,6 +390,14 @@ void AssetControlProfileSchema::toMultipart(std::shared_ptr<MultipartFormData> m
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("asset_uuid")), m_Asset_uuid));
     }
+    if(m_Revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("revision")), m_Revision.get()));
+    }
+    if(m_Can_writeIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("can_write")), m_Can_write));
+    }
     if(m_Manual_controller_ref.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("manual_controller_ref")), m_Manual_controller_ref.get()));
@@ -387,6 +446,10 @@ void AssetControlProfileSchema::toMultipart(std::shared_ptr<MultipartFormData> m
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("basic_simulation_capabilities")), m_Basic_simulation_capabilities));
     }
+    if(m_Control_capabilitiesIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("control_capabilities")), m_Control_capabilities));
+    }
     if(m_Runtime_routesIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("runtime_routes")), m_Runtime_routes));
@@ -419,6 +482,18 @@ bool AssetControlProfileSchema::fromMultiPart(std::shared_ptr<MultipartFormData>
         utility::string_t refVal_setAssetUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("asset_uuid"))), refVal_setAssetUuid );
         setAssetUuid(refVal_setAssetUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("revision"))))
+    {
+        utility::string_t refVal_setRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("revision"))), refVal_setRevision );
+        setRevision(refVal_setRevision);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("can_write"))))
+    {
+        bool refVal_setCanWrite;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("can_write"))), refVal_setCanWrite );
+        setCanWrite(refVal_setCanWrite);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("manual_controller_ref"))))
     {
@@ -492,6 +567,12 @@ bool AssetControlProfileSchema::fromMultiPart(std::shared_ptr<MultipartFormData>
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("basic_simulation_capabilities"))), refVal_setBasicSimulationCapabilities );
         setBasicSimulationCapabilities(refVal_setBasicSimulationCapabilities);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("control_capabilities"))))
+    {
+        std::vector<std::shared_ptr<AssetControlCapabilitySchema>> refVal_setControlCapabilities;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("control_capabilities"))), refVal_setControlCapabilities );
+        setControlCapabilities(refVal_setControlCapabilities);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("runtime_routes"))))
     {
         std::vector<std::shared_ptr<AssetControlRuntimeRouteSchema>> refVal_setRuntimeRoutes;
@@ -540,6 +621,46 @@ bool AssetControlProfileSchema::assetUuidIsSet() const
 void AssetControlProfileSchema::unsetAsset_uuid()
 {
     m_Asset_uuidIsSet = false;
+}
+utility::string_t AssetControlProfileSchema::getRevision() const
+{
+    return m_Revision.get();
+}
+
+
+void AssetControlProfileSchema::setRevision(const utility::string_t& value)
+{
+    m_Revision = value;
+}
+
+bool AssetControlProfileSchema::revisionIsSet() const
+{
+    return m_Revision.has_value();
+}
+
+void AssetControlProfileSchema::unsetRevision()
+{
+    m_Revision.reset();
+}
+bool AssetControlProfileSchema::isCanWrite() const
+{
+    return m_Can_write;
+}
+
+void AssetControlProfileSchema::setCanWrite(bool value)
+{
+    m_Can_write = value;
+    m_Can_writeIsSet = true;
+}
+
+bool AssetControlProfileSchema::canWriteIsSet() const
+{
+    return m_Can_writeIsSet;
+}
+
+void AssetControlProfileSchema::unsetCan_write()
+{
+    m_Can_writeIsSet = false;
 }
 std::shared_ptr<ControllerRefSchema> AssetControlProfileSchema::getManualControllerRef() const
 {
@@ -788,6 +909,27 @@ bool AssetControlProfileSchema::basicSimulationCapabilitiesIsSet() const
 void AssetControlProfileSchema::unsetBasic_simulation_capabilities()
 {
     m_Basic_simulation_capabilitiesIsSet = false;
+}
+std::vector<std::shared_ptr<AssetControlCapabilitySchema>> AssetControlProfileSchema::getControlCapabilities() const
+{
+    return m_Control_capabilities;
+}
+
+
+void AssetControlProfileSchema::setControlCapabilities(const std::vector<std::shared_ptr<AssetControlCapabilitySchema>>& value)
+{
+    m_Control_capabilities = value;
+    m_Control_capabilitiesIsSet = true;
+}
+
+bool AssetControlProfileSchema::controlCapabilitiesIsSet() const
+{
+    return m_Control_capabilitiesIsSet;
+}
+
+void AssetControlProfileSchema::unsetControl_capabilities()
+{
+    m_Control_capabilitiesIsSet = false;
 }
 std::vector<std::shared_ptr<AssetControlRuntimeRouteSchema>> AssetControlProfileSchema::getRuntimeRoutes() const
 {

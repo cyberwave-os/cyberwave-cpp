@@ -34,6 +34,11 @@ void AssetControlRoutePatchSchema::validate()
 web::json::value AssetControlRoutePatchSchema::toJson() const
 {
     web::json::value val = web::json::value::object();
+    if(m_Expected_revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_revision"))] = ModelBase::toJson(m_Expected_revision.get());
+    }
     if(m_Option_id.has_value())
     {
         
@@ -46,6 +51,17 @@ web::json::value AssetControlRoutePatchSchema::toJson() const
 bool AssetControlRoutePatchSchema::fromJson(const web::json::value& val)
 {
     bool ok = true;
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExpectedRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedRevision);
+            setExpectedRevision(refVal_setExpectedRevision);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("option_id"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("option_id")));
@@ -67,6 +83,10 @@ void AssetControlRoutePatchSchema::toMultipart(std::shared_ptr<MultipartFormData
     {
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
+    if(m_Expected_revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_revision")), m_Expected_revision.get()));
+    }
     if(m_Option_id.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("option_id")), m_Option_id.get()));
@@ -82,6 +102,12 @@ bool AssetControlRoutePatchSchema::fromMultiPart(std::shared_ptr<MultipartFormDa
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
 
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        utility::string_t refVal_setExpectedRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))), refVal_setExpectedRevision );
+        setExpectedRevision(refVal_setExpectedRevision);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("option_id"))))
     {
         utility::string_t refVal_setOptionId;
@@ -92,6 +118,26 @@ bool AssetControlRoutePatchSchema::fromMultiPart(std::shared_ptr<MultipartFormDa
 }
 
 
+utility::string_t AssetControlRoutePatchSchema::getExpectedRevision() const
+{
+    return m_Expected_revision.get();
+}
+
+
+void AssetControlRoutePatchSchema::setExpectedRevision(const utility::string_t& value)
+{
+    m_Expected_revision = value;
+}
+
+bool AssetControlRoutePatchSchema::expectedRevisionIsSet() const
+{
+    return m_Expected_revision.has_value();
+}
+
+void AssetControlRoutePatchSchema::unsetExpected_revision()
+{
+    m_Expected_revision.reset();
+}
 utility::string_t AssetControlRoutePatchSchema::getOptionId() const
 {
     return m_Option_id.get();

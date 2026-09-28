@@ -26,6 +26,7 @@
 #include "CppRestOpenAPIClient/model/Rotation.h"
 #include "CppRestOpenAPIClient/model/Style_1.h"
 #include <cpprest/details/basic_types.h>
+#include "CppRestOpenAPIClient/model/Size.h"
 #include <map>
 #include <vector>
 #include "CppRestOpenAPIClient/AnyType.h"
@@ -100,6 +101,16 @@ public:
     void unsetParameters();
     void setParameters(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::shared_ptr<Size> getSize() const;
+    bool sizeIsSet() const;
+    void unsetSize();
+    void setSize(const std::shared_ptr<Size>& value);
+
+    std::map<utility::string_t, double> getDimensions() const;
+    bool dimensionsIsSet() const;
+    void unsetDimensions();
+    void setDimensions(std::map<utility::string_t, double> value);
+
     std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> getJsonPatch() const;
     bool jsonPatchIsSet() const;
     void unsetJson_patch();
@@ -135,6 +146,16 @@ public:
     void unsetLocked();
     void setLocked(bool value);
 
+    bool isFixedBase() const;
+    bool fixedBaseIsSet() const;
+    void unsetFixed_base();
+    void setFixedBase(bool value);
+
+    utility::string_t getExpectedRevision() const;
+    bool expectedRevisionIsSet() const;
+    void unsetExpected_revision();
+    void setExpectedRevision(const utility::string_t& value);
+
 
 protected:
     boost::optional<utility::string_t> m_Template_key;
@@ -153,6 +174,10 @@ protected:
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Parameters;
 
+    boost::optional<std::shared_ptr<Size>> m_Size;
+
+    boost::optional<std::map<utility::string_t, double>> m_Dimensions;
+
     boost::optional<std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>> m_Json_patch;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Pose;
@@ -166,6 +191,10 @@ protected:
     boost::optional<bool> m_Visible;
 
     boost::optional<bool> m_Locked;
+
+    boost::optional<bool> m_Fixed_base;
+
+    boost::optional<utility::string_t> m_Expected_revision;
 
 };
 

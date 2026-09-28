@@ -26,6 +26,7 @@ CloudNodeWorkloadAttachmentResponseSchema::CloudNodeWorkloadAttachmentResponseSc
     m_FilenameIsSet = false;
     m_Expiration_hours = 0;
     m_Expiration_hoursIsSet = false;
+    m_Upload_methodIsSet = false;
 }
 
 CloudNodeWorkloadAttachmentResponseSchema::~CloudNodeWorkloadAttachmentResponseSchema()
@@ -54,6 +55,13 @@ web::json::value CloudNodeWorkloadAttachmentResponseSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("expiration_hours"))] = ModelBase::toJson(m_Expiration_hours);
+    }
+    if(m_Upload_methodIsSet)
+    {
+        
+        utility::string_t refVal = fromUpload_methodEnum(m_Upload_method);
+        val[utility::conversions::to_string_t(_XPLATSTR("upload_method"))] = ModelBase::toJson(refVal);
+        
     }
 
     return val;
@@ -95,6 +103,18 @@ bool CloudNodeWorkloadAttachmentResponseSchema::fromJson(const web::json::value&
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("upload_method"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("upload_method")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setUploadMethod;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setUploadMethod);
+            
+            setUploadMethod(toUpload_methodEnum(refVal_setUploadMethod));
+            
+        }
+    }
     return ok;
 }
 
@@ -116,6 +136,10 @@ void CloudNodeWorkloadAttachmentResponseSchema::toMultipart(std::shared_ptr<Mult
     if(m_Expiration_hoursIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expiration_hours")), m_Expiration_hours));
+    }
+    if(m_Upload_methodIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("upload_method")), fromUpload_methodEnum(m_Upload_method)));
     }
 }
 
@@ -146,7 +170,40 @@ bool CloudNodeWorkloadAttachmentResponseSchema::fromMultiPart(std::shared_ptr<Mu
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expiration_hours"))), refVal_setExpirationHours );
         setExpirationHours(refVal_setExpirationHours);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("upload_method"))))
+    {
+        utility::string_t refVal_setUploadMethod;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("upload_method"))), refVal_setUploadMethod );
+        setUploadMethod(toUpload_methodEnum(refVal_setUploadMethod));
+    }
     return ok;
+}
+
+CloudNodeWorkloadAttachmentResponseSchema::Upload_methodEnum CloudNodeWorkloadAttachmentResponseSchema::toUpload_methodEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("signed_url")) {
+        return Upload_methodEnum::SIGNED_URL;
+    }
+    
+    if (value == utility::conversions::to_string_t("multipart")) {
+        return Upload_methodEnum::MULTIPART;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to Upload_methodEnum");
+}
+
+
+const utility::string_t CloudNodeWorkloadAttachmentResponseSchema::fromUpload_methodEnum(const Upload_methodEnum value) const
+{
+    switch(value)
+    {
+        
+        case Upload_methodEnum::SIGNED_URL: return utility::conversions::to_string_t("signed_url");
+        
+        case Upload_methodEnum::MULTIPART: return utility::conversions::to_string_t("multipart");
+        
+    }
 }
 
 
@@ -211,6 +268,27 @@ bool CloudNodeWorkloadAttachmentResponseSchema::expirationHoursIsSet() const
 void CloudNodeWorkloadAttachmentResponseSchema::unsetExpiration_hours()
 {
     m_Expiration_hoursIsSet = false;
+}
+CloudNodeWorkloadAttachmentResponseSchema::Upload_methodEnum CloudNodeWorkloadAttachmentResponseSchema::getUploadMethod() const
+{
+    return m_Upload_method;
+}
+
+
+void CloudNodeWorkloadAttachmentResponseSchema::setUploadMethod(const Upload_methodEnum value)
+{
+    m_Upload_method = value;
+    m_Upload_methodIsSet = true;
+}
+
+bool CloudNodeWorkloadAttachmentResponseSchema::uploadMethodIsSet() const
+{
+    return m_Upload_methodIsSet;
+}
+
+void CloudNodeWorkloadAttachmentResponseSchema::unsetUpload_method()
+{
+    m_Upload_methodIsSet = false;
 }
 
 }

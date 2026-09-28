@@ -79,6 +79,11 @@ web::json::value CloudNodeWorkloadUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("simulation_ready"))] = ModelBase::toJson(m_Simulation_ready.get());
     }
+    if(m_Simulation_elapsed_s.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("simulation_elapsed_s"))] = ModelBase::toJson(m_Simulation_elapsed_s.get());
+    }
 
     return val;
 }
@@ -185,6 +190,17 @@ bool CloudNodeWorkloadUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("simulation_elapsed_s"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("simulation_elapsed_s")));
+        if(!fieldValue.is_null())
+        {
+            double refVal_setSimulationElapsedS;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSimulationElapsedS);
+            setSimulationElapsedS(refVal_setSimulationElapsedS);
+            
+        }
+    }
     return ok;
 }
 
@@ -230,6 +246,10 @@ void CloudNodeWorkloadUpdateSchema::toMultipart(std::shared_ptr<MultipartFormDat
     if(m_Simulation_ready.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("simulation_ready")), m_Simulation_ready.get()));
+    }
+    if(m_Simulation_elapsed_s.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("simulation_elapsed_s")), m_Simulation_elapsed_s.get()));
     }
 }
 
@@ -295,6 +315,12 @@ bool CloudNodeWorkloadUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         bool refVal_setSimulationReady;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("simulation_ready"))), refVal_setSimulationReady );
         setSimulationReady(refVal_setSimulationReady);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("simulation_elapsed_s"))))
+    {
+        double refVal_setSimulationElapsedS;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("simulation_elapsed_s"))), refVal_setSimulationElapsedS );
+        setSimulationElapsedS(refVal_setSimulationElapsedS);
     }
     return ok;
 }
@@ -477,6 +503,25 @@ bool CloudNodeWorkloadUpdateSchema::simulationReadyIsSet() const
 void CloudNodeWorkloadUpdateSchema::unsetSimulation_ready()
 {
     m_Simulation_ready.reset();
+}
+double CloudNodeWorkloadUpdateSchema::getSimulationElapsedS() const
+{
+    return m_Simulation_elapsed_s.get();
+}
+
+void CloudNodeWorkloadUpdateSchema::setSimulationElapsedS(double value)
+{
+    m_Simulation_elapsed_s = value;
+}
+
+bool CloudNodeWorkloadUpdateSchema::simulationElapsedSIsSet() const
+{
+    return m_Simulation_elapsed_s.has_value();
+}
+
+void CloudNodeWorkloadUpdateSchema::unsetSimulation_elapsed_s()
+{
+    m_Simulation_elapsed_s.reset();
 }
 
 }

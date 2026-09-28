@@ -20,6 +20,10 @@ namespace model {
 
 AssetListQuerySchema::AssetListQuerySchema()
 {
+    m_Public_only = false;
+    m_Public_onlyIsSet = false;
+    m_Exclude_owned = false;
+    m_Exclude_ownedIsSet = false;
 }
 
 AssetListQuerySchema::~AssetListQuerySchema()
@@ -34,6 +38,13 @@ void AssetListQuerySchema::validate()
 web::json::value AssetListQuerySchema::toJson() const
 {
     web::json::value val = web::json::value::object();
+    if(m_Ordering.has_value())
+    {
+        
+        utility::string_t refVal = fromOrderingEnum(m_Ordering.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("ordering"))] = ModelBase::toJson(refVal);
+        
+    }
     if(m_Limit.has_value())
     {
         
@@ -59,6 +70,16 @@ web::json::value AssetListQuerySchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("owned"))] = ModelBase::toJson(m_Owned.get());
     }
+    if(m_Public_onlyIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("public_only"))] = ModelBase::toJson(m_Public_only);
+    }
+    if(m_Exclude_ownedIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("exclude_owned"))] = ModelBase::toJson(m_Exclude_owned);
+    }
     if(m_Search.has_value())
     {
         
@@ -68,6 +89,31 @@ web::json::value AssetListQuerySchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("tag"))] = ModelBase::toJson(m_Tag.get());
+    }
+    if(m_Tags_any.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("tags_any"))] = ModelBase::toJson(m_Tags_any.get());
+    }
+    if(m_Tags_all.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("tags_all"))] = ModelBase::toJson(m_Tags_all.get());
+    }
+    if(m_Vendor.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("vendor"))] = ModelBase::toJson(m_Vendor.get());
+    }
+    if(m_Sensor_tags.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("sensor_tags"))] = ModelBase::toJson(m_Sensor_tags.get());
+    }
+    if(m_Capability_tags.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("capability_tags"))] = ModelBase::toJson(m_Capability_tags.get());
     }
     if(m_Metadata_key.has_value())
     {
@@ -101,6 +147,18 @@ web::json::value AssetListQuerySchema::toJson() const
 bool AssetListQuerySchema::fromJson(const web::json::value& val)
 {
     bool ok = true;
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("ordering"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("ordering")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setOrdering;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setOrdering);
+            
+            setOrdering(toOrderingEnum(refVal_setOrdering));
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("limit"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("limit")));
@@ -156,6 +214,28 @@ bool AssetListQuerySchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("public_only"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("public_only")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setPublicOnly;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setPublicOnly);
+            setPublicOnly(refVal_setPublicOnly);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("exclude_owned"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("exclude_owned")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setExcludeOwned;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExcludeOwned);
+            setExcludeOwned(refVal_setExcludeOwned);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("search"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("search")));
@@ -175,6 +255,61 @@ bool AssetListQuerySchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setTag;
             ok &= ModelBase::fromJson(fieldValue, refVal_setTag);
             setTag(refVal_setTag);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("tags_any"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("tags_any")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setTagsAny;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTagsAny);
+            setTagsAny(refVal_setTagsAny);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("tags_all"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("tags_all")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setTagsAll;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTagsAll);
+            setTagsAll(refVal_setTagsAll);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("vendor"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("vendor")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setVendor;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setVendor);
+            setVendor(refVal_setVendor);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("sensor_tags"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("sensor_tags")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setSensorTags;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSensorTags);
+            setSensorTags(refVal_setSensorTags);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("capability_tags"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("capability_tags")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setCapabilityTags;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCapabilityTags);
+            setCapabilityTags(refVal_setCapabilityTags);
             
         }
     }
@@ -243,6 +378,10 @@ void AssetListQuerySchema::toMultipart(std::shared_ptr<MultipartFormData> multip
     {
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
+    if(m_Ordering.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("ordering")), fromOrderingEnum(m_Ordering.get())));
+    }
     if(m_Limit.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("limit")), m_Limit.get()));
@@ -263,6 +402,14 @@ void AssetListQuerySchema::toMultipart(std::shared_ptr<MultipartFormData> multip
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("owned")), m_Owned.get()));
     }
+    if(m_Public_onlyIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("public_only")), m_Public_only));
+    }
+    if(m_Exclude_ownedIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("exclude_owned")), m_Exclude_owned));
+    }
     if(m_Search.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("search")), m_Search.get()));
@@ -270,6 +417,26 @@ void AssetListQuerySchema::toMultipart(std::shared_ptr<MultipartFormData> multip
     if(m_Tag.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("tag")), m_Tag.get()));
+    }
+    if(m_Tags_any.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("tags_any")), m_Tags_any.get()));
+    }
+    if(m_Tags_all.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("tags_all")), m_Tags_all.get()));
+    }
+    if(m_Vendor.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("vendor")), m_Vendor.get()));
+    }
+    if(m_Sensor_tags.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("sensor_tags")), m_Sensor_tags.get()));
+    }
+    if(m_Capability_tags.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("capability_tags")), m_Capability_tags.get()));
     }
     if(m_Metadata_key.has_value())
     {
@@ -302,6 +469,12 @@ bool AssetListQuerySchema::fromMultiPart(std::shared_ptr<MultipartFormData> mult
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
 
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("ordering"))))
+    {
+        utility::string_t refVal_setOrdering;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("ordering"))), refVal_setOrdering );
+        setOrdering(toOrderingEnum(refVal_setOrdering));
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("limit"))))
     {
         int32_t refVal_setLimit;
@@ -332,6 +505,18 @@ bool AssetListQuerySchema::fromMultiPart(std::shared_ptr<MultipartFormData> mult
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("owned"))), refVal_setOwned );
         setOwned(refVal_setOwned);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("public_only"))))
+    {
+        bool refVal_setPublicOnly;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("public_only"))), refVal_setPublicOnly );
+        setPublicOnly(refVal_setPublicOnly);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("exclude_owned"))))
+    {
+        bool refVal_setExcludeOwned;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("exclude_owned"))), refVal_setExcludeOwned );
+        setExcludeOwned(refVal_setExcludeOwned);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("search"))))
     {
         utility::string_t refVal_setSearch;
@@ -343,6 +528,36 @@ bool AssetListQuerySchema::fromMultiPart(std::shared_ptr<MultipartFormData> mult
         utility::string_t refVal_setTag;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("tag"))), refVal_setTag );
         setTag(refVal_setTag);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("tags_any"))))
+    {
+        utility::string_t refVal_setTagsAny;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("tags_any"))), refVal_setTagsAny );
+        setTagsAny(refVal_setTagsAny);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("tags_all"))))
+    {
+        utility::string_t refVal_setTagsAll;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("tags_all"))), refVal_setTagsAll );
+        setTagsAll(refVal_setTagsAll);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("vendor"))))
+    {
+        utility::string_t refVal_setVendor;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("vendor"))), refVal_setVendor );
+        setVendor(refVal_setVendor);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("sensor_tags"))))
+    {
+        utility::string_t refVal_setSensorTags;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("sensor_tags"))), refVal_setSensorTags );
+        setSensorTags(refVal_setSensorTags);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("capability_tags"))))
+    {
+        utility::string_t refVal_setCapabilityTags;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("capability_tags"))), refVal_setCapabilityTags );
+        setCapabilityTags(refVal_setCapabilityTags);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("metadata_key"))))
     {
@@ -377,7 +592,78 @@ bool AssetListQuerySchema::fromMultiPart(std::shared_ptr<MultipartFormData> mult
     return ok;
 }
 
+AssetListQuerySchema::OrderingEnum AssetListQuerySchema::toOrderingEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("created_at")) {
+        return OrderingEnum::CREATED_AT;
+    }
+    
+    if (value == utility::conversions::to_string_t("-created_at")) {
+        return OrderingEnum::_CREATED_AT;
+    }
+    
+    if (value == utility::conversions::to_string_t("name")) {
+        return OrderingEnum::NAME;
+    }
+    
+    if (value == utility::conversions::to_string_t("-name")) {
+        return OrderingEnum::_NAME;
+    }
+    
+    if (value == utility::conversions::to_string_t("monthly_price")) {
+        return OrderingEnum::MONTHLY_PRICE;
+    }
+    
+    if (value == utility::conversions::to_string_t("-monthly_price")) {
+        return OrderingEnum::_MONTHLY_PRICE;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to OrderingEnum");
+}
 
+
+const utility::string_t AssetListQuerySchema::fromOrderingEnum(const OrderingEnum value) const
+{
+    switch(value)
+    {
+        
+        case OrderingEnum::CREATED_AT: return utility::conversions::to_string_t("created_at");
+        
+        case OrderingEnum::_CREATED_AT: return utility::conversions::to_string_t("-created_at");
+        
+        case OrderingEnum::NAME: return utility::conversions::to_string_t("name");
+        
+        case OrderingEnum::_NAME: return utility::conversions::to_string_t("-name");
+        
+        case OrderingEnum::MONTHLY_PRICE: return utility::conversions::to_string_t("monthly_price");
+        
+        case OrderingEnum::_MONTHLY_PRICE: return utility::conversions::to_string_t("-monthly_price");
+        
+    }
+}
+
+
+AssetListQuerySchema::OrderingEnum AssetListQuerySchema::getOrdering() const
+{
+    return m_Ordering.get();
+}
+
+
+void AssetListQuerySchema::setOrdering(const OrderingEnum value)
+{
+    m_Ordering = value;
+}
+
+bool AssetListQuerySchema::orderingIsSet() const
+{
+    return m_Ordering.has_value();
+}
+
+void AssetListQuerySchema::unsetOrdering()
+{
+    m_Ordering.reset();
+}
 int32_t AssetListQuerySchema::getLimit() const
 {
     return m_Limit.get();
@@ -476,6 +762,46 @@ void AssetListQuerySchema::unsetOwned()
 {
     m_Owned.reset();
 }
+bool AssetListQuerySchema::isPublicOnly() const
+{
+    return m_Public_only;
+}
+
+void AssetListQuerySchema::setPublicOnly(bool value)
+{
+    m_Public_only = value;
+    m_Public_onlyIsSet = true;
+}
+
+bool AssetListQuerySchema::publicOnlyIsSet() const
+{
+    return m_Public_onlyIsSet;
+}
+
+void AssetListQuerySchema::unsetPublic_only()
+{
+    m_Public_onlyIsSet = false;
+}
+bool AssetListQuerySchema::isExcludeOwned() const
+{
+    return m_Exclude_owned;
+}
+
+void AssetListQuerySchema::setExcludeOwned(bool value)
+{
+    m_Exclude_owned = value;
+    m_Exclude_ownedIsSet = true;
+}
+
+bool AssetListQuerySchema::excludeOwnedIsSet() const
+{
+    return m_Exclude_ownedIsSet;
+}
+
+void AssetListQuerySchema::unsetExclude_owned()
+{
+    m_Exclude_ownedIsSet = false;
+}
 utility::string_t AssetListQuerySchema::getSearch() const
 {
     return m_Search.get();
@@ -515,6 +841,106 @@ bool AssetListQuerySchema::tagIsSet() const
 void AssetListQuerySchema::unsetTag()
 {
     m_Tag.reset();
+}
+utility::string_t AssetListQuerySchema::getTagsAny() const
+{
+    return m_Tags_any.get();
+}
+
+
+void AssetListQuerySchema::setTagsAny(const utility::string_t& value)
+{
+    m_Tags_any = value;
+}
+
+bool AssetListQuerySchema::tagsAnyIsSet() const
+{
+    return m_Tags_any.has_value();
+}
+
+void AssetListQuerySchema::unsetTags_any()
+{
+    m_Tags_any.reset();
+}
+utility::string_t AssetListQuerySchema::getTagsAll() const
+{
+    return m_Tags_all.get();
+}
+
+
+void AssetListQuerySchema::setTagsAll(const utility::string_t& value)
+{
+    m_Tags_all = value;
+}
+
+bool AssetListQuerySchema::tagsAllIsSet() const
+{
+    return m_Tags_all.has_value();
+}
+
+void AssetListQuerySchema::unsetTags_all()
+{
+    m_Tags_all.reset();
+}
+utility::string_t AssetListQuerySchema::getVendor() const
+{
+    return m_Vendor.get();
+}
+
+
+void AssetListQuerySchema::setVendor(const utility::string_t& value)
+{
+    m_Vendor = value;
+}
+
+bool AssetListQuerySchema::vendorIsSet() const
+{
+    return m_Vendor.has_value();
+}
+
+void AssetListQuerySchema::unsetVendor()
+{
+    m_Vendor.reset();
+}
+utility::string_t AssetListQuerySchema::getSensorTags() const
+{
+    return m_Sensor_tags.get();
+}
+
+
+void AssetListQuerySchema::setSensorTags(const utility::string_t& value)
+{
+    m_Sensor_tags = value;
+}
+
+bool AssetListQuerySchema::sensorTagsIsSet() const
+{
+    return m_Sensor_tags.has_value();
+}
+
+void AssetListQuerySchema::unsetSensor_tags()
+{
+    m_Sensor_tags.reset();
+}
+utility::string_t AssetListQuerySchema::getCapabilityTags() const
+{
+    return m_Capability_tags.get();
+}
+
+
+void AssetListQuerySchema::setCapabilityTags(const utility::string_t& value)
+{
+    m_Capability_tags = value;
+}
+
+bool AssetListQuerySchema::capabilityTagsIsSet() const
+{
+    return m_Capability_tags.has_value();
+}
+
+void AssetListQuerySchema::unsetCapability_tags()
+{
+    m_Capability_tags.reset();
 }
 utility::string_t AssetListQuerySchema::getMetadataKey() const
 {

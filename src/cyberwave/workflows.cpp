@@ -389,7 +389,7 @@ std::vector<Workflow> WorkflowManager::list() const
     try
     {
         auto vec = a->srcAppApiWorkflowsListWorkflows(boost::none, boost::none, boost::none, boost::none, boost::none,
-                                                      boost::none)
+                                                      boost::none, boost::none)
                        .get();
         std::vector<Workflow> out;
         for (auto& ptr : vec)

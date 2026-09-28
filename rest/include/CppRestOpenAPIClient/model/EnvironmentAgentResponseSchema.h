@@ -80,6 +80,11 @@ public:
     void unsetStructured_results();
     void setStructuredResults(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getSceneChanges() const;
+    bool sceneChangesIsSet() const;
+    void unsetScene_changes();
+    void setSceneChanges(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
 
 protected:
     utility::string_t m_Answer;
@@ -93,6 +98,8 @@ protected:
 
     std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Structured_results;
     bool m_Structured_resultsIsSet;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Scene_changes;
 
 };
 

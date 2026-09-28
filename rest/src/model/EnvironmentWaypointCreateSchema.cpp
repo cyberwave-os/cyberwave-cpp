@@ -51,6 +51,13 @@ web::json::value EnvironmentWaypointCreateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("collection"))] = ModelBase::toJson(m_Collection.get());
     }
+    if(m_Motion_space.has_value())
+    {
+        
+        utility::string_t refVal = fromMotion_spaceEnum(m_Motion_space.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("motion_space"))] = ModelBase::toJson(refVal);
+        
+    }
     if(m_PositionIsSet)
     {
         
@@ -108,6 +115,18 @@ bool EnvironmentWaypointCreateSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setCollection;
             ok &= ModelBase::fromJson(fieldValue, refVal_setCollection);
             setCollection(refVal_setCollection);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("motion_space"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("motion_space")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setMotionSpace;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setMotionSpace);
+            
+            setMotionSpace(toMotion_spaceEnum(refVal_setMotionSpace));
             
         }
     }
@@ -177,6 +196,10 @@ void EnvironmentWaypointCreateSchema::toMultipart(std::shared_ptr<MultipartFormD
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("collection")), m_Collection.get()));
     }
+    if(m_Motion_space.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("motion_space")), fromMotion_spaceEnum(m_Motion_space.get())));
+    }
     if(m_PositionIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("position")), m_Position));
@@ -222,6 +245,12 @@ bool EnvironmentWaypointCreateSchema::fromMultiPart(std::shared_ptr<MultipartFor
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("collection"))), refVal_setCollection );
         setCollection(refVal_setCollection);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("motion_space"))))
+    {
+        utility::string_t refVal_setMotionSpace;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("motion_space"))), refVal_setMotionSpace );
+        setMotionSpace(toMotion_spaceEnum(refVal_setMotionSpace));
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("position"))))
     {
         std::shared_ptr<Vector3Schema> refVal_setPosition;
@@ -247,6 +276,33 @@ bool EnvironmentWaypointCreateSchema::fromMultiPart(std::shared_ptr<MultipartFor
         setFrame(refVal_setFrame);
     }
     return ok;
+}
+
+EnvironmentWaypointCreateSchema::Motion_spaceEnum EnvironmentWaypointCreateSchema::toMotion_spaceEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("surface")) {
+        return Motion_spaceEnum::SURFACE;
+    }
+    
+    if (value == utility::conversions::to_string_t("free_space")) {
+        return Motion_spaceEnum::FREE_SPACE;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to Motion_spaceEnum");
+}
+
+
+const utility::string_t EnvironmentWaypointCreateSchema::fromMotion_spaceEnum(const Motion_spaceEnum value) const
+{
+    switch(value)
+    {
+        
+        case Motion_spaceEnum::SURFACE: return utility::conversions::to_string_t("surface");
+        
+        case Motion_spaceEnum::FREE_SPACE: return utility::conversions::to_string_t("free_space");
+        
+    }
 }
 
 
@@ -309,6 +365,26 @@ bool EnvironmentWaypointCreateSchema::collectionIsSet() const
 void EnvironmentWaypointCreateSchema::unsetCollection()
 {
     m_Collection.reset();
+}
+EnvironmentWaypointCreateSchema::Motion_spaceEnum EnvironmentWaypointCreateSchema::getMotionSpace() const
+{
+    return m_Motion_space.get();
+}
+
+
+void EnvironmentWaypointCreateSchema::setMotionSpace(const Motion_spaceEnum value)
+{
+    m_Motion_space = value;
+}
+
+bool EnvironmentWaypointCreateSchema::motionSpaceIsSet() const
+{
+    return m_Motion_space.has_value();
+}
+
+void EnvironmentWaypointCreateSchema::unsetMotion_space()
+{
+    m_Motion_space.reset();
 }
 std::shared_ptr<Vector3Schema> EnvironmentWaypointCreateSchema::getPosition() const
 {

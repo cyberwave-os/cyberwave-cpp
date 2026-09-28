@@ -34,6 +34,16 @@ void AssetControlProfilePatchSchema::validate()
 web::json::value AssetControlProfilePatchSchema::toJson() const
 {
     web::json::value val = web::json::value::object();
+    if(m_Expected_revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_revision"))] = ModelBase::toJson(m_Expected_revision.get());
+    }
+    if(m_Control_setups.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("control_setups"))] = ModelBase::toJson(m_Control_setups.get());
+    }
     if(m_Manual_controller_ref.has_value())
     {
         
@@ -86,6 +96,28 @@ web::json::value AssetControlProfilePatchSchema::toJson() const
 bool AssetControlProfilePatchSchema::fromJson(const web::json::value& val)
 {
     bool ok = true;
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExpectedRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedRevision);
+            setExpectedRevision(refVal_setExpectedRevision);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("control_setups"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("control_setups")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<CapabilityControlSetup>> refVal_setControlSetups;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setControlSetups);
+            setControlSetups(refVal_setControlSetups);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("manual_controller_ref"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("manual_controller_ref")));
@@ -195,6 +227,14 @@ void AssetControlProfilePatchSchema::toMultipart(std::shared_ptr<MultipartFormDa
     {
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
+    if(m_Expected_revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_revision")), m_Expected_revision.get()));
+    }
+    if(m_Control_setups.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("control_setups")), m_Control_setups.get()));
+    }
     if(m_Manual_controller_ref.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("manual_controller_ref")), m_Manual_controller_ref.get()));
@@ -242,6 +282,18 @@ bool AssetControlProfilePatchSchema::fromMultiPart(std::shared_ptr<MultipartForm
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
 
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        utility::string_t refVal_setExpectedRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))), refVal_setExpectedRevision );
+        setExpectedRevision(refVal_setExpectedRevision);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("control_setups"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<CapabilityControlSetup>> refVal_setControlSetups;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("control_setups"))), refVal_setControlSetups );
+        setControlSetups(refVal_setControlSetups);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("manual_controller_ref"))))
     {
         std::shared_ptr<ControllerRefSchema> refVal_setManualControllerRef;
@@ -300,6 +352,46 @@ bool AssetControlProfilePatchSchema::fromMultiPart(std::shared_ptr<MultipartForm
 }
 
 
+utility::string_t AssetControlProfilePatchSchema::getExpectedRevision() const
+{
+    return m_Expected_revision.get();
+}
+
+
+void AssetControlProfilePatchSchema::setExpectedRevision(const utility::string_t& value)
+{
+    m_Expected_revision = value;
+}
+
+bool AssetControlProfilePatchSchema::expectedRevisionIsSet() const
+{
+    return m_Expected_revision.has_value();
+}
+
+void AssetControlProfilePatchSchema::unsetExpected_revision()
+{
+    m_Expected_revision.reset();
+}
+std::map<utility::string_t, std::shared_ptr<CapabilityControlSetup>> AssetControlProfilePatchSchema::getControlSetups() const
+{
+    return m_Control_setups.get();
+}
+
+
+void AssetControlProfilePatchSchema::setControlSetups(const std::map<utility::string_t, std::shared_ptr<CapabilityControlSetup>>& value)
+{
+    m_Control_setups = value;
+}
+
+bool AssetControlProfilePatchSchema::controlSetupsIsSet() const
+{
+    return m_Control_setups.has_value();
+}
+
+void AssetControlProfilePatchSchema::unsetControl_setups()
+{
+    m_Control_setups.reset();
+}
 std::shared_ptr<ControllerRefSchema> AssetControlProfilePatchSchema::getManualControllerRef() const
 {
     return m_Manual_controller_ref.get();

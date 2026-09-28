@@ -35,6 +35,12 @@ OrganizationCreditAccountSchema::OrganizationCreditAccountSchema()
     m_Manual_blockIsSet = false;
     m_Manual_block_reason = utility::conversions::to_string_t("");
     m_Manual_block_reasonIsSet = false;
+    m_Billing_provider = utility::conversions::to_string_t("");
+    m_Billing_providerIsSet = false;
+    m_Billing_provider_label = utility::conversions::to_string_t("");
+    m_Billing_provider_labelIsSet = false;
+    m_Billing_status = utility::conversions::to_string_t("");
+    m_Billing_statusIsSet = false;
 }
 
 OrganizationCreditAccountSchema::~OrganizationCreditAccountSchema()
@@ -88,6 +94,21 @@ web::json::value OrganizationCreditAccountSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("manual_block_reason"))] = ModelBase::toJson(m_Manual_block_reason);
+    }
+    if(m_Billing_providerIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("billing_provider"))] = ModelBase::toJson(m_Billing_provider);
+    }
+    if(m_Billing_provider_labelIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("billing_provider_label"))] = ModelBase::toJson(m_Billing_provider_label);
+    }
+    if(m_Billing_statusIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("billing_status"))] = ModelBase::toJson(m_Billing_status);
     }
 
     return val;
@@ -184,6 +205,39 @@ bool OrganizationCreditAccountSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("billing_provider"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("billing_provider")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setBillingProvider;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setBillingProvider);
+            setBillingProvider(refVal_setBillingProvider);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("billing_provider_label"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("billing_provider_label")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setBillingProviderLabel;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setBillingProviderLabel);
+            setBillingProviderLabel(refVal_setBillingProviderLabel);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("billing_status"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("billing_status")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setBillingStatus;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setBillingStatus);
+            setBillingStatus(refVal_setBillingStatus);
+            
+        }
+    }
     return ok;
 }
 
@@ -225,6 +279,18 @@ void OrganizationCreditAccountSchema::toMultipart(std::shared_ptr<MultipartFormD
     if(m_Manual_block_reasonIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("manual_block_reason")), m_Manual_block_reason));
+    }
+    if(m_Billing_providerIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("billing_provider")), m_Billing_provider));
+    }
+    if(m_Billing_provider_labelIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("billing_provider_label")), m_Billing_provider_label));
+    }
+    if(m_Billing_statusIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("billing_status")), m_Billing_status));
     }
 }
 
@@ -284,6 +350,24 @@ bool OrganizationCreditAccountSchema::fromMultiPart(std::shared_ptr<MultipartFor
         utility::string_t refVal_setManualBlockReason;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("manual_block_reason"))), refVal_setManualBlockReason );
         setManualBlockReason(refVal_setManualBlockReason);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("billing_provider"))))
+    {
+        utility::string_t refVal_setBillingProvider;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("billing_provider"))), refVal_setBillingProvider );
+        setBillingProvider(refVal_setBillingProvider);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("billing_provider_label"))))
+    {
+        utility::string_t refVal_setBillingProviderLabel;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("billing_provider_label"))), refVal_setBillingProviderLabel );
+        setBillingProviderLabel(refVal_setBillingProviderLabel);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("billing_status"))))
+    {
+        utility::string_t refVal_setBillingStatus;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("billing_status"))), refVal_setBillingStatus );
+        setBillingStatus(refVal_setBillingStatus);
     }
     return ok;
 }
@@ -454,6 +538,69 @@ bool OrganizationCreditAccountSchema::manualBlockReasonIsSet() const
 void OrganizationCreditAccountSchema::unsetManual_block_reason()
 {
     m_Manual_block_reasonIsSet = false;
+}
+utility::string_t OrganizationCreditAccountSchema::getBillingProvider() const
+{
+    return m_Billing_provider;
+}
+
+
+void OrganizationCreditAccountSchema::setBillingProvider(const utility::string_t& value)
+{
+    m_Billing_provider = value;
+    m_Billing_providerIsSet = true;
+}
+
+bool OrganizationCreditAccountSchema::billingProviderIsSet() const
+{
+    return m_Billing_providerIsSet;
+}
+
+void OrganizationCreditAccountSchema::unsetBilling_provider()
+{
+    m_Billing_providerIsSet = false;
+}
+utility::string_t OrganizationCreditAccountSchema::getBillingProviderLabel() const
+{
+    return m_Billing_provider_label;
+}
+
+
+void OrganizationCreditAccountSchema::setBillingProviderLabel(const utility::string_t& value)
+{
+    m_Billing_provider_label = value;
+    m_Billing_provider_labelIsSet = true;
+}
+
+bool OrganizationCreditAccountSchema::billingProviderLabelIsSet() const
+{
+    return m_Billing_provider_labelIsSet;
+}
+
+void OrganizationCreditAccountSchema::unsetBilling_provider_label()
+{
+    m_Billing_provider_labelIsSet = false;
+}
+utility::string_t OrganizationCreditAccountSchema::getBillingStatus() const
+{
+    return m_Billing_status;
+}
+
+
+void OrganizationCreditAccountSchema::setBillingStatus(const utility::string_t& value)
+{
+    m_Billing_status = value;
+    m_Billing_statusIsSet = true;
+}
+
+bool OrganizationCreditAccountSchema::billingStatusIsSet() const
+{
+    return m_Billing_statusIsSet;
+}
+
+void OrganizationCreditAccountSchema::unsetBilling_status()
+{
+    m_Billing_statusIsSet = false;
 }
 
 }

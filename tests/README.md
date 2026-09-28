@@ -13,6 +13,8 @@ The tests are designed to verify:
 5. **Error Handling** - Proper error handling and exception management
 6. **MQTT client** - `test_mqtt`: connect, subscribe to a topic, disconnect (skips if no broker; use `CYBERWAVE_MQTT_HOST`, `CYBERWAVE_MQTT_PORT`, `CYBERWAVE_API_KEY`)
 
+When asset query parameters change, regenerate the REST client from the current backend before compiling `test_assets`. Its list test checks that both the default call and the legacy workspace argument leave query parameters unset, preserving server defaults.
+
 ## Running Tests with Docker (Recommended)
 
 The easiest way to run tests is using Docker, which provides a consistent environment without needing to install C++ dependencies on your host machine.

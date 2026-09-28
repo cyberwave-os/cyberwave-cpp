@@ -45,6 +45,11 @@ web::json::value AgentControlRouteResolveRequest::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("route_id"))] = ModelBase::toJson(m_Route_id);
     }
+    if(m_Saved_action.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("saved_action"))] = ModelBase::toJson(m_Saved_action.get());
+    }
     if(m_InputsIsSet)
     {
         
@@ -117,6 +122,17 @@ bool AgentControlRouteResolveRequest::fromJson(const web::json::value& val)
             utility::string_t refVal_setRouteId;
             ok &= ModelBase::fromJson(fieldValue, refVal_setRouteId);
             setRouteId(refVal_setRouteId);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("saved_action"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("saved_action")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<AgentSavedControlActionReference> refVal_setSavedAction;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSavedAction);
+            setSavedAction(refVal_setSavedAction);
             
         }
     }
@@ -256,6 +272,10 @@ void AgentControlRouteResolveRequest::toMultipart(std::shared_ptr<MultipartFormD
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("route_id")), m_Route_id));
     }
+    if(m_Saved_action.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("saved_action")), m_Saved_action.get()));
+    }
     if(m_InputsIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("inputs")), m_Inputs));
@@ -316,6 +336,12 @@ bool AgentControlRouteResolveRequest::fromMultiPart(std::shared_ptr<MultipartFor
         utility::string_t refVal_setRouteId;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("route_id"))), refVal_setRouteId );
         setRouteId(refVal_setRouteId);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("saved_action"))))
+    {
+        std::shared_ptr<AgentSavedControlActionReference> refVal_setSavedAction;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("saved_action"))), refVal_setSavedAction );
+        setSavedAction(refVal_setSavedAction);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("inputs"))))
     {
@@ -440,6 +466,26 @@ bool AgentControlRouteResolveRequest::routeIdIsSet() const
 void AgentControlRouteResolveRequest::unsetRoute_id()
 {
     m_Route_idIsSet = false;
+}
+std::shared_ptr<AgentSavedControlActionReference> AgentControlRouteResolveRequest::getSavedAction() const
+{
+    return m_Saved_action.get();
+}
+
+
+void AgentControlRouteResolveRequest::setSavedAction(const std::shared_ptr<AgentSavedControlActionReference>& value)
+{
+    m_Saved_action = value;
+}
+
+bool AgentControlRouteResolveRequest::savedActionIsSet() const
+{
+    return m_Saved_action.has_value();
+}
+
+void AgentControlRouteResolveRequest::unsetSaved_action()
+{
+    m_Saved_action.reset();
 }
 std::map<utility::string_t, std::shared_ptr<AnyType>> AgentControlRouteResolveRequest::getInputs() const
 {

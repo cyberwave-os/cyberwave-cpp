@@ -238,6 +238,39 @@ static void test_scene_get_composed_schema_uses_canonical_route()
     assert(request_paths.front() == "/api/v1/environments/env-123/universal-schema.json");
 }
 
+static void test_scene_add_twin_preserves_creation_response_fields()
+{
+    for (bool inherited : {false, true})
+    {
+        TestHttpServer server(
+            [inherited](web::http::http_request request)
+            {
+                assert(request.method() == web::http::methods::POST);
+                assert(to_std(request.relative_uri().path()) == "/api/v1/twins");
+                const auto body = request.extract_json().get();
+                assert(to_std(body.at(to_utility("asset_uuid")).as_string()) == "asset-123");
+                assert(to_std(body.at(to_utility("environment_uuid")).as_string()) == "env-123");
+                auto response = web::json::value::parse(to_utility(R"({
+                    "uuid":"twin-123", "name":"Inspector", "asset_uuid":"asset-123",
+                    "environment_uuid":"env-123", "capabilities":{"can_locomote":true}
+                })"));
+                response[to_utility("control_setup_inherited")] = web::json::value::boolean(inherited);
+                request.reply(web::http::status_codes::OK, response);
+            });
+
+        Config cfg;
+        cfg.base_url = server.base_url();
+        cfg.api_key = "token";
+        Client c(cfg);
+        const auto twin = c.get_scene("env-123").add_twin("asset-123", "Inspector");
+        assert(twin.uuid() == "twin-123");
+        assert(twin.name() == "Inspector");
+        assert(twin.environment_id() == "env-123");
+        assert(twin.asset_id() == "asset-123");
+        assert(twin.can_locomote());
+    }
+}
+
 int main()
 {
     test_get_scene_returns_scene();
@@ -251,5 +284,6 @@ int main()
     test_scene_undock_throws_without_api_key();
     test_scene_environment_id_matches();
     test_scene_get_composed_schema_uses_canonical_route();
+    test_scene_add_twin_preserves_creation_response_fields();
     return 0;
 }

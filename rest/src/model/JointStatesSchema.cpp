@@ -70,6 +70,11 @@ web::json::value JointStatesSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("position_source"))] = ModelBase::toJson(m_Position_source);
     }
+    if(m_Observation.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("observation"))] = ModelBase::toJson(m_Observation.get());
+    }
 
     return val;
 }
@@ -143,6 +148,17 @@ bool JointStatesSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("observation"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("observation")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setObservation;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setObservation);
+            setObservation(refVal_setObservation);
+            
+        }
+    }
     return ok;
 }
 
@@ -176,6 +192,10 @@ void JointStatesSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart
     if(m_Position_sourceIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("position_source")), m_Position_source));
+    }
+    if(m_Observation.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("observation")), m_Observation.get()));
     }
 }
 
@@ -223,6 +243,12 @@ bool JointStatesSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
         std::vector<utility::string_t> refVal_setPositionSource;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("position_source"))), refVal_setPositionSource );
         setPositionSource(refVal_setPositionSource);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("observation"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setObservation;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("observation"))), refVal_setObservation );
+        setObservation(refVal_setObservation);
     }
     return ok;
 }
@@ -350,6 +376,26 @@ bool JointStatesSchema::positionSourceIsSet() const
 void JointStatesSchema::unsetPosition_source()
 {
     m_Position_sourceIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> JointStatesSchema::getObservation() const
+{
+    return m_Observation.get();
+}
+
+
+void JointStatesSchema::setObservation(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Observation = value;
+}
+
+bool JointStatesSchema::observationIsSet() const
+{
+    return m_Observation.has_value();
+}
+
+void JointStatesSchema::unsetObservation()
+{
+    m_Observation.reset();
 }
 
 }

@@ -23,6 +23,8 @@
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include <cpprest/details/basic_types.h>
+#include "CppRestOpenAPIClient/model/WorkflowExecutionProgressSchema.h"
+#include "CppRestOpenAPIClient/model/WorkflowExecutionPendingReasonSchema.h"
 #include <map>
 #include "CppRestOpenAPIClient/AnyType.h"
 
@@ -31,6 +33,8 @@ namespace openapitools {
 namespace client {
 namespace model {
 
+class WorkflowExecutionProgressSchema;
+class WorkflowExecutionPendingReasonSchema;
 
 
 /// <summary>
@@ -99,6 +103,16 @@ public:
     void unsetFinished_at();
     void setFinishedAt(const utility::datetime& value);
 
+    std::shared_ptr<WorkflowExecutionProgressSchema> getProgress() const;
+    bool progressIsSet() const;
+    void unsetProgress();
+    void setProgress(const std::shared_ptr<WorkflowExecutionProgressSchema>& value);
+
+    std::shared_ptr<WorkflowExecutionPendingReasonSchema> getPendingReason() const;
+    bool pendingReasonIsSet() const;
+    void unsetPending_reason();
+    void setPendingReason(const std::shared_ptr<WorkflowExecutionPendingReasonSchema>& value);
+
 
 protected:
     utility::string_t m_Uuid;
@@ -121,6 +135,10 @@ protected:
     bool m_Started_atIsSet;
 
     boost::optional<utility::datetime> m_Finished_at;
+
+    boost::optional<std::shared_ptr<WorkflowExecutionProgressSchema>> m_Progress;
+
+    boost::optional<std::shared_ptr<WorkflowExecutionPendingReasonSchema>> m_Pending_reason;
 
 };
 

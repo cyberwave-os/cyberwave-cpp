@@ -210,8 +210,10 @@ static void test_webrtc_and_command_topics()
     assert(m.subscribes[3].topic == "test/cyberwave/twin/twin-1/command");
 
     auto scoped = m.subscribe_webrtc_messages_scoped("twin-2", [](const std::string&) {});
-    assert(m.subscribes.size() == 6);
-    assert(m.subscribes[3].topic == "test/cyberwave/twin/twin-2/webrtc-offer");
+    assert(m.subscribes.size() == 7);
+    assert(m.subscribes[4].topic == "test/cyberwave/twin/twin-2/webrtc-offer");
+    assert(m.subscribes[5].topic == "test/cyberwave/twin/twin-2/webrtc-answer");
+    assert(m.subscribes[6].topic == "test/cyberwave/twin/twin-2/webrtc-candidate");
     scoped.reset();
 }
 

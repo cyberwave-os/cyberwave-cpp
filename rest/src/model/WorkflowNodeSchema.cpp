@@ -41,9 +41,11 @@ WorkflowNodeSchema::WorkflowNodeSchema()
     m_Is_disabledIsSet = false;
     m_Created_at = utility::datetime();
     m_Created_atIsSet = false;
-    m_Updated_at = utility::datetime();
+    m_Updated_at = utility::conversions::to_string_t("");
     m_Updated_atIsSet = false;
     m_MetadataIsSet = false;
+    m_Supports_model_task_binding = false;
+    m_Supports_model_task_bindingIsSet = false;
 }
 
 WorkflowNodeSchema::~WorkflowNodeSchema()
@@ -127,6 +129,11 @@ web::json::value WorkflowNodeSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("metadata"))] = ModelBase::toJson(m_Metadata);
+    }
+    if(m_Supports_model_task_bindingIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("supports_model_task_binding"))] = ModelBase::toJson(m_Supports_model_task_binding);
     }
 
     return val;
@@ -272,7 +279,7 @@ bool WorkflowNodeSchema::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("updated_at")));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_setUpdatedAt;
+            utility::string_t refVal_setUpdatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_setUpdatedAt);
             setUpdatedAt(refVal_setUpdatedAt);
             
@@ -286,6 +293,17 @@ bool WorkflowNodeSchema::fromJson(const web::json::value& val)
             std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
             ok &= ModelBase::fromJson(fieldValue, refVal_setMetadata);
             setMetadata(refVal_setMetadata);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("supports_model_task_binding"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("supports_model_task_binding")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setSupportsModelTaskBinding;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSupportsModelTaskBinding);
+            setSupportsModelTaskBinding(refVal_setSupportsModelTaskBinding);
             
         }
     }
@@ -354,6 +372,10 @@ void WorkflowNodeSchema::toMultipart(std::shared_ptr<MultipartFormData> multipar
     if(m_MetadataIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata));
+    }
+    if(m_Supports_model_task_bindingIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("supports_model_task_binding")), m_Supports_model_task_binding));
     }
 }
 
@@ -440,7 +462,7 @@ bool WorkflowNodeSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multip
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("updated_at"))))
     {
-        utility::datetime refVal_setUpdatedAt;
+        utility::string_t refVal_setUpdatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("updated_at"))), refVal_setUpdatedAt );
         setUpdatedAt(refVal_setUpdatedAt);
     }
@@ -449,6 +471,12 @@ bool WorkflowNodeSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))), refVal_setMetadata );
         setMetadata(refVal_setMetadata);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("supports_model_task_binding"))))
+    {
+        bool refVal_setSupportsModelTaskBinding;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("supports_model_task_binding"))), refVal_setSupportsModelTaskBinding );
+        setSupportsModelTaskBinding(refVal_setSupportsModelTaskBinding);
     }
     return ok;
 }
@@ -702,13 +730,13 @@ void WorkflowNodeSchema::unsetCreated_at()
 {
     m_Created_atIsSet = false;
 }
-utility::datetime WorkflowNodeSchema::getUpdatedAt() const
+utility::string_t WorkflowNodeSchema::getUpdatedAt() const
 {
     return m_Updated_at;
 }
 
 
-void WorkflowNodeSchema::setUpdatedAt(const utility::datetime& value)
+void WorkflowNodeSchema::setUpdatedAt(const utility::string_t& value)
 {
     m_Updated_at = value;
     m_Updated_atIsSet = true;
@@ -743,6 +771,26 @@ bool WorkflowNodeSchema::metadataIsSet() const
 void WorkflowNodeSchema::unsetMetadata()
 {
     m_MetadataIsSet = false;
+}
+bool WorkflowNodeSchema::isSupportsModelTaskBinding() const
+{
+    return m_Supports_model_task_binding;
+}
+
+void WorkflowNodeSchema::setSupportsModelTaskBinding(bool value)
+{
+    m_Supports_model_task_binding = value;
+    m_Supports_model_task_bindingIsSet = true;
+}
+
+bool WorkflowNodeSchema::supportsModelTaskBindingIsSet() const
+{
+    return m_Supports_model_task_bindingIsSet;
+}
+
+void WorkflowNodeSchema::unsetSupports_model_task_binding()
+{
+    m_Supports_model_task_bindingIsSet = false;
 }
 
 }

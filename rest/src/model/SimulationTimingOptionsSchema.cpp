@@ -54,6 +54,16 @@ web::json::value SimulationTimingOptionsSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("stream_frequency_hz"))] = ModelBase::toJson(m_Stream_frequency_hz.get());
     }
+    if(m_Range_stream_frequency_hz.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("range_stream_frequency_hz"))] = ModelBase::toJson(m_Range_stream_frequency_hz.get());
+    }
+    if(m_Range_self_hit_fallback.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("range_self_hit_fallback"))] = ModelBase::toJson(m_Range_self_hit_fallback.get());
+    }
 
     return val;
 }
@@ -105,6 +115,28 @@ bool SimulationTimingOptionsSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("range_stream_frequency_hz"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("range_stream_frequency_hz")));
+        if(!fieldValue.is_null())
+        {
+            double refVal_setRangeStreamFrequencyHz;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRangeStreamFrequencyHz);
+            setRangeStreamFrequencyHz(refVal_setRangeStreamFrequencyHz);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("range_self_hit_fallback"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("range_self_hit_fallback")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setRangeSelfHitFallback;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setRangeSelfHitFallback);
+            setRangeSelfHitFallback(refVal_setRangeSelfHitFallback);
+            
+        }
+    }
     return ok;
 }
 
@@ -130,6 +162,14 @@ void SimulationTimingOptionsSchema::toMultipart(std::shared_ptr<MultipartFormDat
     if(m_Stream_frequency_hz.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("stream_frequency_hz")), m_Stream_frequency_hz.get()));
+    }
+    if(m_Range_stream_frequency_hz.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("range_stream_frequency_hz")), m_Range_stream_frequency_hz.get()));
+    }
+    if(m_Range_self_hit_fallback.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("range_self_hit_fallback")), m_Range_self_hit_fallback.get()));
     }
 }
 
@@ -165,6 +205,18 @@ bool SimulationTimingOptionsSchema::fromMultiPart(std::shared_ptr<MultipartFormD
         double refVal_setStreamFrequencyHz;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("stream_frequency_hz"))), refVal_setStreamFrequencyHz );
         setStreamFrequencyHz(refVal_setStreamFrequencyHz);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("range_stream_frequency_hz"))))
+    {
+        double refVal_setRangeStreamFrequencyHz;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("range_stream_frequency_hz"))), refVal_setRangeStreamFrequencyHz );
+        setRangeStreamFrequencyHz(refVal_setRangeStreamFrequencyHz);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("range_self_hit_fallback"))))
+    {
+        bool refVal_setRangeSelfHitFallback;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("range_self_hit_fallback"))), refVal_setRangeSelfHitFallback );
+        setRangeSelfHitFallback(refVal_setRangeSelfHitFallback);
     }
     return ok;
 }
@@ -245,6 +297,44 @@ bool SimulationTimingOptionsSchema::streamFrequencyHzIsSet() const
 void SimulationTimingOptionsSchema::unsetStream_frequency_hz()
 {
     m_Stream_frequency_hz.reset();
+}
+double SimulationTimingOptionsSchema::getRangeStreamFrequencyHz() const
+{
+    return m_Range_stream_frequency_hz.get();
+}
+
+void SimulationTimingOptionsSchema::setRangeStreamFrequencyHz(double value)
+{
+    m_Range_stream_frequency_hz = value;
+}
+
+bool SimulationTimingOptionsSchema::rangeStreamFrequencyHzIsSet() const
+{
+    return m_Range_stream_frequency_hz.has_value();
+}
+
+void SimulationTimingOptionsSchema::unsetRange_stream_frequency_hz()
+{
+    m_Range_stream_frequency_hz.reset();
+}
+bool SimulationTimingOptionsSchema::isRangeSelfHitFallback() const
+{
+    return m_Range_self_hit_fallback.get();
+}
+
+void SimulationTimingOptionsSchema::setRangeSelfHitFallback(bool value)
+{
+    m_Range_self_hit_fallback = value;
+}
+
+bool SimulationTimingOptionsSchema::rangeSelfHitFallbackIsSet() const
+{
+    return m_Range_self_hit_fallback.has_value();
+}
+
+void SimulationTimingOptionsSchema::unsetRange_self_hit_fallback()
+{
+    m_Range_self_hit_fallback.reset();
 }
 
 }

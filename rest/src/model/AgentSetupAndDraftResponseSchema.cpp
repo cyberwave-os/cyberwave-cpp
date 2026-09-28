@@ -32,6 +32,8 @@ AgentSetupAndDraftResponseSchema::AgentSetupAndDraftResponseSchema()
     m_Missing_requirementsIsSet = false;
     m_Proposed_environment_changesIsSet = false;
     m_Applied_setup_changesIsSet = false;
+    m_Resolved_node_hintsIsSet = false;
+    m_Dropped_node_hintsIsSet = false;
 }
 
 AgentSetupAndDraftResponseSchema::~AgentSetupAndDraftResponseSchema()
@@ -109,6 +111,21 @@ web::json::value AgentSetupAndDraftResponseSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("proposal"))] = ModelBase::toJson(m_Proposal.get());
+    }
+    if(m_Composition_strategy.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("composition_strategy"))] = ModelBase::toJson(m_Composition_strategy.get());
+    }
+    if(m_Resolved_node_hintsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("resolved_node_hints"))] = ModelBase::toJson(m_Resolved_node_hints);
+    }
+    if(m_Dropped_node_hintsIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("dropped_node_hints"))] = ModelBase::toJson(m_Dropped_node_hints);
     }
 
     return val;
@@ -251,6 +268,39 @@ bool AgentSetupAndDraftResponseSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("composition_strategy"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("composition_strategy")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setCompositionStrategy;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCompositionStrategy);
+            setCompositionStrategy(refVal_setCompositionStrategy);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("resolved_node_hints"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("resolved_node_hints")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setResolvedNodeHints;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setResolvedNodeHints);
+            setResolvedNodeHints(refVal_setResolvedNodeHints);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("dropped_node_hints"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("dropped_node_hints")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setDroppedNodeHints;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setDroppedNodeHints);
+            setDroppedNodeHints(refVal_setDroppedNodeHints);
+            
+        }
+    }
     return ok;
 }
 
@@ -308,6 +358,18 @@ void AgentSetupAndDraftResponseSchema::toMultipart(std::shared_ptr<MultipartForm
     if(m_Proposal.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("proposal")), m_Proposal.get()));
+    }
+    if(m_Composition_strategy.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("composition_strategy")), m_Composition_strategy.get()));
+    }
+    if(m_Resolved_node_hintsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("resolved_node_hints")), m_Resolved_node_hints));
+    }
+    if(m_Dropped_node_hintsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("dropped_node_hints")), m_Dropped_node_hints));
     }
 }
 
@@ -391,6 +453,24 @@ bool AgentSetupAndDraftResponseSchema::fromMultiPart(std::shared_ptr<MultipartFo
         std::shared_ptr<AgentProposalSchema> refVal_setProposal;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("proposal"))), refVal_setProposal );
         setProposal(refVal_setProposal);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("composition_strategy"))))
+    {
+        utility::string_t refVal_setCompositionStrategy;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("composition_strategy"))), refVal_setCompositionStrategy );
+        setCompositionStrategy(refVal_setCompositionStrategy);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("resolved_node_hints"))))
+    {
+        std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setResolvedNodeHints;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("resolved_node_hints"))), refVal_setResolvedNodeHints );
+        setResolvedNodeHints(refVal_setResolvedNodeHints);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("dropped_node_hints"))))
+    {
+        std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setDroppedNodeHints;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("dropped_node_hints"))), refVal_setDroppedNodeHints );
+        setDroppedNodeHints(refVal_setDroppedNodeHints);
     }
     return ok;
 }
@@ -705,6 +785,68 @@ bool AgentSetupAndDraftResponseSchema::proposalIsSet() const
 void AgentSetupAndDraftResponseSchema::unsetProposal()
 {
     m_Proposal.reset();
+}
+utility::string_t AgentSetupAndDraftResponseSchema::getCompositionStrategy() const
+{
+    return m_Composition_strategy.get();
+}
+
+
+void AgentSetupAndDraftResponseSchema::setCompositionStrategy(const utility::string_t& value)
+{
+    m_Composition_strategy = value;
+}
+
+bool AgentSetupAndDraftResponseSchema::compositionStrategyIsSet() const
+{
+    return m_Composition_strategy.has_value();
+}
+
+void AgentSetupAndDraftResponseSchema::unsetComposition_strategy()
+{
+    m_Composition_strategy.reset();
+}
+std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> AgentSetupAndDraftResponseSchema::getResolvedNodeHints() const
+{
+    return m_Resolved_node_hints;
+}
+
+
+void AgentSetupAndDraftResponseSchema::setResolvedNodeHints(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value)
+{
+    m_Resolved_node_hints = value;
+    m_Resolved_node_hintsIsSet = true;
+}
+
+bool AgentSetupAndDraftResponseSchema::resolvedNodeHintsIsSet() const
+{
+    return m_Resolved_node_hintsIsSet;
+}
+
+void AgentSetupAndDraftResponseSchema::unsetResolved_node_hints()
+{
+    m_Resolved_node_hintsIsSet = false;
+}
+std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> AgentSetupAndDraftResponseSchema::getDroppedNodeHints() const
+{
+    return m_Dropped_node_hints;
+}
+
+
+void AgentSetupAndDraftResponseSchema::setDroppedNodeHints(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value)
+{
+    m_Dropped_node_hints = value;
+    m_Dropped_node_hintsIsSet = true;
+}
+
+bool AgentSetupAndDraftResponseSchema::droppedNodeHintsIsSet() const
+{
+    return m_Dropped_node_hintsIsSet;
+}
+
+void AgentSetupAndDraftResponseSchema::unsetDropped_node_hints()
+{
+    m_Dropped_node_hintsIsSet = false;
 }
 
 }

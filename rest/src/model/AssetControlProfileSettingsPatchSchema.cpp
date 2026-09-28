@@ -34,10 +34,30 @@ void AssetControlProfileSettingsPatchSchema::validate()
 web::json::value AssetControlProfileSettingsPatchSchema::toJson() const
 {
     web::json::value val = web::json::value::object();
+    if(m_Expected_revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_revision"))] = ModelBase::toJson(m_Expected_revision.get());
+    }
+    if(m_Expected_policy_updated_at.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_policy_updated_at"))] = ModelBase::toJson(m_Expected_policy_updated_at.get());
+    }
     if(m_Keyboard_bindings.has_value())
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("keyboard_bindings"))] = ModelBase::toJson(m_Keyboard_bindings.get());
+    }
+    if(m_Leader_arm_bindings.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("leader_arm_bindings"))] = ModelBase::toJson(m_Leader_arm_bindings.get());
+    }
+    if(m_Custom_leader_arm_bindings.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("custom_leader_arm_bindings"))] = ModelBase::toJson(m_Custom_leader_arm_bindings.get());
     }
 
     return val;
@@ -46,6 +66,28 @@ web::json::value AssetControlProfileSettingsPatchSchema::toJson() const
 bool AssetControlProfileSettingsPatchSchema::fromJson(const web::json::value& val)
 {
     bool ok = true;
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExpectedRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedRevision);
+            setExpectedRevision(refVal_setExpectedRevision);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_policy_updated_at"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_policy_updated_at")));
+        if(!fieldValue.is_null())
+        {
+            utility::datetime refVal_setExpectedPolicyUpdatedAt;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedPolicyUpdatedAt);
+            setExpectedPolicyUpdatedAt(refVal_setExpectedPolicyUpdatedAt);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("keyboard_bindings"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("keyboard_bindings")));
@@ -54,6 +96,28 @@ bool AssetControlProfileSettingsPatchSchema::fromJson(const web::json::value& va
             std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setKeyboardBindings;
             ok &= ModelBase::fromJson(fieldValue, refVal_setKeyboardBindings);
             setKeyboardBindings(refVal_setKeyboardBindings);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("leader_arm_bindings"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("leader_arm_bindings")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setLeaderArmBindings;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setLeaderArmBindings);
+            setLeaderArmBindings(refVal_setLeaderArmBindings);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("custom_leader_arm_bindings"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("custom_leader_arm_bindings")));
+        if(!fieldValue.is_null())
+        {
+            std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setCustomLeaderArmBindings;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setCustomLeaderArmBindings);
+            setCustomLeaderArmBindings(refVal_setCustomLeaderArmBindings);
             
         }
     }
@@ -67,9 +131,25 @@ void AssetControlProfileSettingsPatchSchema::toMultipart(std::shared_ptr<Multipa
     {
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
+    if(m_Expected_revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_revision")), m_Expected_revision.get()));
+    }
+    if(m_Expected_policy_updated_at.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_policy_updated_at")), m_Expected_policy_updated_at.get()));
+    }
     if(m_Keyboard_bindings.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("keyboard_bindings")), m_Keyboard_bindings.get()));
+    }
+    if(m_Leader_arm_bindings.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("leader_arm_bindings")), m_Leader_arm_bindings.get()));
+    }
+    if(m_Custom_leader_arm_bindings.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("custom_leader_arm_bindings")), m_Custom_leader_arm_bindings.get()));
     }
 }
 
@@ -82,16 +162,80 @@ bool AssetControlProfileSettingsPatchSchema::fromMultiPart(std::shared_ptr<Multi
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
 
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        utility::string_t refVal_setExpectedRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))), refVal_setExpectedRevision );
+        setExpectedRevision(refVal_setExpectedRevision);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_policy_updated_at"))))
+    {
+        utility::datetime refVal_setExpectedPolicyUpdatedAt;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_policy_updated_at"))), refVal_setExpectedPolicyUpdatedAt );
+        setExpectedPolicyUpdatedAt(refVal_setExpectedPolicyUpdatedAt);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("keyboard_bindings"))))
     {
         std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setKeyboardBindings;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("keyboard_bindings"))), refVal_setKeyboardBindings );
         setKeyboardBindings(refVal_setKeyboardBindings);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("leader_arm_bindings"))))
+    {
+        std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setLeaderArmBindings;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("leader_arm_bindings"))), refVal_setLeaderArmBindings );
+        setLeaderArmBindings(refVal_setLeaderArmBindings);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("custom_leader_arm_bindings"))))
+    {
+        std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setCustomLeaderArmBindings;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("custom_leader_arm_bindings"))), refVal_setCustomLeaderArmBindings );
+        setCustomLeaderArmBindings(refVal_setCustomLeaderArmBindings);
+    }
     return ok;
 }
 
 
+utility::string_t AssetControlProfileSettingsPatchSchema::getExpectedRevision() const
+{
+    return m_Expected_revision.get();
+}
+
+
+void AssetControlProfileSettingsPatchSchema::setExpectedRevision(const utility::string_t& value)
+{
+    m_Expected_revision = value;
+}
+
+bool AssetControlProfileSettingsPatchSchema::expectedRevisionIsSet() const
+{
+    return m_Expected_revision.has_value();
+}
+
+void AssetControlProfileSettingsPatchSchema::unsetExpected_revision()
+{
+    m_Expected_revision.reset();
+}
+utility::datetime AssetControlProfileSettingsPatchSchema::getExpectedPolicyUpdatedAt() const
+{
+    return m_Expected_policy_updated_at.get();
+}
+
+
+void AssetControlProfileSettingsPatchSchema::setExpectedPolicyUpdatedAt(const utility::datetime& value)
+{
+    m_Expected_policy_updated_at = value;
+}
+
+bool AssetControlProfileSettingsPatchSchema::expectedPolicyUpdatedAtIsSet() const
+{
+    return m_Expected_policy_updated_at.has_value();
+}
+
+void AssetControlProfileSettingsPatchSchema::unsetExpected_policy_updated_at()
+{
+    m_Expected_policy_updated_at.reset();
+}
 std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> AssetControlProfileSettingsPatchSchema::getKeyboardBindings() const
 {
     return m_Keyboard_bindings.get();
@@ -111,6 +255,46 @@ bool AssetControlProfileSettingsPatchSchema::keyboardBindingsIsSet() const
 void AssetControlProfileSettingsPatchSchema::unsetKeyboard_bindings()
 {
     m_Keyboard_bindings.reset();
+}
+std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> AssetControlProfileSettingsPatchSchema::getLeaderArmBindings() const
+{
+    return m_Leader_arm_bindings.get();
+}
+
+
+void AssetControlProfileSettingsPatchSchema::setLeaderArmBindings(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value)
+{
+    m_Leader_arm_bindings = value;
+}
+
+bool AssetControlProfileSettingsPatchSchema::leaderArmBindingsIsSet() const
+{
+    return m_Leader_arm_bindings.has_value();
+}
+
+void AssetControlProfileSettingsPatchSchema::unsetLeader_arm_bindings()
+{
+    m_Leader_arm_bindings.reset();
+}
+std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> AssetControlProfileSettingsPatchSchema::getCustomLeaderArmBindings() const
+{
+    return m_Custom_leader_arm_bindings.get();
+}
+
+
+void AssetControlProfileSettingsPatchSchema::setCustomLeaderArmBindings(const std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>>& value)
+{
+    m_Custom_leader_arm_bindings = value;
+}
+
+bool AssetControlProfileSettingsPatchSchema::customLeaderArmBindingsIsSet() const
+{
+    return m_Custom_leader_arm_bindings.has_value();
+}
+
+void AssetControlProfileSettingsPatchSchema::unsetCustom_leader_arm_bindings()
+{
+    m_Custom_leader_arm_bindings.reset();
 }
 
 }

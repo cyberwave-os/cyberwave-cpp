@@ -59,8 +59,8 @@ public:
 
     enum class ModeEnum
     {
-        LIVE,
         SIMULATION,
+        LIVE,
     };
     enum class TransportEnum
     {
@@ -114,6 +114,11 @@ public:
     OriginEnum toOriginEnum(const utility::string_t& value) const;
     const utility::string_t fromOriginEnum(const OriginEnum value) const;
 
+
+    utility::string_t getPolicyJointBindingUuid() const;
+    bool policyJointBindingUuidIsSet() const;
+    void unsetPolicy_joint_binding_uuid();
+    void setPolicyJointBindingUuid(const utility::string_t& value);
 
     utility::string_t getTwinUuid() const;
     bool twinUuidIsSet() const;
@@ -242,6 +247,8 @@ public:
 
 
 protected:
+    boost::optional<utility::string_t> m_Policy_joint_binding_uuid;
+
     utility::string_t m_Twin_uuid;
     bool m_Twin_uuidIsSet;
 

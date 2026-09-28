@@ -23,6 +23,7 @@
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include "CppRestOpenAPIClient/model/IOSchemaPortSchema.h"
+#include <cpprest/details/basic_types.h>
 #include <vector>
 
 namespace org {
@@ -66,6 +67,16 @@ public:
     void unsetOutputs();
     void setOutputs(const std::vector<std::shared_ptr<IOSchemaPortSchema>>& value);
 
+    int32_t getSemanticsVersion() const;
+    bool semanticsVersionIsSet() const;
+    void unsetSemantics_version();
+    void setSemanticsVersion(int32_t value);
+
+    std::vector<utility::string_t> getSemanticIssues() const;
+    bool semanticIssuesIsSet() const;
+    void unsetSemantic_issues();
+    void setSemanticIssues(const std::vector<utility::string_t>& value);
+
 
 protected:
     std::vector<std::shared_ptr<IOSchemaPortSchema>> m_Inputs;
@@ -73,6 +84,11 @@ protected:
 
     std::vector<std::shared_ptr<IOSchemaPortSchema>> m_Outputs;
     bool m_OutputsIsSet;
+
+    boost::optional<int32_t> m_Semantics_version;
+
+    std::vector<utility::string_t> m_Semantic_issues;
+    bool m_Semantic_issuesIsSet;
 
 };
 

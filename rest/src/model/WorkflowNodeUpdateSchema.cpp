@@ -84,6 +84,16 @@ web::json::value WorkflowNodeUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("metadata"))] = ModelBase::toJson(m_Metadata.get());
     }
+    if(m_Expected_updated_at.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_updated_at"))] = ModelBase::toJson(m_Expected_updated_at.get());
+    }
+    if(m_Expected_model_updated_at.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_model_updated_at"))] = ModelBase::toJson(m_Expected_model_updated_at.get());
+    }
 
     return val;
 }
@@ -201,6 +211,28 @@ bool WorkflowNodeUpdateSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_updated_at"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_updated_at")));
+        if(!fieldValue.is_null())
+        {
+            utility::datetime refVal_setExpectedUpdatedAt;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedUpdatedAt);
+            setExpectedUpdatedAt(refVal_setExpectedUpdatedAt);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_model_updated_at"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_model_updated_at")));
+        if(!fieldValue.is_null())
+        {
+            utility::datetime refVal_setExpectedModelUpdatedAt;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedModelUpdatedAt);
+            setExpectedModelUpdatedAt(refVal_setExpectedModelUpdatedAt);
+            
+        }
+    }
     return ok;
 }
 
@@ -250,6 +282,14 @@ void WorkflowNodeUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData> mu
     if(m_Metadata.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("metadata")), m_Metadata.get()));
+    }
+    if(m_Expected_updated_at.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_updated_at")), m_Expected_updated_at.get()));
+    }
+    if(m_Expected_model_updated_at.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_model_updated_at")), m_Expected_model_updated_at.get()));
     }
 }
 
@@ -321,6 +361,18 @@ bool WorkflowNodeUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> 
         std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setMetadata;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("metadata"))), refVal_setMetadata );
         setMetadata(refVal_setMetadata);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_updated_at"))))
+    {
+        utility::datetime refVal_setExpectedUpdatedAt;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_updated_at"))), refVal_setExpectedUpdatedAt );
+        setExpectedUpdatedAt(refVal_setExpectedUpdatedAt);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_model_updated_at"))))
+    {
+        utility::datetime refVal_setExpectedModelUpdatedAt;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_model_updated_at"))), refVal_setExpectedModelUpdatedAt );
+        setExpectedModelUpdatedAt(refVal_setExpectedModelUpdatedAt);
     }
     return ok;
 }
@@ -522,6 +574,46 @@ bool WorkflowNodeUpdateSchema::metadataIsSet() const
 void WorkflowNodeUpdateSchema::unsetMetadata()
 {
     m_Metadata.reset();
+}
+utility::datetime WorkflowNodeUpdateSchema::getExpectedUpdatedAt() const
+{
+    return m_Expected_updated_at.get();
+}
+
+
+void WorkflowNodeUpdateSchema::setExpectedUpdatedAt(const utility::datetime& value)
+{
+    m_Expected_updated_at = value;
+}
+
+bool WorkflowNodeUpdateSchema::expectedUpdatedAtIsSet() const
+{
+    return m_Expected_updated_at.has_value();
+}
+
+void WorkflowNodeUpdateSchema::unsetExpected_updated_at()
+{
+    m_Expected_updated_at.reset();
+}
+utility::datetime WorkflowNodeUpdateSchema::getExpectedModelUpdatedAt() const
+{
+    return m_Expected_model_updated_at.get();
+}
+
+
+void WorkflowNodeUpdateSchema::setExpectedModelUpdatedAt(const utility::datetime& value)
+{
+    m_Expected_model_updated_at = value;
+}
+
+bool WorkflowNodeUpdateSchema::expectedModelUpdatedAtIsSet() const
+{
+    return m_Expected_model_updated_at.has_value();
+}
+
+void WorkflowNodeUpdateSchema::unsetExpected_model_updated_at()
+{
+    m_Expected_model_updated_at.reset();
 }
 
 }

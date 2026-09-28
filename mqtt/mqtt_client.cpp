@@ -1,6 +1,9 @@
 #include "mqtt_client.h"
 #include "constants.h"
 
+#include <cyberwave/config.h>
+#include <cyberwave/mqtt_identity.h>
+
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
@@ -142,17 +145,33 @@ CyberwaveMQTTClient::CyberwaveMQTTClient(const CyberwaveConfig& config) : config
     {
         mqtt_username_ = resolved_env_username.empty() ? "mqttcyb" : resolved_env_username;
     }
+    const std::string env_mqtt_password = read_env("CYBERWAVE_MQTT_PASSWORD");
     mqtt_api_token_ = !config.mqtt_api_token.empty() ? config.mqtt_api_token : config.mqtt_password;
     if (mqtt_api_token_.empty())
     {
         const std::string env_token = read_env("CYBERWAVE_MQTT_API_TOKEN");
-        const std::string env_password = read_env("CYBERWAVE_MQTT_PASSWORD");
-        mqtt_api_token_ =
-            env_token.empty() ? (env_password.empty() ? read_env("CYBERWAVE_API_KEY") : env_password) : env_token;
+        mqtt_api_token_ = env_token.empty()
+                              ? (env_mqtt_password.empty() ? read_env("CYBERWAVE_API_KEY") : env_mqtt_password)
+                              : env_token;
     }
     if (mqtt_api_token_.empty())
     {
         throw std::invalid_argument("MQTT API token is required (set mqtt_api_token / CYBERWAVE_API_KEY)");
+    }
+
+    // Authorization checks reach the backend without the password, so a username
+    // every client shares leaves it unable to tell them apart. Derived from the
+    // token it names exactly one. An explicit broker password is the legacy
+    // static path, where the placeholder is the account and hashing it would
+    // deny the CONNECT -- unless it is an API token, which the cloud node sets
+    // CYBERWAVE_MQTT_PASSWORD to when it scopes a workload token. Matching the
+    // placeholder by value (not by "was it set") is what lets a caller that
+    // passes it explicitly migrate on an SDK bump.
+    const bool legacy_broker_password =
+        is_legacy_broker_password(config.mqtt_password) || is_legacy_broker_password(env_mqtt_password);
+    if (mqtt_username_ == DEFAULT_MQTT_USERNAME && !legacy_broker_password)
+    {
+        mqtt_username_ = mqtt_username_for_token(mqtt_api_token_);
     }
 
     const std::string env_source_type = read_env("CYBERWAVE_SOURCE_TYPE");

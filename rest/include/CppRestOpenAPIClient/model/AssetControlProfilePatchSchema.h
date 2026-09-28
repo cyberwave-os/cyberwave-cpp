@@ -22,6 +22,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/CapabilityControlSetup.h"
 #include "CppRestOpenAPIClient/model/ControllerRefSchema.h"
 #include <cpprest/details/basic_types.h>
 #include <map>
@@ -32,6 +33,7 @@ namespace openapitools {
 namespace client {
 namespace model {
 
+class CapabilityControlSetup;
 class ControllerRefSchema;
 
 
@@ -57,6 +59,16 @@ public:
     /////////////////////////////////////////////
     /// AssetControlProfilePatchSchema members
 
+
+    utility::string_t getExpectedRevision() const;
+    bool expectedRevisionIsSet() const;
+    void unsetExpected_revision();
+    void setExpectedRevision(const utility::string_t& value);
+
+    std::map<utility::string_t, std::shared_ptr<CapabilityControlSetup>> getControlSetups() const;
+    bool controlSetupsIsSet() const;
+    void unsetControl_setups();
+    void setControlSetups(const std::map<utility::string_t, std::shared_ptr<CapabilityControlSetup>>& value);
 
     std::shared_ptr<ControllerRefSchema> getManualControllerRef() const;
     bool manualControllerRefIsSet() const;
@@ -105,6 +117,10 @@ public:
 
 
 protected:
+    boost::optional<utility::string_t> m_Expected_revision;
+
+    boost::optional<std::map<utility::string_t, std::shared_ptr<CapabilityControlSetup>>> m_Control_setups;
+
     boost::optional<std::shared_ptr<ControllerRefSchema>> m_Manual_controller_ref;
 
     boost::optional<utility::string_t> m_Manual_option_id;

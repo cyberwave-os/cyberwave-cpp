@@ -48,6 +48,11 @@ web::json::value TwinDriverLogSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("uuid"))] = ModelBase::toJson(m_Uuid);
     }
+    if(m_Twin_uuid.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))] = ModelBase::toJson(m_Twin_uuid.get());
+    }
     if(m_TimestampIsSet)
     {
         
@@ -108,6 +113,17 @@ bool TwinDriverLogSchema::fromJson(const web::json::value& val)
             utility::string_t refVal_setUuid;
             ok &= ModelBase::fromJson(fieldValue, refVal_setUuid);
             setUuid(refVal_setUuid);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("twin_uuid")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setTwinUuid;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTwinUuid);
+            setTwinUuid(refVal_setTwinUuid);
             
         }
     }
@@ -224,6 +240,10 @@ void TwinDriverLogSchema::toMultipart(std::shared_ptr<MultipartFormData> multipa
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("uuid")), m_Uuid));
     }
+    if(m_Twin_uuid.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("twin_uuid")), m_Twin_uuid.get()));
+    }
     if(m_TimestampIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("timestamp")), m_Timestamp));
@@ -276,6 +296,12 @@ bool TwinDriverLogSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multi
         utility::string_t refVal_setUuid;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("uuid"))), refVal_setUuid );
         setUuid(refVal_setUuid);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))))
+    {
+        utility::string_t refVal_setTwinUuid;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("twin_uuid"))), refVal_setTwinUuid );
+        setTwinUuid(refVal_setTwinUuid);
     }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("timestamp"))))
     {
@@ -355,6 +381,26 @@ bool TwinDriverLogSchema::uuidIsSet() const
 void TwinDriverLogSchema::unsetUuid()
 {
     m_UuidIsSet = false;
+}
+utility::string_t TwinDriverLogSchema::getTwinUuid() const
+{
+    return m_Twin_uuid.get();
+}
+
+
+void TwinDriverLogSchema::setTwinUuid(const utility::string_t& value)
+{
+    m_Twin_uuid = value;
+}
+
+bool TwinDriverLogSchema::twinUuidIsSet() const
+{
+    return m_Twin_uuid.has_value();
+}
+
+void TwinDriverLogSchema::unsetTwin_uuid()
+{
+    m_Twin_uuid.reset();
 }
 utility::string_t TwinDriverLogSchema::getTimestamp() const
 {

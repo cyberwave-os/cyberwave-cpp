@@ -23,6 +23,7 @@
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
+#include "CppRestOpenAPIClient/model/ControlOperatorUISchema.h"
 #include <cpprest/details/basic_types.h>
 #include <map>
 #include <vector>
@@ -33,6 +34,7 @@ namespace openapitools {
 namespace client {
 namespace model {
 
+class ControlOperatorUISchema;
 
 
 /// <summary>
@@ -101,6 +103,16 @@ public:
     bool routeKindIsSet() const;
     void unsetRoute_kind();
     void setRouteKind(const utility::string_t& value);
+
+    utility::string_t getCapabilityLabel() const;
+    bool capabilityLabelIsSet() const;
+    void unsetCapability_label();
+    void setCapabilityLabel(const utility::string_t& value);
+
+    utility::string_t getCapabilityId() const;
+    bool capabilityIdIsSet() const;
+    void unsetCapability_id();
+    void setCapabilityId(const utility::string_t& value);
 
     std::vector<utility::string_t> getInputKinds() const;
     bool inputKindsIsSet() const;
@@ -177,6 +189,11 @@ public:
     void unsetResolver_metadata();
     void setResolverMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    std::shared_ptr<ControlOperatorUISchema> getOperatorUi() const;
+    bool operatorUiIsSet() const;
+    void unsetOperator_ui();
+    void setOperatorUi(const std::shared_ptr<ControlOperatorUISchema>& value);
+
 
 protected:
     utility::string_t m_Id;
@@ -187,6 +204,10 @@ protected:
 
     utility::string_t m_Route_kind;
     bool m_Route_kindIsSet;
+
+    boost::optional<utility::string_t> m_Capability_label;
+
+    boost::optional<utility::string_t> m_Capability_id;
 
     std::vector<utility::string_t> m_Input_kinds;
     bool m_Input_kindsIsSet;
@@ -224,6 +245,9 @@ protected:
 
     std::map<utility::string_t, std::shared_ptr<AnyType>> m_Resolver_metadata;
     bool m_Resolver_metadataIsSet;
+
+    std::shared_ptr<ControlOperatorUISchema> m_Operator_ui;
+    bool m_Operator_uiIsSet;
 
 };
 

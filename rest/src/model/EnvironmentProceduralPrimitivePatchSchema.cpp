@@ -74,6 +74,16 @@ web::json::value EnvironmentProceduralPrimitivePatchSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("parameters"))] = ModelBase::toJson(m_Parameters.get());
     }
+    if(m_Size.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("size"))] = ModelBase::toJson(m_Size.get());
+    }
+    if(m_Dimensions.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("dimensions"))] = ModelBase::toJson(m_Dimensions.get());
+    }
     if(m_Json_patch.has_value())
     {
         
@@ -108,6 +118,16 @@ web::json::value EnvironmentProceduralPrimitivePatchSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("locked"))] = ModelBase::toJson(m_Locked.get());
+    }
+    if(m_Fixed_base.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("fixed_base"))] = ModelBase::toJson(m_Fixed_base.get());
+    }
+    if(m_Expected_revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_revision"))] = ModelBase::toJson(m_Expected_revision.get());
     }
 
     return val;
@@ -204,6 +224,28 @@ bool EnvironmentProceduralPrimitivePatchSchema::fromJson(const web::json::value&
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("size"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("size")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<Size> refVal_setSize;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSize);
+            setSize(refVal_setSize);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("dimensions"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("dimensions")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, double> refVal_setDimensions;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setDimensions);
+            setDimensions(refVal_setDimensions);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("json_patch"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("json_patch")));
@@ -281,6 +323,28 @@ bool EnvironmentProceduralPrimitivePatchSchema::fromJson(const web::json::value&
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("fixed_base")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setFixedBase;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setFixedBase);
+            setFixedBase(refVal_setFixedBase);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExpectedRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedRevision);
+            setExpectedRevision(refVal_setExpectedRevision);
+            
+        }
+    }
     return ok;
 }
 
@@ -323,6 +387,14 @@ void EnvironmentProceduralPrimitivePatchSchema::toMultipart(std::shared_ptr<Mult
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("parameters")), m_Parameters.get()));
     }
+    if(m_Size.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("size")), m_Size.get()));
+    }
+    if(m_Dimensions.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("dimensions")), m_Dimensions.get()));
+    }
     if(m_Json_patch.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("json_patch")), m_Json_patch.get()));
@@ -350,6 +422,14 @@ void EnvironmentProceduralPrimitivePatchSchema::toMultipart(std::shared_ptr<Mult
     if(m_Locked.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("locked")), m_Locked.get()));
+    }
+    if(m_Fixed_base.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("fixed_base")), m_Fixed_base.get()));
+    }
+    if(m_Expected_revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_revision")), m_Expected_revision.get()));
     }
 }
 
@@ -410,6 +490,18 @@ bool EnvironmentProceduralPrimitivePatchSchema::fromMultiPart(std::shared_ptr<Mu
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("parameters"))), refVal_setParameters );
         setParameters(refVal_setParameters);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("size"))))
+    {
+        std::shared_ptr<Size> refVal_setSize;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("size"))), refVal_setSize );
+        setSize(refVal_setSize);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("dimensions"))))
+    {
+        std::map<utility::string_t, double> refVal_setDimensions;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("dimensions"))), refVal_setDimensions );
+        setDimensions(refVal_setDimensions);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("json_patch"))))
     {
         std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> refVal_setJsonPatch;
@@ -451,6 +543,18 @@ bool EnvironmentProceduralPrimitivePatchSchema::fromMultiPart(std::shared_ptr<Mu
         bool refVal_setLocked;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("locked"))), refVal_setLocked );
         setLocked(refVal_setLocked);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))))
+    {
+        bool refVal_setFixedBase;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("fixed_base"))), refVal_setFixedBase );
+        setFixedBase(refVal_setFixedBase);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        utility::string_t refVal_setExpectedRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))), refVal_setExpectedRevision );
+        setExpectedRevision(refVal_setExpectedRevision);
     }
     return ok;
 }
@@ -616,6 +720,45 @@ void EnvironmentProceduralPrimitivePatchSchema::unsetParameters()
 {
     m_Parameters.reset();
 }
+std::shared_ptr<Size> EnvironmentProceduralPrimitivePatchSchema::getSize() const
+{
+    return m_Size.get();
+}
+
+
+void EnvironmentProceduralPrimitivePatchSchema::setSize(const std::shared_ptr<Size>& value)
+{
+    m_Size = value;
+}
+
+bool EnvironmentProceduralPrimitivePatchSchema::sizeIsSet() const
+{
+    return m_Size.has_value();
+}
+
+void EnvironmentProceduralPrimitivePatchSchema::unsetSize()
+{
+    m_Size.reset();
+}
+std::map<utility::string_t, double> EnvironmentProceduralPrimitivePatchSchema::getDimensions() const
+{
+    return m_Dimensions.get();
+}
+
+void EnvironmentProceduralPrimitivePatchSchema::setDimensions(std::map<utility::string_t, double> value)
+{
+    m_Dimensions = value;
+}
+
+bool EnvironmentProceduralPrimitivePatchSchema::dimensionsIsSet() const
+{
+    return m_Dimensions.has_value();
+}
+
+void EnvironmentProceduralPrimitivePatchSchema::unsetDimensions()
+{
+    m_Dimensions.reset();
+}
 std::vector<std::map<utility::string_t, std::shared_ptr<AnyType>>> EnvironmentProceduralPrimitivePatchSchema::getJsonPatch() const
 {
     return m_Json_patch.get();
@@ -753,6 +896,45 @@ bool EnvironmentProceduralPrimitivePatchSchema::lockedIsSet() const
 void EnvironmentProceduralPrimitivePatchSchema::unsetLocked()
 {
     m_Locked.reset();
+}
+bool EnvironmentProceduralPrimitivePatchSchema::isFixedBase() const
+{
+    return m_Fixed_base.get();
+}
+
+void EnvironmentProceduralPrimitivePatchSchema::setFixedBase(bool value)
+{
+    m_Fixed_base = value;
+}
+
+bool EnvironmentProceduralPrimitivePatchSchema::fixedBaseIsSet() const
+{
+    return m_Fixed_base.has_value();
+}
+
+void EnvironmentProceduralPrimitivePatchSchema::unsetFixed_base()
+{
+    m_Fixed_base.reset();
+}
+utility::string_t EnvironmentProceduralPrimitivePatchSchema::getExpectedRevision() const
+{
+    return m_Expected_revision.get();
+}
+
+
+void EnvironmentProceduralPrimitivePatchSchema::setExpectedRevision(const utility::string_t& value)
+{
+    m_Expected_revision = value;
+}
+
+bool EnvironmentProceduralPrimitivePatchSchema::expectedRevisionIsSet() const
+{
+    return m_Expected_revision.has_value();
+}
+
+void EnvironmentProceduralPrimitivePatchSchema::unsetExpected_revision()
+{
+    m_Expected_revision.reset();
 }
 
 }

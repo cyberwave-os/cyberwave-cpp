@@ -57,6 +57,11 @@ public:
     /// AssetListSchema members
 
 
+    bool isIsKit() const;
+    bool isKitIsSet() const;
+    void unsetIs_kit();
+    void setIsKit(bool value);
+
     utility::string_t getUuid() const;
     bool uuidIsSet() const;
     void unsetUuid();
@@ -137,6 +142,16 @@ public:
     void unsetHas_universal_schema();
     void setHasUniversalSchema(bool value);
 
+    utility::string_t getBuildStatus() const;
+    bool buildStatusIsSet() const;
+    void unsetBuild_status();
+    void setBuildStatus(const utility::string_t& value);
+
+    utility::string_t getUniversalSchemaSource() const;
+    bool universalSchemaSourceIsSet() const;
+    void unsetUniversal_schema_source();
+    void setUniversalSchemaSource(const utility::string_t& value);
+
     bool isFixedBase() const;
     bool fixedBaseIsSet() const;
     void unsetFixed_base();
@@ -169,6 +184,9 @@ public:
 
 
 protected:
+    bool m_Is_kit;
+    bool m_Is_kitIsSet;
+
     utility::string_t m_Uuid;
     bool m_UuidIsSet;
 
@@ -206,6 +224,10 @@ protected:
 
     bool m_Has_universal_schema;
     bool m_Has_universal_schemaIsSet;
+
+    boost::optional<utility::string_t> m_Build_status;
+
+    boost::optional<utility::string_t> m_Universal_schema_source;
 
     bool m_Fixed_base;
     bool m_Fixed_baseIsSet;

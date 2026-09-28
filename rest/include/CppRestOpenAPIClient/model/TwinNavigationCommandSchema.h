@@ -28,6 +28,7 @@
 #include <cpprest/details/basic_types.h>
 #include "CppRestOpenAPIClient/model/NavigationWaypointSchema.h"
 #include <map>
+#include "CppRestOpenAPIClient/model/NavigationCoordinateFrameSchema.h"
 #include <vector>
 #include "CppRestOpenAPIClient/AnyType.h"
 
@@ -36,6 +37,7 @@ namespace openapitools {
 namespace client {
 namespace model {
 
+class NavigationCoordinateFrameSchema;
 class NavigationWaypointSchema;
 class NavigationWaypointActionSchema;
 
@@ -94,10 +96,25 @@ public:
     void unsetRotation();
     void setRotation(std::vector<double> value);
 
+    std::map<utility::string_t, std::shared_ptr<AnyType>> getOrientation() const;
+    bool orientationIsSet() const;
+    void unsetOrientation();
+    void setOrientation(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
+
     double getYaw() const;
     bool yawIsSet() const;
     void unsetYaw();
     void setYaw(double value);
+
+    std::shared_ptr<NavigationCoordinateFrameSchema> getCoordinateFrame() const;
+    bool coordinateFrameIsSet() const;
+    void unsetCoordinate_frame();
+    void setCoordinateFrame(const std::shared_ptr<NavigationCoordinateFrameSchema>& value);
+
+    std::map<utility::string_t, double> getGeodeticPosition() const;
+    bool geodeticPositionIsSet() const;
+    void unsetGeodetic_position();
+    void setGeodeticPosition(std::map<utility::string_t, double> value);
 
     std::vector<std::shared_ptr<NavigationWaypointSchema>> getWaypoints() const;
     bool waypointsIsSet() const;
@@ -149,6 +166,11 @@ public:
     void unsetMetadata();
     void setMetadata(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value);
 
+    utility::string_t getPlanner() const;
+    bool plannerIsSet() const;
+    void unsetPlanner();
+    void setPlanner(const utility::string_t& value);
+
     bool isSkipNavAnchorTransform() const;
     bool skipNavAnchorTransformIsSet() const;
     void unsetSkip_nav_anchor_transform();
@@ -163,7 +185,13 @@ protected:
 
     boost::optional<std::vector<double>> m_Rotation;
 
+    boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Orientation;
+
     boost::optional<double> m_Yaw;
+
+    boost::optional<std::shared_ptr<NavigationCoordinateFrameSchema>> m_Coordinate_frame;
+
+    boost::optional<std::map<utility::string_t, double>> m_Geodetic_position;
 
     boost::optional<std::vector<std::shared_ptr<NavigationWaypointSchema>>> m_Waypoints;
 
@@ -184,6 +212,8 @@ protected:
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Constraints;
 
     boost::optional<std::map<utility::string_t, std::shared_ptr<AnyType>>> m_Metadata;
+
+    boost::optional<utility::string_t> m_Planner;
 
     bool m_Skip_nav_anchor_transform;
     bool m_Skip_nav_anchor_transformIsSet;

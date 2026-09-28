@@ -47,6 +47,11 @@ web::json::value TwinDriverSchemaSetSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("merge"))] = ModelBase::toJson(m_Merge);
     }
+    if(m_Expected_revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_revision"))] = ModelBase::toJson(m_Expected_revision.get());
+    }
 
     return val;
 }
@@ -76,6 +81,17 @@ bool TwinDriverSchemaSetSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExpectedRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedRevision);
+            setExpectedRevision(refVal_setExpectedRevision);
+            
+        }
+    }
     return ok;
 }
 
@@ -93,6 +109,10 @@ void TwinDriverSchemaSetSchema::toMultipart(std::shared_ptr<MultipartFormData> m
     if(m_MergeIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("merge")), m_Merge));
+    }
+    if(m_Expected_revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_revision")), m_Expected_revision.get()));
     }
 }
 
@@ -116,6 +136,12 @@ bool TwinDriverSchemaSetSchema::fromMultiPart(std::shared_ptr<MultipartFormData>
         bool refVal_setMerge;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("merge"))), refVal_setMerge );
         setMerge(refVal_setMerge);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        utility::string_t refVal_setExpectedRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))), refVal_setExpectedRevision );
+        setExpectedRevision(refVal_setExpectedRevision);
     }
     return ok;
 }
@@ -161,6 +187,26 @@ bool TwinDriverSchemaSetSchema::mergeIsSet() const
 void TwinDriverSchemaSetSchema::unsetMerge()
 {
     m_MergeIsSet = false;
+}
+utility::string_t TwinDriverSchemaSetSchema::getExpectedRevision() const
+{
+    return m_Expected_revision.get();
+}
+
+
+void TwinDriverSchemaSetSchema::setExpectedRevision(const utility::string_t& value)
+{
+    m_Expected_revision = value;
+}
+
+bool TwinDriverSchemaSetSchema::expectedRevisionIsSet() const
+{
+    return m_Expected_revision.has_value();
+}
+
+void TwinDriverSchemaSetSchema::unsetExpected_revision()
+{
+    m_Expected_revision.reset();
 }
 
 }

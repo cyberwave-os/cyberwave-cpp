@@ -97,10 +97,10 @@ public:
     void unsetCreated_at();
     void setCreatedAt(const utility::datetime& value);
 
-    utility::datetime getUpdatedAt() const;
+    utility::string_t getUpdatedAt() const;
     bool updatedAtIsSet() const;
     void unsetUpdated_at();
-    void setUpdatedAt(const utility::datetime& value);
+    void setUpdatedAt(const utility::string_t& value);
 
     utility::string_t getCreatedBy() const;
     bool createdByIsSet() const;
@@ -121,6 +121,11 @@ public:
     bool canWriteIsSet() const;
     void unsetCan_write();
     void setCanWrite(bool value);
+
+    utility::string_t getCommandKeyRevision() const;
+    bool commandKeyRevisionIsSet() const;
+    void unsetCommand_key_revision();
+    void setCommandKeyRevision(const utility::string_t& value);
 
     utility::string_t getDevice() const;
     bool deviceIsSet() const;
@@ -152,7 +157,7 @@ protected:
     utility::datetime m_Created_at;
     bool m_Created_atIsSet;
 
-    utility::datetime m_Updated_at;
+    utility::string_t m_Updated_at;
     bool m_Updated_atIsSet;
 
     boost::optional<utility::string_t> m_Created_by;
@@ -164,6 +169,8 @@ protected:
 
     bool m_Can_write;
     bool m_Can_writeIsSet;
+
+    boost::optional<utility::string_t> m_Command_key_revision;
 
     boost::optional<utility::string_t> m_Device;
 

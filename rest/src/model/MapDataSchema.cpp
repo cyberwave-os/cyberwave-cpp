@@ -30,6 +30,8 @@ MapDataSchema::MapDataSchema()
     m_Created_atIsSet = false;
     m_Updated_at = utility::datetime();
     m_Updated_atIsSet = false;
+    m_Twin_is_deleted = false;
+    m_Twin_is_deletedIsSet = false;
 }
 
 MapDataSchema::~MapDataSchema()
@@ -104,6 +106,11 @@ web::json::value MapDataSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("data_file_uuid"))] = ModelBase::toJson(m_Data_file_uuid);
     }
+    if(m_Data_format.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("data_format"))] = ModelBase::toJson(m_Data_format.get());
+    }
     if(m_Image_width.has_value())
     {
         
@@ -128,6 +135,16 @@ web::json::value MapDataSchema::toJson() const
     {
         
         val[utility::conversions::to_string_t(_XPLATSTR("updated_at"))] = ModelBase::toJson(m_Updated_at);
+    }
+    if(m_Twin_name.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("twin_name"))] = ModelBase::toJson(m_Twin_name.get());
+    }
+    if(m_Twin_is_deletedIsSet)
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("twin_is_deleted"))] = ModelBase::toJson(m_Twin_is_deleted);
     }
 
     return val;
@@ -268,6 +285,17 @@ bool MapDataSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("data_format"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("data_format")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setDataFormat;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setDataFormat);
+            setDataFormat(refVal_setDataFormat);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("image_width"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("image_width")));
@@ -320,6 +348,28 @@ bool MapDataSchema::fromJson(const web::json::value& val)
             utility::datetime refVal_setUpdatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_setUpdatedAt);
             setUpdatedAt(refVal_setUpdatedAt);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("twin_name"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("twin_name")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setTwinName;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTwinName);
+            setTwinName(refVal_setTwinName);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("twin_is_deleted"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("twin_is_deleted")));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_setTwinIsDeleted;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setTwinIsDeleted);
+            setTwinIsDeleted(refVal_setTwinIsDeleted);
             
         }
     }
@@ -381,6 +431,10 @@ void MapDataSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, co
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("data_file_uuid")), m_Data_file_uuid));
     }
+    if(m_Data_format.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("data_format")), m_Data_format.get()));
+    }
     if(m_Image_width.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("image_width")), m_Image_width.get()));
@@ -400,6 +454,14 @@ void MapDataSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart, co
     if(m_Updated_atIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("updated_at")), m_Updated_at));
+    }
+    if(m_Twin_name.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("twin_name")), m_Twin_name.get()));
+    }
+    if(m_Twin_is_deletedIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("twin_is_deleted")), m_Twin_is_deleted));
     }
 }
 
@@ -484,6 +546,12 @@ bool MapDataSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, 
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("data_file_uuid"))), refVal_setDataFileUuid );
         setDataFileUuid(refVal_setDataFileUuid);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("data_format"))))
+    {
+        utility::string_t refVal_setDataFormat;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("data_format"))), refVal_setDataFormat );
+        setDataFormat(refVal_setDataFormat);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("image_width"))))
     {
         int32_t refVal_setImageWidth;
@@ -513,6 +581,18 @@ bool MapDataSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, 
         utility::datetime refVal_setUpdatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("updated_at"))), refVal_setUpdatedAt );
         setUpdatedAt(refVal_setUpdatedAt);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("twin_name"))))
+    {
+        utility::string_t refVal_setTwinName;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("twin_name"))), refVal_setTwinName );
+        setTwinName(refVal_setTwinName);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("twin_is_deleted"))))
+    {
+        bool refVal_setTwinIsDeleted;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("twin_is_deleted"))), refVal_setTwinIsDeleted );
+        setTwinIsDeleted(refVal_setTwinIsDeleted);
     }
     return ok;
 }
@@ -754,6 +834,26 @@ void MapDataSchema::unsetData_file_uuid()
 {
     m_Data_file_uuidIsSet = false;
 }
+utility::string_t MapDataSchema::getDataFormat() const
+{
+    return m_Data_format.get();
+}
+
+
+void MapDataSchema::setDataFormat(const utility::string_t& value)
+{
+    m_Data_format = value;
+}
+
+bool MapDataSchema::dataFormatIsSet() const
+{
+    return m_Data_format.has_value();
+}
+
+void MapDataSchema::unsetData_format()
+{
+    m_Data_format.reset();
+}
 int32_t MapDataSchema::getImageWidth() const
 {
     return m_Image_width.get();
@@ -853,6 +953,46 @@ bool MapDataSchema::updatedAtIsSet() const
 void MapDataSchema::unsetUpdated_at()
 {
     m_Updated_atIsSet = false;
+}
+utility::string_t MapDataSchema::getTwinName() const
+{
+    return m_Twin_name.get();
+}
+
+
+void MapDataSchema::setTwinName(const utility::string_t& value)
+{
+    m_Twin_name = value;
+}
+
+bool MapDataSchema::twinNameIsSet() const
+{
+    return m_Twin_name.has_value();
+}
+
+void MapDataSchema::unsetTwin_name()
+{
+    m_Twin_name.reset();
+}
+bool MapDataSchema::isTwinIsDeleted() const
+{
+    return m_Twin_is_deleted;
+}
+
+void MapDataSchema::setTwinIsDeleted(bool value)
+{
+    m_Twin_is_deleted = value;
+    m_Twin_is_deletedIsSet = true;
+}
+
+bool MapDataSchema::twinIsDeletedIsSet() const
+{
+    return m_Twin_is_deletedIsSet;
+}
+
+void MapDataSchema::unsetTwin_is_deleted()
+{
+    m_Twin_is_deletedIsSet = false;
 }
 
 }

@@ -34,6 +34,11 @@ void AssetUpdateSchema::validate()
 web::json::value AssetUpdateSchema::toJson() const
 {
     web::json::value val = web::json::value::object();
+    if(m_Expected_revision.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("expected_revision"))] = ModelBase::toJson(m_Expected_revision.get());
+    }
     if(m_Name.has_value())
     {
         
@@ -111,6 +116,17 @@ web::json::value AssetUpdateSchema::toJson() const
 bool AssetUpdateSchema::fromJson(const web::json::value& val)
 {
     bool ok = true;
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("expected_revision")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setExpectedRevision;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setExpectedRevision);
+            setExpectedRevision(refVal_setExpectedRevision);
+            
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("name"))))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("name")));
@@ -275,6 +291,10 @@ void AssetUpdateSchema::toMultipart(std::shared_ptr<MultipartFormData> multipart
     {
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
+    if(m_Expected_revision.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("expected_revision")), m_Expected_revision.get()));
+    }
     if(m_Name.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("name")), m_Name.get()));
@@ -342,6 +362,12 @@ bool AssetUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
         namePrefix += utility::conversions::to_string_t(_XPLATSTR("."));
     }
 
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))))
+    {
+        utility::string_t refVal_setExpectedRevision;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("expected_revision"))), refVal_setExpectedRevision );
+        setExpectedRevision(refVal_setExpectedRevision);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("name"))))
     {
         utility::string_t refVal_setName;
@@ -430,6 +456,26 @@ bool AssetUpdateSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
 }
 
 
+utility::string_t AssetUpdateSchema::getExpectedRevision() const
+{
+    return m_Expected_revision.get();
+}
+
+
+void AssetUpdateSchema::setExpectedRevision(const utility::string_t& value)
+{
+    m_Expected_revision = value;
+}
+
+bool AssetUpdateSchema::expectedRevisionIsSet() const
+{
+    return m_Expected_revision.has_value();
+}
+
+void AssetUpdateSchema::unsetExpected_revision()
+{
+    m_Expected_revision.reset();
+}
 utility::string_t AssetUpdateSchema::getName() const
 {
     return m_Name.get();

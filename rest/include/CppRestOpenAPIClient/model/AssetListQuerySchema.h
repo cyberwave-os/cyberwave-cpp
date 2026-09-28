@@ -18,6 +18,7 @@
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_AssetListQuerySchema_H_
 #define ORG_OPENAPITOOLS_CLIENT_MODEL_AssetListQuerySchema_H_
 
+#include <stdexcept>
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
@@ -53,6 +54,24 @@ public:
     /////////////////////////////////////////////
     /// AssetListQuerySchema members
 
+    enum class OrderingEnum
+    {
+        CREATED_AT,
+        _CREATED_AT,
+        NAME,
+        _NAME,
+        MONTHLY_PRICE,
+        _MONTHLY_PRICE,
+    };
+
+    OrderingEnum toOrderingEnum(const utility::string_t& value) const;
+    const utility::string_t fromOrderingEnum(const OrderingEnum value) const;
+
+
+    OrderingEnum getOrdering() const;
+    bool orderingIsSet() const;
+    void unsetOrdering();
+    void setOrdering(const OrderingEnum value);
 
     /// <summary>
     /// Page size (default 60, max 1000)
@@ -82,6 +101,16 @@ public:
     void unsetOwned();
     void setOwned(const utility::string_t& value);
 
+    bool isPublicOnly() const;
+    bool publicOnlyIsSet() const;
+    void unsetPublic_only();
+    void setPublicOnly(bool value);
+
+    bool isExcludeOwned() const;
+    bool excludeOwnedIsSet() const;
+    void unsetExclude_owned();
+    void setExcludeOwned(bool value);
+
     utility::string_t getSearch() const;
     bool searchIsSet() const;
     void unsetSearch();
@@ -91,6 +120,31 @@ public:
     bool tagIsSet() const;
     void unsetTag();
     void setTag(const utility::string_t& value);
+
+    utility::string_t getTagsAny() const;
+    bool tagsAnyIsSet() const;
+    void unsetTags_any();
+    void setTagsAny(const utility::string_t& value);
+
+    utility::string_t getTagsAll() const;
+    bool tagsAllIsSet() const;
+    void unsetTags_all();
+    void setTagsAll(const utility::string_t& value);
+
+    utility::string_t getVendor() const;
+    bool vendorIsSet() const;
+    void unsetVendor();
+    void setVendor(const utility::string_t& value);
+
+    utility::string_t getSensorTags() const;
+    bool sensorTagsIsSet() const;
+    void unsetSensor_tags();
+    void setSensorTags(const utility::string_t& value);
+
+    utility::string_t getCapabilityTags() const;
+    bool capabilityTagsIsSet() const;
+    void unsetCapability_tags();
+    void setCapabilityTags(const utility::string_t& value);
 
     utility::string_t getMetadataKey() const;
     bool metadataKeyIsSet() const;
@@ -119,6 +173,8 @@ public:
 
 
 protected:
+    boost::optional<OrderingEnum> m_Ordering;
+
     boost::optional<int32_t> m_Limit;
 
     boost::optional<int32_t> m_Offset;
@@ -129,9 +185,25 @@ protected:
 
     boost::optional<utility::string_t> m_Owned;
 
+    bool m_Public_only;
+    bool m_Public_onlyIsSet;
+
+    bool m_Exclude_owned;
+    bool m_Exclude_ownedIsSet;
+
     boost::optional<utility::string_t> m_Search;
 
     boost::optional<utility::string_t> m_Tag;
+
+    boost::optional<utility::string_t> m_Tags_any;
+
+    boost::optional<utility::string_t> m_Tags_all;
+
+    boost::optional<utility::string_t> m_Vendor;
+
+    boost::optional<utility::string_t> m_Sensor_tags;
+
+    boost::optional<utility::string_t> m_Capability_tags;
 
     boost::optional<utility::string_t> m_Metadata_key;
 

@@ -55,6 +55,11 @@ web::json::value IOSchemaPortSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("required"))] = ModelBase::toJson(m_Required);
     }
+    if(m_Semantics.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("semantics"))] = ModelBase::toJson(m_Semantics.get());
+    }
 
     return val;
 }
@@ -95,6 +100,17 @@ bool IOSchemaPortSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("semantics"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("semantics")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setSemantics;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setSemantics);
+            setSemantics(refVal_setSemantics);
+            
+        }
+    }
     return ok;
 }
 
@@ -116,6 +132,10 @@ void IOSchemaPortSchema::toMultipart(std::shared_ptr<MultipartFormData> multipar
     if(m_RequiredIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("required")), m_Required));
+    }
+    if(m_Semantics.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("semantics")), m_Semantics.get()));
     }
 }
 
@@ -145,6 +165,12 @@ bool IOSchemaPortSchema::fromMultiPart(std::shared_ptr<MultipartFormData> multip
         bool refVal_setRequired;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("required"))), refVal_setRequired );
         setRequired(refVal_setRequired);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("semantics"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<AnyType>> refVal_setSemantics;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("semantics"))), refVal_setSemantics );
+        setSemantics(refVal_setSemantics);
     }
     return ok;
 }
@@ -211,6 +237,26 @@ bool IOSchemaPortSchema::requiredIsSet() const
 void IOSchemaPortSchema::unsetRequired()
 {
     m_RequiredIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<AnyType>> IOSchemaPortSchema::getSemantics() const
+{
+    return m_Semantics.get();
+}
+
+
+void IOSchemaPortSchema::setSemantics(const std::map<utility::string_t, std::shared_ptr<AnyType>>& value)
+{
+    m_Semantics = value;
+}
+
+bool IOSchemaPortSchema::semanticsIsSet() const
+{
+    return m_Semantics.has_value();
+}
+
+void IOSchemaPortSchema::unsetSemantics()
+{
+    m_Semantics.reset();
 }
 
 }

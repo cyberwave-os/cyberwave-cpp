@@ -80,6 +80,11 @@ web::json::value AssetControlOptionSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("controller_policy"))] = ModelBase::toJson(m_Controller_policy);
     }
+    if(m_Input_compatibility.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("input_compatibility"))] = ModelBase::toJson(m_Input_compatibility.get());
+    }
 
     return val;
 }
@@ -164,6 +169,17 @@ bool AssetControlOptionSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("input_compatibility"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("input_compatibility")));
+        if(!fieldValue.is_null())
+        {
+            std::map<utility::string_t, std::shared_ptr<ControlInputCompatibilitySchema>> refVal_setInputCompatibility;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setInputCompatibility);
+            setInputCompatibility(refVal_setInputCompatibility);
+            
+        }
+    }
     return ok;
 }
 
@@ -201,6 +217,10 @@ void AssetControlOptionSchema::toMultipart(std::shared_ptr<MultipartFormData> mu
     if(m_Controller_policyIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("controller_policy")), m_Controller_policy));
+    }
+    if(m_Input_compatibility.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("input_compatibility")), m_Input_compatibility.get()));
     }
 }
 
@@ -254,6 +274,12 @@ bool AssetControlOptionSchema::fromMultiPart(std::shared_ptr<MultipartFormData> 
         std::shared_ptr<ControllerPolicySchema> refVal_setControllerPolicy;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("controller_policy"))), refVal_setControllerPolicy );
         setControllerPolicy(refVal_setControllerPolicy);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("input_compatibility"))))
+    {
+        std::map<utility::string_t, std::shared_ptr<ControlInputCompatibilitySchema>> refVal_setInputCompatibility;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("input_compatibility"))), refVal_setInputCompatibility );
+        setInputCompatibility(refVal_setInputCompatibility);
     }
     return ok;
 }
@@ -404,6 +430,26 @@ bool AssetControlOptionSchema::controllerPolicyIsSet() const
 void AssetControlOptionSchema::unsetController_policy()
 {
     m_Controller_policyIsSet = false;
+}
+std::map<utility::string_t, std::shared_ptr<ControlInputCompatibilitySchema>> AssetControlOptionSchema::getInputCompatibility() const
+{
+    return m_Input_compatibility.get();
+}
+
+
+void AssetControlOptionSchema::setInputCompatibility(const std::map<utility::string_t, std::shared_ptr<ControlInputCompatibilitySchema>>& value)
+{
+    m_Input_compatibility = value;
+}
+
+bool AssetControlOptionSchema::inputCompatibilityIsSet() const
+{
+    return m_Input_compatibility.has_value();
+}
+
+void AssetControlOptionSchema::unsetInput_compatibility()
+{
+    m_Input_compatibility.reset();
 }
 
 }

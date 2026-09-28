@@ -59,6 +59,11 @@ web::json::value MapStreamStartSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("map_name"))] = ModelBase::toJson(m_Map_name.get());
     }
+    if(m_Service_provider.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("service_provider"))] = ModelBase::toJson(m_Service_provider.get());
+    }
 
     return val;
 }
@@ -111,6 +116,17 @@ bool MapStreamStartSchema::fromJson(const web::json::value& val)
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("service_provider"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("service_provider")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setServiceProvider;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setServiceProvider);
+            setServiceProvider(refVal_setServiceProvider);
+            
+        }
+    }
     return ok;
 }
 
@@ -136,6 +152,10 @@ void MapStreamStartSchema::toMultipart(std::shared_ptr<MultipartFormData> multip
     if(m_Map_name.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("map_name")), m_Map_name.get()));
+    }
+    if(m_Service_provider.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("service_provider")), m_Service_provider.get()));
     }
 }
 
@@ -171,6 +191,12 @@ bool MapStreamStartSchema::fromMultiPart(std::shared_ptr<MultipartFormData> mult
         utility::string_t refVal_setMapName;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("map_name"))), refVal_setMapName );
         setMapName(refVal_setMapName);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("service_provider"))))
+    {
+        utility::string_t refVal_setServiceProvider;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("service_provider"))), refVal_setServiceProvider );
+        setServiceProvider(refVal_setServiceProvider);
     }
     return ok;
 }
@@ -283,6 +309,26 @@ bool MapStreamStartSchema::mapNameIsSet() const
 void MapStreamStartSchema::unsetMap_name()
 {
     m_Map_name.reset();
+}
+utility::string_t MapStreamStartSchema::getServiceProvider() const
+{
+    return m_Service_provider.get();
+}
+
+
+void MapStreamStartSchema::setServiceProvider(const utility::string_t& value)
+{
+    m_Service_provider = value;
+}
+
+bool MapStreamStartSchema::serviceProviderIsSet() const
+{
+    return m_Service_provider.has_value();
+}
+
+void MapStreamStartSchema::unsetService_provider()
+{
+    m_Service_provider.reset();
 }
 
 }
