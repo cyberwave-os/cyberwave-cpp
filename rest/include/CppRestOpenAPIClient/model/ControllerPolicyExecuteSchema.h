@@ -59,8 +59,8 @@ public:
 
     enum class ModeEnum
     {
-        SIMULATION,
         LIVE,
+        SIMULATION,
     };
     enum class TransportEnum
     {

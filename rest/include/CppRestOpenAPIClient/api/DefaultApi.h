@@ -102,6 +102,7 @@
 #include "CppRestOpenAPIClient/model/EdgeCoreRestartResponseSchema.h"
 #include "CppRestOpenAPIClient/model/EdgeCreateSchema.h"
 #include "CppRestOpenAPIClient/model/EdgeRegisterSchema.h"
+#include "CppRestOpenAPIClient/model/EdgeRegisteredElsewhereSchema.h"
 #include "CppRestOpenAPIClient/model/EdgeSchema.h"
 #include "CppRestOpenAPIClient/model/EndSessionResponseSchema.h"
 #include "CppRestOpenAPIClient/model/EnsureControllerPolicyResponseSchema.h"
@@ -124,6 +125,8 @@
 #include "CppRestOpenAPIClient/model/EnvironmentUniversalSchemaPatchSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentVisualObservationSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentWaypointBulkCreateSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentWaypointPoseSchema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentWaypointPosesRequestSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentWaypointPositionUpdateSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentWaypointSchema.h"
 #include "CppRestOpenAPIClient/model/EnvironmentWorkflowReplayEventSchema.h"
@@ -311,6 +314,7 @@
 #include "CppRestOpenAPIClient/model/TwinActionResponseSchema.h"
 #include "CppRestOpenAPIClient/model/TwinActionStatusSchema.h"
 #include "CppRestOpenAPIClient/model/TwinBindingSchema.h"
+#include "CppRestOpenAPIClient/model/TwinCameraInfoReportSchema.h"
 #include "CppRestOpenAPIClient/model/TwinConnectionEventSchema.h"
 #include "CppRestOpenAPIClient/model/TwinControllerBindingPatch.h"
 #include "CppRestOpenAPIClient/model/TwinCreateResultSchema.h"
@@ -1929,6 +1933,16 @@ public:
         boost::optional<utility::string_t> workspaceUuid = boost::none
     ) const;
     /// <summary>
+    /// Get Edges Registered Elsewhere
+    /// </summary>
+    /// <remarks>
+    /// Edges this workspace&#39;s twins are bound to that live in another workspace.  &#x60;&#x60;GET /edges&#x60;&#x60; is workspace-scoped, so without this the UI cannot tell an edge registered under a different login apart from one that was never registered at all (CYB-4155).
+    /// </remarks>
+    /// <param name="workspaceUuid"></param>
+    pplx::task<std::vector<std::shared_ptr<EdgeRegisteredElsewhereSchema>>> srcAppApiEdgesGetEdgesRegisteredElsewhere(
+        utility::string_t workspaceUuid
+    ) const;
+    /// <summary>
     /// Update Edge
     /// </summary>
     /// <remarks>
@@ -2879,6 +2893,18 @@ public:
         std::shared_ptr<UpdateRecordingMetadataSchema> updateRecordingMetadataSchema
     ) const;
     /// <summary>
+    /// Resolve Waypoint Poses
+    /// </summary>
+    /// <remarks>
+    /// The current poses of a Move Twin node&#39;s waypoints.  A compiled edge worker calls this when the node runs, so a waypoint moved since compilation (e.g. by Move Waypoint earlier in the same run) is driven to where it is now. Resolved exactly as the compiler resolves the poses it bakes in -- see &#x60;&#x60;src.lib.move_twin_waypoint_poses&#x60;&#x60;.
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="environmentWaypointPosesRequestSchema"></param>
+    pplx::task<std::vector<std::shared_ptr<EnvironmentWaypointPoseSchema>>> srcAppApiEnvironmentsResolveWaypointPoses(
+        utility::string_t uuid,
+        std::shared_ptr<EnvironmentWaypointPosesRequestSchema> environmentWaypointPosesRequestSchema
+    ) const;
+    /// <summary>
     /// Save Environment Pinned Layout
     /// </summary>
     /// <remarks>
@@ -2911,6 +2937,28 @@ public:
         utility::string_t uuid
     ) const;
     /// <summary>
+    /// Direct Environment Embed
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="requestBody"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingDirectEnvironmentEmbed(
+        utility::string_t uuid,
+        std::map<utility::string_t, std::shared_ptr<AnyType>> requestBody
+    ) const;
+    /// <summary>
+    /// Get Environment Embed
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingGetEnvironmentEmbed(
+        utility::string_t uuid
+    ) const;
+    /// <summary>
     /// Get Environment Invitations
     /// </summary>
     /// <remarks>
@@ -2939,6 +2987,18 @@ public:
     /// <param name="uuid"></param>
     pplx::task<std::shared_ptr<InvitationResponseSchema>> srcAppApiEnvironmentsSharingInviteUserToEnvironment(
         utility::string_t uuid
+    ) const;
+    /// <summary>
+    /// Patch Environment Embed
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="requestBody"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiEnvironmentsSharingPatchEnvironmentEmbed(
+        utility::string_t uuid,
+        std::map<utility::string_t, std::shared_ptr<AnyType>> requestBody
     ) const;
     /// <summary>
     /// Redeem Environment Link
@@ -6081,6 +6141,20 @@ public:
         std::shared_ptr<ReloadCapabilitiesBulkSchema> reloadCapabilitiesBulkSchema
     ) const;
     /// <summary>
+    /// Report Twin Camera Info
+    /// </summary>
+    /// <remarks>
+    /// Write a driver&#39;s measured camera calibration into the twin&#39;s sensor.  Drivers call this with the &#x60;&#x60;camera_info&#x60;&#x60; of the stream they publish, so the sensor declares the resolution and intrinsics the camera really uses (see :mod:&#x60;src.lib.sensor_camera_info&#x60; for what is written and why it replaces a user&#39;s edit of those fields). Idempotent: a report matching the sensor changes nothing. A change is announced like any schema edit and makes the twin&#39;s edge re-sync its workflows, so compiled workers pick the values up straight away.  Returns:     {\&quot;changed\&quot;: &lt;bool&gt;, \&quot;sensor\&quot;: &lt;name&gt;, \&quot;parameters\&quot;: &lt;sensor parameters&gt;}
+    /// </remarks>
+    /// <param name="uuid"></param>
+    /// <param name="name"></param>
+    /// <param name="twinCameraInfoReportSchema"></param>
+    pplx::task<std::map<utility::string_t, std::shared_ptr<AnyType>>> srcAppApiTwinsReportTwinCameraInfo(
+        utility::string_t uuid,
+        utility::string_t name,
+        std::shared_ptr<TwinCameraInfoReportSchema> twinCameraInfoReportSchema
+    ) const;
+    /// <summary>
     /// Reset Twin Joint Homes
     /// </summary>
     /// <remarks>
@@ -6612,9 +6686,9 @@ public:
     /// <remarks>
     /// Get details of a specific execution by its UUID, including node executions.
     /// </remarks>
-    /// <param name="executionUuid"></param>
+    /// <param name="uuid"></param>
     pplx::task<std::shared_ptr<WorkflowExecutionSchema>> srcAppApiWorkflowsGetExecutionByUuid(
-        utility::string_t executionUuid
+        utility::string_t uuid
     ) const;
     /// <summary>
     /// Get Node Schema
