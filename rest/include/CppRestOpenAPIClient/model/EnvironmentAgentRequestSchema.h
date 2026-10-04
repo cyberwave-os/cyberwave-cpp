@@ -69,8 +69,8 @@ public:
     };
     enum class Control_modeEnum
     {
-        SIMULATION,
         LIVE,
+        SIMULATION,
     };
 
     Assistant_modeEnum toAssistant_modeEnum(const utility::string_t& value) const;

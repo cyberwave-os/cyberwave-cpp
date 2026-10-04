@@ -44,6 +44,18 @@ web::json::value EnvironmentWaypointPositionUpdateSchema::toJson() const
         
         val[utility::conversions::to_string_t(_XPLATSTR("rotation"))] = ModelBase::toJson(m_Rotation.get());
     }
+    if(m_Reference_frame.has_value())
+    {
+        
+        val[utility::conversions::to_string_t(_XPLATSTR("reference_frame"))] = ModelBase::toJson(m_Reference_frame.get());
+    }
+    if(m_Joint_state_source.has_value())
+    {
+        
+        utility::string_t refVal = fromJoint_state_sourceEnum(m_Joint_state_source.get());
+        val[utility::conversions::to_string_t(_XPLATSTR("joint_state_source"))] = ModelBase::toJson(refVal);
+        
+    }
 
     return val;
 }
@@ -73,6 +85,29 @@ bool EnvironmentWaypointPositionUpdateSchema::fromJson(const web::json::value& v
             
         }
     }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("reference_frame"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("reference_frame")));
+        if(!fieldValue.is_null())
+        {
+            std::shared_ptr<EnvironmentWaypointFrameSchema> refVal_setReferenceFrame;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setReferenceFrame);
+            setReferenceFrame(refVal_setReferenceFrame);
+            
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t(_XPLATSTR("joint_state_source"))))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t(_XPLATSTR("joint_state_source")));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_setJointStateSource;
+            ok &= ModelBase::fromJson(fieldValue, refVal_setJointStateSource);
+            
+            setJointStateSource(toJoint_state_sourceEnum(refVal_setJointStateSource));
+            
+        }
+    }
     return ok;
 }
 
@@ -90,6 +125,14 @@ void EnvironmentWaypointPositionUpdateSchema::toMultipart(std::shared_ptr<Multip
     if(m_Rotation.has_value())
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("rotation")), m_Rotation.get()));
+    }
+    if(m_Reference_frame.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("reference_frame")), m_Reference_frame.get()));
+    }
+    if(m_Joint_state_source.has_value())
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t(_XPLATSTR("joint_state_source")), fromJoint_state_sourceEnum(m_Joint_state_source.get())));
     }
 }
 
@@ -114,7 +157,46 @@ bool EnvironmentWaypointPositionUpdateSchema::fromMultiPart(std::shared_ptr<Mult
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("rotation"))), refVal_setRotation );
         setRotation(refVal_setRotation);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("reference_frame"))))
+    {
+        std::shared_ptr<EnvironmentWaypointFrameSchema> refVal_setReferenceFrame;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("reference_frame"))), refVal_setReferenceFrame );
+        setReferenceFrame(refVal_setReferenceFrame);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t(_XPLATSTR("joint_state_source"))))
+    {
+        utility::string_t refVal_setJointStateSource;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t(_XPLATSTR("joint_state_source"))), refVal_setJointStateSource );
+        setJointStateSource(toJoint_state_sourceEnum(refVal_setJointStateSource));
+    }
     return ok;
+}
+
+EnvironmentWaypointPositionUpdateSchema::Joint_state_sourceEnum EnvironmentWaypointPositionUpdateSchema::toJoint_state_sourceEnum(const utility::string_t& value) const
+{
+    
+    if (value == utility::conversions::to_string_t("live")) {
+        return Joint_state_sourceEnum::LIVE;
+    }
+    
+    if (value == utility::conversions::to_string_t("simulation")) {
+        return Joint_state_sourceEnum::SIMULATION;
+    }
+    
+    throw std::invalid_argument("Invalid value for conversion to Joint_state_sourceEnum");
+}
+
+
+const utility::string_t EnvironmentWaypointPositionUpdateSchema::fromJoint_state_sourceEnum(const Joint_state_sourceEnum value) const
+{
+    switch(value)
+    {
+        
+        case Joint_state_sourceEnum::LIVE: return utility::conversions::to_string_t("live");
+        
+        case Joint_state_sourceEnum::SIMULATION: return utility::conversions::to_string_t("simulation");
+        
+    }
 }
 
 
@@ -157,6 +239,46 @@ bool EnvironmentWaypointPositionUpdateSchema::rotationIsSet() const
 void EnvironmentWaypointPositionUpdateSchema::unsetRotation()
 {
     m_Rotation.reset();
+}
+std::shared_ptr<EnvironmentWaypointFrameSchema> EnvironmentWaypointPositionUpdateSchema::getReferenceFrame() const
+{
+    return m_Reference_frame.get();
+}
+
+
+void EnvironmentWaypointPositionUpdateSchema::setReferenceFrame(const std::shared_ptr<EnvironmentWaypointFrameSchema>& value)
+{
+    m_Reference_frame = value;
+}
+
+bool EnvironmentWaypointPositionUpdateSchema::referenceFrameIsSet() const
+{
+    return m_Reference_frame.has_value();
+}
+
+void EnvironmentWaypointPositionUpdateSchema::unsetReference_frame()
+{
+    m_Reference_frame.reset();
+}
+EnvironmentWaypointPositionUpdateSchema::Joint_state_sourceEnum EnvironmentWaypointPositionUpdateSchema::getJointStateSource() const
+{
+    return m_Joint_state_source.get();
+}
+
+
+void EnvironmentWaypointPositionUpdateSchema::setJointStateSource(const Joint_state_sourceEnum value)
+{
+    m_Joint_state_source = value;
+}
+
+bool EnvironmentWaypointPositionUpdateSchema::jointStateSourceIsSet() const
+{
+    return m_Joint_state_source.has_value();
+}
+
+void EnvironmentWaypointPositionUpdateSchema::unsetJoint_state_source()
+{
+    m_Joint_state_source.reset();
 }
 
 }
