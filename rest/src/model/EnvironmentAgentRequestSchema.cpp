@@ -505,12 +505,12 @@ const utility::string_t EnvironmentAgentRequestSchema::fromAssistant_modeEnum(co
 EnvironmentAgentRequestSchema::Control_modeEnum EnvironmentAgentRequestSchema::toControl_modeEnum(const utility::string_t& value) const
 {
     
-    if (value == utility::conversions::to_string_t("simulation")) {
-        return Control_modeEnum::SIMULATION;
-    }
-    
     if (value == utility::conversions::to_string_t("live")) {
         return Control_modeEnum::LIVE;
+    }
+    
+    if (value == utility::conversions::to_string_t("simulation")) {
+        return Control_modeEnum::SIMULATION;
     }
     
     throw std::invalid_argument("Invalid value for conversion to Control_modeEnum");
@@ -522,9 +522,9 @@ const utility::string_t EnvironmentAgentRequestSchema::fromControl_modeEnum(cons
     switch(value)
     {
         
-        case Control_modeEnum::SIMULATION: return utility::conversions::to_string_t("simulation");
-        
         case Control_modeEnum::LIVE: return utility::conversions::to_string_t("live");
+        
+        case Control_modeEnum::SIMULATION: return utility::conversions::to_string_t("simulation");
         
     }
 }
