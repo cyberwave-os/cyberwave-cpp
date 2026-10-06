@@ -71,8 +71,8 @@ public:
     };
     enum class ModeEnum
     {
-        SIMULATION,
         LIVE,
+        SIMULATION,
     };
 
     Runtime_targetEnum toRuntime_targetEnum(const utility::string_t& value) const;

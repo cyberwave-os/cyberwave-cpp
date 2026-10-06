@@ -12,18 +12,21 @@
 /*
  * EnvironmentWaypointPositionUpdateSchema.h
  *
- * Partial update for a single waypoint&#39;s position/rotation.  Deliberately excludes &#x60;&#x60;frame&#x60;&#x60; — see &#x60;&#x60;update_environment_waypoint_position&#x60;&#x60; in &#x60;&#x60;src.app.api.environments&#x60;&#x60;. Fields not sent are left untouched (the endpoint reads this via &#x60;&#x60;.dict(exclude_unset&#x3D;True)&#x60;&#x60;).  Either pose may be omitted, but a pose that *is* sent must carry every axis: the &#x60;&#x60;Required*&#x60;&#x60; variants exist so the generated client cannot zero-fill one on its way out (CYB-3809).
+ * Partial update for a single waypoint&#39;s position/rotation.  Deliberately excludes &#x60;&#x60;frame&#x60;&#x60; — see &#x60;&#x60;update_environment_waypoint_position&#x60;&#x60; in &#x60;&#x60;src.app.api.environments&#x60;&#x60;. Fields not sent are left untouched (the endpoint reads this via &#x60;&#x60;.dict(exclude_unset&#x3D;True)&#x60;&#x60;).  Either pose may be omitted, but a pose that *is* sent must carry every axis: the &#x60;&#x60;Required*&#x60;&#x60; variants exist so the generated client cannot zero-fill one on its way out (CYB-3809).  &#x60;&#x60;reference_frame&#x60;&#x60; names the frame the sent pose is expressed in; the server converts it into the waypoint&#39;s own frame before storing it. Omitted means the pose is already relative to that frame. It is never written to the waypoint — see &#x60;&#x60;src.lib.environment_objects.waypoint_input_frames&#x60;&#x60;.  &#x60;&#x60;joint_state_source&#x60;&#x60; says where to read the robot&#39;s measured joint positions (the live robot or the simulation) when the conversion runs through a link the robot&#39;s joints move, such as a wrist camera. Such a conversion is refused without it.
  */
 
 #ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentWaypointPositionUpdateSchema_H_
 #define ORG_OPENAPITOOLS_CLIENT_MODEL_EnvironmentWaypointPositionUpdateSchema_H_
 
+#include <stdexcept>
 #include <boost/optional.hpp>
 
 #include "CppRestOpenAPIClient/ModelBase.h"
 
 #include "CppRestOpenAPIClient/model/RequiredQuaternionSchema.h"
 #include "CppRestOpenAPIClient/model/RequiredVector3Schema.h"
+#include "CppRestOpenAPIClient/model/EnvironmentWaypointFrameSchema.h"
+#include <cpprest/details/basic_types.h>
 
 namespace org {
 namespace openapitools {
@@ -32,10 +35,11 @@ namespace model {
 
 class RequiredVector3Schema;
 class RequiredQuaternionSchema;
+class EnvironmentWaypointFrameSchema;
 
 
 /// <summary>
-/// Partial update for a single waypoint&#39;s position/rotation.  Deliberately excludes &#x60;&#x60;frame&#x60;&#x60; — see &#x60;&#x60;update_environment_waypoint_position&#x60;&#x60; in &#x60;&#x60;src.app.api.environments&#x60;&#x60;. Fields not sent are left untouched (the endpoint reads this via &#x60;&#x60;.dict(exclude_unset&#x3D;True)&#x60;&#x60;).  Either pose may be omitted, but a pose that *is* sent must carry every axis: the &#x60;&#x60;Required*&#x60;&#x60; variants exist so the generated client cannot zero-fill one on its way out (CYB-3809).
+/// Partial update for a single waypoint&#39;s position/rotation.  Deliberately excludes &#x60;&#x60;frame&#x60;&#x60; — see &#x60;&#x60;update_environment_waypoint_position&#x60;&#x60; in &#x60;&#x60;src.app.api.environments&#x60;&#x60;. Fields not sent are left untouched (the endpoint reads this via &#x60;&#x60;.dict(exclude_unset&#x3D;True)&#x60;&#x60;).  Either pose may be omitted, but a pose that *is* sent must carry every axis: the &#x60;&#x60;Required*&#x60;&#x60; variants exist so the generated client cannot zero-fill one on its way out (CYB-3809).  &#x60;&#x60;reference_frame&#x60;&#x60; names the frame the sent pose is expressed in; the server converts it into the waypoint&#39;s own frame before storing it. Omitted means the pose is already relative to that frame. It is never written to the waypoint — see &#x60;&#x60;src.lib.environment_objects.waypoint_input_frames&#x60;&#x60;.  &#x60;&#x60;joint_state_source&#x60;&#x60; says where to read the robot&#39;s measured joint positions (the live robot or the simulation) when the conversion runs through a link the robot&#39;s joints move, such as a wrist camera. Such a conversion is refused without it.
 /// </summary>
 class  EnvironmentWaypointPositionUpdateSchema
     : public ModelBase
@@ -59,6 +63,15 @@ public:
     /////////////////////////////////////////////
     /// EnvironmentWaypointPositionUpdateSchema members
 
+    enum class Joint_state_sourceEnum
+    {
+        LIVE,
+        SIMULATION,
+    };
+
+    Joint_state_sourceEnum toJoint_state_sourceEnum(const utility::string_t& value) const;
+    const utility::string_t fromJoint_state_sourceEnum(const Joint_state_sourceEnum value) const;
+
 
     std::shared_ptr<RequiredVector3Schema> getPosition() const;
     bool positionIsSet() const;
@@ -70,11 +83,25 @@ public:
     void unsetRotation();
     void setRotation(const std::shared_ptr<RequiredQuaternionSchema>& value);
 
+    std::shared_ptr<EnvironmentWaypointFrameSchema> getReferenceFrame() const;
+    bool referenceFrameIsSet() const;
+    void unsetReference_frame();
+    void setReferenceFrame(const std::shared_ptr<EnvironmentWaypointFrameSchema>& value);
+
+    Joint_state_sourceEnum getJointStateSource() const;
+    bool jointStateSourceIsSet() const;
+    void unsetJoint_state_source();
+    void setJointStateSource(const Joint_state_sourceEnum value);
+
 
 protected:
     boost::optional<std::shared_ptr<RequiredVector3Schema>> m_Position;
 
     boost::optional<std::shared_ptr<RequiredQuaternionSchema>> m_Rotation;
+
+    boost::optional<std::shared_ptr<EnvironmentWaypointFrameSchema>> m_Reference_frame;
+
+    boost::optional<Joint_state_sourceEnum> m_Joint_state_source;
 
 };
 
