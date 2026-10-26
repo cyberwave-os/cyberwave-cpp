@@ -3,6 +3,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <functional>
 #include <sstream>
 
@@ -25,10 +26,35 @@ double wall_seconds()
     return std::chrono::duration<double>(Clock::now().time_since_epoch()).count();
 }
 
-double monotonic_seconds()
+// Acquisition needs a clock that survives suspend, or the (wall, monotonic) offset
+// breaks by the whole sleep. On Linux steady_clock is CLOCK_MONOTONIC, which stops,
+// so prefer CLOCK_BOOTTIME; on Darwin steady_clock is already mach_continuous_time().
+// Probed once rather than assumed, because the macro is visible if the *build* host's
+// headers had the clock, which does not promise the running kernel does — the name and
+// the flag then describe the clock actually being read.
+// See "Acquisition stamps come from a suspend-inclusive clock" in cyberwave-sdks/README.md.
+struct MonotonicClock
 {
-    using Clock = std::chrono::steady_clock;
-    return std::chrono::duration<double>(Clock::now().time_since_epoch()).count();
+    const char* name;
+    bool suspend_inclusive;
+};
+
+const MonotonicClock& selected_monotonic_clock()
+{
+    static const MonotonicClock selected = []
+    {
+#if defined(CLOCK_BOOTTIME)
+        struct timespec probe;
+        if (clock_gettime(CLOCK_BOOTTIME, &probe) == 0)
+            return MonotonicClock{"CLOCK_BOOTTIME", true};
+#endif
+#if defined(__APPLE__)
+        return MonotonicClock{"mach_continuous_time", true};
+#else
+        return MonotonicClock{"steady_clock", false};
+#endif
+    }();
+    return selected;
 }
 
 std::string get_hostname()
@@ -77,6 +103,24 @@ std::string hash_suffix(const std::string& raw)
 }
 
 } // namespace
+
+const char* monotonic_clock_name() { return selected_monotonic_clock().name; }
+
+bool monotonic_clock_is_suspend_inclusive() { return selected_monotonic_clock().suspend_inclusive; }
+
+double monotonic_seconds()
+{
+#if defined(CLOCK_BOOTTIME)
+    if (selected_monotonic_clock().suspend_inclusive)
+    {
+        struct timespec ts;
+        if (clock_gettime(CLOCK_BOOTTIME, &ts) == 0)
+            return static_cast<double>(ts.tv_sec) + static_cast<double>(ts.tv_nsec) * 1e-9;
+    }
+#endif
+    using Clock = std::chrono::steady_clock;
+    return std::chrono::duration<double>(Clock::now().time_since_epoch()).count();
+}
 
 TimeReference::TimeReference()
 {

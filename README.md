@@ -255,6 +255,8 @@ For local non-TLS brokers: `export CYBERWAVE_MQTT_USE_TLS=false`
 
 Optional MQTT envs:
 - `CYBERWAVE_MQTT_PROTOCOL=5` to request MQTT v5
+- `CYBERWAVE_MQTT_MAX_PAYLOAD_BYTES=<bytes>` to change the largest payload `publish()` sends
+  (default 32 MiB, the brokers' `message_size_limit`; `0` turns the check off)
 - `CYBERWAVE_TWIN_UUID=<uuid>` to keep a default twin UUID in config
 
 #### GPS Telemetry
