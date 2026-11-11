@@ -36,6 +36,12 @@ struct CyberwaveConfig
     bool mqtt_use_tls = false;
     std::string mqtt_tls_ca_cert;
     int mqtt_protocol = 0;
+    // Largest payload publish() sends, in bytes; a larger one is refused and
+    // logged, because the broker would drop it without telling this client.
+    // Unset: CYBERWAVE_MQTT_MAX_PAYLOAD_BYTES, else 32 MiB (Cyberwave's
+    // brokers from CYB-4375 on). Raise it only for a broker that accepts more;
+    // 0 turns it off.
+    std::optional<std::size_t> mqtt_max_payload_bytes;
     std::string runtime_mode = "live";
     std::string twin_uuid;
 };
@@ -139,6 +145,14 @@ public:
      * Python-parity alias for get_topic_prefix().
      */
     std::string topic_prefix() const { return get_topic_prefix(); }
+
+    /**
+     * The largest payload publish() sends, in bytes, or 0 for no limit.
+     *
+     * Over MQTT 5 libmosquitto also refuses a packet over the broker's
+     * announced Maximum Packet Size, with MOSQ_ERR_OVERSIZE_PACKET.
+     */
+    std::size_t max_payload_bytes() const { return max_payload_bytes_; }
 
     // Twin-related methods
 
@@ -407,6 +421,9 @@ private:
     std::string with_prefix(const std::string& topic_suffix) const;
     bool parse_bool_env(const std::string& value) const;
     bool is_valid_source_type(const std::string& source_type) const;
+    bool refuse_oversized(const std::string& topic, std::size_t payload_bytes) const;
+    void warn_if_unrecorded(const std::string& topic, std::size_t payload_bytes) const;
+    void report_publish_error(const std::string& topic, int rc) const;
     void resubscribe_registered_topics();
     void handle_twin_update_with_telemetry(const std::string& twin_uuid, const json& metadata = json::object());
     void publish_connect_message(const std::string& twin_uuid);
@@ -424,6 +441,11 @@ private:
     std::string source_type_;
     std::string topic_prefix_;
     std::string client_id_;
+    std::size_t max_payload_bytes_ = DEFAULT_MQTT_MAX_PAYLOAD_BYTES;
+    // refuse_oversized(), warn_if_unrecorded() and report_publish_error() report each topic at most
+    // once per 10 s.
+    mutable std::mutex refusal_log_mutex_;
+    mutable detail::ReportThrottle refusal_log_{std::chrono::seconds{10}};
 
     MosquittoPtr mosq_;
     std::atomic<bool> connected_{false};
