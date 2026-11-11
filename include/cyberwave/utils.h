@@ -14,6 +14,21 @@
 namespace cyberwave
 {
 
+/** @brief Name of the monotonic clock acquisition stamps are read from. */
+const char* monotonic_clock_name();
+
+/** @brief Whether that clock keeps advancing while the host is suspended. */
+bool monotonic_clock_is_suspend_inclusive();
+
+/**
+ * @brief Seconds from the monotonic clock named by monotonic_clock_name().
+ *
+ * Use this for anything stamping *acquisition*. Deadlines, retry backoff and frame
+ * pacing should keep std::chrono::steady_clock: they measure an interval the host is
+ * awake for, and folding suspended time into a timeout would fire it on resume.
+ */
+double monotonic_seconds();
+
 /**
  * @brief Synchronised wall-clock and monotonic time reference.
  */
