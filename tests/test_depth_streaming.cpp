@@ -11,11 +11,23 @@
 
 #include <cassert>
 #include <chrono>
+#include <cstdio>
+#include <cstdlib>
 #include <memory>
 #include <string>
 #include <thread>
 
 using namespace cyberwave;
+
+// These contract checks must remain active in Release builds (NDEBUG).
+static void check(bool ok, const char* what)
+{
+    if (!ok)
+    {
+        std::fprintf(stderr, "FAIL: %s\n", what);
+        std::abort();
+    }
+}
 
 struct MockMqttForDepth : IMqttClient
 {
@@ -24,6 +36,7 @@ struct MockMqttForDepth : IMqttClient
     int depth_publishes = 0;
     int pointcloud_publishes = 0;
     int other_publishes = 0;
+    std::string last_pointcloud_payload;
 
     bool is_connected() const override { return connected; }
     std::string get_topic_prefix() const override { return topic_prefix_; }
@@ -34,7 +47,10 @@ struct MockMqttForDepth : IMqttClient
         if (topic.find("/depth") != std::string::npos)
             ++depth_publishes;
         else if (topic.find("/pointcloud") != std::string::npos)
+        {
             ++pointcloud_publishes;
+            last_pointcloud_payload = json_payload;
+        }
         else
             ++other_publishes;
     }
@@ -58,6 +74,35 @@ struct TestDepthSource : IDepthSource
         return true;
     }
 };
+
+struct MapCloudSource : TestDepthSource
+{
+    bool next_point_cloud_sample(PointCloudSample& sample) override
+    {
+        sample.frame = "map";
+        sample.timestamp = 123.0;
+        sample.map_uuid = "map-a";
+        sample.odometry_session_id = "session-a";
+        return next_point_cloud(sample.points);
+    }
+};
+
+static void test_pointcloud_capture_metadata()
+{
+    auto mqtt = std::make_shared<MockMqttForDepth>();
+    DepthStreamer streamer(mqtt, "robot", std::make_shared<MapCloudSource>(), 20, false, true);
+    streamer.start();
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
+    streamer.stop();
+    check(mqtt->pointcloud_publishes > 0, "pointcloud was published");
+    check(mqtt->last_pointcloud_payload.find("\"frame\":\"map\"") != std::string::npos, "capture frame is preserved");
+    check(mqtt->last_pointcloud_payload.find("\"timestamp\":123") != std::string::npos,
+          "capture timestamp is preserved");
+    check(mqtt->last_pointcloud_payload.find("\"map_uuid\":\"map-a\"") != std::string::npos,
+          "capture map identity is preserved");
+    check(mqtt->last_pointcloud_payload.find("\"odometry_session_id\":\"session-a\"") != std::string::npos,
+          "capture odometry session is preserved");
+}
 
 static void test_virtual_depth_source()
 {
@@ -85,6 +130,9 @@ static void test_depth_streamer_publishes_depth()
     assert(!streamer.running());
     assert(mqtt->depth_publishes >= 1);
     assert(mqtt->pointcloud_publishes >= 1); // TestDepthSource supports point cloud
+    check(mqtt->last_pointcloud_payload.find("map_uuid") == std::string::npos, "legacy cloud omits map identity");
+    check(mqtt->last_pointcloud_payload.find("odometry_session_id") == std::string::npos,
+          "legacy cloud omits odometry session");
 }
 
 static void test_depth_camera_twin_factory()
@@ -207,6 +255,7 @@ static void test_not_implemented_methods_throw()
 
 int main()
 {
+    test_pointcloud_capture_metadata();
     test_virtual_depth_source();
     test_depth_streamer_publishes_depth();
     test_depth_camera_twin_factory();
