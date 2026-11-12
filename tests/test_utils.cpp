@@ -6,6 +6,8 @@
 #include "cyberwave/utils.h"
 
 #include <cassert>
+#include <cmath>
+#include <ctime>
 #include <string>
 
 int main()
@@ -39,6 +41,27 @@ int main()
     auto uv = tr.update();
     assert(uv.first >= 0);
     assert(uv.second >= 0);
+
+    // Both platforms the SDK ships on have a suspend-inclusive clock, so falling
+    // back is never the right answer here.
+    assert(cyberwave::monotonic_clock_is_suspend_inclusive());
+
+    // monotonic_seconds() is what CameraStreamer::stream_loop reads for the SEI
+    // capture stamp, so pin it directly and not only through TimeReference.
+    const double acquisition = cyberwave::monotonic_seconds();
+    assert(acquisition > 0);
+    assert(std::fabs(tr.update().second - acquisition) < 0.5);
+#if defined(CLOCK_BOOTTIME)
+    assert(std::string(cyberwave::monotonic_clock_name()) == "CLOCK_BOOTTIME");
+    struct timespec bt;
+    const int bt_rc = clock_gettime(CLOCK_BOOTTIME, &bt);
+    (void)bt_rc;
+    assert(bt_rc == 0);
+    const double boottime = static_cast<double>(bt.tv_sec) + static_cast<double>(bt.tv_nsec) * 1e-9;
+    assert(std::fabs(acquisition - boottime) < 0.5);
+#elif defined(__APPLE__)
+    assert(std::string(cyberwave::monotonic_clock_name()) == "mach_continuous_time");
+#endif
 
     // --- Device info and fingerprint ---
     cyberwave::DeviceInfo info = cyberwave::get_device_info();
