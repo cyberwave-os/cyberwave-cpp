@@ -200,6 +200,23 @@ CyberwaveMQTTClient::CyberwaveMQTTClient(const CyberwaveConfig& config) : config
         config_.mqtt_tls_ca_cert = read_env("CYBERWAVE_MQTT_TLS_CA_CERT");
     }
 
+    if (config.mqtt_max_payload_bytes)
+    {
+        max_payload_bytes_ = *config.mqtt_max_payload_bytes;
+    }
+    else if (const std::string raw = read_env(MQTT_MAX_PAYLOAD_BYTES_ENV); !raw.empty())
+    {
+        if (const auto parsed = parse_mqtt_max_payload_bytes(raw))
+        {
+            max_payload_bytes_ = *parsed;
+        }
+        else
+        {
+            mqtt_log().warn("Invalid {}='{}' (want a byte count, or 0 for no limit); using {}",
+                            MQTT_MAX_PAYLOAD_BYTES_ENV, raw, DEFAULT_MQTT_MAX_PAYLOAD_BYTES);
+        }
+    }
+
     client_id_ = (config_.runtime_mode == "simulation" ? "sdk_sim_" : "sdk_") + generate_client_id();
 
     ensure_mosq_lib_init();
@@ -477,12 +494,17 @@ void CyberwaveMQTTClient::publish(const std::string& topic, const json& message,
         payload_json["session_id"] = client_id_;
     }
     std::string payload = payload_json.dump();
+    if (refuse_oversized(topic, payload.size()))
+    {
+        return;
+    }
+    warn_if_unrecorded(topic, payload.size());
 
     int rc = mosquitto_publish(mosq_.get(), nullptr, topic.c_str(), static_cast<int>(payload.size()), payload.c_str(),
                                qos, false);
     if (rc != MOSQ_ERR_SUCCESS)
     {
-        mqtt_log().warn("MQTT publish error on {}: {}", topic, mosquitto_strerror(rc));
+        report_publish_error(topic, rc);
     }
 }
 
@@ -493,13 +515,87 @@ void CyberwaveMQTTClient::publish(const std::string& topic, const std::string& m
         mqtt_log().warn("Cannot publish to {}: not connected to MQTT broker", topic);
         return;
     }
+    if (refuse_oversized(topic, message.size()))
+    {
+        return;
+    }
+    warn_if_unrecorded(topic, message.size());
 
     int rc = mosquitto_publish(mosq_.get(), nullptr, topic.c_str(), static_cast<int>(message.size()), message.c_str(),
                                qos, false);
     if (rc != MOSQ_ERR_SUCCESS)
     {
-        mqtt_log().warn("MQTT publish error on {}: {}", topic, mosquitto_strerror(rc));
+        report_publish_error(topic, rc);
     }
+}
+
+void CyberwaveMQTTClient::report_publish_error(const std::string& topic, int rc) const
+{
+    if (rc != MOSQ_ERR_OVERSIZE_PACKET)
+    {
+        mqtt_log().warn("MQTT publish error on {}: {}", topic, mosquitto_strerror(rc));
+        return;
+    }
+    // Over an MQTT 5 broker's Maximum Packet Size: as with refuse_oversized,
+    // a stream over it is over it on every frame, so report it per interval.
+    std::optional<std::size_t> held_back;
+    {
+        std::lock_guard<std::mutex> lock(refusal_log_mutex_);
+        held_back = refusal_log_.admit("packet:" + topic, std::chrono::steady_clock::now());
+    }
+    if (!held_back)
+    {
+        return;
+    }
+    mqtt_log().error("Not publishing to {}: {}{}", topic, mosquitto_strerror(rc),
+                     *held_back ? " (" + std::to_string(*held_back) + " more since the last report)" : "");
+}
+
+void CyberwaveMQTTClient::warn_if_unrecorded(const std::string& topic, std::size_t payload_bytes) const
+{
+    if (!mqtt_publish_unrecorded(topic, payload_bytes))
+    {
+        return;
+    }
+    std::optional<std::size_t> held_back;
+    {
+        std::lock_guard<std::mutex> lock(refusal_log_mutex_);
+        held_back = refusal_log_.admit("unrecorded:" + topic, std::chrono::steady_clock::now());
+    }
+    if (!held_back)
+    {
+        return;
+    }
+    mqtt_log().warn("Publishing to {}, but payload is {} bytes, over the {}-byte point cloud limit of Cyberwave's "
+                    "telemetry pipeline: live subscribers get it, but it is not recorded (downsample it to keep it){}",
+                    topic, payload_bytes, MQTT_POINTCLOUD_RECORDED_MAX_PAYLOAD_BYTES,
+                    *held_back ? " (" + std::to_string(*held_back) + " more since the last report)" : "");
+}
+
+bool CyberwaveMQTTClient::refuse_oversized(const std::string& topic, std::size_t payload_bytes) const
+{
+    if (mqtt_payload_fits(payload_bytes, max_payload_bytes_))
+    {
+        return false;
+    }
+    // A payload's size follows the sensor's resolution, so a stream over the
+    // limit is over it on every frame: one line per interval, not 30 a second.
+    // Matches the Python SDK's _report_dropped_publish.
+    std::optional<std::size_t> held_back;
+    {
+        std::lock_guard<std::mutex> lock(refusal_log_mutex_);
+        held_back = refusal_log_.admit(topic, std::chrono::steady_clock::now());
+    }
+    if (!held_back)
+    {
+        return true;
+    }
+    mqtt_log().error("Not publishing to {}: payload is {} bytes, over the {}-byte limit (set {} or "
+                     "mqtt_max_payload_bytes only if the broker accepts more){}",
+                     topic, payload_bytes, mqtt_effective_max_payload_bytes(max_payload_bytes_),
+                     MQTT_MAX_PAYLOAD_BYTES_ENV,
+                     *held_back ? " (" + std::to_string(*held_back) + " more since the last report)" : "");
+    return true;
 }
 
 // ── Subscribe / Unsubscribe ─────────────────────────────────────────────────

@@ -1,12 +1,20 @@
 # Top-level build: REST client, cyberwave SDK layer, and optional tests/examples.
 cmake_minimum_required(VERSION 3.14)
+# 0.4.0: PointCloudSample carries map/session identity; rebuild binary consumers.
+# 0.3.0: IDepthSource gains captured point-cloud samples with frame + timestamp.
+# Existing sources remain source-compatible; rebuild binary consumers of the interface.
+# 0.2.1: acquisition stamps are read off a suspend-inclusive clock
+# (CLOCK_BOOTTIME where it exists), so a host that sleeps no longer skews the
+# (wall, monotonic) offset by the whole suspend. Purely additive to the ABI --
+# `monotonic_clock_name()` and `monotonic_clock_is_suspend_inclusive()` are new
+# symbols and no existing signature moved, so a prebuilt consumer still links.
 # 0.2.0: AssetManager::rebuild_universal_schema gained a trailing
 # `preserve_authored` parameter. Defaulted, so every existing call site still
 # compiles, but the mangled symbol changed — a consumer linking a prebuilt
 # cyberwave_sdk must rebuild rather than swap the artifact. The version is what
 # `find_package(CyberwaveCppSDK 0.2)` pins against; `SameMajorVersion` below means
 # 0.x consumers are not locked out, so this is a signal, not a wall.
-project(CyberwaveCppSDK VERSION 0.2.0 LANGUAGES CXX)
+project(CyberwaveCppSDK VERSION 0.4.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
