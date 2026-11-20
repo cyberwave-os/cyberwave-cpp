@@ -260,6 +260,16 @@ struct DepthFrame
 /** @brief One coloured point-cloud point as `{x, y, z, r, g, b}`. */
 using PointXYZRGB = std::array<float, 6>;
 
+/** A captured cloud; an empty frame preserves legacy sensor-relative payloads. */
+struct PointCloudSample
+{
+    std::vector<PointXYZRGB> points;
+    std::string frame;
+    double timestamp = 0.0;
+    std::string map_uuid;
+    std::string odometry_session_id;
+};
+
 /**
  * @brief Abstract source of depth frames and optional point clouds.
  */
@@ -272,6 +282,9 @@ struct IDepthSource
 
     /** Optionally get a point cloud. Default: not supported (returns false). */
     virtual bool next_point_cloud(std::vector<PointXYZRGB>& /*cloud_out*/) { return false; }
+
+    /** Atomic geometry + capture metadata. Existing sources remain supported. */
+    virtual bool next_point_cloud_sample(PointCloudSample& sample) { return next_point_cloud(sample.points); }
 };
 
 /**
