@@ -8,16 +8,163 @@
 #ifndef CYBERWAVE_MQTT_INTERFACE_H
 #define CYBERWAVE_MQTT_INTERFACE_H
 
+#include <charconv>
+#include <chrono>
+#include <cstddef>
 #include <functional>
+#include <limits>
 #include <map>
 #include <memory>
 #include <optional>
 #include <sstream>
 #include <string>
+#include <string_view>
+#include <utility>
 #include <vector>
 
 namespace cyberwave
 {
+
+/**
+ * @brief The payload limit Cyberwave's brokers are configured with.
+ *
+ * Set on the brokers from CYB-4375 on (mosquitto `message_size_limit`, nanomq
+ * `max_packet_size`); before it they accept up to the protocol's 256 MiB, so
+ * this refuses payloads they would still deliver.
+ *
+ * A broker drops anything larger, and over MQTT 3.1.1 it cannot say so: a QoS 0
+ * message just vanishes and a QoS 1 PUBACK reports success. The MQTT client
+ * refuses such a payload before sending it, the only place the driver can hear
+ * about it. A broker configured to accept more needs
+ * `CYBERWAVE_MQTT_MAX_PAYLOAD_BYTES` raised to match, or 0. The same default as
+ * the Python SDK's `DEFAULT_MAX_PAYLOAD_BYTES`.
+ */
+inline constexpr std::size_t DEFAULT_MQTT_MAX_PAYLOAD_BYTES = std::size_t{32} * 1024 * 1024;
+
+/** @brief Overrides DEFAULT_MQTT_MAX_PAYLOAD_BYTES; 0 turns the check off. */
+inline constexpr const char* MQTT_MAX_PAYLOAD_BYTES_ENV = "CYBERWAVE_MQTT_MAX_PAYLOAD_BYTES";
+
+/**
+ * @brief A `CYBERWAVE_MQTT_MAX_PAYLOAD_BYTES` value as a byte count.
+ *
+ * @return the count, where 0 turns the check off, or std::nullopt unless `raw`
+ *         is a plain non-negative decimal integer (`32MiB`, `-1` and `1.5` are not).
+ */
+inline std::optional<std::size_t> parse_mqtt_max_payload_bytes(std::string_view raw)
+{
+    const auto first = raw.find_first_not_of(" \t\r\n");
+    if (first == std::string_view::npos)
+        return std::nullopt;
+    raw = raw.substr(first, raw.find_last_not_of(" \t\r\n") - first + 1);
+    std::size_t value = 0;
+    const char* end = raw.data() + raw.size();
+    const auto [parsed_to, error] = std::from_chars(raw.data(), end, value);
+    if (error != std::errc{} || parsed_to != end)
+        return std::nullopt;
+    return value;
+}
+
+/** @brief The largest payload `mosquitto_publish` takes: it is handed the length as an `int`. */
+inline constexpr std::size_t MQTT_MAX_PUBLISHABLE_PAYLOAD_BYTES =
+    static_cast<std::size_t>(std::numeric_limits<int>::max());
+
+/**
+ * @brief The limit a payload is held to: `max_payload_bytes`, where 0 means no limit of our own,
+ * but never more than mosquitto can publish.
+ */
+inline constexpr std::size_t mqtt_effective_max_payload_bytes(std::size_t max_payload_bytes)
+{
+    return max_payload_bytes == 0 || max_payload_bytes > MQTT_MAX_PUBLISHABLE_PAYLOAD_BYTES
+               ? MQTT_MAX_PUBLISHABLE_PAYLOAD_BYTES
+               : max_payload_bytes;
+}
+
+/** @brief Whether a `payload_bytes` payload is within `max_payload_bytes` (see mqtt_effective_max_payload_bytes). */
+inline constexpr bool mqtt_payload_fits(std::size_t payload_bytes, std::size_t max_payload_bytes)
+{
+    return payload_bytes <= mqtt_effective_max_payload_bytes(max_payload_bytes);
+}
+
+/**
+ * @brief The largest point cloud Cyberwave's telemetry pipeline records.
+ *
+ * Vector's `size_guard_colored_pointcloud` drops a larger `.../pointcloud`
+ * payload before parsing it, since parsing is what bounds Vector's memory. The
+ * broker still delivers it to live subscribers, so the client publishes it and
+ * warns that it was not recorded. The same value as the Python SDK's
+ * `POINTCLOUD_INGEST_MAX_PAYLOAD_BYTES`.
+ */
+inline constexpr std::size_t MQTT_POINTCLOUD_RECORDED_MAX_PAYLOAD_BYTES = std::size_t{8} * 1024 * 1024;
+
+/** @brief Whether the cloud would not record a `payload_bytes` publish to `topic`, though the broker delivers it. */
+inline bool mqtt_publish_unrecorded(std::string_view topic, std::size_t payload_bytes)
+{
+    constexpr std::string_view pointcloud_suffix = "/pointcloud";
+    return payload_bytes > MQTT_POINTCLOUD_RECORDED_MAX_PAYLOAD_BYTES && topic.size() >= pointcloud_suffix.size() &&
+           topic.substr(topic.size() - pointcloud_suffix.size()) == pointcloud_suffix;
+}
+
+namespace detail
+{
+/**
+ * @brief Lets one report per key through per interval, and counts the rest.
+ *
+ * Not synchronised: the caller holds a lock around admit(). Remembers at
+ * most `max_keys` keys, forgetting the least recently reported one first, so a
+ * driver publishing to per-request topics cannot grow it without end; a
+ * forgotten key at worst lets one extra report through.
+ */
+class ReportThrottle
+{
+public:
+    static constexpr std::size_t kDefaultMaxKeys = 256;
+
+    explicit ReportThrottle(std::chrono::steady_clock::duration interval, std::size_t max_keys = kDefaultMaxKeys)
+        : interval_(interval), max_keys_(max_keys == 0 ? 1 : max_keys)
+    {
+    }
+
+    std::size_t size() const { return entries_.size(); }
+
+    /**
+     * @return std::nullopt to stay quiet, else how many reports of `key` were
+     *         held back since the last one let through.
+     */
+    std::optional<std::size_t> admit(const std::string& key, std::chrono::steady_clock::time_point now)
+    {
+        if (entries_.size() >= max_keys_ && entries_.find(key) == entries_.end())
+        {
+            // A linear scan, but only when a new key arrives at a full map.
+            auto oldest = entries_.begin();
+            for (auto candidate = entries_.begin(); candidate != entries_.end(); ++candidate)
+            {
+                if (candidate->second.reported_at < oldest->second.reported_at)
+                    oldest = candidate;
+            }
+            entries_.erase(oldest);
+        }
+        auto [it, first] = entries_.try_emplace(key);
+        Entry& entry = it->second;
+        if (!first && now - entry.reported_at < interval_)
+        {
+            ++entry.suppressed;
+            return std::nullopt;
+        }
+        entry.reported_at = now;
+        return std::exchange(entry.suppressed, 0);
+    }
+
+private:
+    struct Entry
+    {
+        std::chrono::steady_clock::time_point reported_at{};
+        std::size_t suppressed = 0;
+    };
+    std::chrono::steady_clock::duration interval_;
+    std::size_t max_keys_;
+    std::map<std::string, Entry> entries_;
+};
+} // namespace detail
 
 /** @brief Raw GNSS fix data for GPS telemetry publishing. */
 struct GpsFix
