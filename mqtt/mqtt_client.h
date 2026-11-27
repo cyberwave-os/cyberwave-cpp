@@ -36,6 +36,12 @@ struct CyberwaveConfig
     bool mqtt_use_tls = false;
     std::string mqtt_tls_ca_cert;
     int mqtt_protocol = 0;
+    // Largest payload publish() sends, in bytes; a larger one is refused and
+    // logged, because the broker would drop it without telling this client.
+    // Unset: CYBERWAVE_MQTT_MAX_PAYLOAD_BYTES, else 32 MiB (Cyberwave's
+    // brokers from CYB-4375 on). Raise it only for a broker that accepts more;
+    // 0 turns it off.
+    std::optional<std::size_t> mqtt_max_payload_bytes;
     std::string runtime_mode = "live";
     std::string twin_uuid;
 };
@@ -68,7 +74,108 @@ struct JointState
     std::optional<double> position;
     std::optional<double> velocity;
     std::optional<double> effort;
+    // rad/s² (revolute/continuous) or m/s² (prismatic), published as
+    // `joint_state.acceleration`. Its own channel: never derived from effort.
+    // Declared last so existing aggregate initialisers keep their meaning.
+    std::optional<double> acceleration;
 };
+
+namespace detail
+{
+
+/** Put one aggregated joint channel under `key`; an empty map leaves the key out. */
+inline void put_joint_channel(json& message, const char* key, const std::map<std::string, double>& values)
+{
+    if (values.empty())
+        return;
+    json channel = json::object();
+    for (const auto& [joint_name, value] : values)
+        channel[joint_name] = value;
+    message[key] = std::move(channel);
+}
+
+/** The optional metadata of an aggregated joint payload; empty / negative ones are left out. */
+inline void put_joint_metadata(json& message, double timestamp, const std::string& workload_uuid,
+                               const std::string& session_id, const std::string& source_subtype)
+{
+    if (timestamp >= 0.0)
+        message["timestamp"] = timestamp;
+    if (!workload_uuid.empty())
+        message["workload_uuid"] = workload_uuid;
+    if (!session_id.empty())
+        message["session_id"] = session_id;
+    if (!source_subtype.empty())
+        message["source_subtype"] = source_subtype;
+}
+
+/**
+ * Assemble the `cyberwave/joint/{twin_uuid}/update` payload that
+ * CyberwaveMQTTClient::update_joints_state() publishes, without validating or
+ * publishing it. Kept apart so the wire shape can be checked without a broker.
+ *
+ * Aggregated (`positions` / `velocities` / `accelerations` / `efforts` maps)
+ * when any channel beyond positions or any metadata is given, flat
+ * (`{"source_type": ..., "<joint>": <position>}`) otherwise. An empty map
+ * means the channel was not measured: its key is omitted, never zero-filled.
+ */
+inline json build_joints_state_message(const std::string& source_type,
+                                       const std::map<std::string, double>& joint_positions,
+                                       const std::map<std::string, double>& velocities,
+                                       const std::map<std::string, double>& efforts, double timestamp,
+                                       const std::string& workload_uuid, const std::string& session_id,
+                                       const std::string& source_subtype,
+                                       const std::map<std::string, double>& accelerations = {})
+{
+    const bool use_aggregated = !velocities.empty() || !accelerations.empty() || !efforts.empty() || timestamp >= 0.0 ||
+                                !workload_uuid.empty() || !session_id.empty() || !source_subtype.empty();
+    json message = {{"source_type", source_type}};
+    if (!use_aggregated)
+    {
+        for (const auto& [joint_name, joint_position] : joint_positions)
+            message[joint_name] = joint_position;
+        return message;
+    }
+
+    message["positions"] = json::object();
+    put_joint_channel(message, "positions", joint_positions);
+    put_joint_channel(message, "velocities", velocities);
+    put_joint_channel(message, "accelerations", accelerations);
+    put_joint_channel(message, "efforts", efforts);
+    put_joint_metadata(message, timestamp, workload_uuid, session_id, source_subtype);
+    return message;
+}
+
+/**
+ * Assemble the `cyberwave/joint/{twin_uuid}/update` command payload that
+ * CyberwaveMQTTClient::update_joint_targets() publishes, without validating or
+ * publishing it. The same JSON as the Python SDK's
+ * `update_joints_state(..., as_targets=True)`.
+ *
+ * Always aggregated, every channel under its own `target_` key
+ * (`target_positions` / `target_velocities` / `target_accelerations` /
+ * `target_efforts`), so a setpoint never reads as measured state. An empty map
+ * means the channel is not commanded: its key is omitted, never zero-filled,
+ * and no channel stands in for another. `timestamp` is written when >= 0; the
+ * publishing method resolves a negative one to the current time first.
+ */
+inline json build_joint_targets_message(const std::string& source_type,
+                                        const std::map<std::string, double>& target_positions,
+                                        const std::map<std::string, double>& velocities,
+                                        const std::map<std::string, double>& efforts, double timestamp,
+                                        const std::string& workload_uuid, const std::string& session_id,
+                                        const std::string& source_subtype,
+                                        const std::map<std::string, double>& accelerations = {})
+{
+    json message = {{"source_type", source_type}};
+    put_joint_channel(message, "target_positions", target_positions);
+    put_joint_channel(message, "target_velocities", velocities);
+    put_joint_channel(message, "target_accelerations", accelerations);
+    put_joint_channel(message, "target_efforts", efforts);
+    put_joint_metadata(message, timestamp, workload_uuid, session_id, source_subtype);
+    return message;
+}
+
+} // namespace detail
 
 // RAII handle for struct mosquitto*
 struct MosquittoDeleter
@@ -139,6 +246,22 @@ public:
      * Python-parity alias for get_topic_prefix().
      */
     std::string topic_prefix() const { return get_topic_prefix(); }
+
+    /**
+     * The source type this client stamps on a message whose caller passes none:
+     * the configured one, else ``CYBERWAVE_SOURCE_TYPE``, else ``edge``.
+     *
+     * @return one of SOURCE_TYPES
+     */
+    const std::string& get_source_type() const { return source_type_; }
+
+    /**
+     * The largest payload publish() sends, in bytes, or 0 for no limit.
+     *
+     * Over MQTT 5 libmosquitto also refuses a packet over the broker's
+     * announced Maximum Packet Size, with MOSQ_ERR_OVERSIZE_PACKET.
+     */
+    std::size_t max_payload_bytes() const { return max_payload_bytes_; }
 
     // Twin-related methods
 
@@ -227,7 +350,7 @@ public:
      *
      * @param twin_uuid UUID of the twin
      * @param joint_name Name of the joint
-     * @param state Joint state with optional position, velocity, and effort
+     * @param state Joint state with optional position, velocity, acceleration, and effort
      * @param source_type Source type for the message (defaults to SOURCE_TYPE_EDGE).
      */
     void update_joint_state(const std::string& twin_uuid, const std::string& joint_name, const JointState& state,
@@ -238,7 +361,7 @@ public:
      *
      * @param twin_uuid UUID of the twin
      * @param joint_name Name of the joint
-     * @param state Joint state with optional position, velocity, and effort
+     * @param state Joint state with optional position, velocity, acceleration, and effort
      * @param timestamp Unix timestamp in seconds; negative values use the current time
      * @param source_type Source type for the message (defaults to SOURCE_TYPE_EDGE).
      */
@@ -274,13 +397,45 @@ public:
      * Update multiple joints at once using the rich aggregated payload format.
      *
      * Publishes a single message with positions and optional velocities,
-     * efforts, timestamp, workload_uuid, session_id, and source_subtype.
+     * accelerations, efforts, timestamp, workload_uuid, session_id, and
+     * source_subtype.
+     *
+     * `accelerations` (rad/s² or m/s²) is published as `accelerations` and is
+     * last so that every existing positional call binds exactly as before.
+     * Leave it empty when the source does not measure acceleration; never fill
+     * it from efforts.
      */
     void update_joints_state(const std::string& twin_uuid, const std::map<std::string, double>& joint_positions,
                              const std::string& source_type, const std::map<std::string, double>& velocities,
                              const std::map<std::string, double>& efforts, double timestamp,
                              const std::string& workload_uuid, const std::string& session_id,
-                             const std::string& source_subtype);
+                             const std::string& source_subtype,
+                             const std::map<std::string, double>& accelerations = {});
+
+    /**
+     * Publish joint *targets*: a setpoint the plant should track, never
+     * measured state. The C++ counterpart of the Python SDK's
+     * `update_joints_state(..., as_targets=True)`, with the same parameters in
+     * the same order as update_joints_state() above, and the same JSON: always
+     * aggregated, under `target_positions` / `target_velocities` /
+     * `target_accelerations` / `target_efforts`.
+     *
+     * `target_positions` may be empty when velocity, acceleration or effort
+     * targets are given; at least one channel must be. An empty channel is not
+     * commanded and is left out, never zero-filled; an explicit 0.0 commands
+     * that channel. Accelerations (rad/s² or m/s²) and efforts (N·m or N) are
+     * separate channels: never fill one from the other. A negative `timestamp`
+     * is replaced by the current time. Unlike measured state, a target neither
+     * starts nor owns a telemetry session.
+     *
+     * @throws std::invalid_argument for an invalid source_type or no target at all.
+     */
+    void update_joint_targets(const std::string& twin_uuid, const std::map<std::string, double>& target_positions,
+                              const std::string& source_type = "", const std::map<std::string, double>& velocities = {},
+                              const std::map<std::string, double>& efforts = {}, double timestamp = -1.0,
+                              const std::string& workload_uuid = "", const std::string& session_id = "",
+                              const std::string& source_subtype = "",
+                              const std::map<std::string, double>& accelerations = {});
 
     // Environment-related methods
 
@@ -407,6 +562,9 @@ private:
     std::string with_prefix(const std::string& topic_suffix) const;
     bool parse_bool_env(const std::string& value) const;
     bool is_valid_source_type(const std::string& source_type) const;
+    bool refuse_oversized(const std::string& topic, std::size_t payload_bytes) const;
+    void warn_if_unrecorded(const std::string& topic, std::size_t payload_bytes) const;
+    void report_publish_error(const std::string& topic, int rc) const;
     void resubscribe_registered_topics();
     void handle_twin_update_with_telemetry(const std::string& twin_uuid, const json& metadata = json::object());
     void publish_connect_message(const std::string& twin_uuid);
@@ -424,6 +582,11 @@ private:
     std::string source_type_;
     std::string topic_prefix_;
     std::string client_id_;
+    std::size_t max_payload_bytes_ = DEFAULT_MQTT_MAX_PAYLOAD_BYTES;
+    // refuse_oversized(), warn_if_unrecorded() and report_publish_error() report each topic at most
+    // once per 10 s.
+    mutable std::mutex refusal_log_mutex_;
+    mutable detail::ReportThrottle refusal_log_{std::chrono::seconds{10}};
 
     MosquittoPtr mosq_;
     std::atomic<bool> connected_{false};

@@ -1,6 +1,7 @@
 #include "cyberwave/data.h"
 
 #include "cyberwave/exceptions.h"
+#include "cyberwave/utils.h"
 
 #include <algorithm>
 #include <chrono>
@@ -23,11 +24,6 @@ namespace
 constexpr std::uint32_t kHeaderLenSize = 4;
 constexpr std::uint32_t kTsSeqSize = 16;
 constexpr std::uint32_t kMaxHeaderBytes = 64 * 1024;
-
-double now_seconds()
-{
-    return std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
-}
 
 void append_u32_le(DataBytes& out, std::uint32_t value)
 {
@@ -283,7 +279,7 @@ private:
                 DataSample sample;
                 sample.channel = channel_;
                 sample.payload = read_file_bytes(path);
-                sample.timestamp = sample_timestamp_from_name(path).value_or(now_seconds());
+                sample.timestamp = sample_timestamp_from_name(path).value_or(wall_seconds());
 
                 const std::filesystem::path metadata_path = path.parent_path() / (path.stem().string() + ".meta.json");
                 if (std::filesystem::exists(metadata_path))
@@ -425,7 +421,7 @@ DataHeaderTemplate::DataHeaderTemplate(std::string content_type, std::optional<s
 DataBytes DataHeaderTemplate::pack(const DataBytes& payload, std::optional<double> ts)
 {
     if (!ts)
-        ts = now_seconds();
+        ts = wall_seconds();
 
     std::int64_t seq = 0;
     {
@@ -542,7 +538,7 @@ std::optional<DataSample> FilesystemDataBackend::latest(const std::string& chann
     DataSample sample;
     sample.channel = channel;
     sample.payload = read_file_bytes(latest_path);
-    sample.timestamp = now_seconds();
+    sample.timestamp = wall_seconds();
     return sample;
 }
 
@@ -682,7 +678,7 @@ std::optional<DataValue> DataBus::latest(const std::string& channel, double time
     const auto decoded = decode_data_sample(sample->payload);
     if (max_age_ms)
     {
-        const double age_seconds = now_seconds() - decoded.first.ts;
+        const double age_seconds = wall_seconds() - decoded.first.ts;
         if (age_seconds > (*max_age_ms / 1000.0))
             return std::nullopt;
     }

@@ -17,7 +17,7 @@ static void test_velocity_command_serializes_contract_payload()
 
     assert(payload.find("\"contract\":\"locomotion.velocity_command.v1\"") != std::string::npos);
     assert(payload.find("\"linear_x\":0.25") != std::string::npos);
-    assert(payload.find("\"linear_y\":0") != std::string::npos);
+    assert(payload.find("\"linear_y\":0.0,") != std::string::npos);
     assert(payload.find("\"angular_z\":0.4") != std::string::npos);
     assert(payload.find("\"duration_ms\":750") != std::string::npos);
     assert(payload.find("\"gait\":\"walk\"") != std::string::npos);

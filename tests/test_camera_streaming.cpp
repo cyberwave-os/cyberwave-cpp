@@ -21,9 +21,7 @@
 
 using namespace cyberwave;
 
-// Release builds define NDEBUG, which compiles <cassert> away — an assert-only
-// test then passes no matter what it observes. Used by the health test below;
-// the older tests here are left on assert() rather than flipped blind.
+// assert() that names the expectation it failed on. Used by the health test below.
 static void check(bool ok, const char* what)
 {
     if (!ok)
@@ -38,11 +36,13 @@ struct MockMqttForStreaming : IMqttClient
 {
     bool connected = true;
     std::string topic_prefix_;
+    std::string source_type_ = SOURCE_TYPE_EDGE;
     int publish_count = 0;
     mutable std::mutex payload_mutex;
     std::vector<std::string> payloads;
     bool is_connected() const override { return connected; }
     std::string get_topic_prefix() const override { return topic_prefix_; }
+    std::string default_source_type() const override { return source_type_; }
     void update_joint_state(const std::string&, const std::string&, double) override {}
     void publish(const std::string& topic, const std::string& json_payload) override
     {
@@ -154,6 +154,7 @@ static void test_encoded_h264_publishes_health_without_frames()
     // heartbeats exist with zero send_frame() calls.
     auto mqtt = std::make_shared<MockMqttForStreaming>();
     mqtt->topic_prefix_ = "";
+    mqtt->source_type_ = SOURCE_TYPE_SIM;
     EncodedH264CameraStreamer streamer(mqtt, "twin-1");
     streamer.set_log_callback([](const std::string&) {});
     streamer.start();
@@ -170,6 +171,8 @@ static void test_encoded_h264_publishes_health_without_frames()
     const std::string beat = mqtt->last_health();
     check(beat.find("\"connection_state\":\"connecting\"") != std::string::npos, "startup reads connecting");
     check(beat.find("\"is_stale\":false") != std::string::npos, "startup is not stale");
+    // The recording pipeline refuses a heartbeat it cannot attribute.
+    check(beat.find("\"source_type\":\"sim\"") != std::string::npos, "heartbeat carries the client's source_type");
 
     // stop() must wake the health thread rather than wait out its interval.
     const auto t0 = std::chrono::steady_clock::now();

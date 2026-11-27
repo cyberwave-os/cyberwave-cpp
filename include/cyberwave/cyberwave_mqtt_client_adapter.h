@@ -33,6 +33,7 @@ public:
 
     bool is_connected() const override { return client_.is_connected(); }
     std::string get_topic_prefix() const override { return client_.get_topic_prefix(); }
+    std::string default_source_type() const override { return client_.get_source_type(); }
 
     void update_joint_state(const std::string& twin_uuid, const std::string& joint_name, double position_rad) override
     {
@@ -44,7 +45,8 @@ public:
     using IMqttClient::update_joint_state; // surface base overloads
     void update_joint_state(const std::string& twin_uuid, const std::string& joint_name, double position_rad,
                             std::optional<double> velocity, std::optional<double> effort, double timestamp = -1.0,
-                            const std::string& source_type = "") override
+                            const std::string& source_type = "",
+                            std::optional<double> acceleration = std::nullopt) override
     {
         JointState state;
         state.position = position_rad;
@@ -52,11 +54,36 @@ public:
             state.velocity = *velocity;
         if (effort.has_value())
             state.effort = *effort;
+        if (acceleration.has_value())
+            state.acceleration = *acceleration;
         const std::string st = source_type.empty() ? std::string{} : source_type;
         if (timestamp >= 0.0)
             client_.update_joint_state(twin_uuid, joint_name, state, timestamp, st);
         else
             client_.update_joint_state(twin_uuid, joint_name, state, st);
+    }
+
+    // The concrete client's pose helpers also announce the twin's telemetry
+    // session on its first update, as its joint helpers do.
+
+    void update_twin_position(const std::string& twin_uuid, double x, double y, double z) override
+    {
+        client_.update_twin_position(twin_uuid, Position{x, y, z});
+    }
+
+    void update_twin_rotation(const std::string& twin_uuid, double w, double x, double y, double z) override
+    {
+        Rotation rotation;
+        rotation.w = w;
+        rotation.x = x;
+        rotation.y = y;
+        rotation.z = z;
+        client_.update_twin_rotation(twin_uuid, rotation);
+    }
+
+    void update_twin_scale(const std::string& twin_uuid, double x, double y, double z) override
+    {
+        client_.update_twin_scale(twin_uuid, Scale{x, y, z});
     }
 
     void publish(const std::string& topic, const std::string& json_payload) override

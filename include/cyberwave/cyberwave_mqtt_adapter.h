@@ -71,6 +71,8 @@ public:
 
     std::string get_topic_prefix() const override { return inner_->get_topic_prefix(); }
 
+    std::string default_source_type() const override { return inner_->get_source_type(); }
+
     void update_joint_state(const std::string& twin_uuid, const std::string& joint_name, double position_rad) override
     {
         JointState js;
@@ -80,7 +82,8 @@ public:
 
     void update_joint_state(const std::string& twin_uuid, const std::string& joint_name, double position_rad,
                             std::optional<double> velocity, std::optional<double> effort, double timestamp = -1.0,
-                            const std::string& source_type = "") override
+                            const std::string& source_type = "",
+                            std::optional<double> acceleration = std::nullopt) override
     {
         JointState js;
         js.position = position_rad;
@@ -88,6 +91,8 @@ public:
             js.velocity = *velocity;
         if (effort.has_value())
             js.effort = *effort;
+        if (acceleration.has_value())
+            js.acceleration = *acceleration;
         inner_->update_joint_state(twin_uuid, joint_name, js, timestamp, source_type);
     }
 
@@ -122,10 +127,45 @@ public:
                              const std::string& source_type = "", const std::map<std::string, double>& velocities = {},
                              const std::map<std::string, double>& efforts = {}, double timestamp = -1.0,
                              const std::string& workload_uuid = "", const std::string& session_id = "",
-                             const std::string& source_subtype = "") override
+                             const std::string& source_subtype = "",
+                             const std::map<std::string, double>& accelerations = {}) override
     {
         inner_->update_joints_state(twin_uuid, positions, source_type, velocities, efforts, timestamp, workload_uuid,
-                                    session_id, source_subtype);
+                                    session_id, source_subtype, accelerations);
+    }
+
+    void update_joint_targets(const std::string& twin_uuid, const std::map<std::string, double>& target_positions,
+                              const std::string& source_type = "", const std::map<std::string, double>& velocities = {},
+                              const std::map<std::string, double>& efforts = {}, double timestamp = -1.0,
+                              const std::string& workload_uuid = "", const std::string& session_id = "",
+                              const std::string& source_subtype = "",
+                              const std::map<std::string, double>& accelerations = {}) override
+    {
+        inner_->update_joint_targets(twin_uuid, target_positions, source_type, velocities, efforts, timestamp,
+                                     workload_uuid, session_id, source_subtype, accelerations);
+    }
+
+    // The concrete client's pose helpers also announce the twin's telemetry
+    // session on its first update, as its joint helpers do.
+
+    void update_twin_position(const std::string& twin_uuid, double x, double y, double z) override
+    {
+        inner_->update_twin_position(twin_uuid, Position{x, y, z});
+    }
+
+    void update_twin_rotation(const std::string& twin_uuid, double w, double x, double y, double z) override
+    {
+        Rotation rotation;
+        rotation.w = w;
+        rotation.x = x;
+        rotation.y = y;
+        rotation.z = z;
+        inner_->update_twin_rotation(twin_uuid, rotation);
+    }
+
+    void update_twin_scale(const std::string& twin_uuid, double x, double y, double z) override
+    {
+        inner_->update_twin_scale(twin_uuid, Scale{x, y, z});
     }
 
     // -----------------------------------------------------------------------
