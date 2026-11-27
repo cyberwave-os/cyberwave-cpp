@@ -14,6 +14,21 @@
 namespace cyberwave
 {
 
+/** @brief Name of the monotonic clock acquisition stamps are read from. */
+const char* monotonic_clock_name();
+
+/** @brief Whether that clock keeps advancing while the host is suspended. */
+bool monotonic_clock_is_suspend_inclusive();
+
+/**
+ * @brief Seconds from the monotonic clock named by monotonic_clock_name().
+ *
+ * Use this for anything stamping *acquisition*. Deadlines, retry backoff and frame
+ * pacing should keep std::chrono::steady_clock: they measure an interval the host is
+ * awake for, and folding suspended time into a timeout would fire it on resume.
+ */
+double monotonic_seconds();
+
 /**
  * @brief Synchronised wall-clock and monotonic time reference.
  */
@@ -33,6 +48,18 @@ private:
     double time_{0};
     double time_monotonic_{0};
 };
+
+/**
+ * @brief Seconds since the Unix epoch, from the system clock.
+ *
+ * The one wall clock the SDK stamps with: the `timestamp` a message carries by default,
+ * and the wall half of TimeReference. Inline so header-only users, such as the standalone
+ * `cyberwave_mqtt_client` library, which does not link `cyberwave_sdk`, read the same clock.
+ */
+inline double wall_seconds()
+{
+    return std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
 
 /** @brief Device identity fields used for fingerprinting and diagnostics. */
 struct DeviceInfo

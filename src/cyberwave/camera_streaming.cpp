@@ -1,4 +1,5 @@
 #include "cyberwave/camera_streaming.h"
+#include "cyberwave/utils.h"
 #include "h264_capture_sei.h"
 
 #include <cpprest/details/basic_types.h>
@@ -92,12 +93,6 @@ std::string json_serialize(const web::json::value& v)
     return os.str();
 }
 
-double timestamp_now()
-{
-    using namespace std::chrono;
-    return duration<double>(system_clock::now().time_since_epoch()).count();
-}
-
 constexpr double edge_health_publish_interval_seconds = 5.0;
 // Keep in step with the Python SDK's SDK_EDGE_HEALTH_STALE_TIMEOUT_SECONDS.
 constexpr double edge_health_stale_timeout_seconds = 30.0;
@@ -146,7 +141,9 @@ void publish_camera_stream_edge_health(IMqttClient& mqtt, const std::string& twi
     const double rounded_uptime = std::round(uptime_seconds * 10.0) / 10.0;
     const double rounded_fps = std::round(fps * 100.0) / 100.0;
 
+    // source_type because the recording pipeline refuses a heartbeat without one.
     Json message = {{"type", "edge_health"},
+                    {"source_type", mqtt.default_source_type()},
                     {"timestamp", now_seconds},
                     {"edge_id", twin_uuid},
                     {"twin_uuid", twin_uuid},
@@ -1162,7 +1159,7 @@ private:
                     {"sender", "edge"},
                     {"type", local_description->typeString()},
                     {"sdp", local_sdp_.value()},
-                    {"timestamp", timestamp_now()},
+                    {"timestamp", wall_seconds()},
                     {"recording", recording_},
                     {"session_id", session_id_},
                 };
@@ -1194,7 +1191,7 @@ private:
                          {"candidate", std::string(candidate)},
                          {"sdpMid", candidate.mid()},
                      }},
-                    {"timestamp", timestamp_now()},
+                    {"timestamp", wall_seconds()},
                     {"session_id", session_id_},
                 };
                 if (!sensor_.empty())
@@ -1308,7 +1305,7 @@ bool VirtualFrameSource::next_frame(VideoFrame& frame_out)
     frame_out.width = 1;
     frame_out.height = 1;
     frame_out.pixel_format = PixelFormat::BGR24;
-    frame_out.timestamp = timestamp_now();
+    frame_out.timestamp = wall_seconds();
     frame_out.data = {0, 0, 0};
     frame_out.jpeg_fallback.assign(MINIMAL_JPEG, MINIMAL_JPEG + MINIMAL_JPEG_SIZE);
     return true;
@@ -1421,7 +1418,7 @@ void CameraStreamer::start()
     // on the first real frame (resolution changes, encoder renegotiation, etc).
     frame_counter_ = 0;
     h264_encoder_.reset();
-    edge_health_stream_started_at_seconds_ = timestamp_now();
+    edge_health_stream_started_at_seconds_ = wall_seconds();
     edge_health_last_publish_ts_seconds_ = 0.0;
     edge_health_last_frame_ts_seconds_ = 0.0;
     edge_health_frames_sent_ = 0;
@@ -1471,14 +1468,16 @@ void CameraStreamer::stream_loop()
         {
             // Frame sources may supply Unix capture seconds. Legacy monotonic
             // values fall back to wall time at acquisition, never to RTP time.
-            const double acquired_at = timestamp_now();
+            const double acquired_at = wall_seconds();
             const double capture_at =
                 std::isfinite(frame.timestamp) && frame.timestamp >= 946684800.0 && frame.timestamp <= acquired_at + 5.0
                     ? frame.timestamp
                     : acquired_at;
             const auto wall_ns = static_cast<std::uint64_t>(capture_at * 1e9);
-            const auto monotonic_ns = static_cast<std::uint64_t>(
-                std::chrono::duration_cast<std::chrono::nanoseconds>(frame_start.time_since_epoch()).count());
+            // Acquisition stamp, so it reads the suspend-inclusive clock rather than
+            // frame_start — which stays on steady_clock for the RTP timestamp and the
+            // frame-interval sleep below, both of which want awake-only time.
+            const auto monotonic_ns = static_cast<std::uint64_t>(monotonic_seconds() * 1e9);
             bool sent_via_webrtc = false;
             bool sent_to_cloud = false;
             if (enable_webrtc_ && webrtc_adapter_)
@@ -1522,7 +1521,7 @@ void CameraStreamer::stream_loop()
             if (!sent_via_webrtc && enable_mqtt_video_fallback_ && mqtt_ && mqtt_->is_connected() &&
                 !frame.jpeg_fallback.empty())
             {
-                const double now_ts = timestamp_now();
+                const double now_ts = wall_seconds();
                 if ((now_ts - mqtt_fallback_last_send_ts_) >= mqtt_fallback_min_interval_s_)
                 {
                     std::string b64 = base64_encode(frame.jpeg_fallback.data(), frame.jpeg_fallback.size());
@@ -1540,11 +1539,11 @@ void CameraStreamer::stream_loop()
             if (sent_to_cloud)
             {
                 edge_health_frames_sent_ += 1;
-                edge_health_last_frame_ts_seconds_ = timestamp_now();
+                edge_health_last_frame_ts_seconds_ = wall_seconds();
             }
         }
 
-        const double now = timestamp_now();
+        const double now = wall_seconds();
         if (mqtt_ && edge_health_stream_started_at_seconds_ > 0.0 &&
             (edge_health_last_publish_ts_seconds_ <= 0.0 ||
              (now - edge_health_last_publish_ts_seconds_) >= edge_health_publish_interval_seconds))
@@ -1649,7 +1648,7 @@ void EncodedH264CameraStreamer::start()
                                    }
                                });
 
-        edge_health_stream_started_at_seconds_ = timestamp_now();
+        edge_health_stream_started_at_seconds_ = wall_seconds();
         edge_health_last_frame_ts_seconds_ = 0.0;
         edge_health_frames_sent_ = 0;
 
@@ -1689,7 +1688,7 @@ void EncodedH264CameraStreamer::health_loop()
         if (mqtt_ && started_at > 0.0)
         {
             publish_camera_stream_edge_health(
-                *mqtt_, twin_uuid_, timestamp_now(),
+                *mqtt_, twin_uuid_, wall_seconds(),
                 {started_at, edge_health_last_frame_ts_seconds_.load(), edge_health_frames_sent_.load(), sensor_name_});
         }
 
@@ -1740,7 +1739,7 @@ bool EncodedH264CameraStreamer::send_frame(const std::vector<std::uint8_t>& anne
         // Record only; health_loop() publishes. Publishing here would tie the
         // heartbeat to the source still delivering.
         edge_health_frames_sent_ += 1;
-        edge_health_last_frame_ts_seconds_ = timestamp_now();
+        edge_health_last_frame_ts_seconds_ = wall_seconds();
     }
 
     return sent;
@@ -1751,7 +1750,7 @@ bool VirtualDepthSource::next_depth_frame(DepthFrame& frame_out)
 {
     frame_out.width = 4;
     frame_out.height = 4;
-    frame_out.timestamp = timestamp_now();
+    frame_out.timestamp = wall_seconds();
     frame_out.data.assign(16, 1000); // 1000 mm = 1 m flat plane
     return true;
 }
@@ -1852,17 +1851,24 @@ void DepthStreamer::stream_loop()
         // Pointcloud → hand off to the dedicated publish thread (non-blocking).
         // The slot overwrites any unsent payload, so the publisher always sends
         // the freshest frame and stale data is dropped — not queued.
-        std::vector<PointXYZRGB> cloud;
-        if (publish_pointcloud_ && source_ && source_->next_point_cloud(cloud) && !cloud.empty())
+        PointCloudSample sample;
+        if (publish_pointcloud_ && source_ && source_->next_point_cloud_sample(sample) && !sample.points.empty())
         {
-            std::string bytes_b64 =
-                base64_encode(reinterpret_cast<const unsigned char*>(cloud.data()), cloud.size() * sizeof(PointXYZRGB));
+            std::string bytes_b64 = base64_encode(reinterpret_cast<const unsigned char*>(sample.points.data()),
+                                                  sample.points.size() * sizeof(PointXYZRGB));
             web::json::value pc_payload = web::json::value::object();
             pc_payload[from_std("type")] = web::json::value::string(from_std("pointcloud"));
             pc_payload[from_std("data")] = web::json::value::string(from_std(bytes_b64));
-            pc_payload[from_std("point_count")] = web::json::value::number(static_cast<int>(cloud.size()));
+            pc_payload[from_std("point_count")] = web::json::value::number(static_cast<int>(sample.points.size()));
             pc_payload[from_std("point_stride")] = web::json::value::number(6);
-            pc_payload[from_std("timestamp")] = timestamp_now();
+            pc_payload[from_std("timestamp")] = sample.timestamp > 0.0 ? sample.timestamp : wall_seconds();
+            if (!sample.frame.empty())
+                pc_payload[from_std("frame")] = web::json::value::string(from_std(sample.frame));
+            if (!sample.map_uuid.empty())
+                pc_payload[from_std("map_uuid")] = web::json::value::string(from_std(sample.map_uuid));
+            if (!sample.odometry_session_id.empty())
+                pc_payload[from_std("odometry_session_id")] =
+                    web::json::value::string(from_std(sample.odometry_session_id));
             std::string pc_topic = mqtt_->get_topic_prefix() + "cyberwave/twin/" + twin_uuid_ + "/pointcloud";
             {
                 std::lock_guard<std::mutex> lock(pc_mutex_);

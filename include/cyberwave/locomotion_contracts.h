@@ -5,10 +5,10 @@
 #ifndef CYBERWAVE_LOCOMOTION_CONTRACTS_H
 #define CYBERWAVE_LOCOMOTION_CONTRACTS_H
 
+#include "cyberwave/mqtt_interface.h"
+
 #include <array>
 #include <cmath>
-#include <iomanip>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 
@@ -35,11 +35,12 @@ struct LocomotionVelocityCommand
     {
         validate_locomotion_velocity_command(*this, true);
 
-        std::ostringstream out;
-        out << std::setprecision(17) << "{\"linear_x\":" << linear_x << ",\"linear_y\":" << linear_y
-            << ",\"angular_z\":" << angular_z << ",\"duration_ms\":" << duration_ms << ",\"gait\":\"" << gait
-            << "\",\"origin\":\"" << origin << "\",\"contract\":\"" << LOCOMOTION_VELOCITY_COMMAND_CONTRACT << "\"}";
-        return out.str();
+        // json_float and std::to_string ignore the global locale, which a
+        // stream would use: "0,25" or a grouped "30.000" is not this payload.
+        return "{\"linear_x\":" + detail::json_float(linear_x) + ",\"linear_y\":" + detail::json_float(linear_y) +
+               ",\"angular_z\":" + detail::json_float(angular_z) + ",\"duration_ms\":" + std::to_string(duration_ms) +
+               ",\"gait\":\"" + gait + "\",\"origin\":\"" + origin + "\",\"contract\":\"" +
+               LOCOMOTION_VELOCITY_COMMAND_CONTRACT + "\"}";
     }
 };
 

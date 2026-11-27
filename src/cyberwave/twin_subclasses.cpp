@@ -5,6 +5,7 @@
 #include "cyberwave/exceptions.h"
 #include "cyberwave/mqtt_interface.h"
 #include "cyberwave/twin.h"
+#include "cyberwave/utils.h"
 
 #include <chrono>
 #include <sstream>
@@ -172,10 +173,11 @@ static void locomote_command(const Twin& twin, const std::string& command, doubl
     if (!mqtt || !mqtt->is_connected())
         return;
     std::string st = source_type.empty() ? SOURCE_TYPE_TELE : source_type;
-    double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    double ts = wall_seconds();
     std::ostringstream out;
-    out << "{\"source_type\":\"" << st << "\",\"command\":\"" << command << "\",\"data\":{\"linear_x\":" << linear_x
-        << ",\"angular_z\":" << angular_z << "},\"timestamp\":" << ts << "}";
+    out << "{\"source_type\":\"" << st << "\",\"command\":\"" << command
+        << "\",\"data\":{\"linear_x\":" << detail::json_float(linear_x)
+        << ",\"angular_z\":" << detail::json_float(angular_z) << "},\"timestamp\":" << detail::json_float(ts) << "}";
     std::string topic = mqtt->get_topic_prefix() + "cyberwave/twin/" + twin.uuid() + "/command";
     mqtt->publish(topic, out.str());
 }
@@ -212,17 +214,17 @@ static void flying_command(const Twin& twin, const std::string& command, const s
     if (!mqtt || !mqtt->is_connected())
         return;
     std::string topic = mqtt->get_topic_prefix() + "cyberwave/twin/" + twin.uuid() + "/command";
-    double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    double ts = wall_seconds();
     std::ostringstream out;
     out << "{\"source_type\":\"" << SOURCE_TYPE_TELE << "\",\"command\":\"" << command << "\",\"data\":" << payload
-        << ",\"timestamp\":" << ts << "}";
+        << ",\"timestamp\":" << detail::json_float(ts) << "}";
     mqtt->publish(topic, out.str());
 }
 
 void FlyingTwin::takeoff(double altitude_m)
 {
     std::ostringstream data;
-    data << "{\"altitude\":" << altitude_m << "}";
+    data << "{\"altitude\":" << detail::json_float(altitude_m) << "}";
     flying_command(*this, "takeoff", data.str());
 }
 
@@ -242,10 +244,10 @@ static void gripper_command(const Twin& twin, const std::string& command, const 
     if (!mqtt || !mqtt->is_connected())
         return;
     std::string topic = mqtt->get_topic_prefix() + "cyberwave/twin/" + twin.uuid() + "/command";
-    double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    double ts = wall_seconds();
     std::ostringstream out;
     out << "{\"source_type\":\"" << SOURCE_TYPE_TELE << "\",\"command\":\"" << command << "\",\"data\":" << payload
-        << ",\"timestamp\":" << ts << "}";
+        << ",\"timestamp\":" << detail::json_float(ts) << "}";
     mqtt->publish(topic, out.str());
 }
 
@@ -253,7 +255,7 @@ void GripperTwin::grip(double force)
 {
     double f = (force < 0.0) ? 0.0 : (force > 1.0 ? 1.0 : force);
     std::ostringstream data;
-    data << "{\"force\":" << f << "}";
+    data << "{\"force\":" << detail::json_float(f) << "}";
     gripper_command(*this, "grip", data.str());
 }
 
@@ -272,7 +274,7 @@ void GripperCameraTwin::grip(double force)
 {
     double f = (force < 0.0) ? 0.0 : (force > 1.0 ? 1.0 : force);
     std::ostringstream d;
-    d << "{\"force\":" << f << "}";
+    d << "{\"force\":" << detail::json_float(f) << "}";
     gripper_command(*this, "grip", d.str());
 }
 void GripperCameraTwin::release() { gripper_command(*this, "release", "{}"); }
@@ -286,7 +288,7 @@ void GripperDepthCameraTwin::grip(double force)
 {
     double f = (force < 0.0) ? 0.0 : (force > 1.0 ? 1.0 : force);
     std::ostringstream d;
-    d << "{\"force\":" << f << "}";
+    d << "{\"force\":" << detail::json_float(f) << "}";
     gripper_command(*this, "grip", d.str());
 }
 void GripperDepthCameraTwin::release() { gripper_command(*this, "release", "{}"); }
@@ -344,7 +346,7 @@ void LocomoteGripperTwin::grip(double force)
 {
     double f = (force < 0.0) ? 0.0 : (force > 1.0 ? 1.0 : force);
     std::ostringstream d;
-    d << "{\"force\":" << f << "}";
+    d << "{\"force\":" << detail::json_float(f) << "}";
     gripper_command(*this, "grip", d.str());
 }
 void LocomoteGripperTwin::release() { gripper_command(*this, "release", "{}"); }
@@ -374,7 +376,7 @@ void LocomoteGripperCameraTwin::grip(double force)
 {
     double f = (force < 0.0) ? 0.0 : (force > 1.0 ? 1.0 : force);
     std::ostringstream d;
-    d << "{\"force\":" << f << "}";
+    d << "{\"force\":" << detail::json_float(f) << "}";
     gripper_command(*this, "grip", d.str());
 }
 void LocomoteGripperCameraTwin::release() { gripper_command(*this, "release", "{}"); }
@@ -404,7 +406,7 @@ void LocomoteGripperDepthCameraTwin::grip(double force)
 {
     double f = (force < 0.0) ? 0.0 : (force > 1.0 ? 1.0 : force);
     std::ostringstream d;
-    d << "{\"force\":" << f << "}";
+    d << "{\"force\":" << detail::json_float(f) << "}";
     gripper_command(*this, "grip", d.str());
 }
 void LocomoteGripperDepthCameraTwin::release() { gripper_command(*this, "release", "{}"); }
@@ -417,7 +419,7 @@ FlyingCameraTwin::FlyingCameraTwin(const Client& c, std::string uuid, std::strin
 void FlyingCameraTwin::takeoff(double alt)
 {
     std::ostringstream d;
-    d << "{\"altitude\":" << alt << "}";
+    d << "{\"altitude\":" << detail::json_float(alt) << "}";
     flying_command(*this, "takeoff", d.str());
 }
 void FlyingCameraTwin::land() { flying_command(*this, "land", "{}"); }
@@ -431,7 +433,7 @@ FlyingDepthCameraTwin::FlyingDepthCameraTwin(const Client& c, std::string uuid, 
 void FlyingDepthCameraTwin::takeoff(double alt)
 {
     std::ostringstream d;
-    d << "{\"altitude\":" << alt << "}";
+    d << "{\"altitude\":" << detail::json_float(alt) << "}";
     flying_command(*this, "takeoff", d.str());
 }
 void FlyingDepthCameraTwin::land() { flying_command(*this, "land", "{}"); }
@@ -446,7 +448,7 @@ void FlyingGripperTwin::grip(double force)
 {
     double f = (force < 0.0) ? 0.0 : (force > 1.0 ? 1.0 : force);
     std::ostringstream d;
-    d << "{\"force\":" << f << "}";
+    d << "{\"force\":" << detail::json_float(f) << "}";
     gripper_command(*this, "grip", d.str());
 }
 void FlyingGripperTwin::release() { gripper_command(*this, "release", "{}"); }
@@ -459,7 +461,7 @@ FlyingGripperCameraTwin::FlyingGripperCameraTwin(const Client& c, std::string uu
 void FlyingGripperCameraTwin::takeoff(double alt)
 {
     std::ostringstream d;
-    d << "{\"altitude\":" << alt << "}";
+    d << "{\"altitude\":" << detail::json_float(alt) << "}";
     flying_command(*this, "takeoff", d.str());
 }
 void FlyingGripperCameraTwin::land() { flying_command(*this, "land", "{}"); }
@@ -468,7 +470,7 @@ void FlyingGripperCameraTwin::grip(double force)
 {
     double f = (force < 0.0) ? 0.0 : (force > 1.0 ? 1.0 : force);
     std::ostringstream d;
-    d << "{\"force\":" << f << "}";
+    d << "{\"force\":" << detail::json_float(f) << "}";
     gripper_command(*this, "grip", d.str());
 }
 void FlyingGripperCameraTwin::release() { gripper_command(*this, "release", "{}"); }
@@ -481,7 +483,7 @@ FlyingGripperDepthCameraTwin::FlyingGripperDepthCameraTwin(const Client& c, std:
 void FlyingGripperDepthCameraTwin::takeoff(double alt)
 {
     std::ostringstream d;
-    d << "{\"altitude\":" << alt << "}";
+    d << "{\"altitude\":" << detail::json_float(alt) << "}";
     flying_command(*this, "takeoff", d.str());
 }
 void FlyingGripperDepthCameraTwin::land() { flying_command(*this, "land", "{}"); }
@@ -490,7 +492,7 @@ void FlyingGripperDepthCameraTwin::grip(double force)
 {
     double f = (force < 0.0) ? 0.0 : (force > 1.0 ? 1.0 : force);
     std::ostringstream d;
-    d << "{\"force\":" << f << "}";
+    d << "{\"force\":" << detail::json_float(f) << "}";
     gripper_command(*this, "grip", d.str());
 }
 void FlyingGripperDepthCameraTwin::release() { gripper_command(*this, "release", "{}"); }

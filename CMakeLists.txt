@@ -1,12 +1,20 @@
 # Top-level build: REST client, cyberwave SDK layer, and optional tests/examples.
 cmake_minimum_required(VERSION 3.14)
+# 0.4.0: PointCloudSample carries map/session identity; rebuild binary consumers.
+# 0.3.0: IDepthSource gains captured point-cloud samples with frame + timestamp.
+# Existing sources remain source-compatible; rebuild binary consumers of the interface.
+# 0.2.1: acquisition stamps are read off a suspend-inclusive clock
+# (CLOCK_BOOTTIME where it exists), so a host that sleeps no longer skews the
+# (wall, monotonic) offset by the whole suspend. Purely additive to the ABI --
+# `monotonic_clock_name()` and `monotonic_clock_is_suspend_inclusive()` are new
+# symbols and no existing signature moved, so a prebuilt consumer still links.
 # 0.2.0: AssetManager::rebuild_universal_schema gained a trailing
 # `preserve_authored` parameter. Defaulted, so every existing call site still
 # compiles, but the mangled symbol changed — a consumer linking a prebuilt
 # cyberwave_sdk must rebuild rather than swap the artifact. The version is what
 # `find_package(CyberwaveCppSDK 0.2)` pins against; `SameMajorVersion` below means
 # 0.x consumers are not locked out, so this is a signal, not a wall.
-project(CyberwaveCppSDK VERSION 0.2.0 LANGUAGES CXX)
+project(CyberwaveCppSDK VERSION 0.4.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -329,8 +337,48 @@ if(CYBERWAVE_BUILD_TESTS)
     foreach(_t IN LISTS _CYBERWAVE_UNIT_TESTS)
         add_executable(${_t} tests/${_t}.cpp)
         target_link_libraries(${_t} PRIVATE cyberwave_sdk)
+        # CI builds Release, whose -DNDEBUG compiles every assert() in these
+        # tests away, so they would pass whatever they observed. GCC and Clang
+        # apply -D/-U in order, and target options follow the config flags.
+        target_compile_options(${_t} PRIVATE -UNDEBUG)
         add_test(NAME ${_t} COMMAND ${_t})
     endforeach()
+
+    # Wire shape of the real MQTT client's joint payload, checked without a
+    # broker. Header-only: it needs the libmosquitto and nlohmann_json headers
+    # that mqtt_client.h includes, and links nothing of the SDK.
+    find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND AND NOT TARGET PkgConfig::MOSQUITTO)
+        pkg_check_modules(MOSQUITTO QUIET IMPORTED_TARGET libmosquitto)
+    endif()
+    find_package(nlohmann_json QUIET)
+    # libmosquitto 2.1 headers include <cjson/cJSON.h>, and Homebrew's
+    # libmosquitto.pc does not put cJSON on the include path.
+    if(PkgConfig_FOUND AND NOT TARGET PkgConfig::CJSON)
+        pkg_check_modules(CJSON QUIET IMPORTED_TARGET libcjson)
+        if(NOT CJSON_FOUND)
+            pkg_check_modules(CJSON QUIET IMPORTED_TARGET cjson)
+        endif()
+    endif()
+    if(TARGET PkgConfig::MOSQUITTO AND nlohmann_json_FOUND)
+        add_executable(test_mqtt_joint_payload tests/test_mqtt_joint_payload.cpp)
+        target_include_directories(test_mqtt_joint_payload PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/mqtt
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+        )
+        target_link_libraries(test_mqtt_joint_payload PRIVATE PkgConfig::MOSQUITTO nlohmann_json::nlohmann_json)
+        if(TARGET PkgConfig::CJSON)
+            target_link_libraries(test_mqtt_joint_payload PRIVATE PkgConfig::CJSON)
+        else()
+            find_path(CJSON_INCLUDE_DIR NAMES cjson/cJSON.h)
+            if(CJSON_INCLUDE_DIR)
+                target_include_directories(test_mqtt_joint_payload PRIVATE ${CJSON_INCLUDE_DIR})
+            endif()
+        endif()
+        add_test(NAME test_mqtt_joint_payload COMMAND test_mqtt_joint_payload)
+    else()
+        message(STATUS "test_mqtt_joint_payload skipped: libmosquitto or nlohmann_json headers not found")
+    endif()
 
     # Integration test: exercises the generated REST client against a live backend.
     add_executable(test_sdk tests/test_sdk.cpp)
