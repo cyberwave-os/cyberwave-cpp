@@ -11,6 +11,7 @@
 #include "cyberwave/mqtt_interface.h"
 #include "cyberwave/navigation.h"
 #include "cyberwave/twins.h"
+#include "cyberwave/utils.h"
 #include "rest_helpers.h"
 #include "source_type_utils.h"
 
@@ -534,11 +535,11 @@ void Twin::move_forward(double distance_m, const std::string& source_type)
         return;
 
     const std::string resolved_source_type = detail::normalize_control_source_type(client(), source_type);
-    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const double ts = wall_seconds();
     std::ostringstream out;
     out << "{\"source_type\":\"" << resolved_source_type
-        << "\",\"command\":\"move_forward\",\"data\":{\"linear_x\":" << distance_m
-        << ",\"angular_z\":0},\"timestamp\":" << ts << "}";
+        << "\",\"command\":\"move_forward\",\"data\":{\"linear_x\":" << detail::json_float(distance_m)
+        << ",\"angular_z\":0.0},\"timestamp\":" << detail::json_float(ts) << "}";
     mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
 }
 
@@ -550,11 +551,11 @@ void Twin::move_backward(double distance_m, const std::string& source_type)
     if (!mqtt || !mqtt->is_connected())
         return;
     const std::string resolved_source_type = detail::normalize_control_source_type(client(), source_type);
-    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const double ts = wall_seconds();
     std::ostringstream out;
     out << "{\"source_type\":\"" << resolved_source_type
-        << "\",\"command\":\"move_backward\",\"data\":{\"linear_x\":" << -distance_m
-        << ",\"angular_z\":0},\"timestamp\":" << ts << "}";
+        << "\",\"command\":\"move_backward\",\"data\":{\"linear_x\":" << detail::json_float(-distance_m)
+        << ",\"angular_z\":0.0},\"timestamp\":" << detail::json_float(ts) << "}";
     mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
 }
 
@@ -567,11 +568,11 @@ void Twin::turn_left(double angle_rad, const std::string& source_type)
         return;
 
     const std::string resolved_source_type = detail::normalize_control_source_type(client(), source_type);
-    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const double ts = wall_seconds();
     std::ostringstream out;
     out << "{\"source_type\":\"" << resolved_source_type
-        << "\",\"command\":\"turn_left\",\"data\":{\"linear_x\":0,\"angular_z\":" << angle_rad
-        << "},\"timestamp\":" << ts << "}";
+        << "\",\"command\":\"turn_left\",\"data\":{\"linear_x\":0.0,\"angular_z\":" << detail::json_float(angle_rad)
+        << "},\"timestamp\":" << detail::json_float(ts) << "}";
     mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
 }
 
@@ -584,11 +585,11 @@ void Twin::turn_right(double angle_rad, const std::string& source_type)
         return;
 
     const std::string resolved_source_type = detail::normalize_control_source_type(client(), source_type);
-    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const double ts = wall_seconds();
     std::ostringstream out;
     out << "{\"source_type\":\"" << resolved_source_type
-        << "\",\"command\":\"turn_right\",\"data\":{\"linear_x\":0,\"angular_z\":" << -angle_rad
-        << "},\"timestamp\":" << ts << "}";
+        << "\",\"command\":\"turn_right\",\"data\":{\"linear_x\":0.0,\"angular_z\":" << detail::json_float(-angle_rad)
+        << "},\"timestamp\":" << detail::json_float(ts) << "}";
     mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
 }
 
@@ -659,10 +660,11 @@ void Twin::takeoff(double altitude_m)
     if (!mqtt || !mqtt->is_connected())
         return;
 
-    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const double ts = wall_seconds();
     std::ostringstream out;
     out << "{\"source_type\":\"" << SOURCE_TYPE_TELE
-        << "\",\"command\":\"takeoff\",\"data\":{\"altitude\":" << altitude_m << "},\"timestamp\":" << ts << "}";
+        << "\",\"command\":\"takeoff\",\"data\":{\"altitude\":" << detail::json_float(altitude_m)
+        << "},\"timestamp\":" << detail::json_float(ts) << "}";
     mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
 }
 
@@ -674,10 +676,10 @@ void Twin::land()
     if (!mqtt || !mqtt->is_connected())
         return;
 
-    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const double ts = wall_seconds();
     std::ostringstream out;
-    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE << "\",\"command\":\"land\",\"data\":{},\"timestamp\":" << ts
-        << "}";
+    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE
+        << "\",\"command\":\"land\",\"data\":{},\"timestamp\":" << detail::json_float(ts) << "}";
     mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
 }
 
@@ -689,10 +691,10 @@ void Twin::hover()
     if (!mqtt || !mqtt->is_connected())
         return;
 
-    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const double ts = wall_seconds();
     std::ostringstream out;
-    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE << "\",\"command\":\"hover\",\"data\":{},\"timestamp\":" << ts
-        << "}";
+    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE
+        << "\",\"command\":\"hover\",\"data\":{},\"timestamp\":" << detail::json_float(ts) << "}";
     mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
 }
 
@@ -705,10 +707,11 @@ void Twin::grip(double force)
         return;
 
     const double clamped_force = force < 0.0 ? 0.0 : (force > 1.0 ? 1.0 : force);
-    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const double ts = wall_seconds();
     std::ostringstream out;
-    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE << "\",\"command\":\"grip\",\"data\":{\"force\":" << clamped_force
-        << "},\"timestamp\":" << ts << "}";
+    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE
+        << "\",\"command\":\"grip\",\"data\":{\"force\":" << detail::json_float(clamped_force)
+        << "},\"timestamp\":" << detail::json_float(ts) << "}";
     mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
 }
 
@@ -720,10 +723,10 @@ void Twin::release()
     if (!mqtt || !mqtt->is_connected())
         return;
 
-    const double ts = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const double ts = wall_seconds();
     std::ostringstream out;
-    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE << "\",\"command\":\"release\",\"data\":{},\"timestamp\":" << ts
-        << "}";
+    out << "{\"source_type\":\"" << SOURCE_TYPE_TELE
+        << "\",\"command\":\"release\",\"data\":{},\"timestamp\":" << detail::json_float(ts) << "}";
     mqtt->publish(mqtt->get_topic_prefix() + "cyberwave/twin/" + uuid() + "/command", out.str());
 }
 

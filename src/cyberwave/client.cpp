@@ -10,6 +10,7 @@
 #include "cyberwave/scene.h"
 #include "cyberwave/twin.h"
 #include "cyberwave/twins.h"
+#include "cyberwave/utils.h"
 #include "cyberwave/workers.h"
 #include "cyberwave/workflows.h"
 #include "cyberwave/workspaces.h"
@@ -279,7 +280,7 @@ void Client::publish_event(const std::string& twin_uuid, const std::string& even
     if (!mqtt_)
         throw CyberwaveError("publish_event() requires an MQTT client set on Client (set_mqtt_client)");
 
-    const auto now = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    const auto now = wall_seconds();
     nlohmann::json data = nlohmann::json::object();
     if (!data_json.empty())
     {
