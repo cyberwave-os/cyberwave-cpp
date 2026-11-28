@@ -3,6 +3,7 @@
 
 #include <cyberwave/config.h>
 #include <cyberwave/mqtt_identity.h>
+#include <cyberwave/utils.h>
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
@@ -60,11 +61,6 @@ inline spdlog::logger& mqtt_log()
     auto l = spdlog::stdout_color_mt("cyberwave.mqtt");
     l->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%n] [%^%l%$] %v");
     return *l;
-}
-
-double now_seconds()
-{
-    return std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 std::string read_env(const char* name)
@@ -198,6 +194,23 @@ CyberwaveMQTTClient::CyberwaveMQTTClient(const CyberwaveConfig& config) : config
     if (config_.mqtt_tls_ca_cert.empty())
     {
         config_.mqtt_tls_ca_cert = read_env("CYBERWAVE_MQTT_TLS_CA_CERT");
+    }
+
+    if (config.mqtt_max_payload_bytes)
+    {
+        max_payload_bytes_ = *config.mqtt_max_payload_bytes;
+    }
+    else if (const std::string raw = read_env(MQTT_MAX_PAYLOAD_BYTES_ENV); !raw.empty())
+    {
+        if (const auto parsed = parse_mqtt_max_payload_bytes(raw))
+        {
+            max_payload_bytes_ = *parsed;
+        }
+        else
+        {
+            mqtt_log().warn("Invalid {}='{}' (want a byte count, or 0 for no limit); using {}",
+                            MQTT_MAX_PAYLOAD_BYTES_ENV, raw, DEFAULT_MQTT_MAX_PAYLOAD_BYTES);
+        }
     }
 
     client_id_ = (config_.runtime_mode == "simulation" ? "sdk_sim_" : "sdk_") + generate_client_id();
@@ -477,12 +490,17 @@ void CyberwaveMQTTClient::publish(const std::string& topic, const json& message,
         payload_json["session_id"] = client_id_;
     }
     std::string payload = payload_json.dump();
+    if (refuse_oversized(topic, payload.size()))
+    {
+        return;
+    }
+    warn_if_unrecorded(topic, payload.size());
 
     int rc = mosquitto_publish(mosq_.get(), nullptr, topic.c_str(), static_cast<int>(payload.size()), payload.c_str(),
                                qos, false);
     if (rc != MOSQ_ERR_SUCCESS)
     {
-        mqtt_log().warn("MQTT publish error on {}: {}", topic, mosquitto_strerror(rc));
+        report_publish_error(topic, rc);
     }
 }
 
@@ -493,13 +511,87 @@ void CyberwaveMQTTClient::publish(const std::string& topic, const std::string& m
         mqtt_log().warn("Cannot publish to {}: not connected to MQTT broker", topic);
         return;
     }
+    if (refuse_oversized(topic, message.size()))
+    {
+        return;
+    }
+    warn_if_unrecorded(topic, message.size());
 
     int rc = mosquitto_publish(mosq_.get(), nullptr, topic.c_str(), static_cast<int>(message.size()), message.c_str(),
                                qos, false);
     if (rc != MOSQ_ERR_SUCCESS)
     {
-        mqtt_log().warn("MQTT publish error on {}: {}", topic, mosquitto_strerror(rc));
+        report_publish_error(topic, rc);
     }
+}
+
+void CyberwaveMQTTClient::report_publish_error(const std::string& topic, int rc) const
+{
+    if (rc != MOSQ_ERR_OVERSIZE_PACKET)
+    {
+        mqtt_log().warn("MQTT publish error on {}: {}", topic, mosquitto_strerror(rc));
+        return;
+    }
+    // Over an MQTT 5 broker's Maximum Packet Size: as with refuse_oversized,
+    // a stream over it is over it on every frame, so report it per interval.
+    std::optional<std::size_t> held_back;
+    {
+        std::lock_guard<std::mutex> lock(refusal_log_mutex_);
+        held_back = refusal_log_.admit("packet:" + topic, std::chrono::steady_clock::now());
+    }
+    if (!held_back)
+    {
+        return;
+    }
+    mqtt_log().error("Not publishing to {}: {}{}", topic, mosquitto_strerror(rc),
+                     *held_back ? " (" + std::to_string(*held_back) + " more since the last report)" : "");
+}
+
+void CyberwaveMQTTClient::warn_if_unrecorded(const std::string& topic, std::size_t payload_bytes) const
+{
+    if (!mqtt_publish_unrecorded(topic, payload_bytes))
+    {
+        return;
+    }
+    std::optional<std::size_t> held_back;
+    {
+        std::lock_guard<std::mutex> lock(refusal_log_mutex_);
+        held_back = refusal_log_.admit("unrecorded:" + topic, std::chrono::steady_clock::now());
+    }
+    if (!held_back)
+    {
+        return;
+    }
+    mqtt_log().warn("Publishing to {}, but payload is {} bytes, over the {}-byte point cloud limit of Cyberwave's "
+                    "telemetry pipeline: live subscribers get it, but it is not recorded (downsample it to keep it){}",
+                    topic, payload_bytes, MQTT_POINTCLOUD_RECORDED_MAX_PAYLOAD_BYTES,
+                    *held_back ? " (" + std::to_string(*held_back) + " more since the last report)" : "");
+}
+
+bool CyberwaveMQTTClient::refuse_oversized(const std::string& topic, std::size_t payload_bytes) const
+{
+    if (mqtt_payload_fits(payload_bytes, max_payload_bytes_))
+    {
+        return false;
+    }
+    // A payload's size follows the sensor's resolution, so a stream over the
+    // limit is over it on every frame: one line per interval, not 30 a second.
+    // Matches the Python SDK's _report_dropped_publish.
+    std::optional<std::size_t> held_back;
+    {
+        std::lock_guard<std::mutex> lock(refusal_log_mutex_);
+        held_back = refusal_log_.admit(topic, std::chrono::steady_clock::now());
+    }
+    if (!held_back)
+    {
+        return true;
+    }
+    mqtt_log().error("Not publishing to {}: payload is {} bytes, over the {}-byte limit (set {} or "
+                     "mqtt_max_payload_bytes only if the broker accepts more){}",
+                     topic, payload_bytes, mqtt_effective_max_payload_bytes(max_payload_bytes_),
+                     MQTT_MAX_PAYLOAD_BYTES_ENV,
+                     *held_back ? " (" + std::to_string(*held_back) + " more since the last report)" : "");
+    return true;
 }
 
 // ── Subscribe / Unsubscribe ─────────────────────────────────────────────────
@@ -721,13 +813,13 @@ bool CyberwaveMQTTClient::is_valid_source_type(const std::string& source_type) c
 void CyberwaveMQTTClient::publish_connect_message(const std::string& twin_uuid)
 {
     publish(with_prefix("cyberwave/twin/" + twin_uuid + "/telemetry"),
-            json{{"type", "connected"}, {"timestamp", now_seconds()}});
+            json{{"type", "connected"}, {"timestamp", wall_seconds()}});
 }
 
 void CyberwaveMQTTClient::publish_disconnect_message(const std::string& twin_uuid)
 {
     publish(with_prefix("cyberwave/twin/" + twin_uuid + "/telemetry"),
-            json{{"type", "disconnected"}, {"timestamp", now_seconds()}});
+            json{{"type", "disconnected"}, {"timestamp", wall_seconds()}});
 }
 
 void CyberwaveMQTTClient::handle_twin_update_with_telemetry(const std::string& twin_uuid, const json& metadata)
@@ -747,7 +839,7 @@ void CyberwaveMQTTClient::handle_twin_update_with_telemetry(const std::string& t
 
 void CyberwaveMQTTClient::publish_telemetry_start_message(const std::string& twin_uuid, const json& metadata)
 {
-    json message = {{"type", "telemetry_start"}, {"timestamp", now_seconds()}};
+    json message = {{"type", "telemetry_start"}, {"timestamp", wall_seconds()}};
     if (metadata.is_object())
     {
         if (metadata.contains("fps"))
@@ -775,7 +867,7 @@ void CyberwaveMQTTClient::publish_telemetry_end(const std::string& twin_uuid, co
 {
     json payload = metadata.is_object() ? metadata : json::object();
     payload["type"] = "telemetry_end";
-    payload["timestamp"] = now_seconds();
+    payload["timestamp"] = wall_seconds();
 
     publish(with_prefix("cyberwave/twin/" + twin_uuid + "/telemetry"), payload);
 
@@ -808,7 +900,7 @@ void CyberwaveMQTTClient::publish_initial_observation(const std::string& twin_uu
     publish(with_prefix("cyberwave/twin/" + twin_uuid + "/telemetry"), json{{"type", "initial_observation"},
                                                                             {"observations", observations},
                                                                             {"fps", fps},
-                                                                            {"timestamp", now_seconds()}});
+                                                                            {"timestamp", wall_seconds()}});
 }
 
 // ── Twin methods ────────────────────────────────────────────────────────────
@@ -841,7 +933,7 @@ void CyberwaveMQTTClient::update_twin_position(const std::string& twin_uuid, con
         {"source_type", source_type_},
         {"type", "position"},
         {"position", {{"x", position.x}, {"y", position.y}, {"z", position.z}}},
-        {"timestamp", now_seconds()},
+        {"timestamp", wall_seconds()},
     };
     publish(topic, message);
 }
@@ -859,7 +951,7 @@ void CyberwaveMQTTClient::update_twin_rotation(const std::string& twin_uuid, con
         {"source_type", source_type_},
         {"type", "rotation"},
         {"rotation", {{"x", rotation.x}, {"y", rotation.y}, {"z", rotation.z}, {"w", rotation.w}}},
-        {"timestamp", now_seconds()},
+        {"timestamp", wall_seconds()},
     };
     publish(topic, message);
 }
@@ -872,7 +964,7 @@ void CyberwaveMQTTClient::update_twin_scale(const std::string& twin_uuid, const 
         {"source_type", source_type_},
         {"type", "scale"},
         {"scale", {{"x", scale.x}, {"y", scale.y}, {"z", scale.z}}},
-        {"timestamp", now_seconds()},
+        {"timestamp", wall_seconds()},
     };
     publish(topic, message);
 }
@@ -882,7 +974,7 @@ void CyberwaveMQTTClient::update_twin_gps(const std::string& twin_uuid, const Gp
     if (fix.fix_type && *fix.fix_type == "none")
         return;
 
-    const double now = now_seconds();
+    const double now = wall_seconds();
     const auto last_it = last_gps_update_times_.find(twin_uuid);
     if (last_it != last_gps_update_times_.end() && (now - last_it->second) < kGpsMinUpdateIntervalSec)
         return;
@@ -890,8 +982,8 @@ void CyberwaveMQTTClient::update_twin_gps(const std::string& twin_uuid, const Gp
 
     const std::string topic = with_prefix("cyberwave/twin/" + twin_uuid + "/gps");
     json message = {
-        {"source_type", source_type_}, {"latitude", fix.latitude},   {"longitude", fix.longitude},
-        {"altitude", fix.altitude},    {"timestamp", now_seconds()},
+        {"source_type", source_type_}, {"latitude", fix.latitude},    {"longitude", fix.longitude},
+        {"altitude", fix.altitude},    {"timestamp", wall_seconds()},
     };
     if (fix.satellite_count)
         message["satellite_count"] = *fix.satellite_count;
@@ -934,6 +1026,10 @@ void CyberwaveMQTTClient::update_joint_state(const std::string& twin_uuid, const
     {
         joint_state["velocity"] = state.velocity.value();
     }
+    if (state.acceleration.has_value())
+    {
+        joint_state["acceleration"] = state.acceleration.value();
+    }
     if (state.effort.has_value())
     {
         joint_state["effort"] = state.effort.value();
@@ -944,7 +1040,7 @@ void CyberwaveMQTTClient::update_joint_state(const std::string& twin_uuid, const
         {"type", "joint_state"},
         {"joint_name", joint_name},
         {"joint_state", joint_state},
-        {"timestamp", timestamp >= 0.0 ? timestamp : now_seconds()},
+        {"timestamp", timestamp >= 0.0 ? timestamp : wall_seconds()},
     };
     publish(topic, message);
 }
@@ -981,7 +1077,8 @@ void CyberwaveMQTTClient::update_joints_state(const std::string& twin_uuid,
 void CyberwaveMQTTClient::update_joints_state(
     const std::string& twin_uuid, const std::map<std::string, double>& joint_positions, const std::string& source_type,
     const std::map<std::string, double>& velocities, const std::map<std::string, double>& efforts, double timestamp,
-    const std::string& workload_uuid, const std::string& session_id, const std::string& source_subtype)
+    const std::string& workload_uuid, const std::string& session_id, const std::string& source_subtype,
+    const std::map<std::string, double>& accelerations)
 {
     const std::string effective_source_type = source_type.empty() ? source_type_ : source_type;
     if (!is_valid_source_type(effective_source_type))
@@ -994,42 +1091,34 @@ void CyberwaveMQTTClient::update_joints_state(
     }
 
     handle_twin_update_with_telemetry(twin_uuid);
-    const bool use_aggregated = !velocities.empty() || !efforts.empty() || timestamp >= 0.0 || !workload_uuid.empty() ||
-                                !session_id.empty() || !source_subtype.empty();
-    json message = {{"source_type", effective_source_type}};
-    if (use_aggregated)
-    {
-        message["positions"] = json::object();
-        for (const auto& [joint_name, joint_position] : joint_positions)
-            message["positions"][joint_name] = joint_position;
+    publish(with_prefix("cyberwave/joint/" + twin_uuid + "/update"),
+            detail::build_joints_state_message(effective_source_type, joint_positions, velocities, efforts, timestamp,
+                                               workload_uuid, session_id, source_subtype, accelerations));
+}
 
-        if (!velocities.empty())
-        {
-            message["velocities"] = json::object();
-            for (const auto& [joint_name, joint_velocity] : velocities)
-                message["velocities"][joint_name] = joint_velocity;
-        }
-        if (!efforts.empty())
-        {
-            message["efforts"] = json::object();
-            for (const auto& [joint_name, joint_effort] : efforts)
-                message["efforts"][joint_name] = joint_effort;
-        }
-        if (timestamp >= 0.0)
-            message["timestamp"] = timestamp;
-        if (!workload_uuid.empty())
-            message["workload_uuid"] = workload_uuid;
-        if (!session_id.empty())
-            message["session_id"] = session_id;
-        if (!source_subtype.empty())
-            message["source_subtype"] = source_subtype;
-    }
-    else
+void CyberwaveMQTTClient::update_joint_targets(
+    const std::string& twin_uuid, const std::map<std::string, double>& target_positions, const std::string& source_type,
+    const std::map<std::string, double>& velocities, const std::map<std::string, double>& efforts, double timestamp,
+    const std::string& workload_uuid, const std::string& session_id, const std::string& source_subtype,
+    const std::map<std::string, double>& accelerations)
+{
+    const std::string effective_source_type = source_type.empty() ? source_type_ : source_type;
+    if (!is_valid_source_type(effective_source_type))
     {
-        for (const auto& [joint_name, joint_position] : joint_positions)
-            message[joint_name] = joint_position;
+        throw std::invalid_argument("Invalid source_type for update_joint_targets: " + effective_source_type);
     }
-    publish(with_prefix("cyberwave/joint/" + twin_uuid + "/update"), message);
+    if (target_positions.empty() && velocities.empty() && accelerations.empty() && efforts.empty())
+    {
+        throw std::invalid_argument(
+            "update_joint_targets needs at least one of target positions, velocities, accelerations or efforts");
+    }
+
+    // A command, not measured state: no handle_twin_update_with_telemetry().
+    // The plant publishing measured state owns the telemetry session.
+    publish(with_prefix("cyberwave/joint/" + twin_uuid + "/update"),
+            detail::build_joint_targets_message(effective_source_type, target_positions, velocities, efforts,
+                                                timestamp >= 0.0 ? timestamp : wall_seconds(), workload_uuid,
+                                                session_id, source_subtype, accelerations));
 }
 
 // ── Environment methods ─────────────────────────────────────────────────────
@@ -1046,7 +1135,7 @@ void CyberwaveMQTTClient::publish_environment_update(const std::string& environm
     const json message = {
         {"type", update_type},
         {"data", data},
-        {"timestamp", now_seconds()},
+        {"timestamp", wall_seconds()},
     };
     publish(topic, message);
 }
@@ -1073,7 +1162,7 @@ void CyberwaveMQTTClient::subscribe_pointcloud_stream(const std::string& twin_uu
 
 void CyberwaveMQTTClient::publish_depth_frame(const std::string& twin_uuid, const json& depth_data)
 {
-    publish_depth_frame(twin_uuid, depth_data, now_seconds());
+    publish_depth_frame(twin_uuid, depth_data, wall_seconds());
 }
 
 void CyberwaveMQTTClient::publish_depth_frame(const std::string& twin_uuid, const json& depth_data, double timestamp)
@@ -1143,7 +1232,7 @@ void CyberwaveMQTTClient::subscribe_command_message(const std::string& twin_uuid
 void CyberwaveMQTTClient::ping(const std::string& resource_uuid)
 {
     publish(with_prefix("cyberwave/ping/" + resource_uuid + "/request"),
-            json{{"type", "ping"}, {"timestamp", now_seconds()}});
+            json{{"type", "ping"}, {"timestamp", wall_seconds()}});
 }
 
 void CyberwaveMQTTClient::subscribe_pong(const std::string& resource_uuid, MessageCallback callback)

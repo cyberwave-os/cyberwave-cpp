@@ -1,12 +1,16 @@
 #include "cyberwave/edge/base_edge_node.h"
 #include "cyberwave/client.h"
+#include "cyberwave/utils.h"
 
 #include <cpprest/details/basic_types.h>
 #include <cpprest/json.h>
 
 #include <algorithm>
+#include <array>
 #include <chrono>
+#include <cmath>
 #include <sstream>
+#include <string_view>
 #include <thread>
 
 namespace cyberwave
@@ -33,10 +37,13 @@ std::string json_serialize(const web::json::value& v)
     return os.str();
 }
 
-double timestamp_now()
+// The source type a node stamps on what it publishes. An empty or unknown
+// configured value (a typo in SOURCE_TYPE) becomes `edge`, as Python's
+// heartbeat_source_type() does: provenance labelling must not keep a node from
+// publishing, and the recording pipeline refuses a source_type it does not know.
+std::string stamped_source_type(const std::string& configured)
 {
-    using namespace std::chrono;
-    return duration<double>(system_clock::now().time_since_epoch()).count();
+    return is_valid_source_type(configured) ? configured : std::string(SOURCE_TYPE_EDGE);
 }
 
 } // namespace
@@ -170,13 +177,14 @@ void BaseEdgeNode::publish_position(const std::string& twin_uuid, double x, doub
     if (!mqtt || !mqtt->is_connected())
         return;
     std::string prefix = topic_prefix_with(mqtt);
+    const auto source_type = web::json::value::string(from_std(stamped_source_type(config_.source_type)));
     web::json::value pos = web::json::value::object();
     pos[from_std("position")] = web::json::value::object();
     pos[from_std("position")][from_std("x")] = x;
     pos[from_std("position")][from_std("y")] = y;
     pos[from_std("position")][from_std("z")] = z;
-    pos[from_std("source_type")] = web::json::value::string(from_std(config_.source_type));
-    pos[from_std("timestamp")] = timestamp_now();
+    pos[from_std("source_type")] = source_type;
+    pos[from_std("timestamp")] = wall_seconds();
     mqtt->publish(prefix + "cyberwave/twin/" + twin_uuid + "/position", json_serialize(pos));
     if (rotation_xyzw)
     {
@@ -186,8 +194,8 @@ void BaseEdgeNode::publish_position(const std::string& twin_uuid, double x, doub
         rot[from_std("rotation")][from_std("y")] = (*rotation_xyzw)[1];
         rot[from_std("rotation")][from_std("z")] = (*rotation_xyzw)[2];
         rot[from_std("rotation")][from_std("w")] = (*rotation_xyzw)[3];
-        rot[from_std("source_type")] = web::json::value::string(from_std(config_.source_type));
-        rot[from_std("timestamp")] = timestamp_now();
+        rot[from_std("source_type")] = source_type;
+        rot[from_std("timestamp")] = wall_seconds();
         mqtt->publish(prefix + "cyberwave/twin/" + twin_uuid + "/rotation", json_serialize(rot));
     }
 }
@@ -203,8 +211,8 @@ void BaseEdgeNode::publish_joint_states(const std::string& twin_uuid, const std:
     for (const auto& kv : joint_states)
         js[from_std(kv.first)] = kv.second;
     j[from_std("joint_states")] = js;
-    j[from_std("source_type")] = web::json::value::string(from_std(config_.source_type));
-    j[from_std("timestamp")] = timestamp_now();
+    j[from_std("source_type")] = web::json::value::string(from_std(stamped_source_type(config_.source_type)));
+    j[from_std("timestamp")] = wall_seconds();
     mqtt->publish(prefix + "cyberwave/twin/" + twin_uuid + "/joint_states", json_serialize(j));
 }
 
@@ -217,9 +225,19 @@ void BaseEdgeNode::publish_nav_status(const std::string& twin_uuid, const std::s
         return;
     std::string prefix = topic_prefix_with(mqtt);
     web::json::value j = web::json::value::object();
+    // As Python's publish_nav_status: the backend lets only `edge` (or no
+    // source at all) move a physical navigation action, and only
+    // `sim`/`sim_tele` move a simulated one. So the leader/follower roles
+    // report as `edge`, and `tele`/`edit` send none rather than get the
+    // status dropped.
+    std::string source_type = stamped_source_type(config_.source_type);
+    if (source_type == SOURCE_TYPE_EDGE_LEADER || source_type == SOURCE_TYPE_EDGE_FOLLOWER)
+        source_type = SOURCE_TYPE_EDGE;
+    if (source_type != SOURCE_TYPE_TELE && source_type != SOURCE_TYPE_EDIT)
+        j[from_std("source_type")] = web::json::value::string(from_std(source_type));
     j[from_std("action_id")] = web::json::value::string(from_std(action_id));
     j[from_std("status")] = web::json::value::string(from_std(status));
-    j[from_std("timestamp")] = timestamp_now();
+    j[from_std("timestamp")] = wall_seconds();
     if (message)
         j[from_std("message")] = web::json::value::string(from_std(*message));
     if (progress)
@@ -233,13 +251,26 @@ void BaseEdgeNode::publish_health(const std::string& twin_uuid, const HealthStat
     if (!mqtt || !mqtt->is_connected())
         return;
     std::string prefix = topic_prefix_with(mqtt);
-    web::json::value j = web::json::value::object();
+    // The field names the edge_health contract declares. A node's
+    // build_health_status() cannot overwrite them; source_type above all: the
+    // recording pipeline refuses a heartbeat without one. Built with
+    // json_float so the floats are spelled as Python spells them (`5.0`, not `5`).
+    static constexpr std::array<std::string_view, 6> contract_fields = {"type",      "source_type", "edge_id",
+                                                                        "twin_uuid", "timestamp",   "uptime_seconds"};
+    const std::string source_type = stamped_source_type(config_.source_type);
+    std::string out = "{\"type\":\"edge_health\",\"source_type\":" + detail::json_quote(source_type) +
+                      ",\"edge_id\":" + detail::json_quote(config_.edge_uuid) +
+                      ",\"twin_uuid\":" + detail::json_quote(twin_uuid) +
+                      ",\"timestamp\":" + detail::json_float(wall_seconds()) +
+                      ",\"uptime_seconds\":" + detail::json_float(std::round(uptime_seconds() * 10.0) / 10.0);
     for (const auto& kv : health_data)
-        j[from_std(kv.first)] = web::json::value::string(from_std(kv.second));
-    j[from_std("edge_uuid")] = web::json::value::string(from_std(config_.edge_uuid));
-    j[from_std("timestamp")] = timestamp_now();
-    j[from_std("uptime")] = uptime_seconds();
-    mqtt->publish(prefix + "cyberwave/twin/" + twin_uuid + "/edge_health", json_serialize(j));
+    {
+        if (std::find(contract_fields.begin(), contract_fields.end(), kv.first) != contract_fields.end())
+            continue;
+        out += "," + detail::json_quote(kv.first) + ":" + detail::json_quote(kv.second);
+    }
+    out += "}";
+    mqtt->publish(prefix + "cyberwave/twin/" + twin_uuid + "/edge_health", out);
 }
 
 void BaseEdgeNode::publish_gps(const std::string& twin_uuid, const GpsFix& fix)
@@ -249,11 +280,11 @@ void BaseEdgeNode::publish_gps(const std::string& twin_uuid, const GpsFix& fix)
         return;
     std::string prefix = topic_prefix_with(mqtt);
     web::json::value j = web::json::value::object();
-    j[from_std("source_type")] = web::json::value::string(from_std(config_.source_type));
+    j[from_std("source_type")] = web::json::value::string(from_std(stamped_source_type(config_.source_type)));
     j[from_std("latitude")] = fix.latitude;
     j[from_std("longitude")] = fix.longitude;
     j[from_std("altitude")] = fix.altitude;
-    j[from_std("timestamp")] = timestamp_now();
+    j[from_std("timestamp")] = wall_seconds();
     if (fix.satellite_count)
         j[from_std("satellite_count")] = *fix.satellite_count;
     if (fix.signal_level)
@@ -279,7 +310,8 @@ void BaseEdgeNode::publish_event(const std::string& twin_uuid, const std::string
     web::json::value j = web::json::value::object();
     j[from_std("event_type")] = web::json::value::string(from_std(event_type));
     j[from_std("source")] = web::json::value::string(from_std("edge_node"));
-    j[from_std("timestamp")] = timestamp_now();
+    j[from_std("source_type")] = web::json::value::string(from_std(stamped_source_type(config_.source_type)));
+    j[from_std("timestamp")] = wall_seconds();
     web::json::value d = web::json::value::object();
     for (const auto& kv : data)
         d[from_std(kv.first)] = web::json::value::string(from_std(kv.second));
@@ -296,8 +328,8 @@ void BaseEdgeNode::publish_telemetry(const std::string& twin_uuid, const std::st
     std::string prefix = topic_prefix_with(mqtt);
     web::json::value j = web::json::value::object();
     j[from_std("telemetry_type")] = web::json::value::string(from_std(telemetry_type));
-    j[from_std("source_type")] = web::json::value::string(from_std(config_.source_type));
-    j[from_std("timestamp")] = timestamp_now();
+    j[from_std("source_type")] = web::json::value::string(from_std(stamped_source_type(config_.source_type)));
+    j[from_std("timestamp")] = wall_seconds();
     web::json::value d = web::json::value::object();
     for (const auto& kv : data)
         d[from_std(kv.first)] = web::json::value::string(from_std(kv.second));

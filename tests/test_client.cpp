@@ -5,6 +5,8 @@
 
 #include <atomic>
 #include <cassert>
+#include <chrono>
+#include <cmath>
 #include <cpprest/http_listener.h>
 #include <cyberwave/client.h>
 #include <cyberwave/config.h>
@@ -12,7 +14,9 @@
 #include <cyberwave/joints.h>
 #include <cyberwave/mqtt_interface.h>
 #include <cyberwave/twin.h>
+#include <cyberwave/twin_subclasses.h>
 #include <functional>
+#include <locale>
 #include <memory>
 #include <mutex>
 #include <nlohmann/json.hpp>
@@ -72,6 +76,7 @@ struct MockMqttClient : IMqttClient
     bool connected = true;
     std::string last_topic;
     std::string last_payload;
+    std::vector<std::string> payloads;
     std::string last_joint_twin_uuid;
     std::string last_joint_name;
     double last_joint_position = 0.0;
@@ -83,7 +88,7 @@ struct MockMqttClient : IMqttClient
     void update_joint_state(const std::string&, const std::string&, double) override {}
     void update_joint_state(const std::string& twin_uuid, const std::string& joint_name, double position_rad,
                             std::optional<double>, std::optional<double>, double timestamp,
-                            const std::string& source_type) override
+                            const std::string& source_type, std::optional<double>) override
     {
         last_joint_twin_uuid = twin_uuid;
         last_joint_name = joint_name;
@@ -95,6 +100,7 @@ struct MockMqttClient : IMqttClient
     {
         last_topic = topic;
         last_payload = payload;
+        payloads.push_back(payload);
     }
     void subscribe(const std::string&, MqttMessageHandler) override {}
     void disconnect() override
@@ -743,6 +749,146 @@ static void test_twin_get_latest_frame_follows_affect_source_type()
     assert(request_queries[1] == "source_type=sim");
 }
 
+/** A twin served from REST with every command capability, so the base `Twin` command methods accept it. */
+static std::unique_ptr<TestHttpServer> command_twin_server()
+{
+    return std::make_unique<TestHttpServer>(
+        [](web::http::http_request request)
+        {
+            if (to_std(request.relative_uri().path()) == "/api/v1/twins/command-twin")
+            {
+                request.reply(web::http::status_codes::OK,
+                              to_utility("{\"uuid\":\"command-twin\",\"name\":\"Command Twin\",\"capabilities\":"
+                                         "{\"can_fly\":true,\"can_grip\":true,\"can_locomote\":true}}"),
+                              to_utility("application/json"));
+                return;
+            }
+            request.reply(web::http::status_codes::NotFound, to_utility("not found"));
+        });
+}
+
+static double now_seconds()
+{
+    return std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
+/**
+ * A drone command carries a full-precision timestamp. The PX4 and Guardian
+ * drivers refuse one more than 0.5 s old, so the default 6-digit `1.79415e+09`
+ * made every takeoff, land and hover stale.
+ */
+static void test_flight_commands_carry_a_current_timestamp()
+{
+    auto server = command_twin_server();
+    Config cfg;
+    cfg.base_url = server->base_url();
+    cfg.api_key = "key";
+    Client c(cfg);
+    auto mqtt = std::make_shared<MockMqttClient>();
+    c.set_mqtt_client(mqtt);
+
+    Twin t = c.twin("command-twin");
+    const double before = now_seconds();
+    t.takeoff(2.5);
+    t.hover();
+    t.land();
+    const double after = now_seconds();
+
+    assert(mqtt->payloads.size() == 3);
+    const char* commands[] = {"takeoff", "hover", "land"};
+    for (std::size_t i = 0; i < 3; ++i)
+    {
+        const auto payload = nlohmann::json::parse(mqtt->payloads[i]);
+        assert(payload.at("command") == commands[i]);
+        assert(payload.at("timestamp").is_number_float());
+        const double timestamp = payload.at("timestamp").get<double>();
+        assert(timestamp >= before - 1.0 && timestamp <= after + 1.0);
+    }
+    assert(nlohmann::json::parse(mqtt->payloads[0]).at("data").at("altitude") == 2.5);
+}
+
+/**
+ * Command payloads stay valid JSON under a comma-decimal locale, from both
+ * the base `Twin` methods and the `create_twin` subclasses, as do the
+ * locomotion velocity command and the interface's initial_observation.
+ */
+static void test_command_payloads_ignore_the_global_locale()
+{
+    // Built here rather than looked up (de_DE may not be installed), so the
+    // test cannot quietly skip itself.
+    struct CommaDecimal : std::numpunct<char>
+    {
+        char do_decimal_point() const override { return ','; }
+        char do_thousands_sep() const override { return '.'; }
+        std::string do_grouping() const override { return "\3"; }
+    };
+
+    auto server = command_twin_server();
+    Config cfg;
+    cfg.base_url = server->base_url();
+    cfg.api_key = "key";
+    Client c(cfg);
+    auto mqtt = std::make_shared<MockMqttClient>();
+    c.set_mqtt_client(mqtt);
+    Twin t = c.twin("command-twin");
+
+    Capabilities flying_gripper;
+    flying_gripper.can_fly = true;
+    flying_gripper.can_grip = true;
+    auto fg = create_twin(c, "fg-twin", "fg", flying_gripper);
+    Capabilities locomote;
+    locomote.can_locomote = true;
+    auto loco = create_twin(c, "loco-twin", "loco", locomote);
+
+    const double before = now_seconds();
+    const std::locale previous = std::locale::global(std::locale(std::locale::classic(), new CommaDecimal));
+    t.takeoff(1234.5);
+    t.grip(0.75);
+    t.move_forward(1.25);
+    t.turn_right(0.5);
+    dynamic_cast<FlyingTwin&>(*fg).takeoff(1234.5);
+    dynamic_cast<FlyingGripperTwin&>(*fg).grip(0.75);
+    dynamic_cast<LocomoteTwin&>(*loco).move_forward(1.25);
+    dynamic_cast<LocomoteTwin&>(*loco).turn_right(0.5);
+    // Grouping would also spell 30000 as "30.000", valid JSON with the wrong value.
+    const std::string velocity_command =
+        build_locomotion_velocity_command(1234.5, -0.125, 0.1, 30000, "walk", "teleop").to_json();
+    mqtt->publish_initial_observation("command-twin", "{}", 29.97);
+    std::locale::global(previous);
+    const double after = now_seconds();
+
+    const auto velocity = nlohmann::json::parse(velocity_command);
+    assert(velocity.at("linear_x") == 1234.5);
+    assert(velocity.at("linear_y") == -0.125);
+    assert(velocity.at("angular_z") == 0.1);
+    assert(velocity.at("duration_ms") == 30000);
+    const auto observation = nlohmann::json::parse(mqtt->payloads.back());
+    assert(observation.at("type") == "initial_observation");
+    assert(observation.at("fps") == 29.97);
+    mqtt->payloads.pop_back();
+
+    assert(mqtt->payloads.size() == 8);
+    std::vector<nlohmann::json> parsed;
+    for (const auto& text : mqtt->payloads)
+    {
+        parsed.push_back(nlohmann::json::parse(text)); // throws on "1.234,5"
+        const double timestamp = parsed.back().at("timestamp").get<double>();
+        assert(timestamp >= before - 1.0 && timestamp <= after + 1.0);
+    }
+    for (std::size_t base : {0u, 4u})
+    {
+        assert(parsed[base].at("data").at("altitude") == 1234.5);
+        assert(parsed[base + 1].at("data").at("force") == 0.75);
+        assert(parsed[base + 2].at("data").at("linear_x") == 1.25);
+        assert(parsed[base + 3].at("data").at("angular_z") == -0.5);
+        // The idle axis is a float zero too, never an integer beside a float.
+        assert(parsed[base + 2].at("data").at("angular_z") == 0.0);
+        assert(parsed[base + 2].at("data").at("angular_z").is_number_float());
+        assert(parsed[base + 3].at("data").at("linear_x") == 0.0);
+        assert(parsed[base + 3].at("data").at("linear_x").is_number_float());
+    }
+}
+
 int main()
 {
     test_construct_from_config();
@@ -765,5 +911,7 @@ int main()
     test_publish_event_rejects_invalid_json_payload();
     test_joint_controller_uses_runtime_mode_control_source_type();
     test_twin_get_latest_frame_follows_affect_source_type();
+    test_flight_commands_carry_a_current_timestamp();
+    test_command_payloads_ignore_the_global_locale();
     return 0;
 }
